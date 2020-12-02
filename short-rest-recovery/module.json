@@ -15,5 +15,5 @@
   "compatibleCoreVersion": "0.7.7",
   "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
   "manifest": "https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/main/short-rest-recovery/module.json",
-  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/raw/main/short-rest-recovery.zip"
+  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/blob/main/short-rest-recovery.zip"
 }
