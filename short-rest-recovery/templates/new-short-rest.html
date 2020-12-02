@@ -1,0 +1,64 @@
+<form id="short-rest-hd" class="dialog-content" onsubmit="event.preventDefault();">
+    <p>{{ localize "DND5E.ShortRestHint" }}</p>
+    <div class="form-group">
+        <label>{{ localize "DND5E.ShortRestSelect" }}</label>
+        <div class="form-fields">
+            <select name="hd">
+                {{#select denomination}}
+                {{#each hd.availableHD as |num denom|}}
+                <option value="{{denom}}">{{denom}} ({{num}} {{ localize "DND5E.available" }})</option>
+                {{/each}}
+                {{/select}}
+            </select>
+            <button id="roll-hd" {{#unless hd.canRoll}}disabled{{/unless}}>
+                <i class="fas fa-dice-d20"></i> {{ localize "Roll" }}
+            </button>
+        </div>
+        {{#unless hd.canRoll}}
+        <p class="notes">{{ localize "DND5E.ShortRestNoHD" }}</p>
+        {{/unless}}
+    </div>
+
+    {{#if spells.has_feature}}
+      <p>As a <strong>{{spells.class}}</strong>, you can regain some spell slots on a short rest. The spell slots can have a combined level that is equal to or less than half your {{spells.class}} level (rounded up), and none of the slots can be 6th level or higher.</p>
+
+      {{#each spells.slots as |slots level|}}
+      <div class="form-group">
+          <div class="form-fields" style="justify-content: flex-start;">
+              <div style="margin-right:5px; flex:0 1 auto;">Level {{level}}: </div>
+              <div style="flex:0 1 auto;">
+              {{#each slots as |slot num|}}
+                  {{#if slot}}
+                    <input type='checkbox' class="spend-spell-point" value="{{level}}">
+                  {{else}}
+                    <input type='checkbox' disabled checked>
+                  {{/if}}
+              {{/each}}
+              </div>
+          </div>
+      </div>
+      {{/each}}
+
+      <div style='margin:1rem 0;'>
+          You have <strong id='sp-left'>{{spells.sp_left}}</strong> spell slots remaining.
+      </div>
+
+    {{/if}}
+
+    {{#if promptNewDay}}
+    <div class="form-group">
+        <label>Is New Day?</label>
+        <input type="checkbox" name="newDay" {{checked newDay}}/>
+        <p class="hint">Recover limited use abilities which recharge "per day"?</p>
+    </div>
+    {{/if}}
+
+    <div class="dialog-buttons">
+        {{#each buttons as |button id|}}
+        <button class="dialog-button" data-button="{{id}}">
+            {{{button.icon}}}
+            {{{button.label}}}
+        </button>
+        {{/each}}
+    </div>
+</form>

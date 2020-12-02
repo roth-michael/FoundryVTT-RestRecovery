@@ -1,0 +1,19 @@
+{
+  "name": "short-rest-recovery",
+  "title": "Short Rest Recovery for 5e",
+  "description": "Adds support for Arcane and Natural Recovery (wizard/druid) features in the short rest dialog.",
+  "systems": [
+    "dnd5e"
+  ],
+  "version": "0.0.1",
+  "author": "Wasp (Wasp#2005)",
+  "esmodules": [
+    "settings.js",
+    "main.js"
+  ],
+  "minimumCoreVersion": "0.7.7",
+  "compatibleCoreVersion": "0.7.7",
+  "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
+  "manifest": "https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/master/short-rest-recovery/module.json",
+  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/raw/master/short-rest-recovery.zip"
+}

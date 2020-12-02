@@ -1,2 +1,2 @@
-# FoundryVTT-ShortRestRecovery
-This repository is for the support of Wizards' Arcane Recovery and Land Druids' Natural Recovery within the short rest dialog
+# Short Rest Arcane Recovery
+This repository is for the support of Wizards' Arcane Recovery within the short rest dialog. Land Druids' Natural Recovery is coming in a future update.
