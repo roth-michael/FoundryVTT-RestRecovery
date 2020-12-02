@@ -34,6 +34,7 @@ export default class newShortRestDialog extends Dialog {
 
 	/** @override */
 	getData() {
+
 		this._data = super.getData();
 
 		this._data.hd = this.get_hitdice();
@@ -78,34 +79,40 @@ export default class newShortRestDialog extends Dialog {
 			class: ""
 		}
 
-		let class_item = this.actor.items.find(i => i.type === "class" && i.name == "Wizard");
+		let class_item = this.actor.items.find(i => i.type === "class" && (i.name == "Wizard" || i.name == "Druid"));
 		
-		let item = this.actor.items.find(i => i.name.toLowerCase() === "arcane recovery");
+		let item = this.actor.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
 
 		if(class_item && class_item.data.data.levels > 1 && item && item.data.data.uses.value != 0){
 
-			spell_data.class = "Wizard";
+			let missing_spells = Object.entries(this.actor.data.data.spells).filter(slot => slot[0] != "pact" && Number(slot[0].substr(5)) < 6 && slot[1].value != slot[1].max);
 
-			let spellLevels = []
-			// Recover spell slots
-			for (let [k, v] of Object.entries(this.actor.data.data.spells)) {
-					if((!v.max && !v.override) || k == "pact"){
+			if(missing_spells.length != 0){
+
+				spell_data.class = class_item.name;
+
+				let spellLevels = []
+				// Recover spell slots
+				for (let [k, v] of Object.entries(this.actor.data.data.spells)) {
+						if((!v.max && !v.override) || k == "pact"){
 							continue;
-					}
-					let level = k.substr(5)
-					if(Number(level) > 5){
-						continue;
-					}
-					spellLevels.push(Number(level))
-					spell_data.slots[level] = [];
-					for(let i = 0; i < v.max; i++){
-						spell_data.slots[level].push(i >= v.value)
-					}
-			}
+						}
+						let level = k.substr(5)
+						if(Number(level) > 5){
+							break;
+						}
+						spellLevels.push(Number(level))
+						spell_data.slots[level] = [];
+						for(let i = 0; i < v.max; i++){
+							spell_data.slots[level].push(i >= v.value)
+						}
+				}
 
-			spell_data.has_feature = true;
-			spell_data.sp_total = Math.ceil(class_item.data.data.levels/2);
-			spell_data.sp_left = Math.ceil(class_item.data.data.levels/2);
+				spell_data.has_feature = true;
+				spell_data.sp_total = Math.ceil(class_item.data.data.levels/2);
+				spell_data.sp_left = Math.ceil(class_item.data.data.levels/2);
+
+			}
 
 		}
 
@@ -182,6 +189,40 @@ export default class newShortRestDialog extends Dialog {
 		let sp_left = this._data.spells.sp_left;
 
 		let checkboxes = this._element.find(".spend-spell-point");
+
+		// Let's keep this around if I decide to return to this
+		// Checks the left-most checkbox in the series, instead of whichever one the user selected
+
+		/*let check_checkboxes = [
+			this._element.find(".spend-spell-point[value='1']"),
+			this._element.find(".spend-spell-point[value='2']"),
+			this._element.find(".spend-spell-point[value='3']"),
+			this._element.find(".spend-spell-point[value='4']"),
+			this._element.find(".spend-spell-point[value='5']")
+		]
+
+		for(let level = 0; level < check_checkboxes.length; level++){
+
+			let checkbox_set = check_checkboxes[level];
+
+			for(let i = checkbox_set.length-1; i >= 1; i--){
+			
+				let checkbox = checkbox_set[i];
+				
+				for(let j = i-1; j >= 0; j--){
+
+					let prev_checkbox = checkbox_set[j];
+
+					if(!prev_checkbox.checked && checkbox.checked){
+						prev_checkbox.checked = true;
+						checkbox.checked = false;
+					}
+
+				}
+
+			}
+
+		}*/
 
 		for(let i = 0; i < checkboxes.length; i++){
 
