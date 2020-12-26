@@ -11,7 +11,7 @@ Hooks.once("init", () => {
 
 	game.settings.register("short-rest-recovery", "showChatMessage", {
 		name: "Show Chat Message",
-		hint: "At the end of the long rest, show a chat message summarizing the short rest.",
+		hint: "At the end of the short rest, show a chat message summarizing the rest.",
 		scope: "world",
 		config: true,
 		default: true,
