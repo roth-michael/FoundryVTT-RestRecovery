@@ -19,10 +19,11 @@
         {{/unless}}
     </div>
 
-    {{#if spells.has_feature}}
-      <p>As a <strong>{{spells.class}}</strong>, you can regain some spell slots on a short rest. The spell slots can have a combined level that is equal to or less than half your {{spells.class}} level (rounded up), and none of the slots can be 6th level or higher.</p>
+    {{#if class_data.has_feature}}
+        
+      <p>{{ localize "DND5E.ShortRestSpellCaster" }}</p>
 
-      {{#each spells.slots as |slots level|}}
+      {{#each class_data.slots as |slots level|}}
       <div class="form-group">
           <div class="form-fields" style="justify-content: flex-start;">
               <div style="margin-right:5px; flex:0 1 auto;">Level {{level}}: </div>
@@ -40,16 +41,16 @@
       {{/each}}
 
       <div style='margin:1rem 0;'>
-          You have <strong id='sp-left'>{{spells.sp_left}}</strong> spell slots remaining.
+          <strong id='sp-left'>{{class_data.sp_left}}</strong> {{ localize "DND5E.ShortRestSpellSlotRemaining" }}
       </div>
 
     {{/if}}
 
     {{#if promptNewDay}}
     <div class="form-group">
-        <label>Is New Day?</label>
+        <label>{{ localize "DND5E.ShortRestNewDay" }}</label>
         <input type="checkbox" name="newDay" {{checked newDay}}/>
-        <p class="hint">Recover limited use abilities which recharge "per day"?</p>
+        <p class='hint'>{{ localize "DND5E.ShortRestNewDayHint" }}</p>
     </div>
     {{/if}}
 

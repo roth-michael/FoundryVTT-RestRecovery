@@ -18,6 +18,8 @@ export default class newShortRestDialog extends Dialog {
 
 		this._data = {}
 
+		this.used_song_of_rest = false;
+
 	}
 
 	/* -------------------------------------------- */
@@ -39,7 +41,7 @@ export default class newShortRestDialog extends Dialog {
 
 		this._data.hd = this.get_hitdice();
 
-		this._data.spells = this.get_spells();
+		this._data.class_data = this.get_class_resource();
 
 		// Determine rest type
 		const variant = game.settings.get("dnd5e", "restVariant");
@@ -69,27 +71,28 @@ export default class newShortRestDialog extends Dialog {
 
 	}
 
-	get_spells(){
+	get_class_resource(){
 
-		let spell_data = {
+		let class_data = {
 			has_feature: false,
 			slots: {},
 			sp_total: 0,
 			sp_left: 0,
-			class: ""
+			class: "",
+			song_of_rest: false
 		}
 
-		let class_item = this.actor.items.find(i => i.type === "class" && (i.name == "Wizard" || i.name == "Druid"));
+		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name == "Wizard" || i.name == "Druid"));
 		
 		let item = this.actor.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
 
-		if(class_item && class_item.data.data.levels > 1 && item && item.data.data.uses.value != 0){
+		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item && item.data.data.uses.value != 0){
 
 			let missing_spells = Object.entries(this.actor.data.data.spells).filter(slot => slot[0] != "pact" && Number(slot[0].substr(5)) < 6 && slot[1].value != slot[1].max);
 
 			if(missing_spells.length != 0){
 
-				spell_data.class = class_item.name;
+				class_data.class = wizard_druid_class_item.name;
 
 				let spellLevels = []
 				// Recover spell slots
@@ -102,21 +105,33 @@ export default class newShortRestDialog extends Dialog {
 							break;
 						}
 						spellLevels.push(Number(level))
-						spell_data.slots[level] = [];
+						class_data.slots[level] = [];
 						for(let i = 0; i < v.max; i++){
-							spell_data.slots[level].push(i >= v.value)
+							class_data.slots[level].push(i >= v.value)
 						}
 				}
 
-				spell_data.has_feature = true;
-				spell_data.sp_total = Math.ceil(class_item.data.data.levels/2);
-				spell_data.sp_left = Math.ceil(class_item.data.data.levels/2);
+				class_data.has_feature = true;
+				class_data.sp_total = Math.ceil(wizard_druid_class_item.data.data.levels/2);
+				class_data.sp_left = Math.ceil(wizard_druid_class_item.data.data.levels/2);
 
 			}
 
 		}
 
-		return spell_data;
+		let bard_level = false;
+		let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
+		characters.forEach(actor => {
+			// Only consider the bard if it has more than 0 hp, as the song of rest cannot be used if the bard is incapacitated
+			if(actor.items.find(i => i.name.toLowerCase().indexOf("song of rest") > -1) && actor.data.data.attributes.hp.value > 0){
+				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() == "bard").data.data.levels;
+				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
+			}
+		})
+
+		class_data.song_of_rest = bard_level >= 17 ? "1d12" : bard_level >= 13 ? "1d10" : bard_level >= 9 ? "1d8" : bard_level >= 2 ? "1d6" : false;
+
+		return class_data;
 
 	}
 
@@ -146,9 +161,28 @@ export default class newShortRestDialog extends Dialog {
 		const btn = event.currentTarget;
 		this._denom = btn.form.hd.value;
 		await this.actor.rollHitDie(this._denom, {dialog: !game.settings.get("short-rest-recovery", "quickHDRoll")});
+
+		if(this._data.class_data.song_of_rest && !this.used_song_of_rest){
+
+			let roll = await new Roll(this._data.class_data.song_of_rest).roll();
+
+			let new_hp = this.actor.data.data.attributes.hp.value + roll.total;
+
+			new_hp = new_hp > this.actor.data.data.attributes.hp.max ? this.actor.data.data.attributes.hp.max : new_hp;
+
+			await this.actor.update({ "data.attributes.hp.value": new_hp });
+
+			roll.toMessage({
+				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name }),
+				speaker: ChatMessage.getSpeaker({token: this.actor})
+			})
+
+			this.used_song_of_rest = true;
+
+		}
+		
 		this.update_hd();
 	}
-
 
 	/* -------------------------------------------- */
 
@@ -186,7 +220,7 @@ export default class newShortRestDialog extends Dialog {
 	 */
 	update_spellpoints(){
 
-		let sp_left = this._data.spells.sp_left;
+		let sp_left = this._data.class_data.sp_left;
 
 		let checkboxes = this._element.find(".spend-spell-point");
 

@@ -5,12 +5,17 @@ This module adds support for Wizards' Arcane Recovery and Land Druids' Natural R
 
 If the Arcane/Natural Recovery Feature does not have any uses remaining or if there are no spell slots to recover, the spell slot UI shown in the above image will be hidden.
 
+Now with added support for the [Bard's Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)!
+
 ## Module Settings
 * **Quick-roll Hit Dice**
   * If this setting is enabled, it will make it so that when you press the "Roll" button on the short rest UI, no hit dice dialog will be prompted, and the hit dice will be rolled immediately.
 
+* **Show Chat Message**
+  * If this is enabled, each character that finishes a short rest will post a public message with a summary what they regained during the short rest.
 
 ## To-do:
 - ~~Hide spell slot recovery checkboxes when user has all spell slots~~
 - ~~Add support for Land Druids' Natural Recovery~~
+- ~~Add support for Bard's Song of Rest~~
 - Add support for Wizard/Druid multiclass (fml...)

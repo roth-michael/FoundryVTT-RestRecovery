@@ -1,0 +1,14 @@
+{
+	"DND5E.ShortRestSpellCaster": "As a part of your class, you can regain some spell slots on a short rest. The spell slots can have a combined level that is equal to or less than half your class level (rounded up), and none of the slots can be 6th level or higher.",
+	"DND5E.ShortRestSpellResult": " In addition, they also regained:{spellslots}",
+	"DND5E.ShortRestSongOfRest": "{name} uses the Song of Rest.",
+	"DND5E.ShortRestSpellSlotRemaining": "spell slots remaining.",
+	"DND5E.ShortRestNewDay": "Is New Day?",
+	"DND5E.ShortRestNewDayHint": "Recover limited use abilities which recharge \"per day\"?",
+	"DND5E.SpellLevelSlotCount": "{n} {level} spell slot(s)",
+	"1": "One",
+	"2": "Two",
+	"3": "Three",
+	"4": "Four",
+	"5": "Five"
+}
