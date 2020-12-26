@@ -7,8 +7,10 @@ If the Arcane/Natural Recovery Feature does not have any uses remaining or if th
 
 Now with added support for the [Bard's Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)!
 
-## Download
-Manifest URL: `https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/main/short-rest-recovery/module.json`
+## Installation
+Use this manifest URL to install the module:
+
+`https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/main/short-rest-recovery/module.json`
 
 ## Module Settings
 * **Quick-roll Hit Dice**
