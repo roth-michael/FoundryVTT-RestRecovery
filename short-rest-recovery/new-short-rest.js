@@ -19,6 +19,7 @@ export default class newShortRestDialog extends Dialog {
 		this._data = {}
 
 		this.used_song_of_rest = false;
+		this.used_chef = false;
 
 	}
 
@@ -79,7 +80,8 @@ export default class newShortRestDialog extends Dialog {
 			sp_total: 0,
 			sp_left: 0,
 			class: "",
-			song_of_rest: false
+			song_of_rest: false,
+			chef: []
 		}
 
 		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name == "Wizard" || i.name == "Druid"));
@@ -123,11 +125,15 @@ export default class newShortRestDialog extends Dialog {
 		let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
 		characters.forEach(actor => {
 			// Only consider the bard if it has more than 0 hp, as the song of rest cannot be used if the bard is incapacitated
-			if(actor.items.find(i => i.name.toLowerCase().indexOf("song of rest") > -1) && actor.data.data.attributes.hp.value > 0){
+			if(actor_has_item(actor, "song of rest") && actor.data.data.attributes.hp.value > 0){
 				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() == "bard").data.data.levels;
 				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
 			}
-		})
+
+			if(actor_has_item(actor, "chef") && actor_has_item(actor, "cook's utensils") && actor.data.data.attributes.hp.value > 0){
+				class_data.chef.push(actor);
+			}
+		});
 
 		class_data.song_of_rest = bard_level >= 17 ? "1d12" : bard_level >= 13 ? "1d10" : bard_level >= 9 ? "1d8" : bard_level >= 2 ? "1d6" : false;
 
@@ -160,17 +166,16 @@ export default class newShortRestDialog extends Dialog {
 		event.preventDefault();
 		const btn = event.currentTarget;
 		this._denom = btn.form.hd.value;
+
 		await this.actor.rollHitDie(this._denom, {dialog: !game.settings.get("short-rest-recovery", "quickHDRoll")});
 
 		if(this._data.class_data.song_of_rest && !this.used_song_of_rest){
 
 			let roll = await new Roll(this._data.class_data.song_of_rest).roll();
-
-			let new_hp = this.actor.data.data.attributes.hp.value + roll.total;
-
-			new_hp = new_hp > this.actor.data.data.attributes.hp.max ? this.actor.data.data.attributes.hp.max : new_hp;
-
-			await this.actor.update({ "data.attributes.hp.value": new_hp });
+			
+			const hp = this.actor.data.data.attributes.hp;
+			const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
+			await this.actor.update({"data.attributes.hp.value": hp.value + dhp});
 
 			roll.toMessage({
 				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name }),
@@ -178,6 +183,27 @@ export default class newShortRestDialog extends Dialog {
 			})
 
 			this.used_song_of_rest = true;
+
+		}
+
+		if(this._data.class_data.chef.length > 0 && !this.used_chef){
+
+			let chef = this._data.class_data.chef[Math.floor(Math.random() * this._data.class_data.chef.length)];
+
+			let roll = await new Roll('1d8').roll();
+			
+			const hp = this.actor.data.data.attributes.hp;
+			const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
+			await this.actor.update({"data.attributes.hp.value": hp.value + dhp});
+
+			let flavor = chef != this.actor ? game.i18n.format("DND5E.ShortRestChef", { name: this.actor.name, chef: chef.name }) : game.i18n.format("DND5E.ShortRestChefSelf", { name: this.actor.name });
+
+			roll.toMessage({
+				flavor: flavor,
+				speaker: ChatMessage.getSpeaker({token: this.actor})
+			})
+
+			this.used_chef = true;
 
 		}
 		
@@ -354,4 +380,8 @@ export default class newShortRestDialog extends Dialog {
 		});
 	}
 
+}
+
+function actor_has_item(actor, item_name){
+	return actor.items.find(i => i.name.toLowerCase().indexOf(item_name.toLowerCase()) > -1);
 }

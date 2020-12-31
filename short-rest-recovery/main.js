@@ -1,5 +1,6 @@
 import Actor5e from "../../systems/dnd5e/module/actor/entity.js";
 import ShortRestDialog from "./new-short-rest.js";
+import { damageRoll } from "../../systems/dnd5e/module/dice.js";
 
 Hooks.on("init", () => {
 
@@ -25,8 +26,73 @@ function ordinal_suffix_of(i) {
 
 function patch_shortRest() {
 
-  Actor5e.prototype.shortRest = async function ({dialog=true, autoHD=false, autoHDThreshold=3}={}) {
+  Actor5e.prototype.rollHitDie = async function(denomination, {dialog=true}={}) {
 
+    // If no denomination was provided, choose the first available
+    let cls = null;
+    if ( !denomination ) {
+      cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);
+      if ( !cls ) return null;
+      denomination = cls.data.data.hitDice;
+    }
+
+    // Otherwise locate a class (if any) which has an available hit die of the requested denomination
+    else {
+      cls = this.items.find(i => {
+        const d = i.data.data;
+        return (d.hitDice === denomination) && ((d.hitDiceUsed || 0) < (d.levels || 1));
+      });
+    }
+
+    // If no class is available, display an error notification
+    if ( !cls ) {
+      ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {name: this.name, formula: denomination}));
+      return null;
+    }
+
+    let parts = [`1${denomination}`, "@abilities.con.mod"];
+
+    let periapt = this.items.find(item => item.name.toLowerCase() == "periapt of wound closure" && item.data.type == "equipment" && item.data.data.attunement == 2) !== null;
+    
+		let durable = this.items.find(item => item.name.toLowerCase() == "durable" && item.data.type == "feat") !== null;
+
+    if(periapt){
+      parts[0] = "("+parts[0];
+      parts[1] += ")*2";
+    }
+
+    if(durable){
+      parts[0] = "{"+parts[0]
+      parts[1] += ",(@abilities.con.mod)*2}kh"
+    }
+
+    const title = game.i18n.localize("DND5E.HitDiceRoll");
+    const rollData = duplicate(this.data.data);
+
+    // Call the roll helper utility
+    const roll = await damageRoll({
+      event: new Event("hitDie"),
+      parts: parts,
+      data: rollData,
+      title: title,
+      speaker: ChatMessage.getSpeaker({actor: this}),
+      allowcritical: false,
+      fastForward: !dialog,
+      dialogOptions: {width: 350},
+      messageData: {"flags.dnd5e.roll": {type: "hitDie"}}
+    });
+    if ( !roll ) return null;
+
+    // Adjust actor data
+    await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
+    const hp = this.data.data.attributes.hp;
+    const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
+    await this.update({"data.attributes.hp.value": hp.value + dhp});
+    return roll;
+  }
+
+  Actor5e.prototype.shortRest = async function ({dialog=true, autoHD=false, autoHDThreshold=3}={}) {
+    
     // Take note of the initial hit points and number of hit dice the Actor has
     const hp = this.data.data.attributes.hp;
     const hd0 = this.data.data.attributes.hd;

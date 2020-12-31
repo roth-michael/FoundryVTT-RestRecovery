@@ -1,11 +1,11 @@
 {
   "name": "short-rest-recovery",
-  "title": "Short Rest Recovery for 5e",
-  "description": "Adds support for Arcane and Natural Recovery (wizard/druid) features in the short rest dialog, as well as Song of Rest (bard).",
+  "title": "Short Rest Recovery for 5E",
+  "description": "Adds support for 5E mechanics in the short rest dialog, such as Arcane/Natural Recovery, Song of Rest, Periapt of Wound Closure, and the Chef feat.",
   "systems": [
     "dnd5e"
   ],
-  "version": "0.2.1",
+  "version": "0.3.0",
   "author": "Wasp (Wasp#2005)",
   "esmodules": [
     "settings.js",
