@@ -23,7 +23,7 @@ Use this manifest URL to install the module:
 - ~~Hide spell slot recovery checkboxes when user has all spell slots~~
 - ~~Add support for Land Druids' Natural Recovery~~
 - ~~Add support for Bard's Song of Rest~~
-- Add support for Periapt of Health
+- Add support for Periapt of Wound Closure
 - Add support for the Durable feat
 - Add support for the Chef feat
 - Add support for Wizard/Druid multiclass (fml...)
