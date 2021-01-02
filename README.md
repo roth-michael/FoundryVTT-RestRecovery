@@ -1,7 +1,7 @@
 # Short Rest Recovery
 This module adds support for the various short rest mechanics in D&D 5E. These are the added features in this module:
 
-## Feature: Arcane Recovery (Wizards), Natural Recovery (Druids)
+## Feature: [Arcane Recovery](https://www.dndbeyond.com/classes/wizard#ArcaneRecovery-411) (Wizards), [Natural Recovery](https://www.dndbeyond.com/classes/druid#CircleoftheLand) (Druids)
 
 This module adds support for Wizards' Arcane Recovery and Land Druids' Natural Recovery within the short rest dialog.
 
