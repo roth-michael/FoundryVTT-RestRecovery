@@ -5,11 +5,12 @@
   "systems": [
     "dnd5e"
   ],
-  "version": "0.3.0",
+  "version": "0.3.1",
   "author": "Wasp (Wasp#2005)",
   "esmodules": [
     "settings.js",
-    "main.js"
+    "main.js",
+    "new-short-rest.js"
   ],
   "languages": [
     {
@@ -21,6 +22,6 @@
   "minimumCoreVersion": "0.7.7",
   "compatibleCoreVersion": "0.7.9",
   "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
-  "manifest": "https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/main/short-rest-recovery/module.json",
-  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/raw/main/short-rest-recovery.zip"
+  "manifest": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.json",
+  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download//module.zip"
 }
