@@ -1,5 +1,5 @@
 # Short Rest Recovery
-This module adds support for the various short rest mechanics in D&D 5E.
+This module adds support for the various short rest mechanics in D&D 5E, such as recharging spell slots for Druids and Wizards, Song of Rest from Bards, and bonuses from various feats and items.
 
 ## Installation
 Use this manifest URL to install the module:
