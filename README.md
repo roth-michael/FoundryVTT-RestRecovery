@@ -51,6 +51,12 @@ If a character that is assigned to a player possesses the Chef feat as well as C
 
 ![Image of a two rolls, one for the chef rolling a 1d8 for themselves, and another non-chef rolling a 1d8 for themselves](docs/chef.jpg)
 
+### All together now!
+
+This is a Wizard with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat.
+
+![Image of a Wizard with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat](docs/allcombined.png)
+
 ## To-do:
 - ~~Hide spell slot recovery checkboxes when user has all spell slots~~
 - ~~Add support for Land Druids' Natural Recovery~~
