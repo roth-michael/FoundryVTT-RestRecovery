@@ -84,9 +84,9 @@ export default class newShortRestDialog extends Dialog {
 			chef: false
 		}
 
-		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name.toLowerCase() === "wizard" || i.name.toLowerCase() === "druid"));
+		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name.toLowerCase().indexOf("wizard") > -1 || i.name.toLowerCase().indexOf("druid") > -1));
 		
-		let item = this.actor.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
+		let item = this.actor.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
 
 		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item && item.data.data.uses.value !== 0){
 

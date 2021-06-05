@@ -114,7 +114,7 @@ function patch_shortRest() {
       levels_regained: false
     };
     
-    let item = this.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
+    let item = this.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
 
     if(item && (item.data.data.activation.type !== "special" || item.data.data.uses.value === null || item.data.data.uses.max === null || item.data.data.uses.per !== "lr")){
       await this.updateEmbeddedEntity("OwnedItem", {
@@ -197,7 +197,7 @@ function patch_shortRest() {
     });
 
     if(regained_spell_slots_string) {
-      let item = this.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
+      let item = this.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
       updateItems.push({
         _id: item.id,
         "data.uses.value": 0
