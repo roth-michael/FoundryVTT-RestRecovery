@@ -4,7 +4,11 @@ This module adds support for the various short rest mechanics in D&D 5E, such as
 ## Installation
 Use this manifest URL to install the module:
 
+For 0.8.6 and onwards:
 `https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.json`
+
+For 0.7.10:
+`https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/0.3.1/module.json`
 
 ## Module Settings
 * **Quick-roll Hit Dice**
