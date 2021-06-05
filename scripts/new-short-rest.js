@@ -76,6 +76,7 @@ export default class newShortRestDialog extends Dialog {
 
 		let class_data = {
 			has_feature: false,
+			has_uses: false,
 			slots: {},
 			sp_total: 0,
 			sp_left: 0,
@@ -88,7 +89,7 @@ export default class newShortRestDialog extends Dialog {
 		
 		let item = this.actor.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
 
-		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item && item.data.data.uses.value !== 0){
+		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item){
 
 			let missing_spells = Object.entries(this.actor.data.data.spells).filter(slot => slot[0] !== "pact" && Number(slot[0].substr(5)) < 6 && slot[1].value !== slot[1].max);
 
@@ -114,6 +115,7 @@ export default class newShortRestDialog extends Dialog {
 				}
 
 				class_data.has_feature = true;
+				class_data.has_uses =  item.data.data.uses.value !== 0;
 				class_data.sp_total = Math.ceil(wizard_druid_class_item.data.data.levels/2);
 				class_data.sp_left = Math.ceil(wizard_druid_class_item.data.data.levels/2);
 

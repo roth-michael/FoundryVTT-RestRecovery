@@ -1,5 +1,6 @@
 {
 	"DND5E.ShortRestSpellCaster": "As a part of your class, you can regain some spell slots on a short rest. The spell slots can have a combined level that is equal to or less than half your class level (rounded up), and none of the slots can be 6th level or higher.",
+	"DND5E.ShortRestSpellCasterUsed": "Sadly, you do not have any uses left of your spell slot recovery class feature, so you cannot regain spell slots any during this short rest.",
 	"DND5E.ShortRestSpellResult": " In addition, they also regained:{spellslots}",
 	"DND5E.ShortRestSongOfRest": "{name} enjoys {bard}'s Song of Rest.",
 	"DND5E.ShortRestChef": "{name} enjoys some delicious food from {chef}.",
