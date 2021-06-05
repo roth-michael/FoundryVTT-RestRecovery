@@ -18,7 +18,7 @@ For 0.7.10:
   * If this is enabled, each character that finishes a short rest will post a public message with a summary what they regained during the short rest.
 
 * **Skip inactive player characters**
-  * If this is enabled, the module skips characters' contribitions with their Song of Rest or Chef food if those character owners are not logged into the game.
+  * If this is enabled, any character whose owner is not logged into the game is ignored when considering whether other characters can benefit from their Song of Rest or Chef feat.
 
 ## Mechanics
 
