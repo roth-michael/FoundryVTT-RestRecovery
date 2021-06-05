@@ -139,13 +139,13 @@ export default class newShortRestDialog extends Dialog {
 			// Only consider the actor if it has more than 0 hp, as features cannot be used if they are unconscious
 			if(actor.data.data.attributes.hp.value <= 0) continue;
 
-			if(actor_has_item(actor, "song of rest")){
+			if(actor_has_item(actor, "song of rest", true)){
 				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard").data.data.levels;
 				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
 				bard = bard ? (level > bard_level ? actor : bard) : actor;
 			}
 
-			if(actor_has_item(actor, "chef") && actor_has_item(actor, "cook's utensils")){
+			if(actor_has_item(actor, "chef", false) && actor_has_item(actor, "cook's utensils", false)){
 				if(!class_data.chef){
 					class_data.chef = [];
 				}
@@ -406,6 +406,8 @@ export default class newShortRestDialog extends Dialog {
 
 }
 
-function actor_has_item(actor, item_name){
-	return actor.items.find(i => i.name.toLowerCase() === item_name.toLowerCase());
+function actor_has_item(inActor, inItemName, inFussySearch){
+	return inActor.items.find(i => {
+		return inFussySearch ? i.name.toLowerCase().indexOf(inItemName.toLowerCase()) > -1 : i.name.toLowerCase() === inItemName.toLowerCase();
+	});
 }
