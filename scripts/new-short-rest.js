@@ -406,8 +406,8 @@ export default class newShortRestDialog extends Dialog {
 
 }
 
-function actor_has_item(inActor, inItemName, inFussySearch){
+function actor_has_item(inActor, inItemName, inFuzzySearch){
 	return inActor.items.find(i => {
-		return inFussySearch ? i.name.toLowerCase().indexOf(inItemName.toLowerCase()) > -1 : i.name.toLowerCase() === inItemName.toLowerCase();
+		return inFuzzySearch ? i.name.toLowerCase().indexOf(inItemName.toLowerCase()) > -1 : i.name.toLowerCase() === inItemName.toLowerCase();
 	});
 }
