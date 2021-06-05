@@ -80,8 +80,8 @@ export default class newShortRestDialog extends Dialog {
 			sp_total: 0,
 			sp_left: 0,
 			class: "",
-			song_of_rest: false,
-			chef: []
+			bard: false,
+			chef: false
 		}
 
 		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name.toLowerCase() === "wizard" || i.name.toLowerCase() === "druid"));
@@ -125,21 +125,41 @@ export default class newShortRestDialog extends Dialog {
 		let bard = false;
 		let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
 
-		characters.forEach(actor => {
-			// Only consider the bard if it has more than 0 hp, as the song of rest cannot be used if the bard is incapacitated
-			if(actor_has_item(actor, "song of rest") && actor.data.data.attributes.hp.value > 0){
+		let skipInactivePlayers = game.settings.get("short-rest-recovery", "skipActivePlayers");
+
+		for(let actor of characters){
+
+			if(skipInactivePlayers) {
+				let found = game.users.find(user => {
+					return user.character === actor && user.active;
+				})
+				if(!found) continue;
+			}
+
+			// Only consider the actor if it has more than 0 hp, as features cannot be used if they are unconscious
+			if(actor.data.data.attributes.hp.value <= 0) continue;
+
+			if(actor_has_item(actor, "song of rest")){
 				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard").data.data.levels;
 				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
 				bard = bard ? (level > bard_level ? actor : bard) : actor;
 			}
 
-			if(actor_has_item(actor, "chef") && actor_has_item(actor, "cook's utensils") && actor.data.data.attributes.hp.value > 0){
+			if(actor_has_item(actor, "chef") && actor_has_item(actor, "cook's utensils")){
+				if(!class_data.chef){
+					class_data.chef = [];
+				}
 				class_data.chef.push(actor);
 			}
-		});
 
-		class_data.song_of_rest = bard_level >= 17 ? "1d12" : bard_level >= 13 ? "1d10" : bard_level >= 9 ? "1d8" : bard_level >= 2 ? "1d6" : false;
-		class_data.bard = bard ?? false;
+		}
+
+		if(bard && bard_level >= 2) {
+			class_data.bard = {
+				"actor": bard,
+				"song_of_rest": bard_level >= 17 ? "1d12" : bard_level >= 13 ? "1d10" : bard_level >= 9 ? "1d8" : bard_level >= 2 ? "1d6" : false
+			};
+		}
 
 		return class_data;
 
@@ -173,16 +193,16 @@ export default class newShortRestDialog extends Dialog {
 
 		await this.actor.rollHitDie(this._denom, { dialog: !game.settings.get("short-rest-recovery", "quickHDRoll") });
 
-		if(this._data.class_data.song_of_rest && !this.used_song_of_rest){
+		if(this._data.class_data.bard && !this.used_song_of_rest){
 
-			let roll = await new Roll(this._data.class_data.song_of_rest).roll({async: true});
+			let roll = await new Roll(this._data.class_data.bard.song_of_rest).roll({async: true});
 			
 			const hp = this.actor.data.data.attributes.hp;
 			const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
 			await this.actor.update({"data.attributes.hp.value": hp.value + dhp});
 
 			roll.toMessage({
-				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name, bard: this._data.class_data.bard.name }),
+				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name, bard: this._data.class_data.bard.actor.name }),
 				speaker: ChatMessage.getSpeaker({token: this.actor})
 			})
 
@@ -387,5 +407,5 @@ export default class newShortRestDialog extends Dialog {
 }
 
 function actor_has_item(actor, item_name){
-	return actor.items.find(i => i.name.toLowerCase().indexOf(item_name.toLowerCase()) > -1);
+	return actor.items.find(i => i.name.toLowerCase() === item_name.toLowerCase());
 }

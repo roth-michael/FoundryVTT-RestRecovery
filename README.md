@@ -17,6 +17,9 @@ For 0.7.10:
 * **Show Chat Message**
   * If this is enabled, each character that finishes a short rest will post a public message with a summary what they regained during the short rest.
 
+* **Skip inactive player characters**
+  * If this is enabled, the module skip any Song of Rest or Chef contributions from characters whose owners are not logged into the game.
+
 ## Mechanics
 
 ### Feature: [Arcane Recovery](https://www.dndbeyond.com/classes/wizard#ArcaneRecovery-411) (Wizards), [Natural Recovery](https://www.dndbeyond.com/classes/druid#CircleoftheLand) (Druids)
