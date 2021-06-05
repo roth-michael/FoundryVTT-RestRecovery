@@ -58,7 +58,7 @@ export default class newShortRestDialog extends Dialog {
 		// Determine Hit Dice
 		hd.availableHD = this.actor.data.items.reduce((hd, item) => {
 			if ( item.type === "class" ) {
-				const d = item.data;
+				const d = item.data.data;
 				const denom = d.hitDice || "d6";
 				const available = parseInt(d.levels || 1) - parseInt(d.hitDiceUsed || 0);
 				hd[denom] = denom in hd ? hd[denom] + available : available;
@@ -84,22 +84,22 @@ export default class newShortRestDialog extends Dialog {
 			chef: []
 		}
 
-		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name == "Wizard" || i.name == "Druid"));
+		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name.toLowerCase() === "wizard" || i.name.toLowerCase() === "druid"));
 		
 		let item = this.actor.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
 
-		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item && item.data.data.uses.value != 0){
+		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item && item.data.data.uses.value !== 0){
 
-			let missing_spells = Object.entries(this.actor.data.data.spells).filter(slot => slot[0] != "pact" && Number(slot[0].substr(5)) < 6 && slot[1].value != slot[1].max);
+			let missing_spells = Object.entries(this.actor.data.data.spells).filter(slot => slot[0] !== "pact" && Number(slot[0].substr(5)) < 6 && slot[1].value !== slot[1].max);
 
-			if(missing_spells.length != 0){
+			if(missing_spells.length !== 0){
 
 				class_data.class = wizard_druid_class_item.name;
 
-				let spellLevels = []
+				let spellLevels = [];
 				// Recover spell slots
 				for (let [k, v] of Object.entries(this.actor.data.data.spells)) {
-						if((!v.max && !v.override) || k == "pact"){
+						if((!v.max && !v.override) || k === "pact"){
 							continue;
 						}
 						let level = k.substr(5)
@@ -122,12 +122,15 @@ export default class newShortRestDialog extends Dialog {
 		}
 
 		let bard_level = false;
+		let bard = false;
 		let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
+
 		characters.forEach(actor => {
 			// Only consider the bard if it has more than 0 hp, as the song of rest cannot be used if the bard is incapacitated
 			if(actor_has_item(actor, "song of rest") && actor.data.data.attributes.hp.value > 0){
-				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() == "bard").data.data.levels;
+				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard").data.data.levels;
 				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
+				bard = bard ? (level > bard_level ? actor : bard) : actor;
 			}
 
 			if(actor_has_item(actor, "chef") && actor_has_item(actor, "cook's utensils") && actor.data.data.attributes.hp.value > 0){
@@ -136,6 +139,7 @@ export default class newShortRestDialog extends Dialog {
 		});
 
 		class_data.song_of_rest = bard_level >= 17 ? "1d12" : bard_level >= 13 ? "1d10" : bard_level >= 9 ? "1d8" : bard_level >= 2 ? "1d6" : false;
+		class_data.bard = bard ?? false;
 
 		return class_data;
 
@@ -167,18 +171,18 @@ export default class newShortRestDialog extends Dialog {
 		const btn = event.currentTarget;
 		this._denom = btn.form.hd.value;
 
-		await this.actor.rollHitDie(this._denom, {dialog: !game.settings.get("short-rest-recovery", "quickHDRoll")});
+		await this.actor.rollHitDie(this._denom, { dialog: !game.settings.get("short-rest-recovery", "quickHDRoll") });
 
 		if(this._data.class_data.song_of_rest && !this.used_song_of_rest){
 
-			let roll = await new Roll(this._data.class_data.song_of_rest).roll();
+			let roll = await new Roll(this._data.class_data.song_of_rest).roll({async: true});
 			
 			const hp = this.actor.data.data.attributes.hp;
 			const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
 			await this.actor.update({"data.attributes.hp.value": hp.value + dhp});
 
 			roll.toMessage({
-				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name }),
+				flavor: game.i18n.format("DND5E.ShortRestSongOfRest", { name: this.actor.name, bard: this._data.class_data.bard.name }),
 				speaker: ChatMessage.getSpeaker({token: this.actor})
 			})
 
@@ -190,13 +194,13 @@ export default class newShortRestDialog extends Dialog {
 
 			let chef = this._data.class_data.chef[Math.floor(Math.random() * this._data.class_data.chef.length)];
 
-			let roll = await new Roll('1d8').roll();
+			let roll = await new Roll('1d8').roll({async: true});
 			
 			const hp = this.actor.data.data.attributes.hp;
 			const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
 			await this.actor.update({"data.attributes.hp.value": hp.value + dhp});
 
-			let flavor = chef != this.actor ? game.i18n.format("DND5E.ShortRestChef", { name: this.actor.name, chef: chef.name }) : game.i18n.format("DND5E.ShortRestChefSelf", { name: this.actor.name });
+			let flavor = chef !== this.actor ? game.i18n.format("DND5E.ShortRestChef", { name: this.actor.name, chef: chef.name }) : game.i18n.format("DND5E.ShortRestChefSelf", { name: this.actor.name });
 
 			roll.toMessage({
 				flavor: flavor,
@@ -351,7 +355,7 @@ export default class newShortRestDialog extends Dialog {
 									}
 								}
 
-								if(Object.keys(levels_regained).length == 0){
+								if(Object.keys(levels_regained).length === 0){
 									levels_regained = false;
 								}
 

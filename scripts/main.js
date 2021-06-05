@@ -1,10 +1,13 @@
-import Actor5e from "../../systems/dnd5e/module/actor/entity.js";
+import Actor5e from "../../../systems/dnd5e/module/actor/entity.js";
 import ShortRestDialog from "./new-short-rest.js";
-import { damageRoll } from "../../systems/dnd5e/module/dice.js";
+import { damageRoll } from "../../../systems/dnd5e/module/dice.js";
+import { register_settings } from "./settings.js";
 
 Hooks.on("init", () => {
 
-    patch_shortRest();
+  register_settings();
+  patch_shortRest();
+  console.log("Short Rest Recovery | Initialized");
 
 });
 
@@ -52,22 +55,29 @@ function patch_shortRest() {
 
     let parts = [`1${denomination}`, "@abilities.con.mod"];
 
-    let periapt = this.items.find(item => item.name.toLowerCase() == "periapt of wound closure" && item.data.type == "equipment" && item.data.data.attunement == 2) !== null;
+    let periapt = this.items.find(item => item.name.toLowerCase() === "periapt of wound closure" && item.data.type === "equipment" && item.data.data.attunement === 2);
     
-		let durable = this.items.find(item => item.name.toLowerCase() == "durable" && item.data.type == "feat") !== null;
+	let durable = this.items.find(item => item.name.toLowerCase() === "durable" && item.data.type === "feat");
 
-    if(periapt){
-      parts[0] = "("+parts[0];
-      parts[1] += ")*2";
-    }
+    if(periapt && durable){
 
-    if(durable){
-      parts[0] = "{"+parts[0]
-      parts[1] += ",(@abilities.con.mod)*2}kh"
+      parts = [`{1${denomination}+@abilities.con.mod,@abilities.con.mod}kh*2`]
+
+    }else{
+
+      if(periapt){
+        parts[0] = "("+parts[0];
+        parts[1] += ")*2";
+      }
+
+      if(durable){
+        parts[0] = "{"+parts[0]
+        parts[1] += ",@abilities.con.mod*2}kh"
+      }
     }
 
     const title = game.i18n.localize("DND5E.HitDiceRoll");
-    const rollData = duplicate(this.data.data);
+    const rollData = foundry.utils.deepClone(this.data.data);
 
     // Call the roll helper utility
     const roll = await damageRoll({
@@ -75,11 +85,13 @@ function patch_shortRest() {
       parts: parts,
       data: rollData,
       title: title,
-      speaker: ChatMessage.getSpeaker({actor: this}),
-      allowcritical: false,
+      allowCritical: false,
       fastForward: !dialog,
       dialogOptions: {width: 350},
-      messageData: {"flags.dnd5e.roll": {type: "hitDie"}}
+      messageData: {
+        speaker: ChatMessage.getSpeaker({actor: this}),
+        "flags.dnd5e.roll": {type: "hitDie"}
+      }
     });
     if ( !roll ) return null;
 
@@ -104,9 +116,9 @@ function patch_shortRest() {
     
     let item = this.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
 
-    if(item && (item.data.data.activation.type != "special" || item.data.data.uses.value == null || item.data.data.uses.max == null || item.data.data.uses.per != "lr")){
+    if(item && (item.data.data.activation.type !== "special" || item.data.data.uses.value === null || item.data.data.uses.max === null || item.data.data.uses.per !== "lr")){
       await this.updateEmbeddedEntity("OwnedItem", {
-        _id: item._id,
+        _id: item.id,
         "data.activation.type": "special",
         "data.uses.value": 1,
         "data.uses.max": 1,
@@ -179,7 +191,7 @@ function patch_shortRest() {
     const items = this.items.filter(item => item.data.data.uses && recovery.includes(item.data.data.uses.per));
     const updateItems = items.map(item => {
       return {
-        _id: item._id,
+        _id: item.id,
         "data.uses.value": item.data.data.uses.max
       };
     });
@@ -187,12 +199,12 @@ function patch_shortRest() {
     if(regained_spell_slots_string) {
       let item = this.items.find(i => i.name.toLowerCase() === "arcane recovery" || i.name.toLowerCase() === "natural recovery");
       updateItems.push({
-        _id: item._id,
+        _id: item.id,
         "data.uses.value": 0
       })
     }
 
-    await this.updateEmbeddedEntity("OwnedItem", updateItems);
+    await this.updateEmbeddedDocuments("Item", updateItems);
 
     const chat = game.settings.get("short-rest-recovery", "showChatMessage");
 
@@ -219,7 +231,7 @@ function patch_shortRest() {
 
       // Create a chat message
       ChatMessage.create({
-        user: game.user._id,
+        user: game.user.id,
         speaker: {actor: this, alias: this.name},
         flavor: restFlavor,
         content: content

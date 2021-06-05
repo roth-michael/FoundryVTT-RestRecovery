@@ -1,4 +1,4 @@
-Hooks.once("init", () => {
+export function register_settings(){
 	
 	game.settings.register("short-rest-recovery", "quickHDRoll", {
 		name: "Quick-roll Hit Dice (skip dialog)",
@@ -18,4 +18,4 @@ Hooks.once("init", () => {
 		type: Boolean
 	});
 
-});
+}
