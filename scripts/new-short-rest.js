@@ -46,7 +46,7 @@ export default class newShortRestDialog extends Dialog {
 
 		// Determine rest type
 		const variant = game.settings.get("dnd5e", "restVariant");
-		this._data.promptNewDay = variant !== "epic";     // It's never a new day when only resting 1 minute
+		this._data.promptNewDay = variant !== "epic";     // It's rarely a new day when only resting 1 minute
 		this._data.newDay = false;                        // It may be a new day, but not by default
 
 		return this._data;
@@ -86,8 +86,8 @@ export default class newShortRestDialog extends Dialog {
 		}
 
 		let wizard_druid_class_item = this.actor.items.find(i => i.type === "class" && (i.name.toLowerCase().indexOf("wizard") > -1 || i.name.toLowerCase().indexOf("druid") > -1));
-		
-		let item = this.actor.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
+
+		let item = actor_has_item(this.actor, game.i18n.format("DND5E.WizardRecovery"), true) ?? actor_has_item(this.actor, game.i18n.format("DND5E.DruidRecovery"), true);
 
 		if(wizard_druid_class_item && wizard_druid_class_item.data.data.levels > 1 && item){
 
@@ -97,7 +97,6 @@ export default class newShortRestDialog extends Dialog {
 
 				class_data.class = wizard_druid_class_item.name;
 
-				let spellLevels = [];
 				// Recover spell slots
 				for (let [k, v] of Object.entries(this.actor.data.data.spells)) {
 						if((!v.max && !v.override) || k === "pact"){
@@ -107,7 +106,6 @@ export default class newShortRestDialog extends Dialog {
 						if(Number(level) > 5){
 							break;
 						}
-						spellLevels.push(Number(level))
 						class_data.slots[level] = [];
 						for(let i = 0; i < v.max; i++){
 							class_data.slots[level].push(i >= v.value)
@@ -141,13 +139,13 @@ export default class newShortRestDialog extends Dialog {
 			// Only consider the actor if it has more than 0 hp, as features cannot be used if they are unconscious
 			if(actor.data.data.attributes.hp.value <= 0) continue;
 
-			if(actor_has_item(actor, "song of rest", true)){
+			if(actor_has_item(actor, game.i18n.format("DND5E.SongOfRest"), true)){
 				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard").data.data.levels;
 				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
 				bard = bard ? (level > bard_level ? actor : bard) : actor;
 			}
 
-			if(actor_has_item(actor, "chef", false) && actor_has_item(actor, "cook's utensils", false)){
+			if(actor_has_item(actor, game.i18n.format("DND5E.ChefFeat"), false) && actor_has_item(actor, game.i18n.format("DND5E.ChefTools"), false)){
 				if(!class_data.chef){
 					class_data.chef = [];
 				}
@@ -193,7 +191,9 @@ export default class newShortRestDialog extends Dialog {
 		const btn = event.currentTarget;
 		this._denom = btn.form.hd.value;
 
-		await this.actor.rollHitDie(this._denom, { dialog: !game.settings.get("short-rest-recovery", "quickHDRoll") });
+		let hitDieResult = await this.actor.rollHitDie(this._denom);
+
+		if(!hitDieResult) return;
 
 		if(this._data.class_data.bard && !this.used_song_of_rest){
 
@@ -346,7 +346,7 @@ export default class newShortRestDialog extends Dialog {
 	 * @param {Actor5e} actor
 	 * @return {Promise}
 	 */
-	static async shortRestDialog({actor}={}) {
+	static async displayDialog({actor}={}) {
 		return new Promise((resolve, reject) => {
 			const dlg = new this(actor, {
 				title: "Short Rest",

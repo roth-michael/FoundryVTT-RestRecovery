@@ -1,250 +1,325 @@
-import Actor5e from "../../../systems/dnd5e/module/actor/entity.js";
-import ShortRestDialog from "./new-short-rest.js";
+import newShortRestDialog from "./new-short-rest.js";
 import { damageRoll } from "../../../systems/dnd5e/module/dice.js";
 import { register_settings } from "./settings.js";
+import { libWrapper } from "../lib/libWrapper/shim.js";
 
 Hooks.on("init", () => {
 
-  register_settings();
-  patch_shortRest();
-  console.log("Short Rest Recovery | Initialized");
+    register_settings();
+    patch_RollHitDie()
+    patch_shortRest();
+    patch_rest();
+    patch_displayRestResultsMessage();
+    console.log("Short Rest Recovery | Initialized");
 
 });
 
 function ordinal_suffix_of(i) {
-  var j, k;
-  j = i % 10;
-  k = i % 100;
-  if(j === 1 && k !== 11) {
-    return i + 'st';
-  }
-  if(j === 2 && k !== 12) {
-    return i + 'nd';
-  }
-  if(j === 3 && k !== 13) {
-    return i + 'rd';
-  }
-  return i + 'th';
+    var j, k;
+    j = i % 10;
+    k = i % 100;
+    if(j === 1 && k !== 11) {
+        return i + 'st';
+    }
+    if(j === 2 && k !== 12) {
+        return i + 'nd';
+    }
+    if(j === 3 && k !== 13) {
+        return i + 'rd';
+    }
+    return i + 'th';
 };
 
-function patch_shortRest() {
+function patch_RollHitDie() {
 
-  Actor5e.prototype.rollHitDie = async function(denomination, {dialog=true}={}) {
+    libWrapper.register(
+        "short-rest-recovery",
+        "CONFIG.Actor.documentClass.prototype.rollHitDie",
+        async function patchedRollHitDie(...args) {
 
-    // If no denomination was provided, choose the first available
-    let cls = null;
-    if ( !denomination ) {
-      cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);
-      if ( !cls ) return null;
-      denomination = cls.data.data.hitDice;
-    }
+            let [denomination, dialog = !game.settings.get("short-rest-recovery", "quickHDRoll")] = args ?? [];
 
-    // Otherwise locate a class (if any) which has an available hit die of the requested denomination
-    else {
-      cls = this.items.find(i => {
-        const d = i.data.data;
-        return (d.hitDice === denomination) && ((d.hitDiceUsed || 0) < (d.levels || 1));
-      });
-    }
+            // If no denomination was provided, choose the first available
+            let cls = null;
+            if (!denomination) {
+                cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);
+                if (!cls) return null;
+                denomination = cls.data.data.hitDice;
+            }
 
-    // If no class is available, display an error notification
-    if ( !cls ) {
-      ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {name: this.name, formula: denomination}));
-      return null;
-    }
+            // Otherwise locate a class (if any) which has an available hit die of the requested denomination
+            else {
+                cls = this.items.find(i => {
+                    const d = i.data.data;
+                    return (d.hitDice === denomination) && ((d.hitDiceUsed || 0) < (d.levels || 1));
+                });
+            }
 
-    let parts = [`1${denomination}`, "@abilities.con.mod"];
+            // If no class is available, display an error notification
+            if (!cls) {
+                ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {name: this.name, formula: denomination}));
+                return null;
+            }
 
-    let periapt = this.items.find(item => item.name.toLowerCase() === "periapt of wound closure" && item.data.type === "equipment" && item.data.data.attunement === 2);
-    
-	let durable = this.items.find(item => item.name.toLowerCase() === "durable" && item.data.type === "feat");
+            let parts = [`1${denomination}`, "@abilities.con.mod"];
 
-    if(periapt && durable){
+            let periapt = this.items.find(item => {
+                return item.name.toLowerCase() === game.i18n.format("DND5E.Periapt").toLowerCase()
+                    && item.data.type === "equipment"
+                    && item.data.data.attunement === 2
+            });
 
-      parts = [`{1${denomination}+@abilities.con.mod,@abilities.con.mod}kh*2`]
+            let durable = this.items.find(item => {
+                return item.name.toLowerCase() === game.i18n.format("DND5E.DurableFeat").toLowerCase() && item.data.type === "feat"
+            });
 
-    }else{
+            if (periapt && durable) {
 
-      if(periapt){
-        parts[0] = "("+parts[0];
-        parts[1] += ")*2";
-      }
+                parts = [`{1${denomination}+@abilities.con.mod,@abilities.con.mod}kh*2`]
 
-      if(durable){
-        parts[0] = "{"+parts[0]
-        parts[1] += ",@abilities.con.mod*2}kh"
-      }
-    }
+            } else {
 
-    const title = game.i18n.localize("DND5E.HitDiceRoll");
-    const rollData = foundry.utils.deepClone(this.data.data);
+                if (periapt) {
+                    parts[0] = "(" + parts[0];
+                    parts[1] += ")*2";
+                }
 
-    // Call the roll helper utility
-    const roll = await damageRoll({
-      event: new Event("hitDie"),
-      parts: parts,
-      data: rollData,
-      title: title,
-      allowCritical: false,
-      fastForward: !dialog,
-      dialogOptions: {width: 350},
-      messageData: {
-        speaker: ChatMessage.getSpeaker({actor: this}),
-        "flags.dnd5e.roll": {type: "hitDie"}
-      }
-    });
-    if ( !roll ) return null;
+                if (durable) {
+                    parts[0] = "{" + parts[0]
+                    parts[1] += ",@abilities.con.mod*2}kh"
+                }
+            }
 
-    // Adjust actor data
-    await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
-    const hp = this.data.data.attributes.hp;
-    const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
-    await this.update({"data.attributes.hp.value": hp.value + dhp});
-    return roll;
-  }
+            const title = game.i18n.localize("DND5E.HitDiceRoll");
+            const rollData = foundry.utils.deepClone(this.data.data);
 
-  Actor5e.prototype.shortRest = async function ({dialog=true, autoHD=false, autoHDThreshold=3}={}) {
-    
-    // Take note of the initial hit points and number of hit dice the Actor has
-    const hp = this.data.data.attributes.hp;
-    const hd0 = this.data.data.attributes.hd;
-    const hp0 = hp.value;
-    let rest_data = {
-      newDay: false,
-      levels_regained: false
-    };
-    
-    let item = this.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
+            // Call the roll helper utility
+            const roll = await damageRoll({
+                event: new Event("hitDie"),
+                parts: parts,
+                data: rollData,
+                title: title,
+                allowCritical: false,
+                fastForward: !dialog,
+                dialogOptions: {width: 350},
+                messageData: {
+                    speaker: ChatMessage.getSpeaker({actor: this}),
+                    "flags.dnd5e.roll": {type: "hitDie"}
+                }
+            });
+            if (!roll) return null;
 
-    if(item && (item.data.data.activation.type !== "special" || item.data.data.uses.value === null || item.data.data.uses.max === null || item.data.data.uses.per !== "lr")){
-      await this.updateEmbeddedEntity("OwnedItem", {
-        _id: item.id,
-        "data.activation.type": "special",
-        "data.uses.value": 1,
-        "data.uses.max": 1,
-        "data.uses.per": "lr",
-      });
-      ui.notifications.info(`${this.name}'s ${item.name} has been patched, it now has 1/1 long rest uses.`);
-    }
+            // Adjust actor data
+            await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
+            const hp = this.data.data.attributes.hp;
+            const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
+            await this.update({"data.attributes.hp.value": hp.value + dhp});
+            return roll;
+        },
+        "OVERRIDE"
+    );
 
-    // Display a Dialog for rolling hit dice
-    if ( dialog ) {
-      try {
-        rest_data = await ShortRestDialog.shortRestDialog({actor: this, canRoll: hd0 > 0});
-      } catch(err) {
-        return;
-      }
-    }
+}
 
-    // Automatically spend hit dice
-    else if ( autoHD ) {
-      while ( (hp.value + autoHDThreshold) <= hp.max ) {
-        const r = await this.rollHitDie(undefined, {dialog: false});
-        if ( r === null ) break;
-      }
-    }
+function patch_shortRest(){
 
-    // Note the change in HP and HD which occurred
-    const dhd = this.data.data.attributes.hd - hd0;
-    const dhp = this.data.data.attributes.hp.value - hp0;
+    // This must be overwritten due to it calling newShortRestDialog.displayDialog
+    libWrapper.register(
+        "short-rest-recovery",
+        "CONFIG.Actor.documentClass.prototype.shortRest",
+        async function patchedShortRest(...args) {
 
-    // Recover character resources
-    const updateData = {};
-    for ( let [k, r] of Object.entries(this.data.data.resources) ) {
-      if ( r.max && r.sr ) {
-        updateData[`data.resources.${k}.value`] = r.max;
-      }
-    }
+            let [dialog=true, chat=true, autoHD=false, autoHDThreshold=3] = args ?? [];
 
-    // Recover pact slots.
-    const pact = this.data.data.spells.pact;
-    updateData['data.spells.pact.value'] = pact.override || pact.max;
+            // Take note of the initial hit points and number of hit dice the Actor has
+            const hp = this.data.data.attributes.hp;
+            const hd0 = this.data.data.attributes.hd;
+            const hp0 = hp.value;
+            let rest_data = {
+                newDay: false,
+                levels_regained: false
+            };
 
-    let regained_spell_slots_string = false;
+            let recovery_item = this.items.find(i => {
+                return i.name.toLowerCase().indexOf(game.i18n.format("DND5E.WizardRecovery").toLowerCase()) > -1 ||
+                       i.name.toLowerCase().indexOf(game.i18n.format("DND5E.DruidRecovery").toLowerCase()) > -1
+            });
 
-    if(rest_data.levels_regained){
+            if(recovery_item &&
+                (
+                    recovery_item.data.data.activation.type !== "special" ||
+                    recovery_item.data.data.uses.value === null ||
+                    recovery_item.data.data.uses.max === null ||
+                    recovery_item.data.data.uses.per !== "lr"
+                )
+            ){
+                await this.updateEmbeddedDocuments("Item", [{
+                    _id: recovery_item.id,
+                    "data.activation.type": "special",
+                    "data.uses.value": 1,
+                    "data.uses.max": 1,
+                    "data.uses.per": "lr",
+                }]);
+                ui.notifications.info(game.i18n.format("DND5E.PatchedRecovery", {
+                    actor_name: this.name,
+                    recovery_name: recovery_item.name
+                }));
+            }
 
-      let spell_slots = ""
-      let level = 0;
-      for (let [k, v] of Object.entries(this.data.data.spells)) {
+            // Display a Dialog for rolling hit dice
+            if ( dialog ) {
+                try {
+                    rest_data = await newShortRestDialog.displayDialog({actor: this, canRoll: hd0 > 0});
+                } catch(err) {
+                    return;
+                }
+            }
 
-        if(!v.max && !v.override){
-          continue;
-        }
-        level++;
+            // Automatically spend hit dice
+            else if ( autoHD ) {
+                while ( (hp.value + autoHDThreshold) <= hp.max ) {
+                    const r = await this.rollHitDie(undefined, {dialog: false});
+                    if ( r === null ) break;
+                }
+            }
 
-        if(rest_data.levels_regained[level]){
+            let updateData = {};
+            let updateItems = [];
 
-          updateData[`data.spells.${k}.value`] = v.value + rest_data.levels_regained[level];
-          spell_slots += `<li>${game.i18n.format('DND5E.SpellLevelSlotCount', { n: game.i18n.localize(`${rest_data.levels_regained[level]}`), level: ordinal_suffix_of(level) })}</li>`;
+            if(rest_data.levels_regained){
 
-        }
-      }
+                let level = 0;
+                for (let [k, v] of Object.entries(this.data.data.spells)) {
 
-      regained_spell_slots_string = `<ul>${spell_slots}</ul>`;
-    }
+                    if(!v.max && !v.override){
+                        continue;
+                    }
+                    level++;
 
-    await this.update(updateData);
+                    if(rest_data.levels_regained[level]){
 
-    // Recover item uses
-    const recovery = rest_data.newDay ? ["sr", "day"] : ["sr"];
-    const items = this.items.filter(item => item.data.data.uses && recovery.includes(item.data.data.uses.per));
-    const updateItems = items.map(item => {
-      return {
-        _id: item.id,
-        "data.uses.value": item.data.data.uses.max
-      };
-    });
+                        updateData[`data.spells.${k}.value`] = v.value + rest_data.levels_regained[level];
 
-    if(regained_spell_slots_string) {
-      let item = this.items.find(i => i.name.toLowerCase().indexOf("arcane recovery") > -1 || i.name.toLowerCase().indexOf("natural recovery") > -1);
-      updateItems.push({
-        _id: item.id,
-        "data.uses.value": 0
-      })
-    }
+                    }
+                }
 
-    await this.updateEmbeddedDocuments("Item", updateItems);
+                if(recovery_item) {
+                    updateItems.push({
+                        _id: recovery_item.id,
+                        "data.uses.value": 0
+                    })
+                }
+            }
 
-    const chat = game.settings.get("short-rest-recovery", "showChatMessage");
+            // Return data summarizing the rest effects
+            return this._rest(
+                chat,
+                rest_data.newDay,
+                false,
+                this.data.data.attributes.hd - hd0,
+                this.data.data.attributes.hp.value - hp0,
+                updateData,
+                updateItems
+            );
+        },
+        "OVERRIDE"
+    );
+}
 
-    // Display a Chat Message summarizing the rest effects
-    if ( chat ) {
+function patch_rest(){
 
-      // Summarize the rest duration
-      let restFlavor;
-      switch (game.settings.get("dnd5e", "restVariant")) {
-        case 'normal': restFlavor = game.i18n.localize("DND5E.ShortRestNormal"); break;
-        case 'gritty': restFlavor = game.i18n.localize(rest_data.newDay ? "DND5E.ShortRestOvernight" : "DND5E.ShortRestGritty"); break;
-        case 'epic':  restFlavor = game.i18n.localize("DND5E.ShortRestEpic"); break;
-      }
+    // This too cannot be wrapped, as it calls `_displayRestResultMessage` inside of it, whose parameters we need to modify
+    libWrapper.register(
+        "short-rest-recovery",
+        "CONFIG.Actor.documentClass.prototype._rest",
+        async function patched_rest(...args) {
 
-      // Summarize the health effects
-      let srMessage = "DND5E.ShortRestResultShort";
-      if ((dhd !== 0) && (dhp !== 0)) srMessage = "DND5E.ShortRestResult";
+            const [chat, newDay, longRest, dhd=0, dhp=0, updateData={}, updateItems=[]] = args ?? [];
 
-      let content = game.i18n.format(srMessage, { name: this.name, dice: -dhd, health: dhp });
+            let hitPointsRecovered = 0;
+            let hitPointUpdates = {};
+            let hitDiceRecovered = 0;
+            let hitDiceUpdates = [];
 
-      if(regained_spell_slots_string){
-        content += " " + game.i18n.format("DND5E.ShortRestSpellResult", { spellslots: regained_spell_slots_string });
-      }
+            // Recover hit points & hit dice on long rest
+            if ( longRest ) {
+                ({ updates: hitPointUpdates, hitPointsRecovered } = this._getRestHitPointRecovery());
+                ({ updates: hitDiceUpdates, hitDiceRecovered } = this._getRestHitDiceRecovery());
+            }
 
-      // Create a chat message
-      ChatMessage.create({
-        user: game.user.id,
-        speaker: {actor: this, alias: this.name},
-        flavor: restFlavor,
-        content: content
-      }); 
-    }
+            // Figure out the rest of the changes
+            const result = {
+                dhd: dhd + hitDiceRecovered,
+                dhp: dhp + hitPointsRecovered,
+                updateData: {
+                    ...hitPointUpdates,
+                    ...this._getRestResourceRecovery({ recoverShortRestResources: !longRest, recoverLongRestResources: longRest }),
+                    ...this._getRestSpellRecovery({ recoverSpells: longRest })
+                },
+                updateItems: [
+                    ...hitDiceUpdates,
+                    ...this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+                ],
+                newDay: newDay
+            }
 
-    // Return data summarizing the rest effects
-    return {
-      dhd: dhd,
-      dhp: dhp,
-      updateData: updateData,
-      updateItems: updateItems,
-      newDay: rest_data.newDay
-    }
-  }
+            result.updateData = foundry.utils.mergeObject(result.updateData, updateData);
+            result.updateItems = result.updateItems.concat(updateItems);
+
+            // Perform updates
+            await this.update(result.updateData);
+            await this.updateEmbeddedDocuments("Item", result.updateItems);
+
+            // Display a Chat Message summarizing the rest effects
+            if ( chat ) await this._displayRestResultMessage(result, longRest);
+
+            // Return data summarizing the rest effects
+            return result;
+
+        },
+        "OVERRIDE"
+    );
+
+}
+
+function patch_displayRestResultsMessage(){
+    libWrapper.register(
+        "short-rest-recovery",
+        "CONFIG.Actor.documentClass.prototype._displayRestResultMessage",
+        async function patched_displayRestResultsMessage(wrapper, ...args){
+
+            let chatMessage = await wrapper(...args);
+
+            let longRest = args[1] ?? false;
+            let spells = args[0]?.updateData?.data?.spells ?? false;
+
+            let content = chatMessage.data.content;
+
+            if(spells && !longRest){
+                spells = Object.entries(spells).filter(spell => {
+                    return spell[0] !== "pact";
+                });
+                if(spells.length) {
+                    let spellSlotsString = "<ul>";
+                    for (let [type, numbers] of spells){
+                        if (type === "pact") continue;
+                        let level = Number(type.replace('spell', ''));
+                        spellSlotsString += `<li>${game.i18n.format('DND5E.SpellLevelSlotCount', {
+                            number: game.i18n.localize(`${numbers.value}`),
+                            slot: ordinal_suffix_of(level)
+                        })}</li>`;
+                    }
+                    spellSlotsString += "</ul>";
+
+                    content += game.i18n.format("DND5E.ShortRestSpellResult", {spellslots: spellSlotsString});
+
+                    await chatMessage.update({content: content});
+                }
+            }
+
+            return chatMessage;
+
+        },
+        "WRAPPER"
+    );
 }

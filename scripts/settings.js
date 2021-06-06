@@ -9,15 +9,6 @@ export function register_settings(){
 		type: Boolean
 	});
 
-	game.settings.register("short-rest-recovery", "showChatMessage", {
-		name: "Show Chat Message",
-		hint: "At the end of the short rest, show a chat message summarizing the rest.",
-		scope: "world",
-		config: true,
-		default: true,
-		type: Boolean
-	});
-
 	game.settings.register("short-rest-recovery", "skipActivePlayers", {
 		name: "Skip inactive player characters",
 		hint: "If you have a Bard with the Song of Rest or a Chef in your party, this will only consider them as present if the owning player is active and logged on.",

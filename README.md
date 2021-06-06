@@ -10,15 +10,22 @@ For >0.8.6:
 For 0.7.10:
 `https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/0.3.1/module.json`
 
+**Note:** The 0.7.10 version is no longer supported or maintained, so the documentation below may be inaccurate for that version.
+
+## Compatibility
+
+### [Long Rest Hit Dice Healing](https://github.com/schultzcole/FVTT-Long-Rest-HD-Healing-5e)
+
+Short Rest Recovery is compatible with this module. Short rest mechanics remain in place, but rolling hit dice during a long rest will take the Durable feat and Periapt of Wound Closure into account.
+
 ## Module Settings
-* **Quick-roll Hit Dice**
-  * If this setting is enabled, it will make it so that when you press the "Roll" button on the short rest UI, no hit dice dialog will be prompted, and the hit dice will be rolled immediately.
+### Quick-roll Hit Dice
+If this setting is enabled, it will make it so that when you press the "Roll" button on the short rest UI, no hit dice dialog will be prompted, and the hit die will be rolled immediately.
 
-* **Show Chat Message**
-  * If this is enabled, each character that finishes a short rest will post a public message with a summary what they regained during the short rest.
+**Note**: This also affects long rests if you have the *Long Rest Hit Dice Healing* module installed.
 
-* **Skip inactive player characters**
-  * If this is enabled, any character whose owner is not logged into the game is ignored when considering whether other characters can benefit from their Song of Rest or Chef feat.
+### Skip inactive player characters
+If this is enabled, any character whose owner is not logged into the game is ignored when considering whether other characters can benefit from their Song of Rest or Chef feat.
 
 ## Mechanics
 
@@ -59,12 +66,3 @@ If a character that is assigned to a player possesses the Chef feat as well as C
 This is a Wizard with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat.
 
 ![Image of a Wizard with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat](docs/allcombined.png)
-
-## To-do:
-- ~~Hide spell slot recovery checkboxes when user has all spell slots~~
-- ~~Add support for Land Druids' Natural Recovery~~
-- ~~Add support for Bard's Song of Rest~~
-- ~~Add support for Periapt of Wound Closure~~
-- ~~Add support for the Durable feat~~
-- ~~Add support for the Chef feat~~
-- Add support for Wizard/Druid multiclass (fml...)
