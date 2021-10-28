@@ -4,13 +4,7 @@ This module adds support for the various short rest mechanics in D&D 5E, such as
 ## Installation
 Use this manifest URL to install the module:
 
-For >0.8.6:
 `https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.json`
-
-For 0.7.10:
-`https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/0.3.1/module.json`
-
-**Note:** The 0.7.10 version is no longer supported or maintained, so the documentation below may be inaccurate for that version.
 
 ## Compatibility
 
