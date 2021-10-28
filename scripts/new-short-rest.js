@@ -140,9 +140,12 @@ export default class newShortRestDialog extends Dialog {
 			if(actor.data.data.attributes.hp.value <= 0) continue;
 
 			if(actor_has_item(actor, game.i18n.format("DND5E.SongOfRest"), true)){
-				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard").data.data.levels;
-				bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
-				bard = bard ? (level > bard_level ? actor : bard) : actor;
+				let level = actor.items.find(i => i.type === "class" && i.name.toLowerCase() === "bard");
+				if(level){
+					level = level.data.data.levels;
+					bard_level = bard_level ? (level > bard_level ? level : bard_level) : level;
+					bard = bard ? (level > bard_level ? actor : bard) : actor;
+				}
 			}
 
 			if(actor_has_item(actor, game.i18n.format("DND5E.ChefFeat"), false) && actor_has_item(actor, game.i18n.format("DND5E.ChefTools"), false)){
