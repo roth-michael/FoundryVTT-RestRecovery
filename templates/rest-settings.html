@@ -1,0 +1,46 @@
+<form class="flexcol {{cssClasses}}" style="padding:0.5rem;" autocomplete="off">
+
+    <nav class="sheet-navigation tabs" data-group="primary">
+        <a class="item active" data-tab="longrest">{{localize "REST-RECOVERY.RestSettings.LongRest"}}</a>
+        <a class="item" data-tab="shortrest">{{localize "REST-RECOVERY.RestSettings.ShortRest"}}</a>
+        <a class="item" data-tab="other">{{localize "REST-RECOVERY.RestSettings.Other"}}</a>
+    </nav>
+
+    <hr/>
+
+    <section class="tab-body">
+
+        <div class="tab longrest flex" data-group="primary" data-tab="longrest">
+
+            <div>
+                <label for="rest-recovery-settings-HitPoints">
+                    {{localize "REST-RECOVERY.RestSettings.HitPoints.Title"}}<br>
+                </label>
+                <select id="rest-recovery-settings-HitPoints" name="{{HitPoints}}">
+                    {{#select HitPoints}}
+                    <option value="0">None</option>
+                    <option value="0.25">Quarter</option>
+                    <option value="0.5">Half</option>
+                    <option value="1">Full (default)</option>
+                    {{/select}}
+                </select>
+                <p>{{localize "REST-RECOVERY.RestSettings.HitPoints.Hint"}}</p>
+            </div>
+
+        </div>
+
+        <div class="tab shortrest flex" data-group="primary" data-tab="shortrest">
+
+        </div>
+
+        <div class="tab other flex" data-group="primary" data-tab="other">
+
+        </div>
+
+    </section>
+
+    <footer class="sheet-footer flexrow" style="margin-top: 1rem;">
+        <button type="submit" name="submit" value="1"><i class="far fa-save"></i> {{localize "ITEM-PILES.Defaults.Update"}}</button>
+    </footer>
+
+</form>

@@ -1,27 +1,39 @@
 {
-  "name": "short-rest-recovery",
-  "title": "Short Rest Recovery for 5E",
-  "description": "Adds support for 5E mechanics in the short rest dialog, such as Arcane/Natural Recovery, Song of Rest, Periapt of Wound Closure, and the Chef feat.",
-  "systems": [
-    "dnd5e"
-  ],
-  "version": "0.4.1",
-  "author": "Wasp (Wasp#2005)",
-  "esmodules": [
-    "/scripts/settings.js",
-    "/scripts/main.js",
-    "/scripts/new-short-rest.js"
-  ],
-  "languages": [
-    {
-      "lang": "en",
-      "name": "English",
-      "path": "/languages/en.json"
-    }
-  ],
-  "minimumCoreVersion": "0.8.6",
-  "compatibleCoreVersion": "0.8.6",
-  "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
-  "manifest": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.json",
-  "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download//module.zip"
+    "name": "rest-recovery",
+    "title": "Rest Recovery for 5E",
+    "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
+    "systems": [
+        "dnd5e"
+    ],
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "Wasp",
+            "url": "https://github.com/Haxxer",
+            "discord": "Wasp#2005"
+        }
+    ],
+    "esmodules": [
+        "/scripts/main.js"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "/languages/en.json"
+        }
+    ],
+    "styles": [
+        "/styles/module.css"
+    ],
+    "dependencies": [
+        {
+            "name": "lib-wrapper"
+        }
+    ],
+    "minimumCoreVersion": "9",
+    "compatibleCoreVersion": "9",
+    "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
+    "manifest": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.json",
+    "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/latest/download/module.zip"
 }

@@ -1,25 +1,62 @@
 {
-	"DND5E.ShortRestSpellCaster": "As a part of your class, you can regain some spell slots on a short rest. The spell slots can have a combined level that is equal to or less than half your class level (rounded up), and none of the slots can be 6th level or higher.",
-	"DND5E.ShortRestSpellCasterUsed": "Sadly, you do not have any uses left of your spell slot recovery class feature, so you cannot regain spell slots any during this short rest.",
-	"DND5E.ShortRestSpellResult": " In addition, they also regained:{spellslots}",
-	"DND5E.ShortRestSongOfRest": "{name} enjoys {bard}'s Song of Rest.",
-	"DND5E.ShortRestChef": "{name} enjoys some delicious food from {chef}.",
-	"DND5E.ShortRestChefSelf": "{name} enjoys their own delicious food.",
-	"DND5E.ShortRestSpellSlotRemaining": "spell slots remaining.",
-	"DND5E.ShortRestNewDay": "Is New Day?",
-	"DND5E.ShortRestNewDayHint": "Recover limited use abilities which recharge \"per day\"?",
-	"DND5E.SpellLevelSlotCount": "{number} {slot} level spell slot(s)",
-	"DND5E.WizardRecovery": "Arcane Recovery",
-	"DND5E.DruidRecovery": "Natural Recovery",
-	"DND5E.PatchedRecovery": "{actor_name}'s {recovery_name} has been patched, it now has 1/1 long rest uses.",
-	"DND5E.SongOfRest": "Song of Rest",
-	"DND5E.ChefFeat": "Chef",
-	"DND5E.ChefTools": "Cook's Utensils",
-	"DND5E.Periapt": "Periapt of Wound Closure",
-	"DND5E.DurableFeat": "Durable",
-	"1": "One",
-	"2": "Two",
-	"3": "Three",
-	"4": "Four",
-	"5": "Five"
+    "REST-RECOVERY": {
+
+        "Settings": {
+            "Reset": {
+                "Title": "Reset settings to default",
+                "Label": "Reset Rest Recovery Settings",
+                "Hint": "This will reset all of the module's settings back to their defaults."
+            },
+            "LongRest": {
+                "Title": "Long Rest",
+                "Label": "Configure Long Rest",
+                "Hint": "You can configure how long rests work in this dialog."
+            },
+            "Configure": {
+                "Title": "Module Configuration",
+                "Label": "Configure Rest",
+                "Hint": "You can configure how rests work in this dialog."
+            },
+            "QuickHDRoll": {
+                "Title": "Quick-roll Hit Dice (skip dialog)",
+                "Hint": "Skip the dialog for rolling hit dice and roll them quickly."
+            },
+            "IgnoreInactive": {
+                "Title": "Ignore inactive player characters",
+                "Hint": "If you have a Bard with the Song of Rest or a Chef in your party, this will only consider them as present if the owning player is active and logged on."
+            },
+            "Debug": {
+                "Title": "Enable debugging",
+                "Label": "Prints debug messages to the console"
+            }
+        },
+
+        "Dialogs": {
+            "ResetSettings": {
+                "Title": "Reset Rest Recovery Module Settings",
+                "Content": "Are you sure you want to reset all of the Rest Recovery module settings' to their defaults?<br><strong>THIS CANNOT BE UNDONE!</strong>",
+                "Confirm": "Reset Module Settings",
+                "Cancel": "Cancel"
+            }
+        },
+
+        "RestSettings": {
+            "LongRest": "Long Rest Settings",
+            "ShortRest": "Short Rest Settings",
+            "Other": "Other Settings",
+            "Recovery": {
+                "HitPoints": {
+                    "Title": "Hit Points Recovery Fraction",
+                    "Hint": "The fraction of missing hit points to recover on a long rest."
+                },
+                "HitDice": "Hit Dice Recovery Fraction",
+                "HitDiceRounding": "Hit Dice Recovery Rounding",
+                "Resources": " Recovery Fraction",
+                "SpellSlots": "Spell Slots Recovery Fraction",
+                "Items": "Item Uses Recovery Fraction",
+                "Feats": "Feat Recovery Fraction",
+                "Daily": "Daily uses Recovery Fraction"
+            }
+        }
+    }
 }
