@@ -221,7 +221,7 @@ export default class RestWorkflow {
 
     async rollHitDice(hitDice, dialog){
         const roll = await this.actor.rollHitDie(hitDice, { dialog });
-        if(!roll) return
+        if(!roll) return;
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
 

@@ -13,7 +13,7 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
     new SettingsShim().render(true)
     //ShortRestDialog.show(game.actors.getName("Jonathan"), true);
-    game.actors.getName("Jonathan").shortRest();
+    game.actors.getName("Jonathan").longRest();
 })
 
 Hooks.on('updateActor', (actor) => {

@@ -1,28 +1,33 @@
-import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
+import { SvelteApplication }  from '@typhonjs-fvtt/runtime/svelte/application';
 import ShortRestShell from './short-rest-shell.svelte';
 
-export default class ShortRestDialog extends TJSDialog {
+export default class ShortRestDialog extends SvelteApplication {
 
     constructor(actor, options = {}, dialogData = {}) {
 
         super({
-            ...dialogData,
             title: `${game.i18n.localize("DND5E.ShortRest")}: ${actor.name}`,
             zIndex: 102,
-            content: {
+            svelte: {
                 class: ShortRestShell,
+                target: document.body,
                 props: {
                     actor
                 }
             },
-            autoClose: false, // Don't automatically close on button onclick.
-            close: () => this.options.reject()
-        }, {
-            ...options,
+            close: () => this.options.reject(),
+            ...options
+        }, dialogData);
+
+    }
+
+    static get defaultOptions() {
+        return foundry.utils.mergeObject(super.defaultOptions, {
+            closeOnSubmit: false,
+            width: 350,
             height: "auto",
             classes: ["dnd5e dialog"]
-        });
-
+        })
     }
 
     static getActiveApp(actor){

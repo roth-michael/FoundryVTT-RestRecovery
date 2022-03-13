@@ -9659,7 +9659,7 @@ function create_if_block$3(ctx) {
   }];
   let tjsglasspane_props = {
     $$slots: {
-      default: [create_default_slot$1]
+      default: [create_default_slot$3]
     },
     $$scope: {
       ctx
@@ -9942,7 +9942,7 @@ function create_default_slot_1(ctx) {
 } // (181:3) <TJSGlassPane id={`${application.id}-glasspane`} preventDefault={false} stopPropagation={false} {...modalProps} {zIndex}>
 
 
-function create_default_slot$1(ctx) {
+function create_default_slot$3(ctx) {
   let applicationshell;
   let updating_elementRoot;
   let updating_elementContent;
@@ -11266,7 +11266,7 @@ function create_each_block$2(key_1, ctx) {
 }
 
 // (42:0) <ApplicationShell bind:elementRoot>
-function create_default_slot(ctx) {
+function create_default_slot$2(ctx) {
 	let form_1;
 	let h2;
 	let t1;
@@ -11397,7 +11397,7 @@ function create_fragment$2(ctx) {
 	}
 
 	let applicationshell_props = {
-		$$slots: { default: [create_default_slot] },
+		$$slots: { default: [create_default_slot$2] },
 		$$scope: { ctx }
 	};
 
@@ -11670,6 +11670,125 @@ async function resetSettings() {
   }
 
   window.location.reload();
+}
+
+function is_date(obj) {
+  return Object.prototype.toString.call(obj) === '[object Date]';
+}
+
+function get_interpolator(a, b) {
+  if (a === b || a !== a) return () => a;
+  const type = typeof a;
+
+  if (type !== typeof b || Array.isArray(a) !== Array.isArray(b)) {
+    throw new Error('Cannot interpolate values of different type');
+  }
+
+  if (Array.isArray(a)) {
+    const arr = b.map((bi, i) => {
+      return get_interpolator(a[i], bi);
+    });
+    return t => arr.map(fn => fn(t));
+  }
+
+  if (type === 'object') {
+    if (!a || !b) throw new Error('Object cannot be null');
+
+    if (is_date(a) && is_date(b)) {
+      a = a.getTime();
+      b = b.getTime();
+      const delta = b - a;
+      return t => new Date(a + t * delta);
+    }
+
+    const keys = Object.keys(b);
+    const interpolators = {};
+    keys.forEach(key => {
+      interpolators[key] = get_interpolator(a[key], b[key]);
+    });
+    return t => {
+      const result = {};
+      keys.forEach(key => {
+        result[key] = interpolators[key](t);
+      });
+      return result;
+    };
+  }
+
+  if (type === 'number') {
+    const delta = b - a;
+    return t => a + t * delta;
+  }
+
+  throw new Error(`Cannot interpolate ${type} values`);
+}
+
+function tweened(value, defaults = {}) {
+  const store = writable(value);
+  let task;
+  let target_value = value;
+
+  function set(new_value, opts) {
+    if (value == null) {
+      store.set(value = new_value);
+      return Promise.resolve();
+    }
+
+    target_value = new_value;
+    let previous_task = task;
+    let started = false;
+    let {
+      delay = 0,
+      duration = 400,
+      easing = identity,
+      interpolate = get_interpolator
+    } = assign(assign({}, defaults), opts);
+
+    if (duration === 0) {
+      if (previous_task) {
+        previous_task.abort();
+        previous_task = null;
+      }
+
+      store.set(value = target_value);
+      return Promise.resolve();
+    }
+
+    const start = now() + delay;
+    let fn;
+    task = loop(now => {
+      if (now < start) return true;
+
+      if (!started) {
+        fn = interpolate(value, new_value);
+        if (typeof duration === 'function') duration = duration(value, new_value);
+        started = true;
+      }
+
+      if (previous_task) {
+        previous_task.abort();
+        previous_task = null;
+      }
+
+      const elapsed = now - start;
+
+      if (elapsed > duration) {
+        store.set(value = new_value);
+        return false;
+      } // @ts-ignore
+
+
+      store.set(value = fn(easing(elapsed / duration)));
+      return true;
+    });
+    return task.promise;
+  }
+
+  return {
+    set,
+    update: (fn, opts) => set(fn(target_value, value), opts),
+    subscribe: store.subscribe
+  };
 }
 
 function ordinalSuffixOf(i) {
@@ -12180,158 +12299,39 @@ class RestWorkflow {
 
 }
 
-function is_date(obj) {
-  return Object.prototype.toString.call(obj) === '[object Date]';
-}
-
-function get_interpolator(a, b) {
-  if (a === b || a !== a) return () => a;
-  const type = typeof a;
-
-  if (type !== typeof b || Array.isArray(a) !== Array.isArray(b)) {
-    throw new Error('Cannot interpolate values of different type');
-  }
-
-  if (Array.isArray(a)) {
-    const arr = b.map((bi, i) => {
-      return get_interpolator(a[i], bi);
-    });
-    return t => arr.map(fn => fn(t));
-  }
-
-  if (type === 'object') {
-    if (!a || !b) throw new Error('Object cannot be null');
-
-    if (is_date(a) && is_date(b)) {
-      a = a.getTime();
-      b = b.getTime();
-      const delta = b - a;
-      return t => new Date(a + t * delta);
-    }
-
-    const keys = Object.keys(b);
-    const interpolators = {};
-    keys.forEach(key => {
-      interpolators[key] = get_interpolator(a[key], b[key]);
-    });
-    return t => {
-      const result = {};
-      keys.forEach(key => {
-        result[key] = interpolators[key](t);
-      });
-      return result;
-    };
-  }
-
-  if (type === 'number') {
-    const delta = b - a;
-    return t => a + t * delta;
-  }
-
-  throw new Error(`Cannot interpolate ${type} values`);
-}
-
-function tweened(value, defaults = {}) {
-  const store = writable(value);
-  let task;
-  let target_value = value;
-
-  function set(new_value, opts) {
-    if (value == null) {
-      store.set(value = new_value);
-      return Promise.resolve();
-    }
-
-    target_value = new_value;
-    let previous_task = task;
-    let started = false;
-    let {
-      delay = 0,
-      duration = 400,
-      easing = identity,
-      interpolate = get_interpolator
-    } = assign(assign({}, defaults), opts);
-
-    if (duration === 0) {
-      if (previous_task) {
-        previous_task.abort();
-        previous_task = null;
-      }
-
-      store.set(value = target_value);
-      return Promise.resolve();
-    }
-
-    const start = now() + delay;
-    let fn;
-    task = loop(now => {
-      if (now < start) return true;
-
-      if (!started) {
-        fn = interpolate(value, new_value);
-        if (typeof duration === 'function') duration = duration(value, new_value);
-        started = true;
-      }
-
-      if (previous_task) {
-        previous_task.abort();
-        previous_task = null;
-      }
-
-      const elapsed = now - start;
-
-      if (elapsed > duration) {
-        store.set(value = new_value);
-        return false;
-      } // @ts-ignore
-
-
-      store.set(value = fn(easing(elapsed / duration)));
-      return true;
-    });
-    return task.promise;
-  }
-
-  return {
-    set,
-    update: (fn, opts) => set(fn(target_value, value), opts),
-    subscribe: store.subscribe
-  };
-}
-
 /* scripts\formapplications\short-rest\short-rest-shell.svelte generated by Svelte v3.46.4 */
 
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[21] = list[i][0];
-	child_ctx[22] = list[i][1];
-	child_ctx[24] = i;
+	child_ctx[24] = list[i][0];
+	child_ctx[25] = list[i][1];
+	child_ctx[27] = i;
 	return child_ctx;
 }
 
 function get_each_context_1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[25] = list[i];
-	child_ctx[26] = list;
-	child_ctx[27] = i;
+	child_ctx[28] = list[i];
+	child_ctx[29] = list;
+	child_ctx[30] = i;
 	return child_ctx;
 }
 
 function get_each_context_2(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[28] = list[i][0];
-	child_ctx[29] = list[i][1];
-	child_ctx[31] = i;
+	child_ctx[31] = list[i][0];
+	child_ctx[32] = list[i][1];
+	child_ctx[34] = i;
 	return child_ctx;
 }
 
-// (88:12) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (93:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block_2(key_1, ctx) {
 	let option;
-	let t0_value = /*hitDice*/ ctx[28] + "";
+	let t0_value = /*hitDice*/ ctx[31] + "";
 	let t0;
 	let t1;
-	let t2_value = /*num*/ ctx[29] + "";
+	let t2_value = /*num*/ ctx[32] + "";
 	let t2;
 	let t3;
 	let t4_value = localize("DND5E.available") + "";
@@ -12350,7 +12350,7 @@ function create_each_block_2(key_1, ctx) {
 			t3 = space();
 			t4 = text(t4_value);
 			t5 = text(")");
-			option.__value = option_value_value = /*hitDice*/ ctx[28];
+			option.__value = option_value_value = /*hitDice*/ ctx[31];
 			option.value = option.__value;
 			this.first = option;
 		},
@@ -12365,10 +12365,10 @@ function create_each_block_2(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty[0] & /*healthData*/ 32 && t0_value !== (t0_value = /*hitDice*/ ctx[28] + "")) set_data(t0, t0_value);
-			if (dirty[0] & /*healthData*/ 32 && t2_value !== (t2_value = /*num*/ ctx[29] + "")) set_data(t2, t2_value);
+			if (dirty[0] & /*healthData*/ 64 && t0_value !== (t0_value = /*hitDice*/ ctx[31] + "")) set_data(t0, t0_value);
+			if (dirty[0] & /*healthData*/ 64 && t2_value !== (t2_value = /*num*/ ctx[32] + "")) set_data(t2, t2_value);
 
-			if (dirty[0] & /*healthData*/ 32 && option_value_value !== (option_value_value = /*hitDice*/ ctx[28])) {
+			if (dirty[0] & /*healthData*/ 64 && option_value_value !== (option_value_value = /*hitDice*/ ctx[31])) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
@@ -12379,7 +12379,7 @@ function create_each_block_2(key_1, ctx) {
 	};
 }
 
-// (96:8) {#if healthData.totalHitDice === 0}
+// (101:12) {#if healthData.totalHitDice === 0}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -12399,7 +12399,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (99:8) {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
+// (104:12) {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
 function create_if_block_5$1(ctx) {
 	let p;
 
@@ -12419,13 +12419,13 @@ function create_if_block_5$1(ctx) {
 	};
 }
 
-// (104:4) {#if spellData.feature}
+// (109:8) {#if spellData.feature}
 function create_if_block_2$1(ctx) {
 	let div;
 	let label;
 
 	let t0_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", {
-		featureName: /*spellData*/ ctx[6].feature.name
+		featureName: /*spellData*/ ctx[7].feature.name
 	}) + "";
 
 	let t0;
@@ -12433,8 +12433,8 @@ function create_if_block_2$1(ctx) {
 	let if_block_anchor;
 
 	function select_block_type(ctx, dirty) {
-		if (/*spellData*/ ctx[6].missingSlots && !/*spellData*/ ctx[6].has_feature_use) return create_if_block_3$1;
-		if (/*spellData*/ ctx[6].missingSlots) return create_if_block_4$1;
+		if (/*spellData*/ ctx[7].missingSlots && !/*spellData*/ ctx[7].has_feature_use) return create_if_block_3$1;
+		if (/*spellData*/ ctx[7].missingSlots) return create_if_block_4$1;
 		return create_else_block;
 	}
 
@@ -12460,8 +12460,8 @@ function create_if_block_2$1(ctx) {
 			insert(target, if_block_anchor, anchor);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*spellData*/ 64 && t0_value !== (t0_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", {
-				featureName: /*spellData*/ ctx[6].feature.name
+			if (dirty[0] & /*spellData*/ 128 && t0_value !== (t0_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", {
+				featureName: /*spellData*/ ctx[7].feature.name
 			}) + "")) set_data(t0, t0_value);
 
 			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
@@ -12485,7 +12485,7 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (140:8) {:else}
+// (145:12) {:else}
 function create_else_block(ctx) {
 	let p;
 
@@ -12505,7 +12505,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (116:41) 
+// (121:45) 
 function create_if_block_4$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
@@ -12513,12 +12513,12 @@ function create_if_block_4$1(ctx) {
 	let p;
 
 	let t1_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
-		spellSlotsLeft: /*spellData*/ ctx[6].pointsTotal - /*spellData*/ ctx[6].pointsSpent
+		spellSlotsLeft: /*spellData*/ ctx[7].pointsTotal - /*spellData*/ ctx[7].pointsSpent
 	}) + "";
 
 	let t1;
-	let each_value = Object.entries(/*spellData*/ ctx[6].slots);
-	const get_key = ctx => /*levelIndex*/ ctx[24];
+	let each_value = Object.entries(/*spellData*/ ctx[7].slots);
+	const get_key = ctx => /*levelIndex*/ ctx[27];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context$1(ctx, each_value, i);
@@ -12547,13 +12547,13 @@ function create_if_block_4$1(ctx) {
 			append(p, t1);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*spellData, spendSpellPoint*/ 16448) {
-				each_value = Object.entries(/*spellData*/ ctx[6].slots);
+			if (dirty[0] & /*spellData, spendSpellPoint*/ 32896) {
+				each_value = Object.entries(/*spellData*/ ctx[7].slots);
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, t0.parentNode, destroy_block, create_each_block$1, t0, get_each_context$1);
 			}
 
-			if (dirty[0] & /*spellData*/ 64 && t1_value !== (t1_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
-				spellSlotsLeft: /*spellData*/ ctx[6].pointsTotal - /*spellData*/ ctx[6].pointsSpent
+			if (dirty[0] & /*spellData*/ 128 && t1_value !== (t1_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
+				spellSlotsLeft: /*spellData*/ ctx[7].pointsTotal - /*spellData*/ ctx[7].pointsSpent
 			}) + "")) set_data(t1, t1_value);
 		},
 		d(detaching) {
@@ -12567,12 +12567,12 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (110:8) {#if spellData.missingSlots && !spellData.has_feature_use}
+// (115:12) {#if spellData.missingSlots && !spellData.has_feature_use}
 function create_if_block_3$1(ctx) {
 	let p;
 
 	let t_value = localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
-		featureName: /*spellData*/ ctx[6].feature.name
+		featureName: /*spellData*/ ctx[7].feature.name
 	}) + "";
 
 	let t;
@@ -12588,8 +12588,8 @@ function create_if_block_3$1(ctx) {
 			append(p, t);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*spellData*/ 64 && t_value !== (t_value = localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
-				featureName: /*spellData*/ ctx[6].feature.name
+			if (dirty[0] & /*spellData*/ 128 && t_value !== (t_value = localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
+				featureName: /*spellData*/ ctx[7].feature.name
 			}) + "")) set_data(t, t_value);
 		},
 		d(detaching) {
@@ -12598,7 +12598,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (123:28) {#each slots as slot, slotIndex (slotIndex)}
+// (128:32) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -12606,7 +12606,11 @@ function create_each_block_1(key_1, ctx) {
 	let dispose;
 
 	function input_change_handler() {
-		/*input_change_handler*/ ctx[16].call(input, /*each_value_1*/ ctx[26], /*slotIndex*/ ctx[27]);
+		/*input_change_handler*/ ctx[17].call(input, /*each_value_1*/ ctx[29], /*slotIndex*/ ctx[30]);
+	}
+
+	function change_handler(...args) {
+		return /*change_handler*/ ctx[18](/*level*/ ctx[24], /*slotIndex*/ ctx[30], ...args);
 	}
 
 	return {
@@ -12615,19 +12619,17 @@ function create_each_block_1(key_1, ctx) {
 		c() {
 			input = element("input");
 			attr(input, "type", "checkbox");
-			input.disabled = input_disabled_value = /*slot*/ ctx[25].disabled || /*slot*/ ctx[25].alwaysDisabled;
+			input.disabled = input_disabled_value = /*slot*/ ctx[28].disabled || /*slot*/ ctx[28].alwaysDisabled;
 			this.first = input;
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
-			input.checked = /*slot*/ ctx[25].checked;
+			input.checked = /*slot*/ ctx[28].checked;
 
 			if (!mounted) {
 				dispose = [
 					listen(input, "change", input_change_handler),
-					listen(input, "change", function () {
-						if (is_function(/*spendSpellPoint*/ ctx[14](event, /*level*/ ctx[21], /*slotIndex*/ ctx[27]))) /*spendSpellPoint*/ ctx[14](event, /*level*/ ctx[21], /*slotIndex*/ ctx[27]).apply(this, arguments);
-					})
+					listen(input, "change", change_handler)
 				];
 
 				mounted = true;
@@ -12636,12 +12638,12 @@ function create_each_block_1(key_1, ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty[0] & /*spellData*/ 64 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[25].disabled || /*slot*/ ctx[25].alwaysDisabled)) {
+			if (dirty[0] & /*spellData*/ 128 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[28].disabled || /*slot*/ ctx[28].alwaysDisabled)) {
 				input.disabled = input_disabled_value;
 			}
 
-			if (dirty[0] & /*spellData*/ 64) {
-				input.checked = /*slot*/ ctx[25].checked;
+			if (dirty[0] & /*spellData*/ 128) {
+				input.checked = /*slot*/ ctx[28].checked;
 			}
 		},
 		d(detaching) {
@@ -12652,21 +12654,21 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (118:12) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+// (123:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
 function create_each_block$1(key_1, ctx) {
 	let div3;
 	let div2;
 	let div0;
 	let t0;
-	let t1_value = /*level*/ ctx[21] + "";
+	let t1_value = /*level*/ ctx[24] + "";
 	let t1;
 	let t2;
 	let t3;
 	let div1;
 	let each_blocks = [];
 	let each_1_lookup = new Map();
-	let each_value_1 = /*slots*/ ctx[22];
-	const get_key = ctx => /*slotIndex*/ ctx[27];
+	let each_value_1 = /*slots*/ ctx[25];
+	const get_key = ctx => /*slotIndex*/ ctx[30];
 
 	for (let i = 0; i < each_value_1.length; i += 1) {
 		let child_ctx = get_each_context_1(ctx, each_value_1, i);
@@ -12715,10 +12717,10 @@ function create_each_block$1(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty[0] & /*spellData*/ 64 && t1_value !== (t1_value = /*level*/ ctx[21] + "")) set_data(t1, t1_value);
+			if (dirty[0] & /*spellData*/ 128 && t1_value !== (t1_value = /*level*/ ctx[24] + "")) set_data(t1, t1_value);
 
-			if (dirty[0] & /*spellData, spendSpellPoint*/ 16448) {
-				each_value_1 = /*slots*/ ctx[22];
+			if (dirty[0] & /*spellData, spendSpellPoint*/ 32896) {
+				each_value_1 = /*slots*/ ctx[25];
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div1, destroy_block, create_each_block_1, null, get_each_context_1);
 			}
 		},
@@ -12732,7 +12734,7 @@ function create_each_block$1(key_1, ctx) {
 	};
 }
 
-// (148:4) {#if promptNewDay}
+// (153:8) {#if promptNewDay}
 function create_if_block_1$1(ctx) {
 	let div;
 	let label;
@@ -12763,18 +12765,18 @@ function create_if_block_1$1(ctx) {
 			append(div, label);
 			append(div, t1);
 			append(div, input);
-			input.checked = /*newDay*/ ctx[4];
+			input.checked = /*newDay*/ ctx[5];
 			append(div, t2);
 			append(div, p);
 
 			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler_1*/ ctx[17]);
+				dispose = listen(input, "change", /*input_change_handler_1*/ ctx[19]);
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*newDay*/ 16) {
-				input.checked = /*newDay*/ ctx[4];
+			if (dirty[0] & /*newDay*/ 32) {
+				input.checked = /*newDay*/ ctx[5];
 			}
 		},
 		d(detaching) {
@@ -12785,7 +12787,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (163:8) {#if !hasSpentHitDice}
+// (168:12) {#if !hasSpentHitDice}
 function create_if_block$1(ctx) {
 	let button;
 	let i;
@@ -12812,7 +12814,7 @@ function create_if_block$1(ctx) {
 			append(button, t1);
 
 			if (!mounted) {
-				dispose = listen(button, "click", /*cancel*/ ctx[12]);
+				dispose = listen(button, "click", /*cancel*/ ctx[13]);
 				mounted = true;
 			}
 		},
@@ -12825,7 +12827,8 @@ function create_if_block$1(ctx) {
 	};
 }
 
-function create_fragment$1(ctx) {
+// (84:0) <ApplicationShell bind:elementRoot>
+function create_default_slot$1(ctx) {
 	let form_1;
 	let p;
 	let t1;
@@ -12862,8 +12865,8 @@ function create_fragment$1(ctx) {
 	let t16;
 	let mounted;
 	let dispose;
-	let each_value_2 = Object.entries(/*healthData*/ ctx[5].availableHitDice);
-	const get_key = ctx => /*index*/ ctx[31];
+	let each_value_2 = Object.entries(/*healthData*/ ctx[6].availableHitDice);
+	const get_key = ctx => /*index*/ ctx[34];
 
 	for (let i = 0; i < each_value_2.length; i += 1) {
 		let child_ctx = get_each_context_2(ctx, each_value_2, i);
@@ -12871,11 +12874,11 @@ function create_fragment$1(ctx) {
 		each_1_lookup.set(key, each_blocks[i] = create_each_block_2(key, child_ctx));
 	}
 
-	let if_block0 = /*healthData*/ ctx[5].totalHitDice === 0 && create_if_block_6();
-	let if_block1 = /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max && create_if_block_5$1();
-	let if_block2 = /*spellData*/ ctx[6].feature && create_if_block_2$1(ctx);
-	let if_block3 = /*promptNewDay*/ ctx[10] && create_if_block_1$1(ctx);
-	let if_block4 = !/*hasSpentHitDice*/ ctx[2] && create_if_block$1(ctx);
+	let if_block0 = /*healthData*/ ctx[6].totalHitDice === 0 && create_if_block_6();
+	let if_block1 = /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max && create_if_block_5$1();
+	let if_block2 = /*spellData*/ ctx[7].feature && create_if_block_2$1(ctx);
+	let if_block3 = /*promptNewDay*/ ctx[11] && create_if_block_1$1(ctx);
+	let if_block4 = !/*hasSpentHitDice*/ ctx[3] && create_if_block$1(ctx);
 
 	return {
 		c() {
@@ -12921,14 +12924,14 @@ function create_fragment$1(ctx) {
 			t16 = space();
 			if (if_block4) if_block4.c();
 			attr(select, "name", "hd");
-			if (/*selectedHitDice*/ ctx[7] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[15].call(select));
+			if (/*selectedHitDice*/ ctx[8] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[16].call(select));
 			attr(i0, "class", "fas fa-dice-d20");
 			attr(button0, "type", "button");
-			button0.disabled = button0_disabled_value = /*healthData*/ ctx[5].totalHitDice === 0 || /*healthData*/ ctx[5].availableHitDice[/*selectedHitDice*/ ctx[7]] === 0 || /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max;
+			button0.disabled = button0_disabled_value = /*healthData*/ ctx[6].totalHitDice === 0 || /*healthData*/ ctx[6].availableHitDice[/*selectedHitDice*/ ctx[8]] === 0 || /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max;
 			attr(div0, "class", "form-fields");
 			attr(div1, "class", "form-group");
 			attr(div2, "class", "progress svelte-g6guf9");
-			set_style(div2, "width", /*$progress*/ ctx[8] * 100 + "%");
+			set_style(div2, "width", /*$progress*/ ctx[9] * 100 + "%");
 			attr(div3, "class", "overlay svelte-g6guf9");
 			attr(div4, "class", "healthbar svelte-g6guf9");
 			attr(i1, "class", "fas fa-bed");
@@ -12954,7 +12957,7 @@ function create_fragment$1(ctx) {
 				each_blocks[i].m(select, null);
 			}
 
-			select_option(select, /*selectedHitDice*/ ctx[7]);
+			select_option(select, /*selectedHitDice*/ ctx[8]);
 			append(div0, t4);
 			append(div0, button0);
 			append(button0, i0);
@@ -12981,34 +12984,34 @@ function create_fragment$1(ctx) {
 			append(button1, t15);
 			append(footer, t16);
 			if (if_block4) if_block4.m(footer, null);
-			/*form_1_binding*/ ctx[18](form_1);
+			/*form_1_binding*/ ctx[20](form_1);
 
 			if (!mounted) {
 				dispose = [
-					listen(select, "change", /*select_change_handler*/ ctx[15]),
-					listen(button0, "click", /*rollHitDice*/ ctx[13]),
-					listen(button1, "click", /*requestSubmit*/ ctx[1]),
-					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[11]))
+					listen(select, "change", /*select_change_handler*/ ctx[16]),
+					listen(button0, "click", /*rollHitDice*/ ctx[14]),
+					listen(button1, "click", /*requestSubmit*/ ctx[2]),
+					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[12]))
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*healthData*/ 32) {
-				each_value_2 = Object.entries(/*healthData*/ ctx[5].availableHitDice);
+			if (dirty[0] & /*healthData*/ 64) {
+				each_value_2 = Object.entries(/*healthData*/ ctx[6].availableHitDice);
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_2, each_1_lookup, select, destroy_block, create_each_block_2, null, get_each_context_2);
 			}
 
-			if (dirty[0] & /*selectedHitDice, healthData*/ 160) {
-				select_option(select, /*selectedHitDice*/ ctx[7]);
+			if (dirty[0] & /*selectedHitDice, healthData*/ 320) {
+				select_option(select, /*selectedHitDice*/ ctx[8]);
 			}
 
-			if (dirty[0] & /*healthData, selectedHitDice, actor*/ 161 && button0_disabled_value !== (button0_disabled_value = /*healthData*/ ctx[5].totalHitDice === 0 || /*healthData*/ ctx[5].availableHitDice[/*selectedHitDice*/ ctx[7]] === 0 || /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max)) {
+			if (dirty[0] & /*healthData, selectedHitDice, actor*/ 322 && button0_disabled_value !== (button0_disabled_value = /*healthData*/ ctx[6].totalHitDice === 0 || /*healthData*/ ctx[6].availableHitDice[/*selectedHitDice*/ ctx[8]] === 0 || /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max)) {
 				button0.disabled = button0_disabled_value;
 			}
 
-			if (/*healthData*/ ctx[5].totalHitDice === 0) {
+			if (/*healthData*/ ctx[6].totalHitDice === 0) {
 				if (if_block0) {
 					if_block0.p(ctx, dirty);
 				} else {
@@ -13021,7 +13024,7 @@ function create_fragment$1(ctx) {
 				if_block0 = null;
 			}
 
-			if (/*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max) {
+			if (/*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 				} else {
@@ -13034,7 +13037,7 @@ function create_fragment$1(ctx) {
 				if_block1 = null;
 			}
 
-			if (/*spellData*/ ctx[6].feature) {
+			if (/*spellData*/ ctx[7].feature) {
 				if (if_block2) {
 					if_block2.p(ctx, dirty);
 				} else {
@@ -13047,13 +13050,13 @@ function create_fragment$1(ctx) {
 				if_block2 = null;
 			}
 
-			if (/*promptNewDay*/ ctx[10]) if_block3.p(ctx, dirty);
+			if (/*promptNewDay*/ ctx[11]) if_block3.p(ctx, dirty);
 
-			if (dirty[0] & /*$progress*/ 256) {
-				set_style(div2, "width", /*$progress*/ ctx[8] * 100 + "%");
+			if (dirty[0] & /*$progress*/ 512) {
+				set_style(div2, "width", /*$progress*/ ctx[9] * 100 + "%");
 			}
 
-			if (!/*hasSpentHitDice*/ ctx[2]) {
+			if (!/*hasSpentHitDice*/ ctx[3]) {
 				if (if_block4) {
 					if_block4.p(ctx, dirty);
 				} else {
@@ -13066,8 +13069,6 @@ function create_fragment$1(ctx) {
 				if_block4 = null;
 			}
 		},
-		i: noop,
-		o: noop,
 		d(detaching) {
 			if (detaching) detach(form_1);
 
@@ -13080,9 +13081,68 @@ function create_fragment$1(ctx) {
 			if (if_block2) if_block2.d();
 			if (if_block3) if_block3.d();
 			if (if_block4) if_block4.d();
-			/*form_1_binding*/ ctx[18](null);
+			/*form_1_binding*/ ctx[20](null);
 			mounted = false;
 			run_all(dispose);
+		}
+	};
+}
+
+function create_fragment$1(ctx) {
+	let applicationshell;
+	let updating_elementRoot;
+	let current;
+
+	function applicationshell_elementRoot_binding(value) {
+		/*applicationshell_elementRoot_binding*/ ctx[21](value);
+	}
+
+	let applicationshell_props = {
+		$$slots: { default: [create_default_slot$1] },
+		$$scope: { ctx }
+	};
+
+	if (/*elementRoot*/ ctx[0] !== void 0) {
+		applicationshell_props.elementRoot = /*elementRoot*/ ctx[0];
+	}
+
+	applicationshell = new ApplicationShell({ props: applicationshell_props });
+	binding_callbacks.push(() => bind(applicationshell, 'elementRoot', applicationshell_elementRoot_binding));
+
+	return {
+		c() {
+			create_component(applicationshell.$$.fragment);
+		},
+		m(target, anchor) {
+			mount_component(applicationshell, target, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const applicationshell_changes = {};
+
+			if (dirty[0] & /*form, hasSpentHitDice, $progress, newDay, spellData, actor, healthData, selectedHitDice*/ 1018 | dirty[1] & /*$$scope*/ 16) {
+				applicationshell_changes.$$scope = { dirty, ctx };
+			}
+
+			if (!updating_elementRoot && dirty[0] & /*elementRoot*/ 1) {
+				updating_elementRoot = true;
+				applicationshell_changes.elementRoot = /*elementRoot*/ ctx[0];
+				add_flush_callback(() => updating_elementRoot = false);
+			}
+
+			applicationshell.$set(applicationshell_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(applicationshell.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(applicationshell.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(applicationshell, detaching);
 		}
 	};
 }
@@ -13090,8 +13150,9 @@ function create_fragment$1(ctx) {
 function instance$1($$self, $$props, $$invalidate) {
 	let $progress;
 	const progress = tweened(0, { duration: 400, easing: cubicOut });
-	component_subscribe($$self, progress, value => $$invalidate(8, $progress = value));
+	component_subscribe($$self, progress, value => $$invalidate(9, $progress = value));
 	const { application } = getContext('external');
+	let { elementRoot } = $$props;
 	let { actor } = $$props;
 	let form;
 	let hasSpentHitDice = false;
@@ -13134,51 +13195,62 @@ function instance$1($$self, $$props, $$invalidate) {
 	async function rollHitDice(event) {
 		const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === game.settings.get(CONSTANTS.MODULE_NAME, "quick-hd-roll"));
 		if (!rolled) return;
-		$$invalidate(5, healthData = workflow.healthData);
-		$$invalidate(2, hasSpentHitDice = true);
+		$$invalidate(6, healthData = workflow.healthData);
+		$$invalidate(3, hasSpentHitDice = true);
 		await progress.set(workflow.healthPercentage);
 	}
 
 	function spendSpellPoint(event, level) {
 		workflow.spendSpellPoint(level, event.target.checked);
-		$$invalidate(6, spellData = workflow.spellData);
+		$$invalidate(7, spellData = workflow.spellData);
 	}
 
 	function select_change_handler() {
 		selectedHitDice = select_value(this);
-		$$invalidate(7, selectedHitDice);
-		$$invalidate(5, healthData);
+		$$invalidate(8, selectedHitDice);
+		$$invalidate(6, healthData);
 	}
 
 	function input_change_handler(each_value_1, slotIndex) {
 		each_value_1[slotIndex].checked = this.checked;
-		$$invalidate(6, spellData);
+		$$invalidate(7, spellData);
 	}
+
+	const change_handler = (level, slotIndex, event) => {
+		spendSpellPoint(event, level);
+	};
 
 	function input_change_handler_1() {
 		newDay = this.checked;
-		$$invalidate(4, newDay);
+		$$invalidate(5, newDay);
 	}
 
 	function form_1_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			form = $$value;
-			$$invalidate(3, form);
+			$$invalidate(4, form);
 		});
 	}
 
+	function applicationshell_elementRoot_binding(value) {
+		elementRoot = value;
+		$$invalidate(0, elementRoot);
+	}
+
 	$$self.$$set = $$props => {
-		if ('actor' in $$props) $$invalidate(0, actor = $$props.actor);
+		if ('elementRoot' in $$props) $$invalidate(0, elementRoot = $$props.elementRoot);
+		if ('actor' in $$props) $$invalidate(1, actor = $$props.actor);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty[0] & /*hasSpentHitDice*/ 4) {
+		if ($$self.$$.dirty[0] & /*hasSpentHitDice*/ 8) {
 			// This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
 			application.reactive.headerButtonNoClose = hasSpentHitDice;
 		}
 	};
 
 	return [
+		elementRoot,
 		actor,
 		requestSubmit,
 		hasSpentHitDice,
@@ -13196,19 +13268,44 @@ function instance$1($$self, $$props, $$invalidate) {
 		spendSpellPoint,
 		select_change_handler,
 		input_change_handler,
+		change_handler,
 		input_change_handler_1,
-		form_1_binding
+		form_1_binding,
+		applicationshell_elementRoot_binding
 	];
 }
 
 class Short_rest_shell extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$1, create_fragment$1, safe_not_equal, { actor: 0, requestSubmit: 1 }, null, [-1, -1]);
+
+		init(
+			this,
+			options,
+			instance$1,
+			create_fragment$1,
+			safe_not_equal,
+			{
+				elementRoot: 0,
+				actor: 1,
+				requestSubmit: 2
+			},
+			null,
+			[-1, -1]
+		);
+	}
+
+	get elementRoot() {
+		return this.$$.ctx[0];
+	}
+
+	set elementRoot(elementRoot) {
+		this.$$set({ elementRoot });
+		flush();
 	}
 
 	get actor() {
-		return this.$$.ctx[0];
+		return this.$$.ctx[1];
 	}
 
 	set actor(actor) {
@@ -13217,28 +13314,33 @@ class Short_rest_shell extends SvelteComponent {
 	}
 
 	get requestSubmit() {
-		return this.$$.ctx[1];
+		return this.$$.ctx[2];
 	}
 }
 
-class ShortRestDialog extends TJSDialog {
+class ShortRestDialog extends SvelteApplication {
   constructor(actor, options = {}, dialogData = {}) {
-    super(_objectSpread2(_objectSpread2({}, dialogData), {}, {
+    super(_objectSpread2({
       title: `${game.i18n.localize("DND5E.ShortRest")}: ${actor.name}`,
       zIndex: 102,
-      content: {
+      svelte: {
         class: Short_rest_shell,
+        target: document.body,
         props: {
           actor
         }
       },
-      autoClose: false,
-      // Don't automatically close on button onclick.
       close: () => this.options.reject()
-    }), _objectSpread2(_objectSpread2({}, options), {}, {
+    }, options), dialogData);
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      closeOnSubmit: false,
+      width: 350,
       height: "auto",
       classes: ["dnd5e dialog"]
-    }));
+    });
   }
 
   static getActiveApp(actor) {
@@ -13267,13 +13369,13 @@ class ShortRestDialog extends TJSDialog {
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[20] = list[i][0];
-	child_ctx[21] = list[i][1];
-	child_ctx[23] = i;
+	child_ctx[23] = list[i][0];
+	child_ctx[24] = list[i][1];
+	child_ctx[26] = i;
 	return child_ctx;
 }
 
-// (81:4) {#if enableRollHitDice}
+// (86:8) {#if enableRollHitDice}
 function create_if_block_3(ctx) {
 	let div1;
 	let label;
@@ -13293,8 +13395,8 @@ function create_if_block_3(ctx) {
 	let t6;
 	let mounted;
 	let dispose;
-	let each_value = Object.entries(/*healthData*/ ctx[5].availableHitDice);
-	const get_key = ctx => /*index*/ ctx[23];
+	let each_value = Object.entries(/*healthData*/ ctx[6].availableHitDice);
+	const get_key = ctx => /*index*/ ctx[26];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context(ctx, each_value, i);
@@ -13302,8 +13404,8 @@ function create_if_block_3(ctx) {
 		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
 	}
 
-	let if_block0 = /*healthData*/ ctx[5].totalHitDice === 0 && create_if_block_5();
-	let if_block1 = /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max && create_if_block_4();
+	let if_block0 = /*healthData*/ ctx[6].totalHitDice === 0 && create_if_block_5();
+	let if_block1 = /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max && create_if_block_4();
 
 	return {
 		c() {
@@ -13328,10 +13430,10 @@ function create_if_block_3(ctx) {
 			t6 = space();
 			if (if_block1) if_block1.c();
 			attr(select, "name", "hd");
-			if (/*selectedHitDice*/ ctx[6] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[14].call(select));
+			if (/*selectedHitDice*/ ctx[7] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[15].call(select));
 			attr(i, "class", "fas fa-dice-d20");
 			attr(button, "type", "button");
-			button.disabled = button_disabled_value = /*healthData*/ ctx[5].totalHitDice === 0 || /*healthData*/ ctx[5].availableHitDice[/*selectedHitDice*/ ctx[6]] === 0 || /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max;
+			button.disabled = button_disabled_value = /*healthData*/ ctx[6].totalHitDice === 0 || /*healthData*/ ctx[6].availableHitDice[/*selectedHitDice*/ ctx[7]] === 0 || /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max;
 			attr(div0, "class", "form-fields");
 			attr(div1, "class", "form-group");
 		},
@@ -13346,7 +13448,7 @@ function create_if_block_3(ctx) {
 				each_blocks[i].m(select, null);
 			}
 
-			select_option(select, /*selectedHitDice*/ ctx[6]);
+			select_option(select, /*selectedHitDice*/ ctx[7]);
 			append(div0, t2);
 			append(div0, button);
 			append(button, i);
@@ -13359,28 +13461,28 @@ function create_if_block_3(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(select, "change", /*select_change_handler*/ ctx[14]),
-					listen(button, "click", /*rollHitDice*/ ctx[13])
+					listen(select, "change", /*select_change_handler*/ ctx[15]),
+					listen(button, "click", /*click_handler*/ ctx[16])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*Object, healthData, localize*/ 32) {
-				each_value = Object.entries(/*healthData*/ ctx[5].availableHitDice);
+			if (dirty & /*Object, healthData, localize*/ 64) {
+				each_value = Object.entries(/*healthData*/ ctx[6].availableHitDice);
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, select, destroy_block, create_each_block, null, get_each_context);
 			}
 
-			if (dirty & /*selectedHitDice, Object, healthData*/ 96) {
-				select_option(select, /*selectedHitDice*/ ctx[6]);
+			if (dirty & /*selectedHitDice, Object, healthData*/ 192) {
+				select_option(select, /*selectedHitDice*/ ctx[7]);
 			}
 
-			if (dirty & /*healthData, selectedHitDice, actor, Object*/ 97 && button_disabled_value !== (button_disabled_value = /*healthData*/ ctx[5].totalHitDice === 0 || /*healthData*/ ctx[5].availableHitDice[/*selectedHitDice*/ ctx[6]] === 0 || /*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max)) {
+			if (dirty & /*healthData, selectedHitDice, actor, Object*/ 194 && button_disabled_value !== (button_disabled_value = /*healthData*/ ctx[6].totalHitDice === 0 || /*healthData*/ ctx[6].availableHitDice[/*selectedHitDice*/ ctx[7]] === 0 || /*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max)) {
 				button.disabled = button_disabled_value;
 			}
 
-			if (/*healthData*/ ctx[5].totalHitDice === 0) {
+			if (/*healthData*/ ctx[6].totalHitDice === 0) {
 				if (if_block0) {
 					if_block0.p(ctx, dirty);
 				} else {
@@ -13393,7 +13495,7 @@ function create_if_block_3(ctx) {
 				if_block0 = null;
 			}
 
-			if (/*actor*/ ctx[0].data.data.attributes.hp.value >= /*actor*/ ctx[0].data.data.attributes.hp.max) {
+			if (/*actor*/ ctx[1].data.data.attributes.hp.value >= /*actor*/ ctx[1].data.data.attributes.hp.max) {
 				if (if_block1) {
 					if_block1.p(ctx, dirty);
 				} else {
@@ -13421,13 +13523,13 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (86:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (91:20) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block(key_1, ctx) {
 	let option;
-	let t0_value = /*hitDice*/ ctx[20] + "";
+	let t0_value = /*hitDice*/ ctx[23] + "";
 	let t0;
 	let t1;
-	let t2_value = /*num*/ ctx[21] + "";
+	let t2_value = /*num*/ ctx[24] + "";
 	let t2;
 	let t3;
 	let t4_value = localize("DND5E.available") + "";
@@ -13446,7 +13548,7 @@ function create_each_block(key_1, ctx) {
 			t3 = space();
 			t4 = text(t4_value);
 			t5 = text(")");
-			option.__value = option_value_value = /*hitDice*/ ctx[20];
+			option.__value = option_value_value = /*hitDice*/ ctx[23];
 			option.value = option.__value;
 			this.first = option;
 		},
@@ -13461,10 +13563,10 @@ function create_each_block(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty & /*healthData*/ 32 && t0_value !== (t0_value = /*hitDice*/ ctx[20] + "")) set_data(t0, t0_value);
-			if (dirty & /*healthData*/ 32 && t2_value !== (t2_value = /*num*/ ctx[21] + "")) set_data(t2, t2_value);
+			if (dirty & /*healthData*/ 64 && t0_value !== (t0_value = /*hitDice*/ ctx[23] + "")) set_data(t0, t0_value);
+			if (dirty & /*healthData*/ 64 && t2_value !== (t2_value = /*num*/ ctx[24] + "")) set_data(t2, t2_value);
 
-			if (dirty & /*healthData*/ 32 && option_value_value !== (option_value_value = /*hitDice*/ ctx[20])) {
+			if (dirty & /*healthData*/ 64 && option_value_value !== (option_value_value = /*hitDice*/ ctx[23])) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
@@ -13475,7 +13577,7 @@ function create_each_block(key_1, ctx) {
 	};
 }
 
-// (94:8) {#if healthData.totalHitDice === 0}
+// (99:12) {#if healthData.totalHitDice === 0}
 function create_if_block_5(ctx) {
 	let p;
 
@@ -13495,7 +13597,7 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (97:8) {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
+// (102:12) {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
 function create_if_block_4(ctx) {
 	let p;
 
@@ -13515,7 +13617,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (103:4) {#if promptNewDay}
+// (108:8) {#if promptNewDay}
 function create_if_block_2(ctx) {
 	let div;
 	let label;
@@ -13546,18 +13648,18 @@ function create_if_block_2(ctx) {
 			append(div, label);
 			append(div, t1);
 			append(div, input);
-			input.checked = /*newDay*/ ctx[4];
+			input.checked = /*newDay*/ ctx[5];
 			append(div, t2);
 			append(div, p);
 
 			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler*/ ctx[15]);
+				dispose = listen(input, "change", /*input_change_handler*/ ctx[17]);
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*newDay*/ 16) {
-				input.checked = /*newDay*/ ctx[4];
+			if (dirty & /*newDay*/ 32) {
+				input.checked = /*newDay*/ ctx[5];
 			}
 		},
 		d(detaching) {
@@ -13568,7 +13670,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (111:4) {#if enableRollHitDice}
+// (116:8) {#if enableRollHitDice}
 function create_if_block_1(ctx) {
 	let div2;
 	let div0;
@@ -13582,7 +13684,7 @@ function create_if_block_1(ctx) {
 			t = space();
 			div1 = element("div");
 			attr(div0, "class", "progress svelte-g6guf9");
-			set_style(div0, "width", /*$progress*/ ctx[7] * 100 + "%");
+			set_style(div0, "width", /*$progress*/ ctx[8] * 100 + "%");
 			attr(div1, "class", "overlay svelte-g6guf9");
 			attr(div2, "class", "healthbar svelte-g6guf9");
 		},
@@ -13593,8 +13695,8 @@ function create_if_block_1(ctx) {
 			append(div2, div1);
 		},
 		p(ctx, dirty) {
-			if (dirty & /*$progress*/ 128) {
-				set_style(div0, "width", /*$progress*/ ctx[7] * 100 + "%");
+			if (dirty & /*$progress*/ 256) {
+				set_style(div0, "width", /*$progress*/ ctx[8] * 100 + "%");
 			}
 		},
 		d(detaching) {
@@ -13603,7 +13705,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (120:8) {#if !hasSpentHitDice}
+// (125:12) {#if !hasSpentHitDice}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -13630,7 +13732,7 @@ function create_if_block(ctx) {
 			append(button, t1);
 
 			if (!mounted) {
-				dispose = listen(button, "click", /*cancel*/ ctx[12]);
+				dispose = listen(button, "click", /*cancel*/ ctx[13]);
 				mounted = true;
 			}
 		},
@@ -13643,7 +13745,8 @@ function create_if_block(ctx) {
 	};
 }
 
-function create_fragment(ctx) {
+// (81:0) <ApplicationShell bind:elementRoot>
+function create_default_slot(ctx) {
 	let form_1;
 	let p;
 	let t1;
@@ -13659,10 +13762,10 @@ function create_fragment(ctx) {
 	let t7;
 	let mounted;
 	let dispose;
-	let if_block0 = /*enableRollHitDice*/ ctx[10] && create_if_block_3(ctx);
-	let if_block1 = /*promptNewDay*/ ctx[9] && create_if_block_2(ctx);
-	let if_block2 = /*enableRollHitDice*/ ctx[10] && create_if_block_1(ctx);
-	let if_block3 = !/*hasSpentHitDice*/ ctx[2] && create_if_block(ctx);
+	let if_block0 = /*enableRollHitDice*/ ctx[11] && create_if_block_3(ctx);
+	let if_block1 = /*promptNewDay*/ ctx[10] && create_if_block_2(ctx);
+	let if_block2 = /*enableRollHitDice*/ ctx[11] && create_if_block_1(ctx);
+	let if_block3 = !/*hasSpentHitDice*/ ctx[3] && create_if_block(ctx);
 
 	return {
 		c() {
@@ -13709,23 +13812,23 @@ function create_fragment(ctx) {
 			append(button, t6);
 			append(footer, t7);
 			if (if_block3) if_block3.m(footer, null);
-			/*form_1_binding*/ ctx[16](form_1);
+			/*form_1_binding*/ ctx[18](form_1);
 
 			if (!mounted) {
 				dispose = [
-					listen(button, "click", /*requestSubmit*/ ctx[1]),
-					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[11]))
+					listen(button, "click", /*requestSubmit*/ ctx[2]),
+					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[12]))
 				];
 
 				mounted = true;
 			}
 		},
-		p(ctx, [dirty]) {
-			if (/*enableRollHitDice*/ ctx[10]) if_block0.p(ctx, dirty);
-			if (/*promptNewDay*/ ctx[9]) if_block1.p(ctx, dirty);
-			if (/*enableRollHitDice*/ ctx[10]) if_block2.p(ctx, dirty);
+		p(ctx, dirty) {
+			if (/*enableRollHitDice*/ ctx[11]) if_block0.p(ctx, dirty);
+			if (/*promptNewDay*/ ctx[10]) if_block1.p(ctx, dirty);
+			if (/*enableRollHitDice*/ ctx[11]) if_block2.p(ctx, dirty);
 
-			if (!/*hasSpentHitDice*/ ctx[2]) {
+			if (!/*hasSpentHitDice*/ ctx[3]) {
 				if (if_block3) {
 					if_block3.p(ctx, dirty);
 				} else {
@@ -13738,17 +13841,74 @@ function create_fragment(ctx) {
 				if_block3 = null;
 			}
 		},
-		i: noop,
-		o: noop,
 		d(detaching) {
 			if (detaching) detach(form_1);
 			if (if_block0) if_block0.d();
 			if (if_block1) if_block1.d();
 			if (if_block2) if_block2.d();
 			if (if_block3) if_block3.d();
-			/*form_1_binding*/ ctx[16](null);
+			/*form_1_binding*/ ctx[18](null);
 			mounted = false;
 			run_all(dispose);
+		}
+	};
+}
+
+function create_fragment(ctx) {
+	let applicationshell;
+	let updating_elementRoot;
+	let current;
+
+	function applicationshell_elementRoot_binding(value) {
+		/*applicationshell_elementRoot_binding*/ ctx[19](value);
+	}
+
+	let applicationshell_props = {
+		$$slots: { default: [create_default_slot] },
+		$$scope: { ctx }
+	};
+
+	if (/*elementRoot*/ ctx[0] !== void 0) {
+		applicationshell_props.elementRoot = /*elementRoot*/ ctx[0];
+	}
+
+	applicationshell = new ApplicationShell({ props: applicationshell_props });
+	binding_callbacks.push(() => bind(applicationshell, 'elementRoot', applicationshell_elementRoot_binding));
+
+	return {
+		c() {
+			create_component(applicationshell.$$.fragment);
+		},
+		m(target, anchor) {
+			mount_component(applicationshell, target, anchor);
+			current = true;
+		},
+		p(ctx, [dirty]) {
+			const applicationshell_changes = {};
+
+			if (dirty & /*$$scope, form, hasSpentHitDice, $progress, newDay, actor, healthData, selectedHitDice*/ 134218234) {
+				applicationshell_changes.$$scope = { dirty, ctx };
+			}
+
+			if (!updating_elementRoot && dirty & /*elementRoot*/ 1) {
+				updating_elementRoot = true;
+				applicationshell_changes.elementRoot = /*elementRoot*/ ctx[0];
+				add_flush_callback(() => updating_elementRoot = false);
+			}
+
+			applicationshell.$set(applicationshell_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(applicationshell.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(applicationshell.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			destroy_component(applicationshell, detaching);
 		}
 	};
 }
@@ -13756,8 +13916,9 @@ function create_fragment(ctx) {
 function instance($$self, $$props, $$invalidate) {
 	let $progress;
 	const progress = tweened(0, { duration: 400, easing: cubicOut });
-	component_subscribe($$self, progress, value => $$invalidate(7, $progress = value));
+	component_subscribe($$self, progress, value => $$invalidate(8, $progress = value));
 	const { application } = getContext('external');
+	let { elementRoot } = $$props;
 	let { actor } = $$props;
 	let form;
 	let hasSpentHitDice = false;
@@ -13801,41 +13962,52 @@ function instance($$self, $$props, $$invalidate) {
 	async function rollHitDice(event) {
 		const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === game.settings.get(CONSTANTS.MODULE_NAME, "quick-hd-roll"));
 		if (!rolled) return;
-		$$invalidate(5, healthData = workflow.healthData);
-		$$invalidate(2, hasSpentHitDice = true);
+		$$invalidate(6, healthData = workflow.healthData);
+		$$invalidate(3, hasSpentHitDice = true);
 		await progress.set(workflow.healthPercentage);
 	}
 
 	function select_change_handler() {
 		selectedHitDice = select_value(this);
-		$$invalidate(6, selectedHitDice);
-		$$invalidate(5, healthData);
+		$$invalidate(7, selectedHitDice);
+		$$invalidate(6, healthData);
 	}
+
+	const click_handler = event => {
+		rollHitDice(event);
+	};
 
 	function input_change_handler() {
 		newDay = this.checked;
-		$$invalidate(4, newDay);
+		$$invalidate(5, newDay);
 	}
 
 	function form_1_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			form = $$value;
-			$$invalidate(3, form);
+			$$invalidate(4, form);
 		});
 	}
 
+	function applicationshell_elementRoot_binding(value) {
+		elementRoot = value;
+		$$invalidate(0, elementRoot);
+	}
+
 	$$self.$$set = $$props => {
-		if ('actor' in $$props) $$invalidate(0, actor = $$props.actor);
+		if ('elementRoot' in $$props) $$invalidate(0, elementRoot = $$props.elementRoot);
+		if ('actor' in $$props) $$invalidate(1, actor = $$props.actor);
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*hasSpentHitDice*/ 4) {
+		if ($$self.$$.dirty & /*hasSpentHitDice*/ 8) {
 			// This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
 			application.reactive.headerButtonNoClose = hasSpentHitDice;
 		}
 	};
 
 	return [
+		elementRoot,
 		actor,
 		requestSubmit,
 		hasSpentHitDice,
@@ -13851,19 +14023,35 @@ function instance($$self, $$props, $$invalidate) {
 		cancel,
 		rollHitDice,
 		select_change_handler,
+		click_handler,
 		input_change_handler,
-		form_1_binding
+		form_1_binding,
+		applicationshell_elementRoot_binding
 	];
 }
 
 class Long_rest_shell extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance, create_fragment, safe_not_equal, { actor: 0, requestSubmit: 1 });
+
+		init(this, options, instance, create_fragment, safe_not_equal, {
+			elementRoot: 0,
+			actor: 1,
+			requestSubmit: 2
+		});
+	}
+
+	get elementRoot() {
+		return this.$$.ctx[0];
+	}
+
+	set elementRoot(elementRoot) {
+		this.$$set({ elementRoot });
+		flush();
 	}
 
 	get actor() {
-		return this.$$.ctx[0];
+		return this.$$.ctx[1];
 	}
 
 	set actor(actor) {
@@ -13872,28 +14060,33 @@ class Long_rest_shell extends SvelteComponent {
 	}
 
 	get requestSubmit() {
-		return this.$$.ctx[1];
+		return this.$$.ctx[2];
 	}
 }
 
-class LongRestDialog extends TJSDialog {
+class LongRestDialog extends SvelteApplication {
   constructor(actor, options = {}, dialogData = {}) {
-    super(_objectSpread2(_objectSpread2({}, dialogData), {}, {
+    super(_objectSpread2({
       title: `${game.i18n.localize("DND5E.LongRest")}: ${actor.name}`,
       zIndex: 102,
-      content: {
+      svelte: {
         class: Long_rest_shell,
+        target: document.body,
         props: {
           actor
         }
       },
-      autoClose: false,
-      // Don't automatically close on button onclick.
       close: () => this.options.reject()
-    }), _objectSpread2(_objectSpread2({}, options), {}, {
+    }, options), dialogData);
+  }
+
+  static get defaultOptions() {
+    return foundry.utils.mergeObject(super.defaultOptions, {
+      closeOnSubmit: false,
+      width: 350,
       height: "auto",
       classes: ["dnd5e dialog"]
-    }));
+    });
   }
 
   static getActiveApp(actor) {
@@ -14200,7 +14393,7 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   new SettingsShim().render(true); //ShortRestDialog.show(game.actors.getName("Jonathan"), true);
 
-  game.actors.getName("Jonathan").shortRest();
+  game.actors.getName("Jonathan").longRest();
 });
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);
