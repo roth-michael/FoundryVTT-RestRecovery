@@ -34,15 +34,6 @@ export default function registerSettings() {
         type: Boolean
     });
 
-    game.settings.register(CONSTANTS.MODULE_NAME, "debug", {
-        name: "REST-RECOVERY.Settings.Debug.Title",
-        hint: "REST-RECOVERY.Settings.Debug.Label",
-        scope: "client",
-        config: true,
-        default: false,
-        type: Boolean
-    });
-
 }
 
 class ResetSettingsDialog extends FormApplication {

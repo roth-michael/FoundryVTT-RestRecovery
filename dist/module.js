@@ -11918,14 +11918,6 @@ function registerSettings() {
     default: true,
     type: Boolean
   });
-  game.settings.register(CONSTANTS.MODULE_NAME, "debug", {
-    name: "REST-RECOVERY.Settings.Debug.Title",
-    hint: "REST-RECOVERY.Settings.Debug.Label",
-    scope: "client",
-    config: true,
-    default: false,
-    type: Boolean
-  });
 }
 
 class ResetSettingsDialog extends FormApplication {
@@ -12165,21 +12157,6 @@ class Healthbar extends SvelteComponent {
 
 const rests = new Map();
 class RestWorkflow {
-  static get(actor) {
-    return rests.get(actor.uuid);
-  }
-
-  static remove(actor) {
-    return rests.delete(actor.uuid);
-  }
-
-  static make(actor, longRest = false) {
-    this.remove(actor);
-    const workflow = new this(actor, longRest);
-    rests.set(actor.uuid, workflow);
-    return workflow;
-  }
-
   constructor(actor, longRest) {
     this.actor = actor;
     this.longRest = longRest;
@@ -12207,6 +12184,41 @@ class RestWorkflow {
         return acc + (slot.empty && slot.checked ? 1 : 0);
       }, 0) : 0];
     }).filter(entry => entry[1]));
+  }
+
+  static get(actor) {
+    return rests.get(actor.uuid);
+  }
+
+  static remove(actor) {
+    return rests.delete(actor.uuid);
+  }
+
+  static make(actor, longRest = false) {
+    this.remove(actor);
+    const workflow = new this(actor, longRest);
+    rests.set(actor.uuid, workflow);
+    return workflow;
+  }
+
+  static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+    const workflow = this.get(actor);
+
+    if (!runWrap) {
+      if (workflow && workflow[fnName]) {
+        return wrapped(workflow[fnName](args));
+      }
+
+      return wrapped(args);
+    }
+
+    let updates = wrapped(args);
+
+    if (workflow && workflow[fnName]) {
+      updates = workflow[fnName](updates, args);
+    }
+
+    return updates;
   }
 
   fetchHealthData() {
@@ -12504,26 +12516,6 @@ class RestWorkflow {
         content: newContent
       });
     });
-  }
-
-  static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
-    const workflow = this.get(actor);
-
-    if (!runWrap) {
-      if (workflow && workflow[fnName]) {
-        return wrapped(workflow[fnName](args));
-      }
-
-      return wrapped(args);
-    }
-
-    let updates = wrapped(args);
-
-    if (workflow && workflow[fnName]) {
-      updates = workflow[fnName](updates, args);
-    }
-
-    return updates;
   }
 
   _getRestHitPointRecovery(result) {
@@ -14905,7 +14897,7 @@ function patch_rollHitDie() {
     var _periapt, _periapt$data, _periapt$data$data, _durable, _durable$data, _hp$tempmax;
 
     // If no denomination was provided, choose the first available
-    let cls = null;
+    let cls;
 
     if (!denomination) {
       cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);

@@ -19,13 +19,13 @@ class Settings extends SvelteApplication {
 
     }
 
-    static getActiveApp(){
+    static getActiveApp() {
         return Object.values(ui.windows).find(app => app.id === "rest-recovery-app");
     }
 
     static async show(options = {}, dialogData = {}) {
         const app = this.getActiveApp()
-        if(app) return app.render(false, { focus: true });
+        if (app) return app.render(false, { focus: true });
         return new Promise((resolve) => {
             options.resolve = resolve;
             new this(options, dialogData).render(true, { focus: true });
@@ -39,13 +39,16 @@ export default class SettingsShim extends FormApplication {
     /**
      * @inheritDoc
      */
-    constructor(){
+    constructor() {
         super({});
         Settings.show();
     }
 
-    async _updateObject(event, formData) {}
+    async _updateObject(event, formData) {
+    }
 
-    render() { this.close(); }
+    render() {
+        this.close();
+    }
 
 }

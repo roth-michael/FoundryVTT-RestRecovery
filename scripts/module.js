@@ -10,7 +10,7 @@ Hooks.once("init", () => {
 
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);
-    if(workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)){
+    if (workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)) {
         console.log(workflow.recoveredSlots)
         workflow.preFinishRestMessage();
     }

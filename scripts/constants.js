@@ -13,7 +13,6 @@ const CONSTANTS = {
         CHEF_TOOLS: "chef-tools-name",
         DURABLE_FEAT: "durable-feat-name",
         PERIAPT_ITEM: "periapt-item-name",
-
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
         HP_MULTIPLIER: "recovery-hitpoints",
@@ -126,8 +125,6 @@ const CONSTANTS = {
                 default: "REST-RECOVERY.FeatureNames.PeriaptItem",
                 type: String
             },
-
-
             [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
                 name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
                 hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",

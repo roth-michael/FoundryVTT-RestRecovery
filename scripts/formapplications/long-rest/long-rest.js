@@ -1,4 +1,4 @@
-import { SvelteApplication }  from '@typhonjs-fvtt/runtime/svelte/application';
+import { SvelteApplication } from '@typhonjs-fvtt/runtime/svelte/application';
 import LongRestShell from './long-rest-shell.svelte';
 
 export default class LongRestDialog extends SvelteApplication {
@@ -20,7 +20,7 @@ export default class LongRestDialog extends SvelteApplication {
         }, dialogData);
 
         this.hookId = Hooks.on('updateActor', (changedActor) => {
-            if(changedActor !== actor) return;
+            if (changedActor !== actor) return;
             this.svelte.applicationShell.updateHealthBar();
         });
 
@@ -35,13 +35,13 @@ export default class LongRestDialog extends SvelteApplication {
         })
     }
 
-    static getActiveApp(actor){
+    static getActiveApp(actor) {
         return Object.values(ui.windows).find(app => app instanceof this && app?.actor === actor);
     }
 
-    static async show({ actor }={}, options = {}, dialogData = {}) {
+    static async show({ actor } = {}, options = {}, dialogData = {}) {
         const app = this.getActiveApp(actor)
-        if(app) return app.render(false, { focus: true });
+        if (app) return app.render(false, { focus: true });
         return new Promise((resolve, reject) => {
             options.resolve = resolve;
             options.reject = reject;
@@ -49,7 +49,7 @@ export default class LongRestDialog extends SvelteApplication {
         });
     }
 
-    async close(options){
+    async close(options) {
         super.close(options);
         Hooks.off('updateActor', this.hookId);
     }
