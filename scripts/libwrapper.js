@@ -2,6 +2,7 @@ import ShortRestDialog from "./formapplications/short-rest/short-rest.js";
 import CONSTANTS from "./constants.js";
 import RestWorkflow from "./rest-workflow.js";
 import LongRestDialog from "./formapplications/long-rest/long-rest.js";
+import { getSetting } from "./lib/lib.js";
 
 export default function registerLibwrappers() {
 
@@ -70,7 +71,11 @@ function patch_longRest(){
                 }
             }
 
-            return this._rest(chat, newDay, true);
+            return this._rest(
+                chat,
+                newDay,
+                true
+            );
         },
         "OVERRIDE"
     );
@@ -110,11 +115,11 @@ function patch_rollHitDie(){
             const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
             const rollData = foundry.utils.deepClone(this.data.data);
 
-            let periapt = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Periapt"));
-            periapt = periapt && periapt.data.data.attunement === 2;
+            let periapt = this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM));
+            periapt = periapt && periapt?.data?.data?.attunement === 2;
 
-            let durable = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Durable"));
-            durable = durable && durable.data.type === "feat";
+            let durable = this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT));
+            durable = durable && durable?.data?.type === "feat";
 
             const conMod = this.data.data.abilities.con.mod;
 
@@ -179,7 +184,10 @@ function patch_getRestHitDiceRecovery(){
         CONSTANTS.MODULE_NAME,
         "CONFIG.Actor.documentClass.prototype._getRestHitDiceRecovery",
         function (wrapped, args){
-            return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecovery", false)
+            if(getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)){
+                return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecoveryPost")
+            }
+            return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecoveryPre", false)
         }
     )
 }

@@ -8,7 +8,7 @@
     import { cubicOut } from 'svelte/easing';
 
     import RestWorkflow from "../../rest-workflow.js";
-    import { dialogLayout } from "../../lib/lib.js";
+    import { dialogLayout, getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
 
     const progress = tweened(0, {
@@ -21,10 +21,10 @@
     export let elementRoot;
     export let actor;
     let form;
-    let hasSpentHitDice = false;
+    let startedShortRest = false;
 
     // This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
-    $: application.reactive.headerButtonNoClose = hasSpentHitDice;
+    $: application.reactive.headerButtonNoClose = startedShortRest;
 
     let newDay = false;
     let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
@@ -64,10 +64,10 @@
     }
 
     async function rollHitDice(event){
-        const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === game.settings.get(CONSTANTS.MODULE_NAME, "quick-hd-roll"));
+        const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
         if(!rolled) return;
         healthData = workflow.healthData;
-        hasSpentHitDice = true;
+        startedShortRest = true;
         await progress.set(workflow.healthPercentage);
     }
 
@@ -165,7 +165,7 @@
 
         <footer class="flexrow" style="margin-top:0.5rem;">
             <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
-            {#if !hasSpentHitDice}
+            {#if !startedShortRest}
                 <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>
             {/if}
         </footer>

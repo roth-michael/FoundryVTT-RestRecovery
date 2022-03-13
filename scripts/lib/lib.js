@@ -5,7 +5,7 @@ export function wait(ms) {
 }
 
 export function debug(msg, args = "") {
-    if (game.settings.get(CONSTANTS.MODULE_NAME, "debug")){
+    if (getSetting("debug")){
         console.log(`DEBUG | ${CONSTANTS.MODULE_NAME} | ${msg}`, args)
     }
 }
@@ -58,7 +58,7 @@ export function dialogLayout({
 }
 
 export function determineLongRestMultiplier(settingKey) {
-    const multiplierSetting = game.settings.get(CONSTANTS.MODULE_NAME, settingKey);
+    const multiplierSetting = getSetting(settingKey);
     switch (multiplierSetting) {
         case "none":
             return 0;
@@ -74,7 +74,7 @@ export function determineLongRestMultiplier(settingKey) {
 }
 
 export function determineRoundingMethod(settingKey){
-    const rounding = game.settings.get(CONSTANTS.MODULE_NAME, settingKey);
+    const rounding = getSetting(settingKey);
     switch(rounding){
         case "down":
             return Math.floor;
@@ -85,4 +85,10 @@ export function determineRoundingMethod(settingKey){
         default:
             throw new Error(`Unable to parse rounding setting for "${settingKey}".`);
     }
+}
+
+export function getSetting(key, localize = false){
+    const value = game.settings.get(CONSTANTS.MODULE_NAME, key);
+    if(localize) return game.i18n.localize(value);
+    return value;
 }

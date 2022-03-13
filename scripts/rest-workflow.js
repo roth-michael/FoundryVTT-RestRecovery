@@ -1,5 +1,5 @@
 import CONSTANTS from "./constants.js";
-import { determineLongRestMultiplier, determineRoundingMethod } from "./lib/lib.js";
+import { determineLongRestMultiplier, determineRoundingMethod, getSetting, ordinalSuffixOf } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -83,16 +83,16 @@ export default class RestWorkflow {
         const wizardLevel = this.actor.items.find(item => {
             return item.type === "class"
                 && item.data.data.levels >= 2
-                && (item.name === game.i18n.localize("REST-RECOVERY.ClassNames.Wizard"));
+                && (item.name === getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true));
         })?.data?.data?.levels || 0;
-        const wizardFeature = this.actor.items.getName(game.i18n.localize("REST-RECOVERY.FeatureNames.ArcaneRecovery")) || false;
+        const wizardFeature = this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
 
         const druidLevel = this.actor.items.find(item => {
             return item.type === "class"
                 && item.data.data.levels >= 2
-                && (item.name === game.i18n.localize("REST-RECOVERY.ClassNames.Druid"));
+                && (item.name === getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true));
         })?.data?.data?.levels || 0;
-        const druidFeature = this.actor.items.getName(game.i18n.localize("REST-RECOVERY.FeatureNames.DruidRecovery")) ?? false;
+        const druidFeature = this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY, true)) ?? false;
 
         for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
             if((!slot.max && !slot.override) || level === "pact"){
@@ -121,14 +121,13 @@ export default class RestWorkflow {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
             this.spellData.pointsTotal = Math.ceil(wizardLevel/2);
-            this.spellData.className = game.i18n.localize("REST-RECOVERY.ClassNames.Wizard");
+            this.spellData.className = getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
         }else if(druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse)){
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
             this.spellData.pointsTotal = Math.ceil(druidLevel/2);
-            this.spellData.className = game.i18n.localize("REST-RECOVERY.ClassNames.Druid");
+            this.spellData.className = getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
-
 
         this.patchSpellFeature();
 
@@ -171,7 +170,7 @@ export default class RestWorkflow {
             durable: false
         }
 
-        const ignoreInactivePlayers = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
+        const ignoreInactivePlayers = getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS, true);
 
         let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
         for(let actor of characters){
@@ -186,10 +185,10 @@ export default class RestWorkflow {
                 if(!found) continue;
             }
 
-            const songOfRest = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.SongOfRest"));
-            if(songOfRest){
-                const bardClass = actor.items.find(item => item.type === "class" && item.name === game.i18n.format("REST-RECOVERY.ClassNames.Bard"));
-                if(bardClass){
+            const bardClass = actor.items.find(item => item.type === "class" && item.name === getSetting(CONSTANTS.SETTINGS.BARD_CLASS, true));
+            if(bardClass){
+                const songOfRest = actor.items.getName(getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true));
+                if(songOfRest){
                     const level = bardClass.data.data.levels;
                     this.features.bard = this.features.bardLevel > level ? this.features.bard : actor;
                     this.features.bardLevel = this.features.bardLevel > level ? this.features.bardLevel : level;
@@ -206,8 +205,8 @@ export default class RestWorkflow {
                 }
             }
 
-            const chefFeat = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.ChefFeat"));
-            const chefTools = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.ChefTools"));
+            const chefFeat = actor.items.getName(getSetting(CONSTANTS.SETTINGS.CHEF_FEAT, true));
+            const chefTools = getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true) !== "" ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true)) : true;
             if(chefFeat && chefTools){
                 if(!this.features.chef){
                     this.features.chef = [];
@@ -285,6 +284,59 @@ export default class RestWorkflow {
         }
     }
 
+    async regainHitDice(){
+
+        if(!getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return;
+
+        let { maxHitDice } = this._getMaxHitDiceRecovery();
+        let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true })
+
+        let hitDiceLeftToRecover = maxHitDice - hitDiceRecovered;
+
+        if(hitDiceLeftToRecover > 0){
+            const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
+                return (parseInt(b.data.data.hitDice.slice(1)) || 0) - (parseInt(a.data.data.hitDice.slice(1)) || 0);
+            });
+
+            const biggestClass = sortedClasses[0];
+
+            const update = updates.find(update => update._id === biggestClass.id);
+            if(update){
+                if(updates[updates.indexOf(update)]["data.hitDiceUsed"] >= 0) {
+                    updates[updates.indexOf(update)]["data.hitDiceUsed"] -= hitDiceLeftToRecover;
+                }
+            }else{
+                updates.push({
+                    _id: biggestClass.id,
+                    "data.hitDiceUsed": hitDiceLeftToRecover*-1
+                })
+            }
+        }
+
+        await this.actor.updateEmbeddedDocuments("Item", updates);
+
+        this.healthData.availableHitDice = this.getHitDice()
+        this.healthData.totalHitDice = this.totalHitDice;
+
+    }
+
+    preFinishRestMessage(){
+        Hooks.once("preCreateChatMessage", (message, data) => {
+            let newContent = `<p>${data.content}</p><p>${game.i18n.localize("REST-RECOVERY.Chat.RegainedSpellSlots")}</p>`;
+            newContent += "<ul>";
+            for(const [level, num] of Object.entries(this.recoveredSlots)){
+                const numText = game.i18n.localize("REST-RECOVERY.NumberToText."+num);
+                const levelText = ordinalSuffixOf(level);
+                const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
+                newContent += `<li>${game.i18n.format(localization, { number: numText, level: levelText })}</li>`
+            }
+            newContent += "</ul>";
+            message.data.update({
+                content: newContent
+            });
+        });
+    }
+
     static wrapperFn(actor, wrapped, args, fnName, runWrap = true){
 
         const workflow = this.get(actor);
@@ -312,18 +364,60 @@ export default class RestWorkflow {
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 
         const maxHP = this.actor.data.data.attributes.hp.max;
+        const currentHP = this.actor.data.data.attributes.hp.value;
+
         const recoveredHP = Math.floor(maxHP * multiplier);
 
-        result.updates["data.attributes.hp.value"] = Math.min(maxHP, this.healthData.startingHealth + recoveredHP);
-        result.hitPointsRecovered = Math.min(maxHP - this.healthData.startingHealth, recoveredHP);
+        result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
+        result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
+
+        if(getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE)){
+            result.hitPointsRecovered += (currentHP - this.healthData.startingHealth);
+        }
 
         return result;
 
     }
 
-    _getRestHitDiceRecovery({ maxHitDice = undefined }={}){
+    _getRestHitDiceRecoveryPre({ maxHitDice = undefined }={}){
 
         if(!this.longRest) return {};
+
+        return this._getMaxHitDiceRecovery({ maxHitDice });
+
+    }
+
+    _getRestHitDiceRecoveryPost({ updates, hitDiceRecovered }={}){
+
+        const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
+            return (parseInt(b.data.data.hitDice.slice(1)) || 0) - (parseInt(a.data.data.hitDice.slice(1)) || 0);
+        });
+
+        for(const item of sortedClasses) {
+            if (item.data.data.hitDiceUsed < 0) {
+                const update = updates.find(update => update._id === item.id);
+                if (update) {
+                    updates[updates.indexOf(update)]["data.hitDiceUsed"] = 0;
+                }else{
+                    updates.push({
+                        _id: item.id,
+                        "data.hitDiceUsed": 0
+                    })
+                }
+                hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
+            }else{
+                const update = updates.find(update => update._id === item.id);
+                if (update) {
+                    updates.splice(updates.indexOf(update), 1);
+                }
+            }
+        }
+
+        return { updates, hitDiceRecovered };
+
+    }
+
+    _getMaxHitDiceRecovery({ maxHitDice = undefined}={}){
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
         const roundingMethod = determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
@@ -380,7 +474,6 @@ export default class RestWorkflow {
             let spellMax = slot.override || slot.max;
             let recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
             updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
-            this.spellData.slots[level] = Math.min(slot.value + recoverSpells, spellMax);
         }
 
         return updates;

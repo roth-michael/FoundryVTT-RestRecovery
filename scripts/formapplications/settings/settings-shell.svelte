@@ -3,6 +3,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
     import CONSTANTS from "../../constants.js";
+    import { getSetting } from "../../lib/lib.js";
 
     const { application } = getContext('external');
 
@@ -11,7 +12,7 @@
 
     let settingsMap = new Map();
     let settings = Object.entries(CONSTANTS.DEFAULT_SETTINGS).map(entry => {
-        entry[1].value = game.settings.get(CONSTANTS.MODULE_NAME, entry[0]);
+        entry[1].value = getSetting(entry[0]);
         entry[1].disabled = false;
         settingsMap.set(entry[0], entry[1]);
         return entry;
@@ -89,9 +90,13 @@
                             {/each}
                             </select>
 
+                        {:else if typeof setting.value === 'number'}
+
+                            <input type="number" bind:value={setting.value} on:change={validateSettings}>
+
                         {:else}
 
-                            <input bind:value={setting.value} on:change={validateSettings}>
+                            <input type="text" bind:value={setting.value} on:change={validateSettings}>
 
                         {/if}
                     </div>
@@ -128,8 +133,8 @@
   }
 
   .tab-body {
-    max-height: 400px;
-    min-height: 400px;
+    max-height: 660px;
+    min-height: 660px;
     overflow-y: scroll;
     padding: 5px;
   }
@@ -150,7 +155,10 @@
 
   select {
     min-width: 200px;
-    max-width: 200px;
+  }
+
+  input[type="text"], input[type="number"]{
+    min-width: 300px;
   }
 
   footer{
