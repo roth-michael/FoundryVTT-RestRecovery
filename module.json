@@ -1,0 +1,39 @@
+{
+    "name": "rest-recovery",
+    "title": "Rest Recovery for 5E",
+    "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
+    "systems": [
+        "dnd5e"
+    ],
+    "version": "1.0.!0",
+    "authors": [
+        {
+            "name": "Wasp",
+            "url": "https://github.com/Haxxer",
+            "discord": "Wasp#2005"
+        }
+    ],
+    "esmodules": [
+        "./dist/module.js"
+    ],
+    "styles": [
+        "./dist/module.css"
+    ],
+    "languages": [
+        {
+            "lang": "en",
+            "name": "English",
+            "path": "/languages/en.json"
+        }
+    ],
+    "dependencies": [
+        {
+            "name": "lib-wrapper"
+        }
+    ],
+    "minimumCoreVersion": "9",
+    "compatibleCoreVersion": "9",
+    "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
+    "manifest": "https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/next/module.json",
+    "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/1.0.!0/module.zip"
+}
