@@ -1,5 +1,5 @@
 import { SvelteApplication }  from '@typhonjs-fvtt/runtime/svelte/application';
-import ShortRestShell from './short-rest-shell.svelte';
+import ShortRestShell  from './short-rest-shell.svelte';
 
 export default class ShortRestDialog extends SvelteApplication {
 
@@ -18,6 +18,11 @@ export default class ShortRestDialog extends SvelteApplication {
             close: () => this.options.reject(),
             ...options
         }, dialogData);
+
+        this.hookId = Hooks.on('updateActor', (changedActor) => {
+            if(changedActor !== actor) return;
+            this.svelte.applicationShell.updateHealthBar();
+        });
 
     }
 
@@ -42,6 +47,11 @@ export default class ShortRestDialog extends SvelteApplication {
             options.reject = reject;
             new this(actor, options, dialogData).render(true, { focus: true });
         });
+    }
+
+    async close(options){
+        super.close(options)
+        Hooks.off("updateActor", this.hookId);
     }
 
 }

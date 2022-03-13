@@ -2,6 +2,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+    import HealthBar from "../components/Healthbar.svelte";
 
     import { getContext } from 'svelte';
     import { tweened } from 'svelte/motion';
@@ -9,17 +10,14 @@
 
     import RestWorkflow from "../../rest-workflow.js";
     import { dialogLayout, getSetting } from "../../lib/lib.js";
-    import CONSTANTS from "../../constants.js";
-
-    const progress = tweened(0, {
-        duration: 400,
-        easing: cubicOut,
-    });
 
     const { application } = getContext('external');
 
     export let elementRoot;
     export let actor;
+    let currHP;
+    let maxHP;
+    let healthPercentage;
     let form;
     let startedShortRest = false;
 
@@ -35,7 +33,8 @@
     let spellData = workflow.spellData;
 
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
-    progress.set(workflow.healthPercentage);
+
+    updateHealthBar();
 
     export async function requestSubmit() {
         if(workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
@@ -68,12 +67,17 @@
         if(!rolled) return;
         healthData = workflow.healthData;
         startedShortRest = true;
-        await progress.set(workflow.healthPercentage);
     }
 
     function spendSpellPoint(event, level){
         workflow.spendSpellPoint(level, event.target.checked);
         spellData = workflow.spellData;
+    }
+
+    export async function updateHealthBar(){
+        currHP = actor.data.data.attributes.hp.value;
+        maxHP = actor.data.data.attributes.hp.max;
+        healthPercentage = currHP / maxHP;
     }
 
 </script>
@@ -94,14 +98,14 @@
                     <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
                 {/each}
                 </select>
-                <button type="button" disabled="{healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0 || actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}" on:click={rollHitDice}>
+                <button type="button" disabled="{currHP >= maxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={rollHitDice}>
                     <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
                 </button>
             </div>
             {#if healthData.totalHitDice === 0}
             <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
             {/if}
-            {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
+            {#if currHP >= maxHP}
             <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullHealth")}</p>
             {/if}
         </div>
@@ -158,10 +162,7 @@
         </div>
         {/if}
 
-        <div class="healthbar">
-            <div class="progress" style="width:{$progress*100}%;"></div>
-            <div class="overlay"></div>
-        </div>
+        <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
 
         <footer class="flexrow" style="margin-top:0.5rem;">
             <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
@@ -172,30 +173,3 @@
 
     </form>
 </ApplicationShell>
-
-<style lang="scss">
-
-    .healthbar{
-      width: 100%;
-      height: 10px;
-      border-radius: 5px;
-      overflow: hidden;
-      background-color: #a7a7a7;
-
-      > div {
-        height: 100%;
-      }
-
-      .progress {
-        background-color: #f34c4c;
-      }
-
-      .overlay{
-        position: relative;
-        top: -10px;
-        width: 100%;
-        box-shadow: 0 0 2px 2px inset rgb(0 0 0 / 25%);
-      }
-    }
-
-</style>

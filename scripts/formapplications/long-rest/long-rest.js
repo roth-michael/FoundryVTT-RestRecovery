@@ -19,6 +19,11 @@ export default class LongRestDialog extends SvelteApplication {
             ...options
         }, dialogData);
 
+        this.hookId = Hooks.on('updateActor', (changedActor) => {
+            if(changedActor !== actor) return;
+            this.svelte.applicationShell.updateHealthBar();
+        });
+
     }
 
     static get defaultOptions() {
@@ -42,6 +47,11 @@ export default class LongRestDialog extends SvelteApplication {
             options.reject = reject;
             new this(actor, options, dialogData).render(true, { focus: true });
         });
+    }
+
+    async close(options){
+        super.close(options);
+        Hooks.off('updateActor', this.hookId);
     }
 
 }

@@ -53,7 +53,8 @@ export default class RestWorkflow {
             startingHitDice: this.actor.data.data.attributes.hd,
             startingHealth: this.actor.data.data.attributes.hp.value,
             availableHitDice: this.getHitDice(),
-            totalHitDice: this.totalHitDice
+            totalHitDice: this.totalHitDice,
+            totalHealthRegained: 0,
         }
     }
 
@@ -164,10 +165,7 @@ export default class RestWorkflow {
             songOfRest: false,
             usedSongOfRest: false,
             chef: false,
-            usedChef: false,
-            usedAllFeatures: false,
-            periapt: false,
-            durable: false
+            usedChef: false
         }
 
         const ignoreInactivePlayers = getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS, true);
@@ -359,7 +357,10 @@ export default class RestWorkflow {
 
     _getRestHitPointRecovery(result){
 
-        if(!this.longRest) return result;
+        if(!this.longRest){
+            result.hitPointsRecovered = Math.max(0, result.hitPointsRecovered);
+            return result;
+        }
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 

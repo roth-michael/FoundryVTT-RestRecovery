@@ -9,6 +9,9 @@ Hooks.once("init", () => {
     console.log("Rest Recovery | Initialized");
 });
 
+Hooks.once("ready", () => {
+    game.actors.getName("Kral").shortRest();
+});
 
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);

@@ -4,22 +4,19 @@
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
 
     import { getContext } from 'svelte';
-    import { tweened } from 'svelte/motion';
-    import { cubicOut } from 'svelte/easing';
 
     import RestWorkflow from "../../rest-workflow.js";
     import { dialogLayout, getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
-
-    const progress = tweened(0, {
-        duration: 400,
-        easing: cubicOut,
-    });
+    import HealthBar from "../components/HealthBar.svelte";
 
     const { application } = getContext('external');
 
     export let elementRoot;
     export let actor;
+    let currHP;
+    let maxHP;
+    let healthPercentage;
     let form;
     let startedLongRest = false;
 
@@ -36,12 +33,12 @@
     const workflow = RestWorkflow.get(actor);
 
     let healthData = workflow.healthData;
+    updateHealthBar();
 
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
-    progress.set(workflow.healthPercentage);
 
     export async function requestSubmit() {
-        if(workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
+        if (workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
             const doContinue = await TJSDialog.confirm({
                 title: "Finish Long Rest?",
                 content: dialogLayout({
@@ -51,34 +48,39 @@
                 modal: true,
                 draggable: false
             })
-            if(!doContinue) return false;
+            if (!doContinue) return false;
         }
         form.requestSubmit();
     }
 
-    async function updateSettings(){
+    async function updateSettings() {
         application.options.resolve(newDay);
         application.close();
     }
 
-    async function cancel(){
+    async function cancel() {
         application.options.reject();
         application.close();
     }
 
-    async function rollHitDice(event){
+    async function rollHitDice(event) {
         const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
-        if(!rolled) return;
+        if (!rolled) return;
         healthData = workflow.healthData;
         startedLongRest = true;
-        await progress.set(workflow.healthPercentage);
     }
 
-    async function startLongRest(){
+    async function startLongRest() {
         showStartLongRestButton = false;
         startedLongRest = true;
         await workflow.regainHitDice();
         healthData = workflow.healthData;
+    }
+
+    export async function updateHealthBar() {
+        currHP = actor.data.data.attributes.hp.value;
+        maxHP = actor.data.data.attributes.hp.max;
+        healthPercentage = currHP / maxHP;
     }
 
 </script>
@@ -107,14 +109,14 @@
                             <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
                         {/each}
                     </select>
-                    <button type="button" disabled="{healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0 || actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}" on:click={(event) => { rollHitDice(event) }}>
+                    <button type="button" disabled="{currHP >= maxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={(event) => { rollHitDice(event) }}>
                         <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
                     </button>
                 </div>
                 {#if healthData.totalHitDice === 0}
                     <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
                 {/if}
-                {#if actor.data.data.attributes.hp.value >= actor.data.data.attributes.hp.max}
+                {#if currHP >= maxHP}
                     <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullHealth")}</p>
                 {/if}
             </div>
@@ -127,13 +129,10 @@
                     <p class="hint">{localize("DND5E.NewDayHint")}</p>
                 </div>
             {/if}
+        {/if}
 
-            {#if enableRollHitDice}
-            <div class="healthbar">
-                <div class="progress" style="width:{$progress*100}%;"></div>
-                <div class="overlay"></div>
-            </div>
-            {/if}
+        {#if enableRollHitDice}
+            <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
         {/if}
 
         <footer class="flexrow" style="margin-top:0.5rem;">
@@ -147,30 +146,3 @@
 
     </form>
 </ApplicationShell>
-
-<style lang="scss">
-
-  .healthbar{
-    width: 100%;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-    background-color: #a7a7a7;
-
-    > div {
-      height: 100%;
-    }
-
-    .progress {
-      background-color: #f34c4c;
-    }
-
-    .overlay{
-      position: relative;
-      top: -10px;
-      width: 100%;
-      box-shadow: 0 0 2px 2px inset rgb(0 0 0 / 25%);
-    }
-  }
-
-</style>

@@ -115,30 +115,24 @@ function patch_rollHitDie(){
             const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
             const rollData = foundry.utils.deepClone(this.data.data);
 
-            let periapt = this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM));
+            let periapt = this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true));
             periapt = periapt && periapt?.data?.data?.attunement === 2;
 
-            let durable = this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT));
+            let durable = this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true));
             durable = durable && durable?.data?.type === "feat";
 
             const conMod = this.data.data.abilities.con.mod;
+            const durableMod = Math.max(2, conMod*2);
 
             if (periapt && durable) {
-
-                parts = [`{1${denomination}+${conMod},${Math.max(conMod,2)}}kh*2`]
-
-            } else {
-
-                if (periapt) {
-                    parts[0] = "(" + parts[0];
-                    parts[1] += ")*2";
-                }
-
-                if (durable) {
-                    parts[0] = "{" + parts[0]
-                    parts[1] += `,${conMod*2}}kh`
-                }
+                parts = [`max((1${denomination}*2)+@abilities.con.mod,${durableMod})`]
+            } else if (periapt) {
+                parts = [`(1${denomination}*2)+@abilities.con.mod`]
+            } else if (durable) {
+                parts = [`max(1${denomination}+@abilities.con.mod,${durableMod})`]
             }
+
+            console.log(parts)
 
             // Call the roll helper utility
             const roll = await damageRoll({
