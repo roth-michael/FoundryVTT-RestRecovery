@@ -5,11 +5,11 @@
     "systems": [
         "dnd5e"
     ],
-    "version": "1.0.!0",
+    "version": "1.0.!2",
     "authors": [
         {
             "name": "Wasp",
-            "url": "https://github.com/Haxxer",
+            "url": "https://github.com/fantasycalendar",
             "discord": "Wasp#2005"
         }
     ],
@@ -35,5 +35,5 @@
     "compatibleCoreVersion": "9",
     "url": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery",
     "manifest": "https://raw.githubusercontent.com/Haxxer/FoundryVTT-ShortRestRecovery/next/module.json",
-    "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/1.0.!0/module.zip"
+    "download": "https://github.com/Haxxer/FoundryVTT-ShortRestRecovery/releases/download/1.0.!2/module.zip"
 }
