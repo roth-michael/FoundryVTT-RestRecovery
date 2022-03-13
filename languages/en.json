@@ -40,7 +40,7 @@
         },
 
         "Chat": {
-            "RegainedSpellSlots": "In addition, they recovered spell slots:",
+            "RegainedSpellSlots": "In addition, they recovered:",
             "SpellSlotList": "{number} {level} level spell slot",
             "SpellSlotListPlural": "{number} {level} level spell slots",
             "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",

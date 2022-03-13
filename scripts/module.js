@@ -1,6 +1,5 @@
 import registerSettings from "./settings.js";
 import registerLibwrappers from "./libwrapper.js";
-import { ordinalSuffixOf } from "./lib/lib.js";
 import RestWorkflow from "./rest-workflow.js";
 
 Hooks.once("init", () => {
@@ -9,13 +8,10 @@ Hooks.once("init", () => {
     console.log("Rest Recovery | Initialized");
 });
 
-Hooks.once("ready", () => {
-    game.actors.getName("Kral").shortRest();
-});
-
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);
-    if(workflow && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)){
+    if(workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)){
+        console.log(workflow.recoveredSlots)
         workflow.preFinishRestMessage();
     }
 });

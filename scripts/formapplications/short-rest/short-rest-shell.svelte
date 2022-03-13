@@ -53,6 +53,7 @@
     }
 
     async function updateSettings(){
+        workflow.finished = true;
         application.options.resolve(newDay);
         application.close();
     }

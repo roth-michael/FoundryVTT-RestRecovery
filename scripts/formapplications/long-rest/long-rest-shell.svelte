@@ -59,6 +59,7 @@
     }
 
     async function cancel() {
+        workflow.finished = true;
         application.options.reject();
         application.close();
     }

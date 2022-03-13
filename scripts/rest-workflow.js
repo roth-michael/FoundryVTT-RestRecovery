@@ -23,6 +23,7 @@ export default class RestWorkflow {
     constructor(actor, longRest) {
         this.actor = actor;
         this.longRest = longRest;
+        this.finished = false;
         this.fetchHealthData();
         this.fetchSpellData();
         this.fetchFeatures();

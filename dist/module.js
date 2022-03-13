@@ -12183,6 +12183,7 @@ class RestWorkflow {
   constructor(actor, longRest) {
     this.actor = actor;
     this.longRest = longRest;
+    this.finished = false;
     this.fetchHealthData();
     this.fetchSpellData();
     this.fetchFeatures();
@@ -12743,7 +12744,7 @@ function get_each_context_2(ctx, list, i) {
 	return child_ctx;
 }
 
-// (97:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (98:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block_2(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[33] + "";
@@ -12797,7 +12798,7 @@ function create_each_block_2(key_1, ctx) {
 	};
 }
 
-// (105:12) {#if healthData.totalHitDice === 0}
+// (106:12) {#if healthData.totalHitDice === 0}
 function create_if_block_6$1(ctx) {
 	let p;
 
@@ -12817,7 +12818,7 @@ function create_if_block_6$1(ctx) {
 	};
 }
 
-// (108:12) {#if currHP >= maxHP}
+// (109:12) {#if currHP >= maxHP}
 function create_if_block_5$1(ctx) {
 	let p;
 
@@ -12837,7 +12838,7 @@ function create_if_block_5$1(ctx) {
 	};
 }
 
-// (113:8) {#if spellData.feature}
+// (114:8) {#if spellData.feature}
 function create_if_block_2$1(ctx) {
 	let div;
 	let label;
@@ -12903,7 +12904,7 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (149:12) {:else}
+// (150:12) {:else}
 function create_else_block$1(ctx) {
 	let p;
 
@@ -12923,7 +12924,7 @@ function create_else_block$1(ctx) {
 	};
 }
 
-// (125:45) 
+// (126:45) 
 function create_if_block_4$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
@@ -12985,7 +12986,7 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (119:12) {#if spellData.missingSlots && !spellData.has_feature_use}
+// (120:12) {#if spellData.missingSlots && !spellData.has_feature_use}
 function create_if_block_3$1(ctx) {
 	let p;
 
@@ -13016,7 +13017,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (132:32) {#each slots as slot, slotIndex (slotIndex)}
+// (133:32) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -13072,7 +13073,7 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (127:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+// (128:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
 function create_each_block$1(key_1, ctx) {
 	let div3;
 	let div2;
@@ -13152,7 +13153,7 @@ function create_each_block$1(key_1, ctx) {
 	};
 }
 
-// (157:8) {#if promptNewDay}
+// (158:8) {#if promptNewDay}
 function create_if_block_1$1(ctx) {
 	let div;
 	let label;
@@ -13205,7 +13206,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (169:12) {#if !startedShortRest}
+// (170:12) {#if !startedShortRest}
 function create_if_block$1(ctx) {
 	let button;
 	let i;
@@ -13245,7 +13246,7 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (88:0) <ApplicationShell bind:elementRoot>
+// (89:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$1(ctx) {
 	let form_1;
 	let p;
@@ -13608,6 +13609,7 @@ function instance$2($$self, $$props, $$invalidate) {
 	}
 
 	async function updateSettings() {
+		workflow.finished = true;
 		application.options.resolve(newDay);
 		application.close();
 	}
@@ -13904,7 +13906,7 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (102:8) {:else}
+// (103:8) {:else}
 function create_else_block(ctx) {
 	let t;
 	let if_block1_anchor;
@@ -13937,7 +13939,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (95:8) {#if showStartLongRestButton}
+// (96:8) {#if showStartLongRestButton}
 function create_if_block_3(ctx) {
 	let div;
 	let button;
@@ -13990,7 +13992,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (103:8) {#if enableRollHitDice}
+// (104:8) {#if enableRollHitDice}
 function create_if_block_5(ctx) {
 	let div1;
 	let label;
@@ -14138,7 +14140,7 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (108:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (109:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[27] + "";
@@ -14192,7 +14194,7 @@ function create_each_block(key_1, ctx) {
 	};
 }
 
-// (116:16) {#if healthData.totalHitDice === 0}
+// (117:16) {#if healthData.totalHitDice === 0}
 function create_if_block_7(ctx) {
 	let p;
 
@@ -14212,7 +14214,7 @@ function create_if_block_7(ctx) {
 	};
 }
 
-// (119:16) {#if currHP >= maxHP}
+// (120:16) {#if currHP >= maxHP}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -14232,7 +14234,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (125:12) {#if promptNewDay}
+// (126:12) {#if promptNewDay}
 function create_if_block_4(ctx) {
 	let div;
 	let label;
@@ -14285,7 +14287,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (134:8) {#if enableRollHitDice}
+// (135:8) {#if enableRollHitDice}
 function create_if_block_2(ctx) {
 	let healthbar;
 	let current;
@@ -14326,7 +14328,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (139:12) {#if !showStartLongRestButton}
+// (140:12) {#if !showStartLongRestButton}
 function create_if_block_1(ctx) {
 	let button;
 	let i;
@@ -14366,7 +14368,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (142:12) {#if !startedLongRest}
+// (143:12) {#if !startedLongRest}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -14406,7 +14408,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (91:0) <ApplicationShell bind:elementRoot>
+// (92:0) <ApplicationShell bind:elementRoot>
 function create_default_slot(ctx) {
 	let form_1;
 	let p;
@@ -14635,6 +14637,7 @@ function instance($$self, $$props, $$invalidate) {
 	}
 
 	async function cancel() {
+		workflow.finished = true;
 		application.options.reject();
 		application.close();
 	}
@@ -14929,22 +14932,21 @@ function patch_rollHitDie() {
     let parts = [`1${denomination}`, "@abilities.con.mod"];
     const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
     const rollData = foundry.utils.deepClone(this.data.data);
-    let periapt = this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true));
+    let periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
     periapt = periapt && ((_periapt = periapt) === null || _periapt === void 0 ? void 0 : (_periapt$data = _periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2;
-    let durable = this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true));
+    let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
     durable = durable && ((_durable = durable) === null || _durable === void 0 ? void 0 : (_durable$data = _durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
     const conMod = this.data.data.abilities.con.mod;
     const durableMod = Math.max(2, conMod * 2);
 
     if (periapt && durable) {
-      parts = [`max((1${denomination}*2)+@abilities.con.mod,${durableMod})`];
+      parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`];
     } else if (periapt) {
-      parts = [`(1${denomination}*2)+@abilities.con.mod`];
+      parts[0] = "(" + parts[0] + "*2)";
     } else if (durable) {
-      parts = [`max(1${denomination}+@abilities.con.mod,${durableMod})`];
-    }
+      parts = [`{1${denomination}+${conMod},${durableMod}}kh`];
+    } // Call the roll helper utility
 
-    console.log(parts); // Call the roll helper utility
 
     const roll = await damageRoll({
       event: new Event("hitDie"),
@@ -15109,13 +15111,11 @@ Hooks.once("init", () => {
   registerLibwrappers();
   console.log("Rest Recovery | Initialized");
 });
-Hooks.once("ready", () => {
-  game.actors.getName("Kral").shortRest();
-});
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);
 
-  if (workflow && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)) {
+  if (workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)) {
+    console.log(workflow.recoveredSlots);
     workflow.preFinishRestMessage();
   }
 });
