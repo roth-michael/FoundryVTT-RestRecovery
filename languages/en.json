@@ -1,16 +1,78 @@
 {
     "REST-RECOVERY": {
 
+        "ClassNames": {
+            "Wizard": "Wizard",
+            "Druid": "Druid",
+            "Bard": "Bard"
+        },
+
+        "FeatureNames": {
+            "ArcaneRecovery": "Arcane Recovery",
+            "DruidRecovery": "Natural Recovery",
+            "SongOfRest": "Song of Rest",
+            "ChefFeat": "Chef",
+            "ChefTools": "Cook's Utensils"
+        },
+
+        "Fractions": {
+            "None": "None",
+            "Quarter": "Quarter",
+            "Half": "Half",
+            "Full": "Full"
+        },
+
+        "Rounding": {
+            "RoundDown": "Round Down",
+            "RoundUp": "Round Up"
+        },
+
+        "NumberToText": {
+            "1": "One",
+            "2": "Two",
+            "3": "Three",
+            "4": "Four",
+            "5": "Five"
+        },
+
+        "Chat": {
+            "RegainedSpellSlots": "In addition, they recovered spell slots:",
+            "SpellSlotList": "{number} {level} level spell slot",
+            "SpellSlotListPlural": "{number} {level} level spell slots",
+            "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",
+            "SongOfRestSelf": "{name} enjoys their own Song of Rest.",
+            "Chef": "{name} enjoys some delicious food from {chef}.",
+            "ChefSelf": "{name} enjoys their own delicious food."
+        },
+
+        "Dialogs": {
+            "ResetSettings": {
+                "Title": "Rest Recovery | Reset Settings",
+                "Content": "Are you sure you want to reset all of the Rest Recovery module settings' to their defaults?<br><strong>THIS CANNOT BE UNDONE!</strong>",
+                "Confirm": "Reset Module Settings",
+                "Cancel": "Cancel"
+            },
+            "ShortRest": {
+                "FullHealth": "You're already at full health, so you can't roll any more hit dice.",
+                "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
+                "SpellSlotsLeft": "You have {spellSlotsLeft} worth of spell slots left to recover.",
+                "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
+                "FullSpells": "You're full on spells, no need to regain any spell slots."
+            },
+            "ModuleConfig": {
+                "Title": "Rest Recovery Configuration",
+                "LongRest": "Long Rest Settings",
+                "ShortRest": "Short Rest Settings",
+                "Other": "Other Settings",
+                "Submit": "Submit Settings"
+            }
+        },
+
         "Settings": {
             "Reset": {
                 "Title": "Reset settings to default",
                 "Label": "Reset Rest Recovery Settings",
                 "Hint": "This will reset all of the module's settings back to their defaults."
-            },
-            "LongRest": {
-                "Title": "Long Rest",
-                "Label": "Configure Long Rest",
-                "Hint": "You can configure how long rests work in this dialog."
             },
             "Configure": {
                 "Title": "Module Configuration",
@@ -21,41 +83,49 @@
                 "Title": "Quick-roll Hit Dice (skip dialog)",
                 "Hint": "Skip the dialog for rolling hit dice and roll them quickly."
             },
+            "Debug": {
+                "Title": "Enable debugging",
+                "Label": "Prints debug messages to the console"
+            },
             "IgnoreInactive": {
                 "Title": "Ignore inactive player characters",
                 "Hint": "If you have a Bard with the Song of Rest or a Chef in your party, this will only consider them as present if the owning player is active and logged on."
             },
-            "Debug": {
-                "Title": "Enable debugging",
-                "Label": "Prints debug messages to the console"
-            }
-        },
-
-        "Dialogs": {
-            "ResetSettings": {
-                "Title": "Reset Rest Recovery Module Settings",
-                "Content": "Are you sure you want to reset all of the Rest Recovery module settings' to their defaults?<br><strong>THIS CANNOT BE UNDONE!</strong>",
-                "Confirm": "Reset Module Settings",
-                "Cancel": "Cancel"
-            }
-        },
-
-        "RestSettings": {
-            "LongRest": "Long Rest Settings",
-            "ShortRest": "Short Rest Settings",
-            "Other": "Other Settings",
-            "Recovery": {
-                "HitPoints": {
-                    "Title": "Hit Points Recovery Fraction",
-                    "Hint": "The fraction of missing hit points to recover on a long rest."
-                },
-                "HitDice": "Hit Dice Recovery Fraction",
-                "HitDiceRounding": "Hit Dice Recovery Rounding",
-                "Resources": " Recovery Fraction",
-                "SpellSlots": "Spell Slots Recovery Fraction",
-                "Items": "Item Uses Recovery Fraction",
-                "Feats": "Feat Recovery Fraction",
-                "Daily": "Daily uses Recovery Fraction"
+            "LongRestRollHitDice": {
+                "Title": "Enable Long Rest Hit Dice Rolls",
+                "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
+            },
+            "HitPointsRecoveryFraction": {
+                "Title": "Hit Points Recovery Fraction",
+                "Hint": "The fraction missing hit points to recover on a long rest."
+            },
+            "HitDiceRecoveryFraction": {
+                "Title": "Hit Dice Recovery Fraction",
+                "Hint": "The fraction of hit dice to recover on a long rest."
+            },
+            "HitDiceRecoveryRounding": {
+                "Title": "Hit Dice Recovery Rounding",
+                "Hint": "How to round the number of hit dice recovered."
+            },
+            "ResourcesRecoveryFraction": {
+                "Title": "Resources Recovery Fraction",
+                "Hint": "The fraction of resources to recover on a long rest."
+            },
+            "SpellSlotsRecoveryFraction": {
+                "Title": "Spell Slots Recovery Fraction",
+                "Hint": "The fraction of spell slots to recover on a long rest (pact slots excluded)."
+            },
+            "ItemUsesRecoveryFraction": {
+                "Title": "Item Uses Recovery Fraction",
+                "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a long rest."
+            },
+            "FeatUsesRecoveryFraction": {
+                "Title": "Feat Uses Recovery Fraction",
+                "Hint": "The fraction of feat uses to recover on a long rest."
+            },
+            "DailyUsesRecoveryFraction": {
+                "Title": "Daily Uses Recovery Fraction",
+                "Hint": "The fraction of daily uses to recover on a long rest (items with the \"Day\" recovery setting)."
             }
         }
     }

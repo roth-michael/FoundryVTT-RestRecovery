@@ -1,42 +1,38 @@
 import CONSTANTS from "./constants.js";
-import RestConfirmation from "./formapplications/restconfirmation.js";
-
-function defaultSettings() {
-    return {
-        "ignoreInactivePlayers": {
-            name: "REST-RECOVERY.Settings.IgnoreInactive.Title",
-            hint: "REST-RECOVERY.Settings.IgnoreInactive.Hint",
-            scope: "world",
-            config: true,
-            default: false,
-            type: Boolean
-        },
-        "quickHDRoll": {
-            name: "REST-RECOVERY.Settings.QuickHDRoll.Title",
-            hint: "REST-RECOVERY.Settings.QuickHDRoll.Hint",
-            scope: "client",
-            config: true,
-            default: true,
-            type: Boolean
-        }
-    }
-}
+import SettingsShim from "./formapplications/settings/settings.js";
 
 export default function registerSettings() {
+
+    game.settings.registerMenu(CONSTANTS.MODULE_NAME, "resetToDefaults", {
+        name: "REST-RECOVERY.Settings.Reset.Title",
+        label: "REST-RECOVERY.Settings.Reset.Label",
+        hint: "REST-RECOVERY.Settings.Reset.Hint",
+        icon: "fas fa-refresh",
+        type: ResetSettingsDialog,
+        restricted: true
+    });
 
     game.settings.registerMenu(CONSTANTS.MODULE_NAME, "configureRest", {
         name: "REST-RECOVERY.Settings.Configure.Title",
         label: "REST-RECOVERY.Settings.Configure.Label",
         hint: "REST-RECOVERY.Settings.Configure.Hint",
         icon: "fas fa-bed",
-        type: RestConfirmation,
+        type: SettingsShim,
         restricted: true
     });
 
-    const settings = defaultSettings();
-    for (const [name, data] of Object.entries(settings)) {
+    for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
         game.settings.register(CONSTANTS.MODULE_NAME, name, data);
     }
+
+    game.settings.register(CONSTANTS.MODULE_NAME, "quick-hd-roll", {
+        name: "REST-RECOVERY.Settings.QuickHDRoll.Title",
+        hint: "REST-RECOVERY.Settings.QuickHDRoll.Hint",
+        scope: "client",
+        config: true,
+        default: true,
+        type: Boolean
+    });
 
     game.settings.register(CONSTANTS.MODULE_NAME, "debug", {
         name: "REST-RECOVERY.Settings.Debug.Title",
@@ -74,8 +70,7 @@ class ResetSettingsDialog extends FormApplication {
 }
 
 async function resetSettings() {
-    const settings = defaultSettings();
-    for (const [name, data] of Object.entries(settings)) {
+    for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
         await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
     }
     window.location.reload();
