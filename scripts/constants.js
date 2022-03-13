@@ -4,6 +4,7 @@ const CONSTANTS = {
     SETTINGS: {
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
+        PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
         HP_MULTIPLIER: "recovery-hitpoints",
         HD_MULTIPLIER: "recovery-hitdice",
         HD_ROUNDING: "recovery-rounding",
@@ -29,6 +30,16 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRestRollHitDice.Hint",
                 scope: "world",
                 group: "longrest",
+                config: false,
+                default: false,
+                type: Boolean
+            },
+            [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE]: {
+                name: "REST-RECOVERY.Settings.PreLongRestRegainHitDice.Title",
+                hint: "REST-RECOVERY.Settings.PreLongRestRegainHitDice.Hint",
+                scope: "world",
+                group: "longrest",
+                validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
                 config: false,
                 default: false,
                 type: Boolean

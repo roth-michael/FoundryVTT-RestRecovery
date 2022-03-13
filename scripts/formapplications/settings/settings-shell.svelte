@@ -9,8 +9,11 @@
     export let elementRoot;
     let form;
 
+    let settingsMap = new Map();
     let settings = Object.entries(CONSTANTS.DEFAULT_SETTINGS).map(entry => {
         entry[1].value = game.settings.get(CONSTANTS.MODULE_NAME, entry[0]);
+        entry[1].disabled = false;
+        settingsMap.set(entry[0], entry[1]);
         return entry;
     }).reduce(function (r, a) {
         r[a[1].group] = r[a[1].group] || [];
@@ -18,8 +21,23 @@
         return r;
     }, Object.create(null));
 
+    validateSettings();
+
+    function validateSettings(){
+        for(const group of Object.keys(settings)){
+            for(let index = 0; index < settings[group].length; index++){
+                if(!settings[group][index][1].validate) continue;
+                settings[group][index][1].disabled = !settingsMap.get(settings[group][index][1].validate).value;
+
+                if(!settings[group][index][1].disabled) continue;
+                settings[group][index][1].value = settings[group][index][1].default;
+            }
+        }
+    }
+
     function resetSetting(group, index){
         settings[group][index][1].value = settings[group][index][1].default;
+        validateSettings();
     }
 
     async function requestSubmit(){
@@ -57,15 +75,15 @@
 
                 {#each settings[group] as [key, setting], setting_index (key)}
                 <div class="form-group">
-                    <label>{localize(setting.name)} <a><i title="Reset setting" class="fas fa-undo reset-setting" on:click={resetSetting(group, setting_index)}></i></a></label>
+                    <label>{localize(setting.name)} <a><i title="Reset setting" class="fas fa-undo reset-setting" on:click={() => { resetSetting(group, setting_index)}}></i></a></label>
                     <div class="form-fields">
                         {#if typeof setting.value === "boolean"}
 
-                            <input type="checkbox" bind:checked={setting.value}>
+                            <input type="checkbox" bind:checked={setting.value} disabled={setting.disabled} on:change={validateSettings}>
 
                         {:else if setting.choices}
 
-                            <select bind:value={setting.value}>
+                            <select bind:value={setting.value} on:change={validateSettings}>
                             {#each Object.entries(setting.choices) as [key, choice], index (index)}
                                 <option value="{key}">{localize(choice)}</option>
                             {/each}
@@ -73,7 +91,7 @@
 
                         {:else}
 
-                            <input bind:value={setting.value}>
+                            <input bind:value={setting.value} on:change={validateSettings}>
 
                         {/if}
                     </div>
@@ -122,7 +140,16 @@
     padding-bottom: 0.5rem;
   }
 
+  label {
+    flex: 1 0 auto;
+  }
+
+  .form-fields{
+    flex: 0 1 auto;
+  }
+
   select {
+    min-width: 200px;
     max-width: 200px;
   }
 

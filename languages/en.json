@@ -99,6 +99,10 @@
                 "Title": "Enable Long Rest Hit Dice Rolls",
                 "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
             },
+            "PreLongRestRegainHitDice": {
+                "Title": "Enable Hit Dice Recovery Before Finishing Long Rest",
+                "Hint": "This makes it so that hit dice are recovered before finishing the long rest."
+            },
             "HitPointsRecoveryFraction": {
                 "Title": "Hit Points Recovery Fraction",
                 "Hint": "The fraction missing hit points to recover on a long rest."
