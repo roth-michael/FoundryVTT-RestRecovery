@@ -7,6 +7,8 @@ export default function registerLibwrappers() {
 
     patch_shortRest();
     patch_longRest();
+    patch_rollHitDie();
+
 
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
@@ -74,6 +76,94 @@ function patch_longRest(){
     );
 }
 
+function patch_rollHitDie(){
+
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Actor.documentClass.prototype.rollHitDie",
+        async function(denomination, {dialog=true}={}) {
+
+            // If no denomination was provided, choose the first available
+            let cls = null;
+            if ( !denomination ) {
+                cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);
+                if ( !cls ) return null;
+                denomination = cls.data.data.hitDice;
+            }
+
+            // Otherwise locate a class (if any) which has an available hit die of the requested denomination
+            else {
+                cls = this.items.find(i => {
+                    const d = i.data.data;
+                    return (d.hitDice === denomination) && ((d.hitDiceUsed || 0) < (d.levels || 1));
+                });
+            }
+
+            // If no class is available, display an error notification
+            if ( !cls ) {
+                ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {name: this.name, formula: denomination}));
+                return null;
+            }
+
+            // Prepare roll data
+            let parts = [`1${denomination}`, "@abilities.con.mod"];
+            const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
+            const rollData = foundry.utils.deepClone(this.data.data);
+
+            let periapt = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Periapt"));
+            periapt = periapt && periapt.data.data.attunement === 2;
+
+            let durable = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Durable"));
+            durable = durable && durable.data.type === "feat";
+
+            const conMod = this.data.data.abilities.con.mod;
+
+            if (periapt && durable) {
+
+                parts = [`{1${denomination}+${conMod},${Math.max(conMod,2)}}kh*2`]
+
+            } else {
+
+                if (periapt) {
+                    parts[0] = "(" + parts[0];
+                    parts[1] += ")*2";
+                }
+
+                if (durable) {
+                    parts[0] = "{" + parts[0]
+                    parts[1] += `,${conMod*2}}kh`
+                }
+            }
+
+            // Call the roll helper utility
+            const roll = await damageRoll({
+                event: new Event("hitDie"),
+                parts: parts,
+                data: rollData,
+                title: title,
+                allowCritical: false,
+                fastForward: !dialog,
+                dialogOptions: {width: 350},
+                messageData: {
+                    speaker: ChatMessage.getSpeaker({actor: this}),
+                    "flags.dnd5e.roll": {type: "hitDie"}
+                }
+            });
+            if ( !roll ) return null;
+
+            // Adjust actor data
+            await cls.update({"data.hitDiceUsed": cls.data.data.hitDiceUsed + 1});
+            const hp = this.data.data.attributes.hp;
+            const dhp = Math.min(hp.max + (hp.tempmax ?? 0) - hp.value, roll.total);
+            await this.update({"data.attributes.hp.value": hp.value + dhp});
+            return roll;
+
+
+        },
+        "OVERRIDE"
+    );
+}
+
 function patch_getRestHitPointRecovery(){
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
@@ -122,4 +212,64 @@ function patch_getRestItemUsesRecovery(){
             return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestItemUsesRecovery")
         }
     )
+}
+
+/*
+    Shamelessly stolen from the D&D 5e system, as these cannot be imported
+ */
+
+
+
+async function damageRoll({
+    parts=[], data, // Roll creation
+    critical=false, criticalBonusDice, criticalMultiplier, multiplyNumeric, powerfulCritical,
+    criticalBonusDamage, // Damage customization
+    fastForward=false, event, allowCritical=true, template, title, dialogOptions, // Dialog configuration
+    chatMessage=true, messageData={}, rollMode, speaker, flavor // Chat Message customization
+}={}) {
+
+    // Handle input arguments
+    const defaultRollMode = rollMode || game.settings.get("core", "rollMode");
+
+    // Construct the DamageRoll instance
+    const formula = parts.join(" + ");
+    const {isCritical, isFF} = _determineCriticalMode({critical, fastForward, event});
+    const roll = new CONFIG.Dice.DamageRoll(formula, data, {
+        flavor: flavor || title,
+        critical: isFF ? isCritical : false,
+        criticalBonusDice,
+        criticalMultiplier,
+        criticalBonusDamage,
+        multiplyNumeric: multiplyNumeric ?? game.settings.get("dnd5e", "criticalDamageModifiers"),
+        powerfulCritical: powerfulCritical ?? game.settings.get("dnd5e", "criticalDamageMaxDice")
+    });
+
+    // Prompt a Dialog to further configure the DamageRoll
+    if ( !isFF ) {
+        const configured = await roll.configureDialog({
+            title,
+            defaultRollMode: defaultRollMode,
+            defaultCritical: isCritical,
+            template,
+            allowCritical
+        }, dialogOptions);
+        if ( configured === null ) return null;
+    }
+
+    // Evaluate the configured roll
+    await roll.evaluate({async: true});
+
+    // Create a Chat Message
+    if ( speaker ) {
+        console.warn("You are passing the speaker argument to the damageRoll function directly which should instead be passed as an internal key of messageData");
+        messageData.speaker = speaker;
+    }
+    if ( roll && chatMessage ) await roll.toMessage(messageData);
+    return roll;
+}
+
+function _determineCriticalMode({event, critical=false, fastForward=false}={}) {
+    const isFF = fastForward || (event && (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey));
+    if ( event?.altKey ) critical = true;
+    return {isFF, isCritical: critical};
 }

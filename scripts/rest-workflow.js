@@ -25,7 +25,7 @@ export default class RestWorkflow {
         this.longRest = longRest;
         this.fetchHealthData();
         this.fetchSpellData();
-        this.fetchOtherClassFeatures();
+        this.fetchFeatures();
     }
 
     get healthPercentage(){
@@ -129,18 +129,46 @@ export default class RestWorkflow {
             this.spellData.className = game.i18n.localize("REST-RECOVERY.ClassNames.Druid");
         }
 
+
+        this.patchSpellFeature();
+
     }
 
-    fetchOtherClassFeatures(){
+    async patchSpellFeature(){
+        if(this.spellData.feature &&
+            (
+                this.spellData.feature.data.data.activation.type !== "special" ||
+                this.spellData.feature.data.data.uses.value === null ||
+                this.spellData.feature.data.data.uses.max === null ||
+                this.spellData.feature.data.data.uses.per !== "lr"
+            )
+        ){
+            await this.actor.updateEmbeddedDocuments("Item", [{
+                _id: this.spellData.feature.id,
+                "data.activation.type": "special",
+                "data.uses.value": 1,
+                "data.uses.max": 1,
+                "data.uses.per": "lr",
+            }]);
+            ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
+                actorName: this.actor.name,
+                recoveryName: this.spellData.feature.name
+            }));
+        }
+    }
 
-        this.classFeatures = {
+    fetchFeatures(){
+
+        this.features = {
             bard: false,
             bardLevel: false,
             songOfRest: false,
             usedSongOfRest: false,
             chef: false,
             usedChef: false,
-            usedAllFeatures: false
+            usedAllFeatures: false,
+            periapt: false,
+            durable: false
         }
 
         const ignoreInactivePlayers = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
@@ -163,17 +191,17 @@ export default class RestWorkflow {
                 const bardClass = actor.items.find(item => item.type === "class" && item.name === game.i18n.format("REST-RECOVERY.ClassNames.Bard"));
                 if(bardClass){
                     const level = bardClass.data.data.levels;
-                    this.classFeatures.bard = this.classFeatures.bardLevel > level ? this.classFeatures.bard : actor;
-                    this.classFeatures.bardLevel = this.classFeatures.bardLevel > level ? this.classFeatures.bardLevel : level;
+                    this.features.bard = this.features.bardLevel > level ? this.features.bard : actor;
+                    this.features.bardLevel = this.features.bardLevel > level ? this.features.bardLevel : level;
 
-                    if(this.classFeatures.bardLevel >= 17){
-                        this.classFeatures.songOfRest = "1d12";
-                    }else if(this.classFeatures.bardLevel >= 13){
-                        this.classFeatures.songOfRest = "1d10";
-                    }else if(this.classFeatures.bardLevel >= 9){
-                        this.classFeatures.songOfRest = "1d8";
-                    }else if(this.classFeatures.bardLevel >= 2){
-                        this.classFeatures.songOfRest = "1d6";
+                    if(this.features.bardLevel >= 17){
+                        this.features.songOfRest = "1d12";
+                    }else if(this.features.bardLevel >= 13){
+                        this.features.songOfRest = "1d10";
+                    }else if(this.features.bardLevel >= 9){
+                        this.features.songOfRest = "1d8";
+                    }else if(this.features.bardLevel >= 2){
+                        this.features.songOfRest = "1d6";
                     }
                 }
             }
@@ -181,10 +209,10 @@ export default class RestWorkflow {
             const chefFeat = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.ChefFeat"));
             const chefTools = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.ChefTools"));
             if(chefFeat && chefTools){
-                if(!this.classFeatures.chef){
-                    this.classFeatures.chef = [];
+                if(!this.features.chef){
+                    this.features.chef = [];
                 }
-                this.classFeatures.chef.push(actor);
+                this.features.chef.push(actor);
             }
 
         }
@@ -201,29 +229,29 @@ export default class RestWorkflow {
 
         let hpRegained = 0;
 
-        if(this.classFeatures.songOfRest && !this.classFeatures.usedSongOfRest){
-            const roll = new Roll(this.classFeatures.songOfRest).evaluate({ async: false });
+        if(this.features.songOfRest && !this.features.usedSongOfRest){
+            const roll = new Roll(this.features.songOfRest).evaluate({ async: false });
             hpRegained += roll.total;
 
-            const isOwnBard = this.classFeatures.bard === this.actor;
+            const isOwnBard = this.features.bard === this.actor;
             await roll.toMessage({
                 flavor: game.i18n.format("REST-RECOVERY.Chat.SongOfRest" + (isOwnBard ? "Self" : ""), {
                     name: this.actor.name,
-                    bard: this.classFeatures.bard.name
+                    bard: this.features.bard.name
                 }),
                 speaker: ChatMessage.getSpeaker({ actor: this.actor })
             })
 
-            this.classFeatures.usedSongOfRest = true;
+            this.features.usedSongOfRest = true;
         }
 
-        if(this.classFeatures.chef.length > 0 && !this.classFeatures.usedChef){
+        if(this.features.chef.length > 0 && !this.features.usedChef){
 
-            const chefActor = this.classFeatures.chef[Math.floor(Math.random() * this.classFeatures.chef.length)];
+            const chefActor = this.features.chef[Math.floor(Math.random() * this.features.chef.length)];
             const roll = new Roll('1d8').evaluate({ async: false });
             hpRegained += roll.total;
 
-            const isOwnChef = this.classFeatures.bard === this.actor;
+            const isOwnChef = this.features.bard === this.actor;
             await roll.toMessage({
                 flavor: game.i18n.format("REST-RECOVERY.Chat.Chef" + (isOwnChef ? "Self" : ""), {
                     name: this.actor.name,
@@ -232,7 +260,7 @@ export default class RestWorkflow {
                 speaker: ChatMessage.getSpeaker({ actor: this.actor })
             })
 
-            this.classFeatures.usedChef = true;
+            this.features.usedChef = true;
 
         }
 

@@ -12,8 +12,12 @@
             "DruidRecovery": "Natural Recovery",
             "SongOfRest": "Song of Rest",
             "ChefFeat": "Chef",
-            "ChefTools": "Cook's Utensils"
+            "ChefTools": "Cook's Utensils",
+            "Periapt": "Periapt of Wound Closure",
+            "Durable": "Durable"
         },
+
+        "PatchedRecovery": "{actorName}'s {recoveryName} has been patched, it now has 1/1 long rest uses.",
 
         "Fractions": {
             "None": "None",

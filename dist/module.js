@@ -11763,7 +11763,7 @@ class RestWorkflow {
     this.longRest = longRest;
     this.fetchHealthData();
     this.fetchSpellData();
-    this.fetchOtherClassFeatures();
+    this.fetchFeatures();
   }
 
   get healthPercentage() {
@@ -11866,17 +11866,37 @@ class RestWorkflow {
       this.spellData.pointsTotal = Math.ceil(druidLevel / 2);
       this.spellData.className = game.i18n.localize("REST-RECOVERY.ClassNames.Druid");
     }
+
+    this.patchSpellFeature();
   }
 
-  fetchOtherClassFeatures() {
-    this.classFeatures = {
+  async patchSpellFeature() {
+    if (this.spellData.feature && (this.spellData.feature.data.data.activation.type !== "special" || this.spellData.feature.data.data.uses.value === null || this.spellData.feature.data.data.uses.max === null || this.spellData.feature.data.data.uses.per !== "lr")) {
+      await this.actor.updateEmbeddedDocuments("Item", [{
+        _id: this.spellData.feature.id,
+        "data.activation.type": "special",
+        "data.uses.value": 1,
+        "data.uses.max": 1,
+        "data.uses.per": "lr"
+      }]);
+      ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
+        actorName: this.actor.name,
+        recoveryName: this.spellData.feature.name
+      }));
+    }
+  }
+
+  fetchFeatures() {
+    this.features = {
       bard: false,
       bardLevel: false,
       songOfRest: false,
       usedSongOfRest: false,
       chef: false,
       usedChef: false,
-      usedAllFeatures: false
+      usedAllFeatures: false,
+      periapt: false,
+      durable: false
     };
     const ignoreInactivePlayers = game.settings.get(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
     let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
@@ -11899,17 +11919,17 @@ class RestWorkflow {
 
         if (bardClass) {
           const level = bardClass.data.data.levels;
-          this.classFeatures.bard = this.classFeatures.bardLevel > level ? this.classFeatures.bard : actor;
-          this.classFeatures.bardLevel = this.classFeatures.bardLevel > level ? this.classFeatures.bardLevel : level;
+          this.features.bard = this.features.bardLevel > level ? this.features.bard : actor;
+          this.features.bardLevel = this.features.bardLevel > level ? this.features.bardLevel : level;
 
-          if (this.classFeatures.bardLevel >= 17) {
-            this.classFeatures.songOfRest = "1d12";
-          } else if (this.classFeatures.bardLevel >= 13) {
-            this.classFeatures.songOfRest = "1d10";
-          } else if (this.classFeatures.bardLevel >= 9) {
-            this.classFeatures.songOfRest = "1d8";
-          } else if (this.classFeatures.bardLevel >= 2) {
-            this.classFeatures.songOfRest = "1d6";
+          if (this.features.bardLevel >= 17) {
+            this.features.songOfRest = "1d12";
+          } else if (this.features.bardLevel >= 13) {
+            this.features.songOfRest = "1d10";
+          } else if (this.features.bardLevel >= 9) {
+            this.features.songOfRest = "1d8";
+          } else if (this.features.bardLevel >= 2) {
+            this.features.songOfRest = "1d6";
           }
         }
       }
@@ -11918,11 +11938,11 @@ class RestWorkflow {
       const chefTools = actor.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.ChefTools"));
 
       if (chefFeat && chefTools) {
-        if (!this.classFeatures.chef) {
-          this.classFeatures.chef = [];
+        if (!this.features.chef) {
+          this.features.chef = [];
         }
 
-        this.classFeatures.chef.push(actor);
+        this.features.chef.push(actor);
       }
     }
   }
@@ -11937,34 +11957,34 @@ class RestWorkflow {
     if (this.longRest) return true;
     let hpRegained = 0;
 
-    if (this.classFeatures.songOfRest && !this.classFeatures.usedSongOfRest) {
-      const _roll = new Roll(this.classFeatures.songOfRest).evaluate({
+    if (this.features.songOfRest && !this.features.usedSongOfRest) {
+      const _roll = new Roll(this.features.songOfRest).evaluate({
         async: false
       });
 
       hpRegained += _roll.total;
-      const isOwnBard = this.classFeatures.bard === this.actor;
+      const isOwnBard = this.features.bard === this.actor;
       await _roll.toMessage({
         flavor: game.i18n.format("REST-RECOVERY.Chat.SongOfRest" + (isOwnBard ? "Self" : ""), {
           name: this.actor.name,
-          bard: this.classFeatures.bard.name
+          bard: this.features.bard.name
         }),
         speaker: ChatMessage.getSpeaker({
           actor: this.actor
         })
       });
-      this.classFeatures.usedSongOfRest = true;
+      this.features.usedSongOfRest = true;
     }
 
-    if (this.classFeatures.chef.length > 0 && !this.classFeatures.usedChef) {
-      const chefActor = this.classFeatures.chef[Math.floor(Math.random() * this.classFeatures.chef.length)];
+    if (this.features.chef.length > 0 && !this.features.usedChef) {
+      const chefActor = this.features.chef[Math.floor(Math.random() * this.features.chef.length)];
 
       const _roll2 = new Roll('1d8').evaluate({
         async: false
       });
 
       hpRegained += _roll2.total;
-      const isOwnChef = this.classFeatures.bard === this.actor;
+      const isOwnChef = this.features.bard === this.actor;
       await _roll2.toMessage({
         flavor: game.i18n.format("REST-RECOVERY.Chat.Chef" + (isOwnChef ? "Self" : ""), {
           name: this.actor.name,
@@ -11974,7 +11994,7 @@ class RestWorkflow {
           actor: this.actor
         })
       });
-      this.classFeatures.usedChef = true;
+      this.features.usedChef = true;
     }
 
     if (hpRegained > 0) {
@@ -13901,6 +13921,7 @@ class LongRestDialog extends TJSDialog {
 function registerLibwrappers() {
   patch_shortRest();
   patch_longRest();
+  patch_rollHitDie();
   patch_getRestHitPointRecovery();
   patch_getRestHitDiceRecovery();
   patch_getRestResourceRecovery();
@@ -13962,6 +13983,94 @@ function patch_longRest() {
   }, "OVERRIDE");
 }
 
+function patch_rollHitDie() {
+  libWrapper.register(CONSTANTS.MODULE_NAME, "CONFIG.Actor.documentClass.prototype.rollHitDie", async function (denomination, {
+    dialog = true
+  } = {}) {
+    var _hp$tempmax;
+
+    // If no denomination was provided, choose the first available
+    let cls = null;
+
+    if (!denomination) {
+      cls = this.itemTypes.class.find(c => c.data.data.hitDiceUsed < c.data.data.levels);
+      if (!cls) return null;
+      denomination = cls.data.data.hitDice;
+    } // Otherwise locate a class (if any) which has an available hit die of the requested denomination
+    else {
+      cls = this.items.find(i => {
+        const d = i.data.data;
+        return d.hitDice === denomination && (d.hitDiceUsed || 0) < (d.levels || 1);
+      });
+    } // If no class is available, display an error notification
+
+
+    if (!cls) {
+      ui.notifications.error(game.i18n.format("DND5E.HitDiceWarn", {
+        name: this.name,
+        formula: denomination
+      }));
+      return null;
+    } // Prepare roll data
+
+
+    let parts = [`1${denomination}`, "@abilities.con.mod"];
+    const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
+    const rollData = foundry.utils.deepClone(this.data.data);
+    let periapt = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Periapt"));
+    periapt = periapt && periapt.data.data.attunement === 2;
+    let durable = this.items.getName(game.i18n.format("REST-RECOVERY.FeatureNames.Durable"));
+    durable = durable && durable.data.type === "feat";
+    const conMod = this.data.data.abilities.con.mod;
+
+    if (periapt && durable) {
+      parts = [`{1${denomination}+${conMod},${Math.max(conMod, 2)}}kh*2`];
+    } else {
+      if (periapt) {
+        parts[0] = "(" + parts[0];
+        parts[1] += ")*2";
+      }
+
+      if (durable) {
+        parts[0] = "{" + parts[0];
+        parts[1] += `,${conMod * 2}}kh`;
+      }
+    } // Call the roll helper utility
+
+
+    const roll = await damageRoll({
+      event: new Event("hitDie"),
+      parts: parts,
+      data: rollData,
+      title: title,
+      allowCritical: false,
+      fastForward: !dialog,
+      dialogOptions: {
+        width: 350
+      },
+      messageData: {
+        speaker: ChatMessage.getSpeaker({
+          actor: this
+        }),
+        "flags.dnd5e.roll": {
+          type: "hitDie"
+        }
+      }
+    });
+    if (!roll) return null; // Adjust actor data
+
+    await cls.update({
+      "data.hitDiceUsed": cls.data.data.hitDiceUsed + 1
+    });
+    const hp = this.data.data.attributes.hp;
+    const dhp = Math.min(hp.max + ((_hp$tempmax = hp.tempmax) !== null && _hp$tempmax !== void 0 ? _hp$tempmax : 0) - hp.value, roll.total);
+    await this.update({
+      "data.attributes.hp.value": hp.value + dhp
+    });
+    return roll;
+  }, "OVERRIDE");
+}
+
 function patch_getRestHitPointRecovery() {
   libWrapper.register(CONSTANTS.MODULE_NAME, "CONFIG.Actor.documentClass.prototype._getRestHitPointRecovery", function (wrapped, args) {
     return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitPointRecovery");
@@ -13990,6 +14099,97 @@ function patch_getRestItemUsesRecovery() {
   libWrapper.register(CONSTANTS.MODULE_NAME, "CONFIG.Actor.documentClass.prototype._getRestItemUsesRecovery", function (wrapped, args) {
     return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestItemUsesRecovery");
   });
+}
+/*
+    Shamelessly stolen from the D&D 5e system, as these cannot be imported
+ */
+
+
+async function damageRoll({
+  parts = [],
+  data,
+  // Roll creation
+  critical = false,
+  criticalBonusDice,
+  criticalMultiplier,
+  multiplyNumeric,
+  powerfulCritical,
+  criticalBonusDamage,
+  // Damage customization
+  fastForward = false,
+  event,
+  allowCritical = true,
+  template,
+  title,
+  dialogOptions,
+  // Dialog configuration
+  chatMessage = true,
+  messageData = {},
+  rollMode,
+  speaker,
+  flavor // Chat Message customization
+
+} = {}) {
+  // Handle input arguments
+  const defaultRollMode = rollMode || game.settings.get("core", "rollMode"); // Construct the DamageRoll instance
+
+  const formula = parts.join(" + ");
+
+  const {
+    isCritical,
+    isFF
+  } = _determineCriticalMode({
+    critical,
+    fastForward,
+    event
+  });
+
+  const roll = new CONFIG.Dice.DamageRoll(formula, data, {
+    flavor: flavor || title,
+    critical: isFF ? isCritical : false,
+    criticalBonusDice,
+    criticalMultiplier,
+    criticalBonusDamage,
+    multiplyNumeric: multiplyNumeric !== null && multiplyNumeric !== void 0 ? multiplyNumeric : game.settings.get("dnd5e", "criticalDamageModifiers"),
+    powerfulCritical: powerfulCritical !== null && powerfulCritical !== void 0 ? powerfulCritical : game.settings.get("dnd5e", "criticalDamageMaxDice")
+  }); // Prompt a Dialog to further configure the DamageRoll
+
+  if (!isFF) {
+    const configured = await roll.configureDialog({
+      title,
+      defaultRollMode: defaultRollMode,
+      defaultCritical: isCritical,
+      template,
+      allowCritical
+    }, dialogOptions);
+    if (configured === null) return null;
+  } // Evaluate the configured roll
+
+
+  await roll.evaluate({
+    async: true
+  }); // Create a Chat Message
+
+  if (speaker) {
+    console.warn("You are passing the speaker argument to the damageRoll function directly which should instead be passed as an internal key of messageData");
+    messageData.speaker = speaker;
+  }
+
+  if (roll && chatMessage) await roll.toMessage(messageData);
+  return roll;
+}
+
+function _determineCriticalMode({
+  event,
+  critical = false,
+  fastForward = false
+} = {}) {
+  const isFF = fastForward || event && (event.shiftKey || event.altKey || event.ctrlKey || event.metaKey);
+  if (event !== null && event !== void 0 && event.altKey) critical = true;
+  return {
+    isFF,
+    isCritical: critical
+  };
 }
 
 Hooks.once("init", () => {

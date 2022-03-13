@@ -38,4 +38,4 @@ Hooks.on('updateActor', (actor) => {
 
 Hooks.on("restCompleted", (actor) => {
     RestWorkflow.remove(actor);
-})
+});
