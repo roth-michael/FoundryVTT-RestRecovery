@@ -4,29 +4,13 @@ export function ordinalSuffixOf(i) {
     let j = i % 10;
     let k = i % 100;
     if (j === 1 && k !== 11) {
-        return i + 'st';
+        return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'st'}`);
+    }else if (j === 2 && k !== 12) {
+        return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'nd'}`);
+    }else if (j === 3 && k !== 13) {
+        return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'rd'}`);
     }
-    if (j === 2 && k !== 12) {
-        return i + 'nd';
-    }
-    if (j === 3 && k !== 13) {
-        return i + 'rd';
-    }
-    return i + 'th';
-}
-
-export function dialogLayout({
-                                 title = "Short Rest",
-                                 message,
-                                 icon = "fas fa-exclamation-triangle",
-                             } = {}) {
-    return `
-    <div style="margin-bottom: 1rem; font-size: 0.9rem; text-align: center;">
-        <p><i style="font-size:3rem;" class="${icon}"></i></p>
-        <p style="margin-bottom: 1rem"><strong style="font-size:1.2rem;">${title}</strong></p>
-        <p>${message}</p>
-    </div>
-    `;
+    return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'th'}`);
 }
 
 export function determineLongRestMultiplier(settingKey) {

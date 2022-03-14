@@ -4,6 +4,7 @@
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
     import CONSTANTS from "../../constants.js";
     import { getSetting } from "../../lib/lib.js";
+    import Setting from "./Setting.svelte";
 
     const { application } = getContext('external');
 
@@ -11,7 +12,7 @@
     let form;
 
     let settingsMap = new Map();
-    let settings = Object.entries(CONSTANTS.DEFAULT_SETTINGS).map(entry => {
+    let settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
         entry[1].value = getSetting(entry[0]);
         entry[1].disabled = false;
         settingsMap.set(entry[0], entry[1]);
@@ -66,7 +67,7 @@
         <nav class="tabs" data-group="primary">
             <a class="item active" data-tab="longrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.LongRest")}</a>
             <a class="item" data-tab="shortrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ShortRest")}</a>
-            <!--<a class="item" data-tab="other">{localize("REST-RECOVERY.Dialogs.ModuleConfig.Other")}</a>-->
+            <a class="item" data-tab="itemnames">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ItemNames")}</a>
         </nav>
 
         <section class="tab-body">
@@ -75,32 +76,8 @@
             <div class="tab flex" data-group="primary" data-tab="{group}">
 
                 {#each settings[group] as [key, setting], setting_index (key)}
-                <div class="form-group">
-                    <label>{localize(setting.name)} <a><i title="Reset setting" class="fas fa-undo reset-setting" on:click={() => { resetSetting(group, setting_index)}}></i></a></label>
-                    <div class="form-fields">
-                        {#if typeof setting.value === "boolean"}
-
-                            <input type="checkbox" bind:checked={setting.value} disabled={setting.disabled} on:change={validateSettings}>
-
-                        {:else if setting.choices}
-
-                            <select bind:value={setting.value} on:change={validateSettings}>
-                            {#each Object.entries(setting.choices) as [key, choice], index (index)}
-                                <option value="{key}">{localize(choice)}</option>
-                            {/each}
-                            </select>
-
-                        {:else if typeof setting.value === 'number'}
-
-                            <input type="number" bind:value={setting.value} on:change={validateSettings}>
-
-                        {:else}
-
-                            <input type="text" bind:value={setting.value} on:change={validateSettings}>
-
-                        {/if}
-                    </div>
-                    <p class="notes">{localize(setting.hint)}</p>
+                <div class="setting">
+                    <Setting group="{group}" setting_index="{setting_index}" setting={setting} resetSetting="{resetSetting}" on:change={validateSettings} />
                 </div>
                 {/each}
 
@@ -116,16 +93,6 @@
 
 <style lang="scss">
 
-  .reset-setting {
-    font-size: 0.75rem;
-    margin-left: 0.5rem;
-    opacity: 0.5;
-    transition: opacity 250ms;
-    &:hover{
-      opacity: 1.0;
-    }
-  }
-
   .tabs {
     border-bottom: 1px solid rgba(0,0,0,0.25);
     margin-bottom: 0.5rem;
@@ -139,26 +106,10 @@
     padding: 5px;
   }
 
-  .form-group:not(:last-child){
+  .setting:not(:last-child){
     border-bottom: 1px solid rgba(0,0,0,0.25);
     margin-bottom: 0.5rem;
     padding-bottom: 0.5rem;
-  }
-
-  label {
-    flex: 1 0 auto;
-  }
-
-  .form-fields{
-    flex: 0 1 auto;
-  }
-
-  select {
-    min-width: 200px;
-  }
-
-  input[type="text"], input[type="number"]{
-    min-width: 300px;
   }
 
   footer{

@@ -9,9 +9,13 @@ export default class RestWorkflow {
         this.actor = actor;
         this.longRest = longRest;
         this.finished = false;
+    }
+
+    async setup(){
         this.fetchHealthData();
-        this.fetchSpellData();
         this.fetchFeatures();
+        this.fetchSpellData();
+        return this;
     }
 
     get healthPercentage() {
@@ -46,7 +50,7 @@ export default class RestWorkflow {
         this.remove(actor);
         const workflow = new this(actor, longRest);
         rests.set(actor.uuid, workflow);
-        return workflow;
+        return workflow.setup();
     }
 
     static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
@@ -75,7 +79,11 @@ export default class RestWorkflow {
             startingHealth: this.actor.data.data.attributes.hp.value,
             availableHitDice: this.getHitDice(),
             totalHitDice: this.totalHitDice,
-            totalHealthRegained: 0,
+            hitPointsToRegain: 0
+        }
+        if(getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL){
+            let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
+            this.healthData.hitPointsToRegain = hitPointsRecovered;
         }
     }
 
@@ -91,7 +99,7 @@ export default class RestWorkflow {
         }, {});
     }
 
-    fetchSpellData() {
+    async fetchSpellData() {
 
         this.spellData = {
             slots: {},
@@ -104,7 +112,6 @@ export default class RestWorkflow {
 
         const wizardLevel = this.actor.items.find(item => {
             return item.type === "class"
-                && item.data.data.levels >= 2
                 && (item.name === getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true));
         })?.data?.data?.levels || 0;
         const wizardFeature = this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
@@ -136,8 +143,10 @@ export default class RestWorkflow {
             }
         }
 
-        const wizardFeatureUse = wizardLevel && wizardFeature && wizardFeature?.data?.data?.uses?.value > 0;
-        const druidFeatureUse = druidLevel && druidFeature && druidFeature?.data?.data?.uses?.value > 0;
+        const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature);
+        const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature);
+
+
 
         if (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse)) {
             this.spellData.has_feature_use = wizardFeatureUse;
@@ -151,21 +160,20 @@ export default class RestWorkflow {
             this.spellData.className = getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
 
-        this.patchSpellFeature();
-
     }
 
-    async patchSpellFeature() {
-        if (this.spellData.feature &&
+    patchSpellFeature(feature) {
+
+        if (feature &&
             (
-                this.spellData.feature.data.data.activation.type !== "special" ||
-                this.spellData.feature.data.data.uses.value === null ||
-                this.spellData.feature.data.data.uses.max === null ||
-                this.spellData.feature.data.data.uses.per !== "lr"
+                feature.data.data.activation.type !== "special" ||
+                feature.data.data.uses.value === null ||
+                feature.data.data.uses.max === null ||
+                feature.data.data.uses.per !== "lr"
             )
         ) {
-            await this.actor.updateEmbeddedDocuments("Item", [{
-                _id: this.spellData.feature.id,
+            this.actor.updateEmbeddedDocuments("Item", [{
+                _id: feature.id,
                 "data.activation.type": "special",
                 "data.uses.value": 1,
                 "data.uses.max": 1,
@@ -175,7 +183,11 @@ export default class RestWorkflow {
                 actorName: this.actor.name,
                 recoveryName: this.spellData.feature.name
             }));
+            return true;
         }
+
+        return feature.data.data.uses.value > 0;
+
     }
 
     fetchFeatures() {
@@ -308,7 +320,8 @@ export default class RestWorkflow {
         if (!getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return;
 
         let { maxHitDice } = this._getMaxHitDiceRecovery();
-        let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true })
+
+        let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
 
         let hitDiceLeftToRecover = maxHitDice - hitDiceRecovered;
 
@@ -363,12 +376,12 @@ export default class RestWorkflow {
             return result;
         }
 
-        const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
-
         const maxHP = this.actor.data.data.attributes.hp.max;
         const currentHP = this.actor.data.data.attributes.hp.value;
 
-        const recoveredHP = Math.floor(maxHP * multiplier);
+        const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+
+        const recoveredHP = this.healthData.hitPointsToRegain || Math.floor(maxHP * multiplier);
 
         result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
         result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
@@ -389,7 +402,11 @@ export default class RestWorkflow {
 
     }
 
-    _getRestHitDiceRecoveryPost({ updates, hitDiceRecovered } = {}) {
+    _getRestHitDiceRecoveryPost(results, { forced = false }={}) {
+
+        if(forced){
+            return results;
+        }
 
         const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
             return (parseInt(b.data.data.hitDice.slice(1)) || 0) - (parseInt(a.data.data.hitDice.slice(1)) || 0);
@@ -397,25 +414,25 @@ export default class RestWorkflow {
 
         for (const item of sortedClasses) {
             if (item.data.data.hitDiceUsed < 0) {
-                const update = updates.find(update => update._id === item.id);
+                const update = results.updates.find(update => update._id === item.id);
                 if (update) {
-                    updates[updates.indexOf(update)]["data.hitDiceUsed"] = 0;
+                    results.updates[results.updates.indexOf(update)]["data.hitDiceUsed"] = 0;
                 } else {
-                    updates.push({
+                    results.updates.push({
                         _id: item.id,
                         "data.hitDiceUsed": 0
                     })
                 }
-                hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
+                results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
             } else {
-                const update = updates.find(update => update._id === item.id);
+                const update = results.updates.find(update => update._id === item.id);
                 if (update) {
-                    updates.splice(updates.indexOf(update), 1);
+                    results.updates.splice(results.updates.indexOf(update), 1);
                 }
             }
         }
 
-        return { updates, hitDiceRecovered };
+        return results;
 
     }
 
@@ -449,7 +466,7 @@ export default class RestWorkflow {
                 if (recoverShortRestResources && resource.sr) {
                     updates[`data.resources.${key}.value`] = Number(resource.max);
                 } else if (recoverLongRestResources && resource.lr) {
-                    const recoverResources = Math.max(Math.floor(resource.max * multiplier), multiplier ? 1 : 0);
+                    const recoverResources = Math.max(Math.floor(resource.max * multiplier), 1);
                     updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
                 }
             }
@@ -461,21 +478,28 @@ export default class RestWorkflow {
 
     _getRestSpellRecovery(updates, { recoverSpells = true } = {}) {
 
-        if (!recoverSpells && this.spellData.feature) {
-            for (const [slot, num] of Object.entries(this.recoveredSlots)) {
-                const prop = `data.spells.spell${slot}.value`;
-                updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor.data, prop) || 0) + num;
+        // Long rest
+        if (recoverSpells) {
+
+            const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
+
+            for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
+                if (!slot.override && !slot.max) continue;
+                let spellMax = slot.override || slot.max;
+                let recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
+                updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
             }
-            return updates;
-        }
 
-        const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
+        // Short rest
+        }else{
 
-        for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
-            if (!slot.override && !slot.max) continue;
-            let spellMax = slot.override || slot.max;
-            let recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
-            updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
+            if(this.spellData.feature) {
+                for (const [slot, num] of Object.entries(this.recoveredSlots)) {
+                    const prop = `data.spells.spell${slot}.value`;
+                    updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor.data, prop) || 0) + num;
+                }
+            }
+
         }
 
         return updates;

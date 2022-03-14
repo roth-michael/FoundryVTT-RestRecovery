@@ -24,7 +24,21 @@ const CONSTANTS = {
         USES_FEATS_MULTIPLIER: "recovery-uses-feats",
         USES_DAILY_MULTIPLIER: "recovery-day"
     },
-    get DEFAULT_SETTINGS() {
+    FULL: "full",
+    HALF: "half",
+    QUARTER: "quarter",
+    NONE: "none",
+    UP: "up",
+    DOWN: "down",
+    USING_DEFAULT_LONG_REST_SETTINGS(){
+        const settings = this.GET_DEFAULT_SETTINGS();
+        for(const [key, setting] of Object.entries(settings)){
+            if(setting.group !== "longrest") continue;
+            if(game.settings.get(this.MODULE_NAME, key) !== setting.default) return false;
+        }
+        return true;
+    },
+    GET_DEFAULT_SETTINGS() {
         return {
             [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
                 name: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Title",
@@ -39,7 +53,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.ClassNames.Wizard",
                 type: String
@@ -48,7 +62,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.ClassNames.Druid",
                 type: String
@@ -57,7 +71,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.BardClassName.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.BardClassName.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.ClassNames.Bard",
                 type: String
@@ -66,7 +80,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
                 type: String
@@ -75,7 +89,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
                 type: String
@@ -84,7 +98,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.SongOfRest",
                 type: String
@@ -93,7 +107,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.ChefFeat",
                 type: String
@@ -102,7 +116,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.ChefTools.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.ChefTools.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.ChefTools",
                 type: String
@@ -111,7 +125,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.DurableFeat",
                 type: String
@@ -120,7 +134,7 @@ const CONSTANTS = {
                 name: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Hint",
                 scope: "world",
-                group: "shortrest",
+                group: "itemnames",
                 config: false,
                 default: "REST-RECOVERY.FeatureNames.PeriaptItem",
                 type: String
@@ -149,6 +163,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -164,6 +179,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -179,6 +195,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -192,6 +209,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -207,6 +225,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -222,6 +241,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -237,6 +257,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {
@@ -252,6 +273,7 @@ const CONSTANTS = {
                 hint: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Hint",
                 scope: "world",
                 group: "longrest",
+                customSettingsDialog: true,
                 config: false,
                 type: String,
                 choices: {

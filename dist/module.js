@@ -24,8 +24,25 @@ const CONSTANTS = {
     USES_FEATS_MULTIPLIER: "recovery-uses-feats",
     USES_DAILY_MULTIPLIER: "recovery-day"
   },
+  FULL: "full",
+  HALF: "half",
+  QUARTER: "quarter",
+  NONE: "none",
+  UP: "up",
+  DOWN: "down",
 
-  get DEFAULT_SETTINGS() {
+  USING_DEFAULT_LONG_REST_SETTINGS() {
+    const settings = this.GET_DEFAULT_SETTINGS();
+
+    for (const [key, setting] of Object.entries(settings)) {
+      if (setting.group !== "longrest") continue;
+      if (game.settings.get(this.MODULE_NAME, key) !== setting.default) return false;
+    }
+
+    return true;
+  },
+
+  GET_DEFAULT_SETTINGS() {
     return {
       [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
         name: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Title",
@@ -40,7 +57,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.ClassNames.Wizard",
         type: String
@@ -49,7 +66,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.ClassNames.Druid",
         type: String
@@ -58,7 +75,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.BardClassName.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.BardClassName.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.ClassNames.Bard",
         type: String
@@ -67,7 +84,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
         type: String
@@ -76,7 +93,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
         type: String
@@ -85,7 +102,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.SongOfRest",
         type: String
@@ -94,7 +111,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.ChefFeat",
         type: String
@@ -103,7 +120,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.ChefTools.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.ChefTools.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.ChefTools",
         type: String
@@ -112,7 +129,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.DurableFeat",
         type: String
@@ -121,7 +138,7 @@ const CONSTANTS = {
         name: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Title",
         hint: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Hint",
         scope: "world",
-        group: "shortrest",
+        group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.PeriaptItem",
         type: String
@@ -150,6 +167,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -165,6 +183,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -180,6 +199,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -193,6 +213,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -208,6 +229,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -223,6 +245,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -238,6 +261,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -253,6 +277,7 @@ const CONSTANTS = {
         hint: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
+        customSettingsDialog: true,
         config: false,
         type: String,
         choices: {
@@ -588,6 +613,10 @@ function get_all_dirty_from_scope($$scope) {
   }
 
   return -1;
+}
+
+function null_to_empty(value) {
+  return value == null ? '' : value;
 }
 
 function action_destroyer(action_result) {
@@ -1289,6 +1318,12 @@ const globals = typeof window !== 'undefined' ? window : typeof globalThis !== '
 function destroy_block(block, lookup) {
   block.d(1);
   lookup.delete(block.key);
+}
+
+function outro_and_destroy_block(block, lookup) {
+  transition_out(block, 1, 1, () => {
+    lookup.delete(block.key);
+  });
 }
 
 function update_keyed_each(old_blocks, dirty, get_key, dynamic, ctx, list, lookup, node, destroy, create_each_block, next, get_context) {
@@ -7161,7 +7196,7 @@ class TJSGlassPane extends SvelteComponent {
 /* src\component\core\application\TJSHeaderButton.svelte generated by Svelte v3.46.0 */
 
 
-function create_fragment$7(ctx) {
+function create_fragment$7$1(ctx) {
   let a;
   let html_tag;
   let t;
@@ -7244,7 +7279,7 @@ const pointerdown_handler = () => null;
 
 const dblclick_handler = () => null;
 
-function instance$7($$self, $$props, $$invalidate) {
+function instance$7$1($$self, $$props, $$invalidate) {
   let {
     button
   } = $$props;
@@ -7286,7 +7321,7 @@ function instance$7($$self, $$props, $$invalidate) {
 class TJSHeaderButton extends SvelteComponent {
   constructor(options) {
     super();
-    init(this, options, instance$7, create_fragment$7, safe_not_equal, {
+    init(this, options, instance$7$1, create_fragment$7$1, safe_not_equal, {
       button: 0
     });
   }
@@ -7361,7 +7396,7 @@ function create_each_block$1$1(ctx) {
   };
 }
 
-function create_fragment$6(ctx) {
+function create_fragment$6$1(ctx) {
   let header;
   let h4;
   let t0_value = localize(
@@ -7522,7 +7557,7 @@ function create_fragment$6(ctx) {
   };
 }
 
-function instance$6($$self, $$props, $$invalidate) {
+function instance$6$1($$self, $$props, $$invalidate) {
   let $storeDraggable;
   let $storeMinimizable;
   let $storeTitle;
@@ -7572,7 +7607,7 @@ function instance$6($$self, $$props, $$invalidate) {
 class TJSApplicationHeader extends SvelteComponent {
   constructor(options) {
     super();
-    init(this, options, instance$6, create_fragment$6, safe_not_equal, {});
+    init(this, options, instance$6$1, create_fragment$6$1, safe_not_equal, {});
   }
 
 }
@@ -7602,7 +7637,7 @@ async function nextAnimationFrame(cntr = 1) {
 /* src\component\core\application\ResizableHandle.svelte generated by Svelte v3.46.0 */
 
 
-function create_fragment$5(ctx) {
+function create_fragment$5$1(ctx) {
   let div;
   let resizable_action;
   let mounted;
@@ -7663,7 +7698,7 @@ function create_fragment$5(ctx) {
   };
 }
 
-function instance$5($$self, $$props, $$invalidate) {
+function instance$5$1($$self, $$props, $$invalidate) {
   let $storeElementRoot;
   let $storeMinimized;
   let $storeResizable;
@@ -7880,7 +7915,7 @@ function instance$5($$self, $$props, $$invalidate) {
 class ResizableHandle extends SvelteComponent {
   constructor(options) {
     super();
-    init(this, options, instance$5, create_fragment$5, safe_not_equal, {
+    init(this, options, instance$5$1, create_fragment$5$1, safe_not_equal, {
       isResizable: 7
     });
   }
@@ -8881,7 +8916,7 @@ function add_css(target) {
   append_styles(target, "svelte-14xg9ru", "div.dialog-buttons.svelte-14xg9ru{padding-top:8px}");
 }
 
-function get_each_context$3(ctx, list, i) {
+function get_each_context$5(ctx, list, i) {
   const child_ctx = ctx.slice();
   child_ctx[15] = list[i];
   return child_ctx;
@@ -9040,9 +9075,9 @@ function create_if_block$1$1(ctx) {
   ctx[15].id;
 
   for (let i = 0; i < each_value.length; i += 1) {
-    let child_ctx = get_each_context$3(ctx, each_value, i);
+    let child_ctx = get_each_context$5(ctx, each_value, i);
     let key = get_key(child_ctx);
-    each_1_lookup.set(key, each_blocks[i] = create_each_block$3(key, child_ctx));
+    each_1_lookup.set(key, each_blocks[i] = create_each_block$5(key, child_ctx));
   }
 
   return {
@@ -9071,7 +9106,7 @@ function create_if_block$1$1(ctx) {
         each_value =
         /*buttons*/
         ctx[1];
-        each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block$3, null, get_each_context$3);
+        each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, div, destroy_block, create_each_block$5, null, get_each_context$5);
       }
     },
 
@@ -9122,7 +9157,7 @@ function create_if_block_1$4(ctx) {
 } // (209:3) {#each buttons as button (button.id)}
 
 
-function create_each_block$3(key_1, ctx) {
+function create_each_block$5(key_1, ctx) {
   let button;
   let span;
   let t0_value =
@@ -9756,7 +9791,7 @@ function create_else_block$4(ctx) {
 } // (180:0) {#if modal}
 
 
-function create_if_block$3(ctx) {
+function create_if_block$6(ctx) {
   let tjsglasspane;
   let current;
   const tjsglasspane_spread_levels = [{
@@ -10184,7 +10219,7 @@ function create_fragment$9(ctx) {
   let if_block;
   let if_block_anchor;
   let current;
-  const if_block_creators = [create_if_block$3, create_else_block$4];
+  const if_block_creators = [create_if_block$6, create_else_block$4];
   const if_blocks = [];
 
   function select_block_type(ctx, dirty) {
@@ -11016,31 +11051,14 @@ function ordinalSuffixOf(i) {
   let k = i % 100;
 
   if (j === 1 && k !== 11) {
-    return i + 'st';
+    return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'st'}`);
+  } else if (j === 2 && k !== 12) {
+    return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'nd'}`);
+  } else if (j === 3 && k !== 13) {
+    return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'rd'}`);
   }
 
-  if (j === 2 && k !== 12) {
-    return i + 'nd';
-  }
-
-  if (j === 3 && k !== 13) {
-    return i + 'rd';
-  }
-
-  return i + 'th';
-}
-function dialogLayout({
-  title = "Short Rest",
-  message,
-  icon = "fas fa-exclamation-triangle"
-} = {}) {
-  return `
-    <div style="margin-bottom: 1rem; font-size: 0.9rem; text-align: center;">
-        <p><i style="font-size:3rem;" class="${icon}"></i></p>
-        <p style="margin-bottom: 1rem"><strong style="font-size:1.2rem;">${title}</strong></p>
-        <p>${message}</p>
-    </div>
-    `;
+  return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'th'}`);
 }
 function determineLongRestMultiplier(settingKey) {
   const multiplierSetting = getSetting(settingKey);
@@ -11085,140 +11103,117 @@ function getSetting(key, localize = false) {
   return value;
 }
 
-/* scripts\formapplications\settings\settings-shell.svelte generated by Svelte v3.46.4 */
+/* scripts\formapplications\settings\Setting.svelte generated by Svelte v3.46.4 */
 
-const { Map: Map_1 } = globals;
-
-function get_each_context$2(ctx, list, i) {
+function get_each_context$4(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[16] = list[i];
-	child_ctx[18] = i;
+	child_ctx[9] = list[i][0];
+	child_ctx[10] = list[i][1];
+	child_ctx[12] = i;
 	return child_ctx;
 }
 
-function get_each_context_1$1(ctx, list, i) {
-	const child_ctx = ctx.slice();
-	child_ctx[19] = list[i][0];
-	child_ctx[20] = list[i][1];
-	child_ctx[21] = list;
-	child_ctx[22] = i;
-	return child_ctx;
-}
-
-function get_each_context_2$1(ctx, list, i) {
-	const child_ctx = ctx.slice();
-	child_ctx[19] = list[i][0];
-	child_ctx[23] = list[i][1];
-	child_ctx[18] = i;
-	return child_ctx;
-}
-
-// (97:24) {:else}
+// (38:8) {:else}
 function create_else_block$2(ctx) {
-	let input;
+	let div;
+	let input0;
+	let t;
+	let input1;
+	let input1_value_value;
 	let mounted;
 	let dispose;
 
-	function input_input_handler_1() {
-		/*input_input_handler_1*/ ctx[11].call(input, /*each_value_1*/ ctx[21], /*setting_index*/ ctx[22]);
-	}
-
 	return {
 		c() {
-			input = element("input");
-			attr(input, "type", "text");
-			attr(input, "class", "svelte-1xzged7");
+			div = element("div");
+			input0 = element("input");
+			t = space();
+			input1 = element("input");
+			attr(input0, "type", "text");
+			attr(input0, "class", "svelte-1vsx49n");
+			attr(input1, "type", "text");
+			input1.disabled = true;
+			input1.value = input1_value_value = localize(/*setting*/ ctx[0].value);
+			attr(input1, "class", "svelte-1vsx49n");
+			attr(div, "class", "setting-container svelte-1vsx49n");
 		},
 		m(target, anchor) {
-			insert(target, input, anchor);
-			set_input_value(input, /*setting*/ ctx[20].value);
+			insert(target, div, anchor);
+			append(div, input0);
+			set_input_value(input0, /*setting*/ ctx[0].value);
+			append(div, t);
+			append(div, input1);
 
 			if (!mounted) {
-				dispose = [
-					listen(input, "input", input_input_handler_1),
-					listen(input, "change", /*validateSettings*/ ctx[3])
-				];
-
+				dispose = listen(input0, "input", /*input0_input_handler*/ ctx[8]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
+		p(ctx, dirty) {
+			if (dirty & /*setting, Object*/ 1 && input0.value !== /*setting*/ ctx[0].value) {
+				set_input_value(input0, /*setting*/ ctx[0].value);
+			}
 
-			if (dirty & /*settings, Object*/ 4 && input.value !== /*setting*/ ctx[20].value) {
-				set_input_value(input, /*setting*/ ctx[20].value);
+			if (dirty & /*setting, Object*/ 1 && input1_value_value !== (input1_value_value = localize(/*setting*/ ctx[0].value)) && input1.value !== input1_value_value) {
+				input1.value = input1_value_value;
 			}
 		},
 		d(detaching) {
-			if (detaching) detach(input);
+			if (detaching) detach(div);
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
 }
 
-// (93:68) 
+// (34:52) 
 function create_if_block_2$2(ctx) {
 	let input;
 	let mounted;
 	let dispose;
 
-	function input_input_handler() {
-		/*input_input_handler*/ ctx[10].call(input, /*each_value_1*/ ctx[21], /*setting_index*/ ctx[22]);
-	}
-
 	return {
 		c() {
 			input = element("input");
 			attr(input, "type", "number");
-			attr(input, "class", "svelte-1xzged7");
+			attr(input, "class", "svelte-1vsx49n");
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
-			set_input_value(input, /*setting*/ ctx[20].value);
+			set_input_value(input, /*setting*/ ctx[0].value);
 
 			if (!mounted) {
-				dispose = [
-					listen(input, "input", input_input_handler),
-					listen(input, "change", /*validateSettings*/ ctx[3])
-				];
-
+				dispose = listen(input, "input", /*input_input_handler*/ ctx[7]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-
-			if (dirty & /*settings, Object*/ 4 && to_number(input.value) !== /*setting*/ ctx[20].value) {
-				set_input_value(input, /*setting*/ ctx[20].value);
+		p(ctx, dirty) {
+			if (dirty & /*setting, Object*/ 1 && to_number(input.value) !== /*setting*/ ctx[0].value) {
+				set_input_value(input, /*setting*/ ctx[0].value);
 			}
 		},
 		d(detaching) {
 			if (detaching) detach(input);
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
 }
 
-// (85:50) 
+// (26:34) 
 function create_if_block_1$2(ctx) {
 	let select;
 	let each_blocks = [];
-	let each_1_lookup = new Map_1();
+	let each_1_lookup = new Map();
 	let mounted;
 	let dispose;
-	let each_value_2 = Object.entries(/*setting*/ ctx[20].choices);
-	const get_key = ctx => /*index*/ ctx[18];
+	let each_value = Object.entries(/*setting*/ ctx[0].choices);
+	const get_key = ctx => /*index*/ ctx[12];
 
-	for (let i = 0; i < each_value_2.length; i += 1) {
-		let child_ctx = get_each_context_2$1(ctx, each_value_2, i);
+	for (let i = 0; i < each_value.length; i += 1) {
+		let child_ctx = get_each_context$4(ctx, each_value, i);
 		let key = get_key(child_ctx);
-		each_1_lookup.set(key, each_blocks[i] = create_each_block_2$1(key, child_ctx));
-	}
-
-	function select_change_handler() {
-		/*select_change_handler*/ ctx[9].call(select, /*each_value_1*/ ctx[21], /*setting_index*/ ctx[22]);
+		each_1_lookup.set(key, each_blocks[i] = create_each_block$4(key, child_ctx));
 	}
 
 	return {
@@ -11229,8 +11224,8 @@ function create_if_block_1$2(ctx) {
 				each_blocks[i].c();
 			}
 
-			attr(select, "class", "svelte-1xzged7");
-			if (/*setting*/ ctx[20].value === void 0) add_render_callback(select_change_handler);
+			attr(select, "class", "svelte-1vsx49n");
+			if (/*setting*/ ctx[0].value === void 0) add_render_callback(() => /*select_change_handler*/ ctx[6].call(select));
 		},
 		m(target, anchor) {
 			insert(target, select, anchor);
@@ -11239,27 +11234,21 @@ function create_if_block_1$2(ctx) {
 				each_blocks[i].m(select, null);
 			}
 
-			select_option(select, /*setting*/ ctx[20].value);
+			select_option(select, /*setting*/ ctx[0].value);
 
 			if (!mounted) {
-				dispose = [
-					listen(select, "change", select_change_handler),
-					listen(select, "change", /*validateSettings*/ ctx[3])
-				];
-
+				dispose = listen(select, "change", /*select_change_handler*/ ctx[6]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-
-			if (dirty & /*Object, settings, localize*/ 4) {
-				each_value_2 = Object.entries(/*setting*/ ctx[20].choices);
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_2, each_1_lookup, select, destroy_block, create_each_block_2$1, null, get_each_context_2$1);
+		p(ctx, dirty) {
+			if (dirty & /*Object, setting, localize*/ 1) {
+				each_value = Object.entries(/*setting*/ ctx[0].choices);
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, select, destroy_block, create_each_block$4, null, get_each_context$4);
 			}
 
-			if (dirty & /*settings, Object*/ 4) {
-				select_option(select, /*setting*/ ctx[20].value);
+			if (dirty & /*setting, Object*/ 1) {
+				select_option(select, /*setting*/ ctx[0].value);
 			}
 		},
 		d(detaching) {
@@ -11270,64 +11259,54 @@ function create_if_block_1$2(ctx) {
 			}
 
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
 }
 
-// (81:24) {#if typeof setting.value === "boolean"}
-function create_if_block$2(ctx) {
+// (22:8) {#if typeof setting.value === "boolean"}
+function create_if_block$3(ctx) {
 	let input;
 	let input_disabled_value;
 	let mounted;
 	let dispose;
 
-	function input_change_handler() {
-		/*input_change_handler*/ ctx[8].call(input, /*each_value_1*/ ctx[21], /*setting_index*/ ctx[22]);
-	}
-
 	return {
 		c() {
 			input = element("input");
 			attr(input, "type", "checkbox");
-			input.disabled = input_disabled_value = /*setting*/ ctx[20].disabled;
+			input.disabled = input_disabled_value = /*setting*/ ctx[0].disabled;
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
-			input.checked = /*setting*/ ctx[20].value;
+			input.checked = /*setting*/ ctx[0].value;
 
 			if (!mounted) {
-				dispose = [
-					listen(input, "change", input_change_handler),
-					listen(input, "change", /*validateSettings*/ ctx[3])
-				];
-
+				dispose = listen(input, "change", /*input_change_handler*/ ctx[5]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-
-			if (dirty & /*settings, Object*/ 4 && input_disabled_value !== (input_disabled_value = /*setting*/ ctx[20].disabled)) {
+		p(ctx, dirty) {
+			if (dirty & /*setting, Object*/ 1 && input_disabled_value !== (input_disabled_value = /*setting*/ ctx[0].disabled)) {
 				input.disabled = input_disabled_value;
 			}
 
-			if (dirty & /*settings, Object*/ 4) {
-				input.checked = /*setting*/ ctx[20].value;
+			if (dirty & /*setting, Object*/ 1) {
+				input.checked = /*setting*/ ctx[0].value;
 			}
 		},
 		d(detaching) {
 			if (detaching) detach(input);
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
 }
 
-// (88:28) {#each Object.entries(setting.choices) as [key, choice], index (index)}
-function create_each_block_2$1(key_1, ctx) {
+// (29:16) {#each Object.entries(setting.choices) as [key, choice], index (index)}
+function create_each_block$4(key_1, ctx) {
 	let option;
-	let t_value = localize(/*choice*/ ctx[23]) + "";
+	let t_value = localize(/*choice*/ ctx[10]) + "";
 	let t;
 	let option_value_value;
 
@@ -11337,7 +11316,7 @@ function create_each_block_2$1(key_1, ctx) {
 		c() {
 			option = element("option");
 			t = text(t_value);
-			option.__value = option_value_value = /*key*/ ctx[19];
+			option.__value = option_value_value = /*key*/ ctx[9];
 			option.value = option.__value;
 			this.first = option;
 		},
@@ -11347,9 +11326,9 @@ function create_each_block_2$1(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty & /*Object, settings*/ 4 && t_value !== (t_value = localize(/*choice*/ ctx[23]) + "")) set_data(t, t_value);
+			if (dirty & /*setting*/ 1 && t_value !== (t_value = localize(/*choice*/ ctx[10]) + "")) set_data(t, t_value);
 
-			if (dirty & /*Object, settings*/ 4 && option_value_value !== (option_value_value = /*key*/ ctx[19])) {
+			if (dirty & /*setting, Object*/ 1 && option_value_value !== (option_value_value = /*key*/ ctx[9])) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
@@ -11360,32 +11339,28 @@ function create_each_block_2$1(key_1, ctx) {
 	};
 }
 
-// (77:16) {#each settings[group] as [key, setting], setting_index (key)}
-function create_each_block_1$1(key_1, ctx) {
-	let div1;
+function create_fragment$7(ctx) {
+	let div2;
+	let div0;
 	let label;
-	let t0_value = localize(/*setting*/ ctx[20].name) + "";
+	let t0_value = localize(/*setting*/ ctx[0].name) + "";
 	let t0;
 	let t1;
 	let a;
 	let i;
 	let t2;
-	let div0;
-	let t3;
 	let p;
-	let t4_value = localize(/*setting*/ ctx[20].hint) + "";
+	let t3_value = localize(/*setting*/ ctx[0].hint) + "";
+	let t3;
 	let t4;
+	let div1;
 	let mounted;
 	let dispose;
 
-	function click_handler() {
-		return /*click_handler*/ ctx[7](/*group*/ ctx[16], /*setting_index*/ ctx[22]);
-	}
-
 	function select_block_type(ctx, dirty) {
-		if (typeof /*setting*/ ctx[20].value === "boolean") return create_if_block$2;
-		if (/*setting*/ ctx[20].choices) return create_if_block_1$2;
-		if (typeof /*setting*/ ctx[20].value === 'number') return create_if_block_2$2;
+		if (typeof /*setting*/ ctx[0].value === "boolean") return create_if_block$3;
+		if (/*setting*/ ctx[0].choices) return create_if_block_1$2;
+		if (typeof /*setting*/ ctx[0].value === 'number') return create_if_block_2$2;
 		return create_else_block$2;
 	}
 
@@ -11393,51 +11368,51 @@ function create_each_block_1$1(key_1, ctx) {
 	let if_block = current_block_type(ctx);
 
 	return {
-		key: key_1,
-		first: null,
 		c() {
-			div1 = element("div");
+			div2 = element("div");
+			div0 = element("div");
 			label = element("label");
 			t0 = text(t0_value);
 			t1 = space();
 			a = element("a");
 			i = element("i");
 			t2 = space();
-			div0 = element("div");
-			if_block.c();
-			t3 = space();
 			p = element("p");
-			t4 = text(t4_value);
+			t3 = text(t3_value);
+			t4 = space();
+			div1 = element("div");
+			if_block.c();
 			attr(i, "title", "Reset setting");
-			attr(i, "class", "fas fa-undo reset-setting svelte-1xzged7");
-			attr(label, "class", "svelte-1xzged7");
-			attr(div0, "class", "form-fields svelte-1xzged7");
+			attr(i, "class", "fas fa-undo reset-setting svelte-1vsx49n");
+			attr(label, "class", "svelte-1vsx49n");
 			attr(p, "class", "notes");
-			attr(div1, "class", "form-group svelte-1xzged7");
-			this.first = div1;
+			attr(div0, "class", "label-side svelte-1vsx49n");
+			attr(div1, "class", "form-fields input-side svelte-1vsx49n");
+			attr(div2, "class", "form-group flexrow");
 		},
 		m(target, anchor) {
-			insert(target, div1, anchor);
-			append(div1, label);
+			insert(target, div2, anchor);
+			append(div2, div0);
+			append(div0, label);
 			append(label, t0);
 			append(label, t1);
 			append(label, a);
 			append(a, i);
-			append(div1, t2);
-			append(div1, div0);
-			if_block.m(div0, null);
-			append(div1, t3);
-			append(div1, p);
-			append(p, t4);
+			append(div0, t2);
+			append(div0, p);
+			append(p, t3);
+			append(div2, t4);
+			append(div2, div1);
+			if_block.m(div1, null);
 
 			if (!mounted) {
-				dispose = listen(i, "click", click_handler);
+				dispose = listen(i, "click", /*click_handler*/ ctx[4]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
-			if (dirty & /*settings, Object*/ 4 && t0_value !== (t0_value = localize(/*setting*/ ctx[20].name) + "")) set_data(t0, t0_value);
+		p(ctx, [dirty]) {
+			if (dirty & /*setting*/ 1 && t0_value !== (t0_value = localize(/*setting*/ ctx[0].name) + "")) set_data(t0, t0_value);
+			if (dirty & /*setting*/ 1 && t3_value !== (t3_value = localize(/*setting*/ ctx[0].hint) + "")) set_data(t3, t3_value);
 
 			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
 				if_block.p(ctx, dirty);
@@ -11447,14 +11422,14 @@ function create_each_block_1$1(key_1, ctx) {
 
 				if (if_block) {
 					if_block.c();
-					if_block.m(div0, null);
+					if_block.m(div1, null);
 				}
 			}
-
-			if (dirty & /*settings, Object*/ 4 && t4_value !== (t4_value = localize(/*setting*/ ctx[20].hint) + "")) set_data(t4, t4_value);
 		},
+		i: noop,
+		o: noop,
 		d(detaching) {
-			if (detaching) detach(div1);
+			if (detaching) detach(div2);
 			if_block.d();
 			mounted = false;
 			dispose();
@@ -11462,15 +11437,153 @@ function create_each_block_1$1(key_1, ctx) {
 	};
 }
 
-// (74:12) {#each Object.keys(settings) as group, index (index)}
-function create_each_block$2(key_1, ctx) {
+function instance$7($$self, $$props, $$invalidate) {
+	let { setting } = $$props;
+	let { group } = $$props;
+	let { setting_index } = $$props;
+	let { resetSetting } = $$props;
+
+	const click_handler = () => {
+		resetSetting(group, setting_index);
+	};
+
+	function input_change_handler() {
+		setting.value = this.checked;
+		$$invalidate(0, setting);
+	}
+
+	function select_change_handler() {
+		setting.value = select_value(this);
+		$$invalidate(0, setting);
+	}
+
+	function input_input_handler() {
+		setting.value = to_number(this.value);
+		$$invalidate(0, setting);
+	}
+
+	function input0_input_handler() {
+		setting.value = this.value;
+		$$invalidate(0, setting);
+	}
+
+	$$self.$$set = $$props => {
+		if ('setting' in $$props) $$invalidate(0, setting = $$props.setting);
+		if ('group' in $$props) $$invalidate(1, group = $$props.group);
+		if ('setting_index' in $$props) $$invalidate(2, setting_index = $$props.setting_index);
+		if ('resetSetting' in $$props) $$invalidate(3, resetSetting = $$props.resetSetting);
+	};
+
+	return [
+		setting,
+		group,
+		setting_index,
+		resetSetting,
+		click_handler,
+		input_change_handler,
+		select_change_handler,
+		input_input_handler,
+		input0_input_handler
+	];
+}
+
+class Setting extends SvelteComponent {
+	constructor(options) {
+		super();
+
+		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
+			setting: 0,
+			group: 1,
+			setting_index: 2,
+			resetSetting: 3
+		});
+	}
+}
+
+/* scripts\formapplications\settings\settings-shell.svelte generated by Svelte v3.46.4 */
+
+const { Map: Map_1 } = globals;
+
+function get_each_context$3(ctx, list, i) {
+	const child_ctx = ctx.slice();
+	child_ctx[11] = list[i];
+	child_ctx[13] = i;
+	return child_ctx;
+}
+
+function get_each_context_1$1(ctx, list, i) {
+	const child_ctx = ctx.slice();
+	child_ctx[14] = list[i][0];
+	child_ctx[15] = list[i][1];
+	child_ctx[17] = i;
+	return child_ctx;
+}
+
+// (78:16) {#each settings[group] as [key, setting], setting_index (key)}
+function create_each_block_1$1(key_1, ctx) {
+	let div;
+	let setting;
+	let current;
+
+	setting = new Setting({
+			props: {
+				group: /*group*/ ctx[11],
+				setting_index: /*setting_index*/ ctx[17],
+				setting: /*setting*/ ctx[15],
+				resetSetting: /*resetSetting*/ ctx[4]
+			}
+		});
+
+	setting.$on("change", /*validateSettings*/ ctx[3]);
+
+	return {
+		key: key_1,
+		first: null,
+		c() {
+			div = element("div");
+			create_component(setting.$$.fragment);
+			attr(div, "class", "setting svelte-1tio1xs");
+			this.first = div;
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			mount_component(setting, div, null);
+			current = true;
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+			const setting_changes = {};
+			if (dirty & /*settings*/ 4) setting_changes.group = /*group*/ ctx[11];
+			if (dirty & /*settings*/ 4) setting_changes.setting_index = /*setting_index*/ ctx[17];
+			if (dirty & /*settings*/ 4) setting_changes.setting = /*setting*/ ctx[15];
+			setting.$set(setting_changes);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(setting.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(setting.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(div);
+			destroy_component(setting);
+		}
+	};
+}
+
+// (75:12) {#each Object.keys(settings) as group, index (index)}
+function create_each_block$3(key_1, ctx) {
 	let div;
 	let each_blocks = [];
 	let each_1_lookup = new Map_1();
 	let t;
 	let div_data_tab_value;
-	let each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[16]];
-	const get_key = ctx => /*key*/ ctx[19];
+	let current;
+	let each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[11]];
+	const get_key = ctx => /*key*/ ctx[14];
 
 	for (let i = 0; i < each_value_1.length; i += 1) {
 		let child_ctx = get_each_context_1$1(ctx, each_value_1, i);
@@ -11491,7 +11604,7 @@ function create_each_block$2(key_1, ctx) {
 			t = space();
 			attr(div, "class", "tab flex");
 			attr(div, "data-group", "primary");
-			attr(div, "data-tab", div_data_tab_value = /*group*/ ctx[16]);
+			attr(div, "data-tab", div_data_tab_value = /*group*/ ctx[11]);
 			this.first = div;
 		},
 		m(target, anchor) {
@@ -11502,18 +11615,37 @@ function create_each_block$2(key_1, ctx) {
 			}
 
 			append(div, t);
+			current = true;
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*localize, settings, Object, validateSettings, resetSetting*/ 28) {
-				each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[16]];
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, destroy_block, create_each_block_1$1, t, get_each_context_1$1);
+			if (dirty & /*Object, settings, resetSetting, validateSettings*/ 28) {
+				each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[11]];
+				group_outros();
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, outro_and_destroy_block, create_each_block_1$1, t, get_each_context_1$1);
+				check_outros();
 			}
 
-			if (dirty & /*Object, settings*/ 4 && div_data_tab_value !== (div_data_tab_value = /*group*/ ctx[16])) {
+			if (!current || dirty & /*settings*/ 4 && div_data_tab_value !== (div_data_tab_value = /*group*/ ctx[11])) {
 				attr(div, "data-tab", div_data_tab_value);
 			}
+		},
+		i(local) {
+			if (current) return;
+
+			for (let i = 0; i < each_value_1.length; i += 1) {
+				transition_in(each_blocks[i]);
+			}
+
+			current = true;
+		},
+		o(local) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				transition_out(each_blocks[i]);
+			}
+
+			current = false;
 		},
 		d(detaching) {
 			if (detaching) detach(div);
@@ -11525,7 +11657,7 @@ function create_each_block$2(key_1, ctx) {
 	};
 }
 
-// (61:0) <ApplicationShell bind:elementRoot>
+// (62:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$2(ctx) {
 	let form_1;
 	let h2;
@@ -11535,25 +11667,28 @@ function create_default_slot$2(ctx) {
 	let t3;
 	let a1;
 	let t5;
+	let a2;
+	let t7;
 	let section;
 	let each_blocks = [];
 	let each_1_lookup = new Map_1();
-	let t6;
+	let t8;
 	let footer;
 	let button;
 	let i;
-	let t7;
-	let t8_value = localize("REST-RECOVERY.Dialogs.ModuleConfig.Submit") + "";
-	let t8;
+	let t9;
+	let t10_value = localize("REST-RECOVERY.Dialogs.ModuleConfig.Submit") + "";
+	let t10;
+	let current;
 	let mounted;
 	let dispose;
 	let each_value = Object.keys(/*settings*/ ctx[2]);
-	const get_key = ctx => /*index*/ ctx[18];
+	const get_key = ctx => /*index*/ ctx[13];
 
 	for (let i = 0; i < each_value.length; i += 1) {
-		let child_ctx = get_each_context$2(ctx, each_value, i);
+		let child_ctx = get_each_context$3(ctx, each_value, i);
 		let key = get_key(child_ctx);
-		each_1_lookup.set(key, each_blocks[i] = create_each_block$2(key, child_ctx));
+		each_1_lookup.set(key, each_blocks[i] = create_each_block$3(key, child_ctx));
 	}
 
 	return {
@@ -11569,30 +11704,35 @@ function create_default_slot$2(ctx) {
 			a1 = element("a");
 			a1.textContent = `${localize("REST-RECOVERY.Dialogs.ModuleConfig.ShortRest")}`;
 			t5 = space();
+			a2 = element("a");
+			a2.textContent = `${localize("REST-RECOVERY.Dialogs.ModuleConfig.ItemNames")}`;
+			t7 = space();
 			section = element("section");
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
 
-			t6 = space();
+			t8 = space();
 			footer = element("footer");
 			button = element("button");
 			i = element("i");
-			t7 = space();
-			t8 = text(t8_value);
+			t9 = space();
+			t10 = text(t10_value);
 			set_style(h2, "text-align", "center");
 			set_style(h2, "margin-bottom", "1rem");
 			attr(a0, "class", "item active");
 			attr(a0, "data-tab", "longrest");
 			attr(a1, "class", "item");
 			attr(a1, "data-tab", "shortrest");
-			attr(nav, "class", "tabs svelte-1xzged7");
+			attr(a2, "class", "item");
+			attr(a2, "data-tab", "itemnames");
+			attr(nav, "class", "tabs svelte-1tio1xs");
 			attr(nav, "data-group", "primary");
-			attr(section, "class", "tab-body svelte-1xzged7");
+			attr(section, "class", "tab-body svelte-1tio1xs");
 			attr(i, "class", "far fa-save");
 			attr(button, "type", "button");
-			attr(footer, "class", "svelte-1xzged7");
+			attr(footer, "class", "svelte-1tio1xs");
 			attr(form_1, "autocomplete", "off");
 		},
 		m(target, anchor) {
@@ -11603,20 +11743,23 @@ function create_default_slot$2(ctx) {
 			append(nav, a0);
 			append(nav, t3);
 			append(nav, a1);
-			append(form_1, t5);
+			append(nav, t5);
+			append(nav, a2);
+			append(form_1, t7);
 			append(form_1, section);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].m(section, null);
 			}
 
-			append(form_1, t6);
+			append(form_1, t8);
 			append(form_1, footer);
 			append(footer, button);
 			append(button, i);
-			append(button, t7);
-			append(button, t8);
-			/*form_1_binding*/ ctx[12](form_1);
+			append(button, t9);
+			append(button, t10);
+			/*form_1_binding*/ ctx[7](form_1);
+			current = true;
 
 			if (!mounted) {
 				dispose = [
@@ -11628,10 +11771,28 @@ function create_default_slot$2(ctx) {
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*Object, settings, localize, validateSettings, resetSetting*/ 28) {
+			if (dirty & /*Object, settings, resetSetting, validateSettings*/ 28) {
 				each_value = Object.keys(/*settings*/ ctx[2]);
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, section, destroy_block, create_each_block$2, null, get_each_context$2);
+				group_outros();
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, section, outro_and_destroy_block, create_each_block$3, null, get_each_context$3);
+				check_outros();
 			}
+		},
+		i(local) {
+			if (current) return;
+
+			for (let i = 0; i < each_value.length; i += 1) {
+				transition_in(each_blocks[i]);
+			}
+
+			current = true;
+		},
+		o(local) {
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				transition_out(each_blocks[i]);
+			}
+
+			current = false;
 		},
 		d(detaching) {
 			if (detaching) detach(form_1);
@@ -11640,20 +11801,20 @@ function create_default_slot$2(ctx) {
 				each_blocks[i].d();
 			}
 
-			/*form_1_binding*/ ctx[12](null);
+			/*form_1_binding*/ ctx[7](null);
 			mounted = false;
 			run_all(dispose);
 		}
 	};
 }
 
-function create_fragment$4(ctx) {
+function create_fragment$6(ctx) {
 	let applicationshell;
 	let updating_elementRoot;
 	let current;
 
 	function applicationshell_elementRoot_binding(value) {
-		/*applicationshell_elementRoot_binding*/ ctx[13](value);
+		/*applicationshell_elementRoot_binding*/ ctx[8](value);
 	}
 
 	let applicationshell_props = {
@@ -11679,7 +11840,7 @@ function create_fragment$4(ctx) {
 		p(ctx, [dirty]) {
 			const applicationshell_changes = {};
 
-			if (dirty & /*$$scope, form, Object, settings*/ 33554438) {
+			if (dirty & /*$$scope, form, settings*/ 262150) {
 				applicationshell_changes.$$scope = { dirty, ctx };
 			}
 
@@ -11706,13 +11867,13 @@ function create_fragment$4(ctx) {
 	};
 }
 
-function instance$4($$self, $$props, $$invalidate) {
+function instance$6($$self, $$props, $$invalidate) {
 	const { application } = getContext('external');
 	let { elementRoot } = $$props;
 	let form;
 	let settingsMap = new Map();
 
-	let settings = Object.entries(CONSTANTS.DEFAULT_SETTINGS).map(entry => {
+	let settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
 		entry[1].value = getSetting(entry[0]);
 		entry[1].disabled = false;
 		settingsMap.set(entry[0], entry[1]);
@@ -11758,30 +11919,6 @@ function instance$4($$self, $$props, $$invalidate) {
 		application.close();
 	}
 
-	const click_handler = (group, setting_index) => {
-		resetSetting(group, setting_index);
-	};
-
-	function input_change_handler(each_value_1, setting_index) {
-		each_value_1[setting_index][1].value = this.checked;
-		$$invalidate(2, settings);
-	}
-
-	function select_change_handler(each_value_1, setting_index) {
-		each_value_1[setting_index][1].value = select_value(this);
-		$$invalidate(2, settings);
-	}
-
-	function input_input_handler(each_value_1, setting_index) {
-		each_value_1[setting_index][1].value = to_number(this.value);
-		$$invalidate(2, settings);
-	}
-
-	function input_input_handler_1(each_value_1, setting_index) {
-		each_value_1[setting_index][1].value = this.value;
-		$$invalidate(2, settings);
-	}
-
 	function form_1_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			form = $$value;
@@ -11806,11 +11943,6 @@ function instance$4($$self, $$props, $$invalidate) {
 		resetSetting,
 		requestSubmit,
 		updateSettings,
-		click_handler,
-		input_change_handler,
-		select_change_handler,
-		input_input_handler,
-		input_input_handler_1,
 		form_1_binding,
 		applicationshell_elementRoot_binding
 	];
@@ -11819,7 +11951,7 @@ function instance$4($$self, $$props, $$invalidate) {
 class Settings_shell extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$4, create_fragment$4, safe_not_equal, { elementRoot: 0 });
+		init(this, options, instance$6, create_fragment$6, safe_not_equal, { elementRoot: 0 });
 	}
 
 	get elementRoot() {
@@ -11906,7 +12038,7 @@ function registerSettings() {
     restricted: true
   });
 
-  for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
+  for (const [name, data] of Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())) {
     game.settings.register(CONSTANTS.MODULE_NAME, name, data);
   }
 
@@ -11946,7 +12078,7 @@ class ResetSettingsDialog extends FormApplication {
 }
 
 async function resetSettings() {
-  for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
+  for (const [name, data] of Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())) {
     await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
   }
 
@@ -12074,84 +12206,126 @@ function tweened(value, defaults = {}) {
 
 /* scripts\formapplications\components\Healthbar.svelte generated by Svelte v3.46.4 */
 
-function create_fragment$3(ctx) {
+function create_fragment$5(ctx) {
+	let div4;
 	let div3;
-	let div2;
 	let div0;
 	let t0;
 	let div1;
 	let t1;
+	let div2;
+	let t2;
 
 	return {
 		c() {
+			div4 = element("div");
 			div3 = element("div");
-			div2 = element("div");
 			div0 = element("div");
 			t0 = space();
 			div1 = element("div");
-			t1 = text(/*text*/ ctx[0]);
-			attr(div0, "class", "progress svelte-1307vsu");
-			set_style(div0, "width", /*$progressBar*/ ctx[2] * 100 + "%");
-			attr(div1, "class", "overlay svelte-1307vsu");
-			attr(div2, "class", "healthbar svelte-1307vsu");
+			t1 = space();
+			div2 = element("div");
+			t2 = text(/*text*/ ctx[0]);
+			attr(div0, "class", "progress_ghost svelte-zkgr9f");
+			set_style(div0, "width", /*$progressBarGhost*/ ctx[3] * 100 + "%");
+			attr(div1, "class", "progress svelte-zkgr9f");
+			set_style(div1, "width", /*$progressBar*/ ctx[4] * 100 + "%");
+			attr(div2, "class", "overlay svelte-zkgr9f");
+			attr(div3, "class", "healthbar svelte-zkgr9f");
 		},
 		m(target, anchor) {
-			insert(target, div3, anchor);
+			insert(target, div4, anchor);
+			append(div4, div3);
+			append(div3, div0);
+			append(div3, t0);
+			append(div3, div1);
+			append(div3, t1);
 			append(div3, div2);
-			append(div2, div0);
-			append(div2, t0);
-			append(div2, div1);
-			append(div1, t1);
+			append(div2, t2);
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*$progressBar*/ 4) {
-				set_style(div0, "width", /*$progressBar*/ ctx[2] * 100 + "%");
+			if (dirty & /*$progressBarGhost*/ 8) {
+				set_style(div0, "width", /*$progressBarGhost*/ ctx[3] * 100 + "%");
 			}
 
-			if (dirty & /*text*/ 1) set_data(t1, /*text*/ ctx[0]);
+			if (dirty & /*$progressBar*/ 16) {
+				set_style(div1, "width", /*$progressBar*/ ctx[4] * 100 + "%");
+			}
+
+			if (dirty & /*text*/ 1) set_data(t2, /*text*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
 		d(detaching) {
-			if (detaching) detach(div3);
+			if (detaching) detach(div4);
 		}
 	};
 }
 
-function instance$3($$self, $$props, $$invalidate) {
+function instance$5($$self, $$props, $$invalidate) {
+	let $progressBarGhost,
+		$$unsubscribe_progressBarGhost = noop,
+		$$subscribe_progressBarGhost = () => ($$unsubscribe_progressBarGhost(), $$unsubscribe_progressBarGhost = subscribe(progressBarGhost, $$value => $$invalidate(3, $progressBarGhost = $$value)), progressBarGhost);
+
 	let $progressBar,
 		$$unsubscribe_progressBar = noop,
-		$$subscribe_progressBar = () => ($$unsubscribe_progressBar(), $$unsubscribe_progressBar = subscribe(progressBar, $$value => $$invalidate(2, $progressBar = $$value)), progressBar);
+		$$subscribe_progressBar = () => ($$unsubscribe_progressBar(), $$unsubscribe_progressBar = subscribe(progressBar, $$value => $$invalidate(4, $progressBar = $$value)), progressBar);
 
+	$$self.$$.on_destroy.push(() => $$unsubscribe_progressBarGhost());
 	$$self.$$.on_destroy.push(() => $$unsubscribe_progressBar());
 	let { text } = $$props;
-	let { progress } = $$props;
+	let { progress = 0 } = $$props;
+	let { progressGhost = 0 } = $$props;
 	let { progressBar = tweened(0, { duration: 400, easing: cubicOut }) } = $$props;
 	$$subscribe_progressBar();
+	let { progressBarGhost = tweened(0, { duration: 400, easing: cubicOut }) } = $$props;
+	$$subscribe_progressBarGhost();
 
 	function updateProgress() {
 		progressBar.set(progress);
+		progressBarGhost.set(progressGhost);
 	}
 
 	$$self.$$set = $$props => {
 		if ('text' in $$props) $$invalidate(0, text = $$props.text);
-		if ('progress' in $$props) $$invalidate(3, progress = $$props.progress);
+		if ('progress' in $$props) $$invalidate(5, progress = $$props.progress);
+		if ('progressGhost' in $$props) $$invalidate(6, progressGhost = $$props.progressGhost);
 		if ('progressBar' in $$props) $$subscribe_progressBar($$invalidate(1, progressBar = $$props.progressBar));
+		if ('progressBarGhost' in $$props) $$subscribe_progressBarGhost($$invalidate(2, progressBarGhost = $$props.progressBarGhost));
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*progress*/ 8) {
+		if ($$self.$$.dirty & /*progress*/ 32) {
+			(updateProgress());
+		}
+
+		if ($$self.$$.dirty & /*progressGhost*/ 64) {
 			(updateProgress());
 		}
 	};
 
-	return [text, progressBar, $progressBar, progress];
+	return [
+		text,
+		progressBar,
+		progressBarGhost,
+		$progressBarGhost,
+		$progressBar,
+		progress,
+		progressGhost
+	];
 }
 
 class Healthbar extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$3, create_fragment$3, safe_not_equal, { text: 0, progress: 3, progressBar: 1 });
+
+		init(this, options, instance$5, create_fragment$5, safe_not_equal, {
+			text: 0,
+			progress: 5,
+			progressGhost: 6,
+			progressBar: 1,
+			progressBarGhost: 2
+		});
 	}
 }
 
@@ -12161,9 +12335,13 @@ class RestWorkflow {
     this.actor = actor;
     this.longRest = longRest;
     this.finished = false;
+  }
+
+  async setup() {
     this.fetchHealthData();
-    this.fetchSpellData();
     this.fetchFeatures();
+    this.fetchSpellData();
+    return this;
   }
 
   get healthPercentage() {
@@ -12198,7 +12376,7 @@ class RestWorkflow {
     this.remove(actor);
     const workflow = new this(actor, longRest);
     rests.set(actor.uuid, workflow);
-    return workflow;
+    return workflow.setup();
   }
 
   static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
@@ -12227,8 +12405,16 @@ class RestWorkflow {
       startingHealth: this.actor.data.data.attributes.hp.value,
       availableHitDice: this.getHitDice(),
       totalHitDice: this.totalHitDice,
-      totalHealthRegained: 0
+      hitPointsToRegain: 0
     };
+
+    if (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL) {
+      let {
+        hitPointsRecovered
+      } = this.actor._getRestHitPointRecovery();
+
+      this.healthData.hitPointsToRegain = hitPointsRecovered;
+    }
   }
 
   getHitDice() {
@@ -12244,8 +12430,8 @@ class RestWorkflow {
     }, {});
   }
 
-  fetchSpellData() {
-    var _this$actor$items$fin, _this$actor$items$fin2, _this$actor$items$fin3, _this$actor$items$fin4, _this$actor$items$fin5, _this$actor$items$fin6, _this$actor$items$get, _wizardFeature$data, _wizardFeature$data$d, _wizardFeature$data$d2, _druidFeature$data, _druidFeature$data$da, _druidFeature$data$da2;
+  async fetchSpellData() {
+    var _this$actor$items$fin, _this$actor$items$fin2, _this$actor$items$fin3, _this$actor$items$fin4, _this$actor$items$fin5, _this$actor$items$fin6, _this$actor$items$get;
 
     this.spellData = {
       slots: {},
@@ -12256,7 +12442,7 @@ class RestWorkflow {
       className: ""
     };
     const wizardLevel = ((_this$actor$items$fin = this.actor.items.find(item => {
-      return item.type === "class" && item.data.data.levels >= 2 && item.name === getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
+      return item.type === "class" && item.name === getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
     })) === null || _this$actor$items$fin === void 0 ? void 0 : (_this$actor$items$fin2 = _this$actor$items$fin.data) === null || _this$actor$items$fin2 === void 0 ? void 0 : (_this$actor$items$fin3 = _this$actor$items$fin2.data) === null || _this$actor$items$fin3 === void 0 ? void 0 : _this$actor$items$fin3.levels) || 0;
     const wizardFeature = this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
     const druidLevel = ((_this$actor$items$fin4 = this.actor.items.find(item => {
@@ -12288,8 +12474,8 @@ class RestWorkflow {
       }
     }
 
-    const wizardFeatureUse = wizardLevel && wizardFeature && (wizardFeature === null || wizardFeature === void 0 ? void 0 : (_wizardFeature$data = wizardFeature.data) === null || _wizardFeature$data === void 0 ? void 0 : (_wizardFeature$data$d = _wizardFeature$data.data) === null || _wizardFeature$data$d === void 0 ? void 0 : (_wizardFeature$data$d2 = _wizardFeature$data$d.uses) === null || _wizardFeature$data$d2 === void 0 ? void 0 : _wizardFeature$data$d2.value) > 0;
-    const druidFeatureUse = druidLevel && druidFeature && (druidFeature === null || druidFeature === void 0 ? void 0 : (_druidFeature$data = druidFeature.data) === null || _druidFeature$data === void 0 ? void 0 : (_druidFeature$data$da = _druidFeature$data.data) === null || _druidFeature$data$da === void 0 ? void 0 : (_druidFeature$data$da2 = _druidFeature$data$da.uses) === null || _druidFeature$data$da2 === void 0 ? void 0 : _druidFeature$data$da2.value) > 0;
+    const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature);
+    const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature);
 
     if (wizardLevel > druidLevel || druidLevel > wizardLevel && !druidFeatureUse) {
       this.spellData.has_feature_use = wizardFeatureUse;
@@ -12302,14 +12488,12 @@ class RestWorkflow {
       this.spellData.pointsTotal = Math.ceil(druidLevel / 2);
       this.spellData.className = getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
     }
-
-    this.patchSpellFeature();
   }
 
-  async patchSpellFeature() {
-    if (this.spellData.feature && (this.spellData.feature.data.data.activation.type !== "special" || this.spellData.feature.data.data.uses.value === null || this.spellData.feature.data.data.uses.max === null || this.spellData.feature.data.data.uses.per !== "lr")) {
-      await this.actor.updateEmbeddedDocuments("Item", [{
-        _id: this.spellData.feature.id,
+  patchSpellFeature(feature) {
+    if (feature && (feature.data.data.activation.type !== "special" || feature.data.data.uses.value === null || feature.data.data.uses.max === null || feature.data.data.uses.per !== "lr")) {
+      this.actor.updateEmbeddedDocuments("Item", [{
+        _id: feature.id,
         "data.activation.type": "special",
         "data.uses.value": 1,
         "data.uses.max": 1,
@@ -12319,7 +12503,10 @@ class RestWorkflow {
         actorName: this.actor.name,
         recoveryName: this.spellData.feature.name
       }));
+      return true;
     }
+
+    return feature.data.data.uses.value > 0;
   }
 
   fetchFeatures() {
@@ -12524,10 +12711,10 @@ class RestWorkflow {
       return result;
     }
 
-    const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
     const maxHP = this.actor.data.data.attributes.hp.max;
     const currentHP = this.actor.data.data.attributes.hp.value;
-    const recoveredHP = Math.floor(maxHP * multiplier);
+    const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+    const recoveredHP = this.healthData.hitPointsToRegain || Math.floor(maxHP * multiplier);
     result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
     result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
 
@@ -12547,41 +12734,41 @@ class RestWorkflow {
     });
   }
 
-  _getRestHitDiceRecoveryPost({
-    updates,
-    hitDiceRecovered
+  _getRestHitDiceRecoveryPost(results, {
+    forced = false
   } = {}) {
+    if (forced) {
+      return results;
+    }
+
     const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
       return (parseInt(b.data.data.hitDice.slice(1)) || 0) - (parseInt(a.data.data.hitDice.slice(1)) || 0);
     });
 
     for (const item of sortedClasses) {
       if (item.data.data.hitDiceUsed < 0) {
-        const update = updates.find(update => update._id === item.id);
+        const update = results.updates.find(update => update._id === item.id);
 
         if (update) {
-          updates[updates.indexOf(update)]["data.hitDiceUsed"] = 0;
+          results.updates[results.updates.indexOf(update)]["data.hitDiceUsed"] = 0;
         } else {
-          updates.push({
+          results.updates.push({
             _id: item.id,
             "data.hitDiceUsed": 0
           });
         }
 
-        hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
+        results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
       } else {
-        const update = updates.find(update => update._id === item.id);
+        const update = results.updates.find(update => update._id === item.id);
 
         if (update) {
-          updates.splice(updates.indexOf(update), 1);
+          results.updates.splice(results.updates.indexOf(update), 1);
         }
       }
     }
 
-    return {
-      updates,
-      hitDiceRecovered
-    };
+    return results;
   }
 
   _getMaxHitDiceRecovery({
@@ -12612,7 +12799,7 @@ class RestWorkflow {
         if (recoverShortRestResources && resource.sr) {
           updates[`data.resources.${key}.value`] = Number(resource.max);
         } else if (recoverLongRestResources && resource.lr) {
-          const recoverResources = Math.max(Math.floor(resource.max * multiplier), multiplier ? 1 : 0);
+          const recoverResources = Math.max(Math.floor(resource.max * multiplier), 1);
           updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
         }
       }
@@ -12624,24 +12811,26 @@ class RestWorkflow {
   _getRestSpellRecovery(updates, {
     recoverSpells = true
   } = {}) {
-    if (!recoverSpells && this.spellData.feature) {
-      for (const [slot, num] of Object.entries(this.recoveredSlots)) {
-        const prop = `data.spells.spell${slot}.value`;
-        updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor.data, prop) || 0) + num;
+    // Long rest
+    if (recoverSpells) {
+      const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
+
+      for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
+        if (!slot.override && !slot.max) continue;
+        let spellMax = slot.override || slot.max;
+
+        let _recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
+
+        updates[`data.spells.${level}.value`] = Math.min(slot.value + _recoverSpells, spellMax);
+      } // Short rest
+
+    } else {
+      if (this.spellData.feature) {
+        for (const [slot, num] of Object.entries(this.recoveredSlots)) {
+          const prop = `data.spells.spell${slot}.value`;
+          updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor.data, prop) || 0) + num;
+        }
       }
-
-      return updates;
-    }
-
-    const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
-
-    for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
-      if (!slot.override && !slot.max) continue;
-      let spellMax = slot.override || slot.max;
-
-      let _recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
-
-      updates[`data.spells.${level}.value`] = Math.min(slot.value + _recoverSpells, spellMax);
     }
 
     return updates;
@@ -12710,9 +12899,121 @@ class RestWorkflow {
 
 }
 
+/* scripts\formapplications\components\Dialog.svelte generated by Svelte v3.46.4 */
+
+function create_if_block$2(ctx) {
+	let p;
+	let i;
+	let i_class_value;
+
+	return {
+		c() {
+			p = element("p");
+			i = element("i");
+			attr(i, "class", i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-iivrm9"));
+			attr(p, "class", "header-icon svelte-iivrm9");
+		},
+		m(target, anchor) {
+			insert(target, p, anchor);
+			append(p, i);
+		},
+		p(ctx, dirty) {
+			if (dirty & /*icon*/ 1 && i_class_value !== (i_class_value = "" + (null_to_empty(/*icon*/ ctx[0]) + " svelte-iivrm9"))) {
+				attr(i, "class", i_class_value);
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(p);
+		}
+	};
+}
+
+function create_fragment$4(ctx) {
+	let div;
+	let t0;
+	let p0;
+	let strong;
+	let t1;
+	let t2;
+	let p1;
+	let t3;
+	let if_block = /*icon*/ ctx[0] && create_if_block$2(ctx);
+
+	return {
+		c() {
+			div = element("div");
+			if (if_block) if_block.c();
+			t0 = space();
+			p0 = element("p");
+			strong = element("strong");
+			t1 = text(/*header*/ ctx[1]);
+			t2 = space();
+			p1 = element("p");
+			t3 = text(/*content*/ ctx[2]);
+			attr(p0, "class", "header svelte-iivrm9");
+			attr(div, "class", "svelte-iivrm9");
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			if (if_block) if_block.m(div, null);
+			append(div, t0);
+			append(div, p0);
+			append(p0, strong);
+			append(strong, t1);
+			append(div, t2);
+			append(div, p1);
+			append(p1, t3);
+		},
+		p(ctx, [dirty]) {
+			if (/*icon*/ ctx[0]) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+				} else {
+					if_block = create_if_block$2(ctx);
+					if_block.c();
+					if_block.m(div, t0);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
+
+			if (dirty & /*header*/ 2) set_data(t1, /*header*/ ctx[1]);
+			if (dirty & /*content*/ 4) set_data(t3, /*content*/ ctx[2]);
+		},
+		i: noop,
+		o: noop,
+		d(detaching) {
+			if (detaching) detach(div);
+			if (if_block) if_block.d();
+		}
+	};
+}
+
+function instance$4($$self, $$props, $$invalidate) {
+	let { icon } = $$props;
+	let { header } = $$props;
+	let { content } = $$props;
+
+	$$self.$$set = $$props => {
+		if ('icon' in $$props) $$invalidate(0, icon = $$props.icon);
+		if ('header' in $$props) $$invalidate(1, header = $$props.header);
+		if ('content' in $$props) $$invalidate(2, content = $$props.content);
+	};
+
+	return [icon, header, content];
+}
+
+class Dialog$1 extends SvelteComponent {
+	constructor(options) {
+		super();
+		init(this, options, instance$4, create_fragment$4, safe_not_equal, { icon: 0, header: 1, content: 2 });
+	}
+}
+
 /* scripts\formapplications\short-rest\short-rest-shell.svelte generated by Svelte v3.46.4 */
 
-function get_each_context$1(ctx, list, i) {
+function get_each_context$2(ctx, list, i) {
 	const child_ctx = ctx.slice();
 	child_ctx[26] = list[i][0];
 	child_ctx[27] = list[i][1];
@@ -12736,7 +13037,7 @@ function get_each_context_2(ctx, list, i) {
 	return child_ctx;
 }
 
-// (98:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (103:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block_2(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[33] + "";
@@ -12790,7 +13091,7 @@ function create_each_block_2(key_1, ctx) {
 	};
 }
 
-// (106:12) {#if healthData.totalHitDice === 0}
+// (111:12) {#if healthData.totalHitDice === 0}
 function create_if_block_6$1(ctx) {
 	let p;
 
@@ -12810,7 +13111,7 @@ function create_if_block_6$1(ctx) {
 	};
 }
 
-// (109:12) {#if currHP >= maxHP}
+// (114:12) {#if currHP >= maxHP}
 function create_if_block_5$1(ctx) {
 	let p;
 
@@ -12830,7 +13131,7 @@ function create_if_block_5$1(ctx) {
 	};
 }
 
-// (114:8) {#if spellData.feature}
+// (119:8) {#if spellData.feature}
 function create_if_block_2$1(ctx) {
 	let div;
 	let label;
@@ -12896,7 +13197,7 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (150:12) {:else}
+// (155:12) {:else}
 function create_else_block$1(ctx) {
 	let p;
 
@@ -12916,7 +13217,7 @@ function create_else_block$1(ctx) {
 	};
 }
 
-// (126:45) 
+// (131:45) 
 function create_if_block_4$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
@@ -12932,9 +13233,9 @@ function create_if_block_4$1(ctx) {
 	const get_key = ctx => /*levelIndex*/ ctx[29];
 
 	for (let i = 0; i < each_value.length; i += 1) {
-		let child_ctx = get_each_context$1(ctx, each_value, i);
+		let child_ctx = get_each_context$2(ctx, each_value, i);
 		let key = get_key(child_ctx);
-		each_1_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
+		each_1_lookup.set(key, each_blocks[i] = create_each_block$2(key, child_ctx));
 	}
 
 	return {
@@ -12960,7 +13261,7 @@ function create_if_block_4$1(ctx) {
 		p(ctx, dirty) {
 			if (dirty[0] & /*spellData, spendSpellPoint*/ 33280) {
 				each_value = Object.entries(/*spellData*/ ctx[9].slots);
-				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, t0.parentNode, destroy_block, create_each_block$1, t0, get_each_context$1);
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, t0.parentNode, destroy_block, create_each_block$2, t0, get_each_context$2);
 			}
 
 			if (dirty[0] & /*spellData*/ 512 && t1_value !== (t1_value = localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
@@ -12978,7 +13279,7 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (120:12) {#if spellData.missingSlots && !spellData.has_feature_use}
+// (125:12) {#if spellData.missingSlots && !spellData.has_feature_use}
 function create_if_block_3$1(ctx) {
 	let p;
 
@@ -13009,7 +13310,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (133:32) {#each slots as slot, slotIndex (slotIndex)}
+// (138:32) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -13065,8 +13366,8 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (128:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
-function create_each_block$1(key_1, ctx) {
+// (133:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+function create_each_block$2(key_1, ctx) {
 	let div3;
 	let div2;
 	let div0;
@@ -13145,7 +13446,7 @@ function create_each_block$1(key_1, ctx) {
 	};
 }
 
-// (158:8) {#if promptNewDay}
+// (163:8) {#if promptNewDay}
 function create_if_block_1$1(ctx) {
 	let div;
 	let label;
@@ -13198,7 +13499,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (170:12) {#if !startedShortRest}
+// (175:12) {#if !startedShortRest}
 function create_if_block$1(ctx) {
 	let button;
 	let i;
@@ -13238,7 +13539,7 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (89:0) <ApplicationShell bind:elementRoot>
+// (94:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$1(ctx) {
 	let form_1;
 	let p;
@@ -13506,7 +13807,7 @@ function create_default_slot$1(ctx) {
 	};
 }
 
-function create_fragment$2(ctx) {
+function create_fragment$3(ctx) {
 	let applicationshell;
 	let updating_elementRoot;
 	let current;
@@ -13565,7 +13866,7 @@ function create_fragment$2(ctx) {
 	};
 }
 
-function instance$2($$self, $$props, $$invalidate) {
+function instance$3($$self, $$props, $$invalidate) {
 	const { application } = getContext('external');
 	let { elementRoot } = $$props;
 	let { actor } = $$props;
@@ -13585,13 +13886,19 @@ function instance$2($$self, $$props, $$invalidate) {
 	async function requestSubmit() {
 		if (workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
 			const doContinue = await TJSDialog.confirm({
-				title: "Finish Short Rest?",
-				content: dialogLayout({
-					title: "Finish Short Rest?",
-					message: "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
-				}),
+				title: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
+				content: {
+					class: Dialog$1,
+					props: {
+						icon: "fas fa-exclamation-triangle",
+						header: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
+						content: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Content")
+					}
+				},
 				modal: true,
-				draggable: false
+				draggable: false,
+				height: 500,
+				headerButtonNoClose: true
 			});
 
 			if (!doContinue) return false;
@@ -13708,8 +14015,8 @@ class Short_rest_shell extends SvelteComponent {
 		init(
 			this,
 			options,
-			instance$2,
-			create_fragment$2,
+			instance$3,
+			create_fragment$3,
 			safe_not_equal,
 			{
 				elementRoot: 0,
@@ -13807,84 +14114,269 @@ class ShortRestDialog extends SvelteApplication {
 
 /* scripts\formapplications\components\HealthBar.svelte generated by Svelte v3.46.4 */
 
-function create_fragment$1(ctx) {
+function create_fragment$2(ctx) {
+	let div4;
 	let div3;
-	let div2;
 	let div0;
 	let t0;
 	let div1;
 	let t1;
+	let div2;
+	let t2;
 
 	return {
 		c() {
+			div4 = element("div");
 			div3 = element("div");
-			div2 = element("div");
 			div0 = element("div");
 			t0 = space();
 			div1 = element("div");
-			t1 = text(/*text*/ ctx[0]);
-			attr(div0, "class", "progress svelte-1307vsu");
-			set_style(div0, "width", /*$progressBar*/ ctx[2] * 100 + "%");
-			attr(div1, "class", "overlay svelte-1307vsu");
-			attr(div2, "class", "healthbar svelte-1307vsu");
+			t1 = space();
+			div2 = element("div");
+			t2 = text(/*text*/ ctx[0]);
+			attr(div0, "class", "progress_ghost svelte-zkgr9f");
+			set_style(div0, "width", /*$progressBarGhost*/ ctx[3] * 100 + "%");
+			attr(div1, "class", "progress svelte-zkgr9f");
+			set_style(div1, "width", /*$progressBar*/ ctx[4] * 100 + "%");
+			attr(div2, "class", "overlay svelte-zkgr9f");
+			attr(div3, "class", "healthbar svelte-zkgr9f");
 		},
 		m(target, anchor) {
-			insert(target, div3, anchor);
+			insert(target, div4, anchor);
+			append(div4, div3);
+			append(div3, div0);
+			append(div3, t0);
+			append(div3, div1);
+			append(div3, t1);
 			append(div3, div2);
-			append(div2, div0);
-			append(div2, t0);
-			append(div2, div1);
-			append(div1, t1);
+			append(div2, t2);
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*$progressBar*/ 4) {
-				set_style(div0, "width", /*$progressBar*/ ctx[2] * 100 + "%");
+			if (dirty & /*$progressBarGhost*/ 8) {
+				set_style(div0, "width", /*$progressBarGhost*/ ctx[3] * 100 + "%");
 			}
 
-			if (dirty & /*text*/ 1) set_data(t1, /*text*/ ctx[0]);
+			if (dirty & /*$progressBar*/ 16) {
+				set_style(div1, "width", /*$progressBar*/ ctx[4] * 100 + "%");
+			}
+
+			if (dirty & /*text*/ 1) set_data(t2, /*text*/ ctx[0]);
 		},
 		i: noop,
 		o: noop,
 		d(detaching) {
-			if (detaching) detach(div3);
+			if (detaching) detach(div4);
 		}
 	};
 }
 
-function instance$1($$self, $$props, $$invalidate) {
+function instance$2($$self, $$props, $$invalidate) {
+	let $progressBarGhost,
+		$$unsubscribe_progressBarGhost = noop,
+		$$subscribe_progressBarGhost = () => ($$unsubscribe_progressBarGhost(), $$unsubscribe_progressBarGhost = subscribe(progressBarGhost, $$value => $$invalidate(3, $progressBarGhost = $$value)), progressBarGhost);
+
 	let $progressBar,
 		$$unsubscribe_progressBar = noop,
-		$$subscribe_progressBar = () => ($$unsubscribe_progressBar(), $$unsubscribe_progressBar = subscribe(progressBar, $$value => $$invalidate(2, $progressBar = $$value)), progressBar);
+		$$subscribe_progressBar = () => ($$unsubscribe_progressBar(), $$unsubscribe_progressBar = subscribe(progressBar, $$value => $$invalidate(4, $progressBar = $$value)), progressBar);
 
+	$$self.$$.on_destroy.push(() => $$unsubscribe_progressBarGhost());
 	$$self.$$.on_destroy.push(() => $$unsubscribe_progressBar());
 	let { text } = $$props;
-	let { progress } = $$props;
+	let { progress = 0 } = $$props;
+	let { progressGhost = 0 } = $$props;
 	let { progressBar = tweened(0, { duration: 400, easing: cubicOut }) } = $$props;
 	$$subscribe_progressBar();
+	let { progressBarGhost = tweened(0, { duration: 400, easing: cubicOut }) } = $$props;
+	$$subscribe_progressBarGhost();
 
 	function updateProgress() {
 		progressBar.set(progress);
+		progressBarGhost.set(progressGhost);
 	}
 
 	$$self.$$set = $$props => {
 		if ('text' in $$props) $$invalidate(0, text = $$props.text);
-		if ('progress' in $$props) $$invalidate(3, progress = $$props.progress);
+		if ('progress' in $$props) $$invalidate(5, progress = $$props.progress);
+		if ('progressGhost' in $$props) $$invalidate(6, progressGhost = $$props.progressGhost);
 		if ('progressBar' in $$props) $$subscribe_progressBar($$invalidate(1, progressBar = $$props.progressBar));
+		if ('progressBarGhost' in $$props) $$subscribe_progressBarGhost($$invalidate(2, progressBarGhost = $$props.progressBarGhost));
 	};
 
 	$$self.$$.update = () => {
-		if ($$self.$$.dirty & /*progress*/ 8) {
+		if ($$self.$$.dirty & /*progress*/ 32) {
+			(updateProgress());
+		}
+
+		if ($$self.$$.dirty & /*progressGhost*/ 64) {
 			(updateProgress());
 		}
 	};
 
-	return [text, progressBar, $progressBar, progress];
+	return [
+		text,
+		progressBar,
+		progressBarGhost,
+		$progressBarGhost,
+		$progressBar,
+		progress,
+		progressGhost
+	];
 }
 
 class HealthBar extends SvelteComponent {
 	constructor(options) {
 		super();
-		init(this, options, instance$1, create_fragment$1, safe_not_equal, { text: 0, progress: 3, progressBar: 1 });
+
+		init(this, options, instance$2, create_fragment$2, safe_not_equal, {
+			text: 0,
+			progress: 5,
+			progressGhost: 6,
+			progressBar: 1,
+			progressBarGhost: 2
+		});
+	}
+}
+
+/* scripts\formapplications\long-rest\CustomSettingsDialog.svelte generated by Svelte v3.46.4 */
+
+function get_each_context$1(ctx, list, i) {
+	const child_ctx = ctx.slice();
+	child_ctx[1] = list[i];
+	child_ctx[3] = i;
+	return child_ctx;
+}
+
+// (26:8) {#each settings as setting, index (index)}
+function create_each_block$1(key_1, ctx) {
+	let tr;
+	let td0;
+	let t0_value = localize(/*setting*/ ctx[1].name) + "";
+	let t0;
+	let t1;
+	let td1;
+	let t2_value = localize(/*setting*/ ctx[1].choices[/*setting*/ ctx[1].value]) + "";
+	let t2;
+	let t3;
+
+	return {
+		key: key_1,
+		first: null,
+		c() {
+			tr = element("tr");
+			td0 = element("td");
+			t0 = text(t0_value);
+			t1 = space();
+			td1 = element("td");
+			t2 = text(t2_value);
+			t3 = space();
+			this.first = tr;
+		},
+		m(target, anchor) {
+			insert(target, tr, anchor);
+			append(tr, td0);
+			append(td0, t0);
+			append(tr, t1);
+			append(tr, td1);
+			append(td1, t2);
+			append(tr, t3);
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+		},
+		d(detaching) {
+			if (detaching) detach(tr);
+		}
+	};
+}
+
+function create_fragment$1(ctx) {
+	let div;
+	let h3;
+	let t1;
+	let p;
+	let t3;
+	let table;
+	let tr;
+	let t7;
+	let each_blocks = [];
+	let each_1_lookup = new Map();
+	let each_value = /*settings*/ ctx[0];
+	const get_key = ctx => /*index*/ ctx[3];
+
+	for (let i = 0; i < each_value.length; i += 1) {
+		let child_ctx = get_each_context$1(ctx, each_value, i);
+		let key = get_key(child_ctx);
+		each_1_lookup.set(key, each_blocks[i] = create_each_block$1(key, child_ctx));
+	}
+
+	return {
+		c() {
+			div = element("div");
+			h3 = element("h3");
+			h3.textContent = `${localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title")}`;
+			t1 = space();
+			p = element("p");
+			p.textContent = `${localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Content")}`;
+			t3 = space();
+			table = element("table");
+			tr = element("tr");
+
+			tr.innerHTML = `<th class="svelte-gs48np">Setting</th> 
+            <th class="svelte-gs48np">Value</th>`;
+
+			t7 = space();
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].c();
+			}
+
+			attr(table, "class", "svelte-gs48np");
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, h3);
+			append(div, t1);
+			append(div, p);
+			append(div, t3);
+			append(div, table);
+			append(table, tr);
+			append(table, t7);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].m(table, null);
+			}
+		},
+		p(ctx, [dirty]) {
+			if (dirty & /*localize, settings*/ 1) {
+				each_value = /*settings*/ ctx[0];
+				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, table, destroy_block, create_each_block$1, null, get_each_context$1);
+			}
+		},
+		i: noop,
+		o: noop,
+		d(detaching) {
+			if (detaching) detach(div);
+
+			for (let i = 0; i < each_blocks.length; i += 1) {
+				each_blocks[i].d();
+			}
+		}
+	};
+}
+
+function instance$1($$self) {
+	const settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).filter(entry => entry[1].customSettingsDialog).map(entry => {
+		entry[1].value = getSetting(entry[0]);
+		return entry[1];
+	});
+
+	return [settings];
+}
+
+class CustomSettingsDialog extends SvelteComponent {
+	constructor(options) {
+		super();
+		init(this, options, instance$1, create_fragment$1, safe_not_equal, {});
 	}
 }
 
@@ -13892,18 +14384,79 @@ class HealthBar extends SvelteComponent {
 
 function get_each_context(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[27] = list[i][0];
-	child_ctx[28] = list[i][1];
-	child_ctx[30] = i;
+	child_ctx[31] = list[i][0];
+	child_ctx[32] = list[i][1];
+	child_ctx[34] = i;
 	return child_ctx;
 }
 
-// (104:8) {:else}
+// (122:8) {:else}
+function create_else_block_1(ctx) {
+	let p0;
+	let t1;
+	let p1;
+	let a;
+	let mounted;
+	let dispose;
+
+	return {
+		c() {
+			p0 = element("p");
+			p0.textContent = `${localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}`;
+			t1 = space();
+			p1 = element("p");
+			a = element("a");
+			a.textContent = `${localize("REST-RECOVERY.Dialogs.LongRest.CustomRulesLink")}`;
+			set_style(a, "color", "var(--color-text-hyperlink)");
+			attr(p1, "class", "notes");
+		},
+		m(target, anchor) {
+			insert(target, p0, anchor);
+			insert(target, t1, anchor);
+			insert(target, p1, anchor);
+			append(p1, a);
+
+			if (!mounted) {
+				dispose = listen(a, "click", /*showCustomRulesDialog*/ ctx[20]);
+				mounted = true;
+			}
+		},
+		p: noop,
+		d(detaching) {
+			if (detaching) detach(p0);
+			if (detaching) detach(t1);
+			if (detaching) detach(p1);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (120:8) {#if usingDefaultSettings}
+function create_if_block_8(ctx) {
+	let p;
+
+	return {
+		c() {
+			p = element("p");
+			p.textContent = `${localize("DND5E.LongRestHint")}`;
+		},
+		m(target, anchor) {
+			insert(target, p, anchor);
+		},
+		p: noop,
+		d(detaching) {
+			if (detaching) detach(p);
+		}
+	};
+}
+
+// (134:8) {:else}
 function create_else_block(ctx) {
 	let t;
 	let if_block1_anchor;
-	let if_block0 = /*enableRollHitDice*/ ctx[12] && create_if_block_5(ctx);
-	let if_block1 = /*promptNewDay*/ ctx[11] && create_if_block_4(ctx);
+	let if_block0 = /*enableRollHitDice*/ ctx[14] && create_if_block_5(ctx);
+	let if_block1 = /*promptNewDay*/ ctx[12] && create_if_block_4(ctx);
 
 	return {
 		c() {
@@ -13919,8 +14472,8 @@ function create_else_block(ctx) {
 			insert(target, if_block1_anchor, anchor);
 		},
 		p(ctx, dirty) {
-			if (/*enableRollHitDice*/ ctx[12]) if_block0.p(ctx, dirty);
-			if (/*promptNewDay*/ ctx[11]) if_block1.p(ctx, dirty);
+			if (/*enableRollHitDice*/ ctx[14]) if_block0.p(ctx, dirty);
+			if (/*promptNewDay*/ ctx[12]) if_block1.p(ctx, dirty);
 		},
 		d(detaching) {
 			if (if_block0) if_block0.d(detaching);
@@ -13931,7 +14484,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (97:8) {#if showStartLongRestButton}
+// (127:8) {#if showStartLongRestButton}
 function create_if_block_3(ctx) {
 	let div;
 	let button;
@@ -13971,7 +14524,7 @@ function create_if_block_3(ctx) {
 			append(div, p);
 
 			if (!mounted) {
-				dispose = listen(button, "click", /*startLongRest*/ ctx[16]);
+				dispose = listen(button, "click", /*startLongRest*/ ctx[19]);
 				mounted = true;
 			}
 		},
@@ -13984,7 +14537,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (105:8) {#if enableRollHitDice}
+// (135:8) {#if enableRollHitDice}
 function create_if_block_5(ctx) {
 	let div1;
 	let label;
@@ -14004,8 +14557,8 @@ function create_if_block_5(ctx) {
 	let t6;
 	let mounted;
 	let dispose;
-	let each_value = Object.entries(/*healthData*/ ctx[9].availableHitDice);
-	const get_key = ctx => /*index*/ ctx[30];
+	let each_value = Object.entries(/*healthData*/ ctx[10].availableHitDice);
+	const get_key = ctx => /*index*/ ctx[34];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context(ctx, each_value, i);
@@ -14013,7 +14566,7 @@ function create_if_block_5(ctx) {
 		each_1_lookup.set(key, each_blocks[i] = create_each_block(key, child_ctx));
 	}
 
-	let if_block0 = /*healthData*/ ctx[9].totalHitDice === 0 && create_if_block_7();
+	let if_block0 = /*healthData*/ ctx[10].totalHitDice === 0 && create_if_block_7();
 	let if_block1 = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4] && create_if_block_6();
 
 	return {
@@ -14039,10 +14592,10 @@ function create_if_block_5(ctx) {
 			t6 = space();
 			if (if_block1) if_block1.c();
 			attr(select, "name", "hd");
-			if (/*selectedHitDice*/ ctx[10] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[19].call(select));
+			if (/*selectedHitDice*/ ctx[11] === void 0) add_render_callback(() => /*select_change_handler*/ ctx[23].call(select));
 			attr(i, "class", "fas fa-dice-d20");
 			attr(button, "type", "button");
-			button.disabled = button_disabled_value = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4] || /*healthData*/ ctx[9].totalHitDice === 0 || /*healthData*/ ctx[9].availableHitDice[/*selectedHitDice*/ ctx[10]] === 0;
+			button.disabled = button_disabled_value = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4] || /*healthData*/ ctx[10].totalHitDice === 0 || /*healthData*/ ctx[10].availableHitDice[/*selectedHitDice*/ ctx[11]] === 0;
 			attr(div0, "class", "form-fields");
 			attr(div1, "class", "form-group");
 		},
@@ -14057,7 +14610,7 @@ function create_if_block_5(ctx) {
 				each_blocks[i].m(select, null);
 			}
 
-			select_option(select, /*selectedHitDice*/ ctx[10]);
+			select_option(select, /*selectedHitDice*/ ctx[11]);
 			append(div0, t2);
 			append(div0, button);
 			append(button, i);
@@ -14070,28 +14623,28 @@ function create_if_block_5(ctx) {
 
 			if (!mounted) {
 				dispose = [
-					listen(select, "change", /*select_change_handler*/ ctx[19]),
-					listen(button, "click", /*click_handler*/ ctx[20])
+					listen(select, "change", /*select_change_handler*/ ctx[23]),
+					listen(button, "click", /*click_handler*/ ctx[24])
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*healthData*/ 512) {
-				each_value = Object.entries(/*healthData*/ ctx[9].availableHitDice);
+			if (dirty[0] & /*healthData*/ 1024) {
+				each_value = Object.entries(/*healthData*/ ctx[10].availableHitDice);
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, select, destroy_block, create_each_block, null, get_each_context);
 			}
 
-			if (dirty[0] & /*selectedHitDice, healthData*/ 1536) {
-				select_option(select, /*selectedHitDice*/ ctx[10]);
+			if (dirty[0] & /*selectedHitDice, healthData*/ 3072) {
+				select_option(select, /*selectedHitDice*/ ctx[11]);
 			}
 
-			if (dirty[0] & /*currHP, maxHP, healthData, selectedHitDice*/ 1560 && button_disabled_value !== (button_disabled_value = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4] || /*healthData*/ ctx[9].totalHitDice === 0 || /*healthData*/ ctx[9].availableHitDice[/*selectedHitDice*/ ctx[10]] === 0)) {
+			if (dirty[0] & /*currHP, maxHP, healthData, selectedHitDice*/ 3096 && button_disabled_value !== (button_disabled_value = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4] || /*healthData*/ ctx[10].totalHitDice === 0 || /*healthData*/ ctx[10].availableHitDice[/*selectedHitDice*/ ctx[11]] === 0)) {
 				button.disabled = button_disabled_value;
 			}
 
-			if (/*healthData*/ ctx[9].totalHitDice === 0) {
+			if (/*healthData*/ ctx[10].totalHitDice === 0) {
 				if (if_block0) {
 					if_block0.p(ctx, dirty);
 				} else {
@@ -14132,13 +14685,13 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (110:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (140:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block(key_1, ctx) {
 	let option;
-	let t0_value = /*hitDice*/ ctx[27] + "";
+	let t0_value = /*hitDice*/ ctx[31] + "";
 	let t0;
 	let t1;
-	let t2_value = /*num*/ ctx[28] + "";
+	let t2_value = /*num*/ ctx[32] + "";
 	let t2;
 	let t3;
 	let t4_value = localize("DND5E.available") + "";
@@ -14157,7 +14710,7 @@ function create_each_block(key_1, ctx) {
 			t3 = space();
 			t4 = text(t4_value);
 			t5 = text(")");
-			option.__value = option_value_value = /*hitDice*/ ctx[27];
+			option.__value = option_value_value = /*hitDice*/ ctx[31];
 			option.value = option.__value;
 			this.first = option;
 		},
@@ -14172,10 +14725,10 @@ function create_each_block(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty[0] & /*healthData*/ 512 && t0_value !== (t0_value = /*hitDice*/ ctx[27] + "")) set_data(t0, t0_value);
-			if (dirty[0] & /*healthData*/ 512 && t2_value !== (t2_value = /*num*/ ctx[28] + "")) set_data(t2, t2_value);
+			if (dirty[0] & /*healthData*/ 1024 && t0_value !== (t0_value = /*hitDice*/ ctx[31] + "")) set_data(t0, t0_value);
+			if (dirty[0] & /*healthData*/ 1024 && t2_value !== (t2_value = /*num*/ ctx[32] + "")) set_data(t2, t2_value);
 
-			if (dirty[0] & /*healthData*/ 512 && option_value_value !== (option_value_value = /*hitDice*/ ctx[27])) {
+			if (dirty[0] & /*healthData*/ 1024 && option_value_value !== (option_value_value = /*hitDice*/ ctx[31])) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
@@ -14186,7 +14739,7 @@ function create_each_block(key_1, ctx) {
 	};
 }
 
-// (118:16) {#if healthData.totalHitDice === 0}
+// (148:16) {#if healthData.totalHitDice === 0}
 function create_if_block_7(ctx) {
 	let p;
 
@@ -14206,7 +14759,7 @@ function create_if_block_7(ctx) {
 	};
 }
 
-// (121:16) {#if currHP >= maxHP}
+// (151:16) {#if currHP >= maxHP}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -14226,7 +14779,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (127:12) {#if promptNewDay}
+// (157:12) {#if promptNewDay}
 function create_if_block_4(ctx) {
 	let div;
 	let label;
@@ -14257,18 +14810,18 @@ function create_if_block_4(ctx) {
 			append(div, label);
 			append(div, t1);
 			append(div, input);
-			input.checked = /*newDay*/ ctx[7];
+			input.checked = /*newDay*/ ctx[8];
 			append(div, t2);
 			append(div, p);
 
 			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler*/ ctx[21]);
+				dispose = listen(input, "change", /*input_change_handler*/ ctx[25]);
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*newDay*/ 128) {
-				input.checked = /*newDay*/ ctx[7];
+			if (dirty[0] & /*newDay*/ 256) {
+				input.checked = /*newDay*/ ctx[8];
 			}
 		},
 		d(detaching) {
@@ -14279,7 +14832,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (136:8) {#if enableRollHitDice}
+// (166:8) {#if showHealthBar}
 function create_if_block_2(ctx) {
 	let healthbar;
 	let current;
@@ -14287,7 +14840,8 @@ function create_if_block_2(ctx) {
 	healthbar = new HealthBar({
 			props: {
 				text: "HP: " + /*currHP*/ ctx[3] + " / " + /*maxHP*/ ctx[4],
-				progress: /*healthPercentage*/ ctx[5]
+				progress: /*healthPercentage*/ ctx[5],
+				progressGhost: /*healthPercentageToGain*/ ctx[6]
 			}
 		});
 
@@ -14303,6 +14857,7 @@ function create_if_block_2(ctx) {
 			const healthbar_changes = {};
 			if (dirty[0] & /*currHP, maxHP*/ 24) healthbar_changes.text = "HP: " + /*currHP*/ ctx[3] + " / " + /*maxHP*/ ctx[4];
 			if (dirty[0] & /*healthPercentage*/ 32) healthbar_changes.progress = /*healthPercentage*/ ctx[5];
+			if (dirty[0] & /*healthPercentageToGain*/ 64) healthbar_changes.progressGhost = /*healthPercentageToGain*/ ctx[6];
 			healthbar.$set(healthbar_changes);
 		},
 		i(local) {
@@ -14320,7 +14875,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (141:12) {#if !showStartLongRestButton}
+// (171:12) {#if !showStartLongRestButton}
 function create_if_block_1(ctx) {
 	let button;
 	let i;
@@ -14360,7 +14915,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (144:12) {#if !startedLongRest}
+// (174:12) {#if !startedLongRest}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -14387,7 +14942,7 @@ function create_if_block(ctx) {
 			append(button, t1);
 
 			if (!mounted) {
-				dispose = listen(button, "click", /*cancel*/ ctx[14]);
+				dispose = listen(button, "click", /*cancel*/ ctx[17]);
 				mounted = true;
 			}
 		},
@@ -14400,44 +14955,50 @@ function create_if_block(ctx) {
 	};
 }
 
-// (92:0) <ApplicationShell bind:elementRoot>
+// (117:0) <ApplicationShell bind:elementRoot>
 function create_default_slot(ctx) {
 	let form_1;
-	let p;
+	let t0;
 	let t1;
 	let t2;
-	let t3;
 	let footer;
-	let t4;
+	let t3;
 	let current;
 	let mounted;
 	let dispose;
 
 	function select_block_type(ctx, dirty) {
-		if (/*showStartLongRestButton*/ ctx[8]) return create_if_block_3;
-		return create_else_block;
+		if (/*usingDefaultSettings*/ ctx[13]) return create_if_block_8;
+		return create_else_block_1;
 	}
 
 	let current_block_type = select_block_type(ctx);
 	let if_block0 = current_block_type(ctx);
-	let if_block1 = /*enableRollHitDice*/ ctx[12] && create_if_block_2(ctx);
-	let if_block2 = !/*showStartLongRestButton*/ ctx[8] && create_if_block_1(ctx);
-	let if_block3 = !/*startedLongRest*/ ctx[2] && create_if_block(ctx);
+
+	function select_block_type_1(ctx, dirty) {
+		if (/*showStartLongRestButton*/ ctx[9]) return create_if_block_3;
+		return create_else_block;
+	}
+
+	let current_block_type_1 = select_block_type_1(ctx);
+	let if_block1 = current_block_type_1(ctx);
+	let if_block2 = /*showHealthBar*/ ctx[15] && create_if_block_2(ctx);
+	let if_block3 = !/*showStartLongRestButton*/ ctx[9] && create_if_block_1(ctx);
+	let if_block4 = !/*startedLongRest*/ ctx[2] && create_if_block(ctx);
 
 	return {
 		c() {
 			form_1 = element("form");
-			p = element("p");
-			p.textContent = `${localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}`;
-			t1 = space();
 			if_block0.c();
-			t2 = space();
-			if (if_block1) if_block1.c();
-			t3 = space();
-			footer = element("footer");
+			t0 = space();
+			if_block1.c();
+			t1 = space();
 			if (if_block2) if_block2.c();
-			t4 = space();
+			t2 = space();
+			footer = element("footer");
 			if (if_block3) if_block3.c();
+			t3 = space();
+			if (if_block4) if_block4.c();
 			attr(footer, "class", "flexrow");
 			set_style(footer, "margin-top", "0.5rem");
 			attr(form_1, "autocomplete", "off");
@@ -14446,81 +15007,84 @@ function create_default_slot(ctx) {
 		},
 		m(target, anchor) {
 			insert(target, form_1, anchor);
-			append(form_1, p);
-			append(form_1, t1);
 			if_block0.m(form_1, null);
+			append(form_1, t0);
+			if_block1.m(form_1, null);
+			append(form_1, t1);
+			if (if_block2) if_block2.m(form_1, null);
 			append(form_1, t2);
-			if (if_block1) if_block1.m(form_1, null);
-			append(form_1, t3);
 			append(form_1, footer);
-			if (if_block2) if_block2.m(footer, null);
-			append(footer, t4);
 			if (if_block3) if_block3.m(footer, null);
-			/*form_1_binding*/ ctx[22](form_1);
+			append(footer, t3);
+			if (if_block4) if_block4.m(footer, null);
+			/*form_1_binding*/ ctx[26](form_1);
 			current = true;
 
 			if (!mounted) {
-				dispose = listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[13]));
+				dispose = listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[16]));
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
-				if_block0.p(ctx, dirty);
+			if_block0.p(ctx, dirty);
+
+			if (current_block_type_1 === (current_block_type_1 = select_block_type_1(ctx)) && if_block1) {
+				if_block1.p(ctx, dirty);
 			} else {
-				if_block0.d(1);
-				if_block0 = current_block_type(ctx);
+				if_block1.d(1);
+				if_block1 = current_block_type_1(ctx);
 
-				if (if_block0) {
-					if_block0.c();
-					if_block0.m(form_1, t2);
+				if (if_block1) {
+					if_block1.c();
+					if_block1.m(form_1, t1);
 				}
 			}
 
-			if (/*enableRollHitDice*/ ctx[12]) if_block1.p(ctx, dirty);
+			if (/*showHealthBar*/ ctx[15]) if_block2.p(ctx, dirty);
 
-			if (!/*showStartLongRestButton*/ ctx[8]) {
-				if (if_block2) {
-					if_block2.p(ctx, dirty);
-				} else {
-					if_block2 = create_if_block_1(ctx);
-					if_block2.c();
-					if_block2.m(footer, t4);
-				}
-			} else if (if_block2) {
-				if_block2.d(1);
-				if_block2 = null;
-			}
-
-			if (!/*startedLongRest*/ ctx[2]) {
+			if (!/*showStartLongRestButton*/ ctx[9]) {
 				if (if_block3) {
 					if_block3.p(ctx, dirty);
 				} else {
-					if_block3 = create_if_block(ctx);
+					if_block3 = create_if_block_1(ctx);
 					if_block3.c();
-					if_block3.m(footer, null);
+					if_block3.m(footer, t3);
 				}
 			} else if (if_block3) {
 				if_block3.d(1);
 				if_block3 = null;
 			}
+
+			if (!/*startedLongRest*/ ctx[2]) {
+				if (if_block4) {
+					if_block4.p(ctx, dirty);
+				} else {
+					if_block4 = create_if_block(ctx);
+					if_block4.c();
+					if_block4.m(footer, null);
+				}
+			} else if (if_block4) {
+				if_block4.d(1);
+				if_block4 = null;
+			}
 		},
 		i(local) {
 			if (current) return;
-			transition_in(if_block1);
+			transition_in(if_block2);
 			current = true;
 		},
 		o(local) {
-			transition_out(if_block1);
+			transition_out(if_block2);
 			current = false;
 		},
 		d(detaching) {
 			if (detaching) detach(form_1);
 			if_block0.d();
-			if (if_block1) if_block1.d();
+			if_block1.d();
 			if (if_block2) if_block2.d();
 			if (if_block3) if_block3.d();
-			/*form_1_binding*/ ctx[22](null);
+			if (if_block4) if_block4.d();
+			/*form_1_binding*/ ctx[26](null);
 			mounted = false;
 			dispose();
 		}
@@ -14533,7 +15097,7 @@ function create_fragment(ctx) {
 	let current;
 
 	function applicationshell_elementRoot_binding(value) {
-		/*applicationshell_elementRoot_binding*/ ctx[23](value);
+		/*applicationshell_elementRoot_binding*/ ctx[27](value);
 	}
 
 	let applicationshell_props = {
@@ -14559,7 +15123,7 @@ function create_fragment(ctx) {
 		p(ctx, dirty) {
 			const applicationshell_changes = {};
 
-			if (dirty[0] & /*form, startedLongRest, showStartLongRestButton, currHP, maxHP, healthPercentage, newDay, healthData, selectedHitDice*/ 2044 | dirty[1] & /*$$scope*/ 1) {
+			if (dirty[0] & /*form, startedLongRest, showStartLongRestButton, currHP, maxHP, healthPercentage, healthPercentageToGain, newDay, healthData, selectedHitDice*/ 4092 | dirty[1] & /*$$scope*/ 16) {
 				applicationshell_changes.$$scope = { dirty, ctx };
 			}
 
@@ -14593,12 +15157,15 @@ function instance($$self, $$props, $$invalidate) {
 	let currHP;
 	let maxHP;
 	let healthPercentage;
+	let healthPercentageToGain;
 	let form;
 	let startedLongRest = false;
 	let variant = game.settings.get("dnd5e", "restVariant");
 	let promptNewDay = variant !== "gritty";
 	let newDay = variant === "normal";
+	let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
 	let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
+	let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL;
 	let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 	const workflow = RestWorkflow.get(actor);
 	let healthData = workflow.healthData;
@@ -14606,13 +15173,17 @@ function instance($$self, $$props, $$invalidate) {
 	let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
 	async function requestSubmit() {
-		if (workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
+		if (enableRollHitDice && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
 			const doContinue = await TJSDialog.confirm({
-				title: "Finish Long Rest?",
-				content: dialogLayout({
-					title: "Finish Long Rest?",
-					message: "You haven't spent any hit dice to regain hit points, are you sure you want to finish your long rest?"
-				}),
+				title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+				content: {
+					class: Dialog$1,
+					props: {
+						icon: "fas fa-exclamation-triangle",
+						header: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+						content: localize("REST-RECOVERY.Dialogs.LongRestWarning.Content")
+					}
+				},
 				modal: true,
 				draggable: false
 			});
@@ -14637,27 +15208,40 @@ function instance($$self, $$props, $$invalidate) {
 	async function rollHitDice(event) {
 		const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
 		if (!rolled) return;
-		$$invalidate(9, healthData = workflow.healthData);
+		$$invalidate(10, healthData = workflow.healthData);
 		$$invalidate(2, startedLongRest = true);
 	}
 
 	async function startLongRest() {
-		$$invalidate(8, showStartLongRestButton = false);
+		$$invalidate(9, showStartLongRestButton = false);
 		$$invalidate(2, startedLongRest = true);
 		await workflow.regainHitDice();
-		$$invalidate(9, healthData = workflow.healthData);
+		$$invalidate(10, healthData = workflow.healthData);
 	}
 
 	async function updateHealthBar() {
 		$$invalidate(3, currHP = actor.data.data.attributes.hp.value);
 		$$invalidate(4, maxHP = actor.data.data.attributes.hp.max);
 		$$invalidate(5, healthPercentage = currHP / maxHP);
+		$$invalidate(6, healthPercentageToGain = (currHP + healthData.hitPointsToRegain) / maxHP);
+	}
+
+	function showCustomRulesDialog() {
+		TJSDialog.prompt({
+			title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+			content: { class: CustomSettingsDialog },
+			label: "Okay",
+			modal: true,
+			draggable: false,
+			height: "auto",
+			headerButtonNoClose: true
+		});
 	}
 
 	function select_change_handler() {
 		selectedHitDice = select_value(this);
-		$$invalidate(10, selectedHitDice);
-		$$invalidate(9, healthData);
+		$$invalidate(11, selectedHitDice);
+		$$invalidate(10, healthData);
 	}
 
 	const click_handler = event => {
@@ -14666,13 +15250,13 @@ function instance($$self, $$props, $$invalidate) {
 
 	function input_change_handler() {
 		newDay = this.checked;
-		$$invalidate(7, newDay);
+		$$invalidate(8, newDay);
 	}
 
 	function form_1_binding($$value) {
 		binding_callbacks[$$value ? 'unshift' : 'push'](() => {
 			form = $$value;
-			$$invalidate(6, form);
+			$$invalidate(7, form);
 		});
 	}
 
@@ -14683,7 +15267,7 @@ function instance($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		if ('elementRoot' in $$props) $$invalidate(0, elementRoot = $$props.elementRoot);
-		if ('actor' in $$props) $$invalidate(17, actor = $$props.actor);
+		if ('actor' in $$props) $$invalidate(21, actor = $$props.actor);
 	};
 
 	$$self.$$.update = () => {
@@ -14700,17 +15284,21 @@ function instance($$self, $$props, $$invalidate) {
 		currHP,
 		maxHP,
 		healthPercentage,
+		healthPercentageToGain,
 		form,
 		newDay,
 		showStartLongRestButton,
 		healthData,
 		selectedHitDice,
 		promptNewDay,
+		usingDefaultSettings,
 		enableRollHitDice,
+		showHealthBar,
 		updateSettings,
 		cancel,
 		rollHitDice,
 		startLongRest,
+		showCustomRulesDialog,
 		actor,
 		updateHealthBar,
 		select_change_handler,
@@ -14733,9 +15321,9 @@ class Long_rest_shell extends SvelteComponent {
 			safe_not_equal,
 			{
 				elementRoot: 0,
-				actor: 17,
+				actor: 21,
 				requestSubmit: 1,
-				updateHealthBar: 18
+				updateHealthBar: 22
 			},
 			null,
 			[-1, -1]
@@ -14752,7 +15340,7 @@ class Long_rest_shell extends SvelteComponent {
 	}
 
 	get actor() {
-		return this.$$.ctx[17];
+		return this.$$.ctx[21];
 	}
 
 	set actor(actor) {
@@ -14765,7 +15353,7 @@ class Long_rest_shell extends SvelteComponent {
 	}
 
 	get updateHealthBar() {
-		return this.$$.ctx[18];
+		return this.$$.ctx[22];
 	}
 }
 
@@ -15102,6 +15690,10 @@ Hooks.once("init", () => {
   registerSettings();
   registerLibwrappers();
   console.log("Rest Recovery 5e | Initialized");
+});
+Hooks.once("ready", () => {
+  //new SettingsShim().render(true);
+  game.actors.getName("Jonathan").longRest();
 });
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);

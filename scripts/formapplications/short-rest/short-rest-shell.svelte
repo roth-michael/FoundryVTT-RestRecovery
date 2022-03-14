@@ -5,11 +5,10 @@
     import HealthBar from "../components/Healthbar.svelte";
 
     import { getContext } from 'svelte';
-    import { tweened } from 'svelte/motion';
-    import { cubicOut } from 'svelte/easing';
 
     import RestWorkflow from "../../rest-workflow.js";
-    import { dialogLayout, getSetting } from "../../lib/lib.js";
+    import Dialog from "../components/Dialog.svelte";
+    import { getSetting } from "../../lib/lib.js";
 
     const { application } = getContext('external');
 
@@ -39,13 +38,19 @@
     export async function requestSubmit() {
         if(workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
             const doContinue = await TJSDialog.confirm({
-                title: "Finish Short Rest?",
-                content: dialogLayout({
-                    title: "Finish Short Rest?",
-                    message: "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
-                }),
+                title: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
+                content: {
+                    class: Dialog,
+                    props: {
+                        icon: "fas fa-exclamation-triangle",
+                        header: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
+                        content: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Content")
+                    }
+                },
                 modal: true,
-                draggable: false
+                draggable: false,
+                height: 500,
+                headerButtonNoClose: true
             })
             if(!doContinue) return false;
         }

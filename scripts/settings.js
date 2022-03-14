@@ -21,7 +21,7 @@ export default function registerSettings() {
         restricted: true
     });
 
-    for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
+    for (const [name, data] of Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())) {
         game.settings.register(CONSTANTS.MODULE_NAME, name, data);
     }
 
@@ -61,7 +61,7 @@ class ResetSettingsDialog extends FormApplication {
 }
 
 async function resetSettings() {
-    for (const [name, data] of Object.entries(CONSTANTS.DEFAULT_SETTINGS)) {
+    for (const [name, data] of Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())) {
         await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
     }
     window.location.reload();

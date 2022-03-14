@@ -9,7 +9,7 @@
 
         "FeatureNames": {
             "ArcaneRecovery": "Arcane Recovery",
-            "DruidRecovery": "Natural Recovery",
+            "NaturalRecovery": "Natural Recovery",
             "SongOfRest": "Song of Rest",
             "ChefFeat": "Chef",
             "ChefTools": "Cook's Utensils",
@@ -36,7 +36,12 @@
             "2": "Two",
             "3": "Three",
             "4": "Four",
-            "5": "Five"
+            "5": "Five",
+            "1st": "1st",
+            "2nd": "2nd",
+            "3rd": "3rd",
+            "4th": "4th",
+            "5th": "5th"
         },
 
         "Chat": {
@@ -63,16 +68,29 @@
                 "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
                 "FullSpells": "You're full on spells, you have no need to regain any spell slots."
             },
+            "ShortRestWarning": {
+                "Title": "Finish Short Rest?",
+                "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
+            },
             "LongRest": {
                 "Begin": "Begin Long Rest",
                 "BeginExplanation": "By beginning your long rest, you will regain some of your hit dice so that you can roll them to regain hit points.",
-                "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots."
+                "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots differently.",
+                "CustomRulesLink": "Check out the custom rules."
+            },
+            "LongRestWarning": {
+                "Title": "Finish Long Rest?",
+                "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your long rest?"
+            },
+            "LongRestSettingsDialog": {
+                "Title": "Long Rest Settings",
+                "Content": "These are the settings your GM configured for long rests in this game."
             },
             "ModuleConfig": {
                 "Title": "Rest Recovery Configuration",
                 "LongRest": "Long Rest Settings",
                 "ShortRest": "Short Rest Settings",
-                "Other": "Other Settings",
+                "ItemNames": "Feature Name Settings",
                 "Submit": "Submit Settings"
             }
         },
