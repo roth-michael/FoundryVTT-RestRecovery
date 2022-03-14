@@ -92,7 +92,8 @@
 <ApplicationShell bind:elementRoot>
     <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd" class="dialog-content">
 
-        <p>{localize("DND5E.LongRestHint")}</p>
+        <p>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}</p>
+
         {#if showStartLongRestButton}
             <div class="form-group" style="margin: 1rem 0;">
                 <button type="button" style="flex:0 1 auto;" on:click={startLongRest}>

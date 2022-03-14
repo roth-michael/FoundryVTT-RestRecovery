@@ -5,13 +5,12 @@ import RestWorkflow from "./rest-workflow.js";
 Hooks.once("init", () => {
     registerSettings();
     registerLibwrappers();
-    console.log("Rest Recovery | Initialized");
+    console.log("Rest Recovery 5e | Initialized");
 });
 
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);
     if (workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)) {
-        console.log(workflow.recoveredSlots)
         workflow.preFinishRestMessage();
     }
 });

@@ -13898,7 +13898,7 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (103:8) {:else}
+// (104:8) {:else}
 function create_else_block(ctx) {
 	let t;
 	let if_block1_anchor;
@@ -13931,7 +13931,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (96:8) {#if showStartLongRestButton}
+// (97:8) {#if showStartLongRestButton}
 function create_if_block_3(ctx) {
 	let div;
 	let button;
@@ -13984,7 +13984,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (104:8) {#if enableRollHitDice}
+// (105:8) {#if enableRollHitDice}
 function create_if_block_5(ctx) {
 	let div1;
 	let label;
@@ -14132,7 +14132,7 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (109:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (110:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[27] + "";
@@ -14186,7 +14186,7 @@ function create_each_block(key_1, ctx) {
 	};
 }
 
-// (117:16) {#if healthData.totalHitDice === 0}
+// (118:16) {#if healthData.totalHitDice === 0}
 function create_if_block_7(ctx) {
 	let p;
 
@@ -14206,7 +14206,7 @@ function create_if_block_7(ctx) {
 	};
 }
 
-// (120:16) {#if currHP >= maxHP}
+// (121:16) {#if currHP >= maxHP}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -14226,7 +14226,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (126:12) {#if promptNewDay}
+// (127:12) {#if promptNewDay}
 function create_if_block_4(ctx) {
 	let div;
 	let label;
@@ -14279,7 +14279,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (135:8) {#if enableRollHitDice}
+// (136:8) {#if enableRollHitDice}
 function create_if_block_2(ctx) {
 	let healthbar;
 	let current;
@@ -14320,7 +14320,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (140:12) {#if !showStartLongRestButton}
+// (141:12) {#if !showStartLongRestButton}
 function create_if_block_1(ctx) {
 	let button;
 	let i;
@@ -14360,7 +14360,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (143:12) {#if !startedLongRest}
+// (144:12) {#if !startedLongRest}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -14428,7 +14428,7 @@ function create_default_slot(ctx) {
 		c() {
 			form_1 = element("form");
 			p = element("p");
-			p.textContent = `${localize("DND5E.LongRestHint")}`;
+			p.textContent = `${localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}`;
 			t1 = space();
 			if_block0.c();
 			t2 = space();
@@ -15101,13 +15101,12 @@ function _determineCriticalMode({
 Hooks.once("init", () => {
   registerSettings();
   registerLibwrappers();
-  console.log("Rest Recovery | Initialized");
+  console.log("Rest Recovery 5e | Initialized");
 });
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);
 
   if (workflow && workflow.finished && !foundry.utils.isObjectEmpty(workflow.recoveredSlots)) {
-    console.log(workflow.recoveredSlots);
     workflow.preFinishRestMessage();
   }
 });
