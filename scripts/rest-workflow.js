@@ -189,7 +189,7 @@ export default class RestWorkflow {
             usedChef: false
         }
 
-        const ignoreInactivePlayers = getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS, true);
+        const ignoreInactivePlayers = getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
 
         let characters = game.actors.filter(actor => actor.data.type === "character" && actor.hasPlayerOwner);
         for (let actor of characters) {

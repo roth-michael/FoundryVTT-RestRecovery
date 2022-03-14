@@ -14,9 +14,9 @@
     "svelte-preprocess": "^4.10.3"
   },
   "devDependencies": {
-    "@league-of-foundry-developers/foundry-vtt-types": "^9.238.1",
     "@babel/core": "^7",
     "@babel/preset-env": "^7",
+    "@league-of-foundry-developers/foundry-vtt-types": "^9.238.1",
     "@rollup/plugin-babel": "^5",
     "@typhonjs-config/eslint-config": "^0.3.0",
     "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
