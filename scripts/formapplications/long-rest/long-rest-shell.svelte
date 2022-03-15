@@ -56,7 +56,11 @@
                     }
                 },
                 modal: true,
-                draggable: false
+                draggable: false,
+                options: {
+                    height: "auto",
+                    headerButtonNoClose: true
+                }
             })
             if (!doContinue) return false;
         }
@@ -97,15 +101,17 @@
 
     function showCustomRulesDialog(){
         TJSDialog.prompt({
-            title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+            title: localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"),
             content: {
                 class: CustomSettings
             },
             label: "Okay",
             modal: true,
             draggable: false,
-            height: "auto",
-            headerButtonNoClose: true
+            options: {
+                height: "auto",
+                headerButtonNoClose: true
+            }
         })
     }
 

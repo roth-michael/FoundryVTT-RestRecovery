@@ -49,8 +49,10 @@
                 },
                 modal: true,
                 draggable: false,
-                height: 500,
-                headerButtonNoClose: true
+                options: {
+                    height: "auto",
+                    headerButtonNoClose: true
+                }
             })
             if(!doContinue) return false;
         }

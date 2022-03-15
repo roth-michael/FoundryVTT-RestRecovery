@@ -11524,6 +11524,8 @@ function create_each_block_1$1(key_1, ctx) {
 	let div;
 	let setting;
 	let current;
+	let mounted;
+	let dispose;
 
 	setting = new Setting({
 			props: {
@@ -11533,8 +11535,6 @@ function create_each_block_1$1(key_1, ctx) {
 				resetSetting: /*resetSetting*/ ctx[4]
 			}
 		});
-
-	setting.$on("change", /*validateSettings*/ ctx[3]);
 
 	return {
 		key: key_1,
@@ -11549,6 +11549,11 @@ function create_each_block_1$1(key_1, ctx) {
 			insert(target, div, anchor);
 			mount_component(setting, div, null);
 			current = true;
+
+			if (!mounted) {
+				dispose = listen(div, "change", /*validateSettings*/ ctx[3]);
+				mounted = true;
+			}
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
@@ -11570,6 +11575,8 @@ function create_each_block_1$1(key_1, ctx) {
 		d(detaching) {
 			if (detaching) detach(div);
 			destroy_component(setting);
+			mounted = false;
+			dispose();
 		}
 	};
 }
@@ -11620,7 +11627,7 @@ function create_each_block$3(key_1, ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*Object, settings, resetSetting, validateSettings*/ 28) {
+			if (dirty & /*validateSettings, Object, settings, resetSetting*/ 28) {
 				each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[11]];
 				group_outros();
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, outro_and_destroy_block, create_each_block_1$1, t, get_each_context_1$1);
@@ -11771,7 +11778,7 @@ function create_default_slot$2(ctx) {
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*Object, settings, resetSetting, validateSettings*/ 28) {
+			if (dirty & /*Object, settings, validateSettings, resetSetting*/ 28) {
 				each_value = Object.keys(/*settings*/ ctx[2]);
 				group_outros();
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, section, outro_and_destroy_block, create_each_block$3, null, get_each_context$3);
@@ -13037,7 +13044,7 @@ function get_each_context_2(ctx, list, i) {
 	return child_ctx;
 }
 
-// (103:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (105:16) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block_2(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[33] + "";
@@ -13091,7 +13098,7 @@ function create_each_block_2(key_1, ctx) {
 	};
 }
 
-// (111:12) {#if healthData.totalHitDice === 0}
+// (113:12) {#if healthData.totalHitDice === 0}
 function create_if_block_6$1(ctx) {
 	let p;
 
@@ -13111,7 +13118,7 @@ function create_if_block_6$1(ctx) {
 	};
 }
 
-// (114:12) {#if currHP >= maxHP}
+// (116:12) {#if currHP >= maxHP}
 function create_if_block_5$1(ctx) {
 	let p;
 
@@ -13131,7 +13138,7 @@ function create_if_block_5$1(ctx) {
 	};
 }
 
-// (119:8) {#if spellData.feature}
+// (121:8) {#if spellData.feature}
 function create_if_block_2$1(ctx) {
 	let div;
 	let label;
@@ -13197,7 +13204,7 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (155:12) {:else}
+// (157:12) {:else}
 function create_else_block$1(ctx) {
 	let p;
 
@@ -13217,7 +13224,7 @@ function create_else_block$1(ctx) {
 	};
 }
 
-// (131:45) 
+// (133:45) 
 function create_if_block_4$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
@@ -13279,7 +13286,7 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (125:12) {#if spellData.missingSlots && !spellData.has_feature_use}
+// (127:12) {#if spellData.missingSlots && !spellData.has_feature_use}
 function create_if_block_3$1(ctx) {
 	let p;
 
@@ -13310,7 +13317,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (138:32) {#each slots as slot, slotIndex (slotIndex)}
+// (140:32) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -13366,7 +13373,7 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (133:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+// (135:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
 function create_each_block$2(key_1, ctx) {
 	let div3;
 	let div2;
@@ -13446,7 +13453,7 @@ function create_each_block$2(key_1, ctx) {
 	};
 }
 
-// (163:8) {#if promptNewDay}
+// (165:8) {#if promptNewDay}
 function create_if_block_1$1(ctx) {
 	let div;
 	let label;
@@ -13499,7 +13506,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (175:12) {#if !startedShortRest}
+// (177:12) {#if !startedShortRest}
 function create_if_block$1(ctx) {
 	let button;
 	let i;
@@ -13539,7 +13546,7 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (94:0) <ApplicationShell bind:elementRoot>
+// (96:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$1(ctx) {
 	let form_1;
 	let p;
@@ -13897,8 +13904,10 @@ function instance$3($$self, $$props, $$invalidate) {
 				},
 				modal: true,
 				draggable: false,
-				height: 500,
-				headerButtonNoClose: true
+				options: {
+					height: "auto",
+					headerButtonNoClose: true
+				}
 			});
 
 			if (!doContinue) return false;
@@ -14390,7 +14399,7 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (122:8) {:else}
+// (128:8) {:else}
 function create_else_block_1(ctx) {
 	let p0;
 	let t1;
@@ -14432,7 +14441,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (120:8) {#if usingDefaultSettings}
+// (126:8) {#if usingDefaultSettings}
 function create_if_block_8(ctx) {
 	let p;
 
@@ -14451,7 +14460,7 @@ function create_if_block_8(ctx) {
 	};
 }
 
-// (134:8) {:else}
+// (140:8) {:else}
 function create_else_block(ctx) {
 	let t;
 	let if_block1_anchor;
@@ -14484,7 +14493,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (127:8) {#if showStartLongRestButton}
+// (133:8) {#if showStartLongRestButton}
 function create_if_block_3(ctx) {
 	let div;
 	let button;
@@ -14537,7 +14546,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (135:8) {#if enableRollHitDice}
+// (141:8) {#if enableRollHitDice}
 function create_if_block_5(ctx) {
 	let div1;
 	let label;
@@ -14685,7 +14694,7 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (140:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
+// (146:24) {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
 function create_each_block(key_1, ctx) {
 	let option;
 	let t0_value = /*hitDice*/ ctx[31] + "";
@@ -14739,7 +14748,7 @@ function create_each_block(key_1, ctx) {
 	};
 }
 
-// (148:16) {#if healthData.totalHitDice === 0}
+// (154:16) {#if healthData.totalHitDice === 0}
 function create_if_block_7(ctx) {
 	let p;
 
@@ -14759,7 +14768,7 @@ function create_if_block_7(ctx) {
 	};
 }
 
-// (151:16) {#if currHP >= maxHP}
+// (157:16) {#if currHP >= maxHP}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -14779,7 +14788,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (157:12) {#if promptNewDay}
+// (163:12) {#if promptNewDay}
 function create_if_block_4(ctx) {
 	let div;
 	let label;
@@ -14832,7 +14841,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (166:8) {#if showHealthBar}
+// (172:8) {#if showHealthBar}
 function create_if_block_2(ctx) {
 	let healthbar;
 	let current;
@@ -14875,7 +14884,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (171:12) {#if !showStartLongRestButton}
+// (177:12) {#if !showStartLongRestButton}
 function create_if_block_1(ctx) {
 	let button;
 	let i;
@@ -14915,7 +14924,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (174:12) {#if !startedLongRest}
+// (180:12) {#if !startedLongRest}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -14955,7 +14964,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (117:0) <ApplicationShell bind:elementRoot>
+// (123:0) <ApplicationShell bind:elementRoot>
 function create_default_slot(ctx) {
 	let form_1;
 	let t0;
@@ -15185,7 +15194,11 @@ function instance($$self, $$props, $$invalidate) {
 					}
 				},
 				modal: true,
-				draggable: false
+				draggable: false,
+				options: {
+					height: "auto",
+					headerButtonNoClose: true
+				}
 			});
 
 			if (!doContinue) return false;
@@ -15228,13 +15241,15 @@ function instance($$self, $$props, $$invalidate) {
 
 	function showCustomRulesDialog() {
 		TJSDialog.prompt({
-			title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+			title: localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"),
 			content: { class: CustomSettingsDialog },
 			label: "Okay",
 			modal: true,
 			draggable: false,
-			height: "auto",
-			headerButtonNoClose: true
+			options: {
+				height: "auto",
+				headerButtonNoClose: true
+			}
 		});
 	}
 
@@ -15690,10 +15705,6 @@ Hooks.once("init", () => {
   registerSettings();
   registerLibwrappers();
   console.log("Rest Recovery 5e | Initialized");
-});
-Hooks.once("ready", () => {
-  //new SettingsShim().render(true);
-  game.actors.getName("Jonathan").longRest();
 });
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);

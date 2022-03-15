@@ -76,8 +76,8 @@
             <div class="tab flex" data-group="primary" data-tab="{group}">
 
                 {#each settings[group] as [key, setting], setting_index (key)}
-                <div class="setting">
-                    <Setting group="{group}" setting_index="{setting_index}" setting={setting} resetSetting="{resetSetting}" on:change={validateSettings} />
+                <div class="setting" on:change={validateSettings}>
+                    <Setting group="{group}" setting_index="{setting_index}" setting={setting} resetSetting="{resetSetting}"/>
                 </div>
                 {/each}
 
