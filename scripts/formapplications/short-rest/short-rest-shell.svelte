@@ -2,7 +2,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-    import HealthBar from "../components/Healthbar.svelte";
+    import HealthBar from "../components/HealthBar.svelte";
 
     import { getContext } from 'svelte';
 

@@ -31,6 +31,10 @@ Use this manifest URL to install the module:
 
 `https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/latest/download/module.json`
 
+# Changelog
+
+You can find the [changelog here](changelog.md).
+
 # Mechanics
 
 ## Long Rest Mechanics
@@ -64,3 +68,7 @@ If a character has the Durable feat, the minimum they can roll with hit dice is 
 ### [Feat: Chef](https://www.dndbeyond.com/feats/chef)
 
 If a character that is assigned to a player possesses the Chef feat as well as Chef's Utensils, each character in the party will roll an additional 1d8 as a part of the short rest.
+
+# Contributing
+
+In order to contribute to this module, you will need to run `npm install` and then `npm run build-watch` in order to build the module the `./dist` folders.

@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.0.3
+- Added French localization (thank you, DarKDinDoN!)
+- Fixed typo in a Svelte component that caused errors on build
+
 ## Version 1.0.2
 - Added second faded health bar to the Long Rest UI to visualize how much hit points that will be gained once the rest is finished
 - Added a dialog to display what custom rules are active, which is accessible through the Long Rest UI 
