@@ -1,0 +1,207 @@
+{
+    "REST-RECOVERY": {
+
+        "ClassNames": {
+            "Wizard": "Magicien",
+            "Druid": "Druide",
+            "Bard": "Barde"
+        },
+
+        "FeatureNames": {
+            "ArcaneRecovery": "Récupération arcanique",
+            "NaturalRecovery": "Récupération naturelle",
+            "SongOfRest": "Chant de repos",
+            "ChefFeat": "Chef",
+            "ChefTools": "Ustensiles de cuisinier",
+            "PeriaptItem": "Amulette de cicatrisation",
+            "DurableFeat": "Endurant"
+        },
+
+        "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patché, il possède maintenant une valeur de récupération de 1/1 sur un repos long.",
+
+        "Fractions": {
+            "None": "Aucun",
+            "Quarter": "Quart",
+            "Half": "Moitié",
+            "Full": "Complet"
+        },
+
+        "Rounding": {
+            "RoundDown": "Arrondi inférieur",
+            "RoundUp": "Arrondi supérieur"
+        },
+
+        "NumberToText": {
+            "1": "Un",
+            "2": "Deux",
+            "3": "Trois",
+            "4": "Quatre",
+            "5": "Cinq",
+            "1st": "1",
+            "2nd": "2",
+            "3rd": "3",
+            "4th": "4",
+            "5th": "5"
+        },
+
+        "Chat": {
+            "RegainedSpellSlots": "Le personnage récupère en plus :",
+            "SpellSlotList": "{number} emplacement de sort de niveau {level}",
+            "SpellSlotListPlural": "{number} emplacements de sort de niveau {level}",
+            "SongOfRest": "{name} profite du Chant de repos de {bard}.",
+            "SongOfRestSelf": "{name} profite de son propre Chant de repos.",
+            "Chef": "{name} profite du délicieux met préparé par {chef}.",
+            "ChefSelf": "{name} profite de son prope met."
+        },
+
+        "Dialogs": {
+            "ResetSettings": {
+                "Title": "Rest Recovery | Réinitialiser les paramètres",
+                "Content": "Êtes-vous sûr de vouloir réinitialiser les paramètres de ce module ?<br><strong>AUCUNE RETOUR EN ARRIÈRE POSSIBLE !</strong>",
+                "Confirm": "Réinitialiser les paramètres",
+                "Cancel": "Annuler"
+            },
+            "ShortRest": {
+                "FullHealth": "Vous ne pouvez plus lancer de dés de vie, car vous êtes déjà à votre maximum de points de vie.",
+                "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
+                "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
+                "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
+                "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer."
+            },
+            "ShortRestWarning": {
+                "Title": "Terminer le repos court ?",
+                "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
+            },
+            "LongRest": {
+                "Begin": "Commencer le repos long",
+                "BeginExplanation": "En commençant votre repos long, vous allez récupérer une partie de vos dés de vie que vous pourrez ensuite lancer pour récupérer des points de vie.",
+                "CustomRules": "Vous jouez avec des règles personnalisées, ce qui signifie que vous pourriez récupérer de façon différente des points de vie, des dés de vie, des aptitudes de classe, des charges d'objets à usage limité et des emplacements de sort.",
+                "CustomRulesLink": "Voir les règles personnalisées."
+            },
+            "LongRestWarning": {
+                "Title": "Terminer le repos long ?",
+                "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos long ?"
+            },
+            "LongRestSettingsDialog": {
+                "Title": "Paramètres de repos long",
+                "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
+            },
+            "ModuleConfig": {
+                "Title": "Configuration de Rest Recovery",
+                "LongRest": "Paramètres du repos long",
+                "ShortRest": "Paramètres du repos court",
+                "ItemNames": "Paramètres de nommage",
+                "Submit": "Soumettre les paramètres"
+            }
+        },
+
+        "Settings": {
+            "Reset": {
+                "Title": "Réinitialiser les paramètres par défaut",
+                "Label": "Réinitialiser les paramètres de repos",
+                "Hint": "Ceci réinitialisera tous les paramètres du module à leurs valeurs par défaut."
+            },
+            "Configure": {
+                "Title": "Configuration du module",
+                "Label": "Paramètres de repos",
+                "Hint": "Vous pouvez configurer le fonctionnement des repos avec ce bouton."
+            },
+            "QuickHDRoll": {
+                "Title": "Jet rapide des dés de vie (passer la fenêtre)",
+                "Hint": "Passer la fenêtre de configuration de dés de vie et les jeter immédiatement."
+            },
+            "Debug": {
+                "Title": "Activer le mode debug",
+                "Label": "Afficher des messages de debug dans la console"
+            },
+            "ShortRest": {
+                "IgnoreInactive": {
+                    "Title": "Ignorer les personnages joueurs inactifs",
+                    "Hint": "Si vous avez un barde avec le Chant de repos ou un personnage avec le don Chef dans votre groupe, ils ne seront considérés comme présents que si le joueur est actif et connecté."
+                },
+                "WizardClassName": {
+                    "Title": "Nom de la classe de Magicien",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "DruidClassName": {
+                    "Title": "Nom de la classe de Druide",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "BardClassName": {
+                    "Title": "Nom de la classe de Barde",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Barde dans votre partie. Cela permet de savoir quel Chant de repos utiliser. Il peut s'agir d'une chaîne localisée."
+                },
+                "ArcaneRecovery": {
+                    "Title": "Nom de l'aptitude Restauration magique",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Restauration magique du Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "NaturalRecovery": {
+                    "Title": "Nom de l'aptitude Récupération naturelle",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Récupération naturelle du Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "SongOfRest": {
+                    "Title": "Nom de l'aptitude Chant de repos",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Chant de repos du Barde dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "ChefFeat": {
+                    "Title": "Nom du don Chef",
+                    "Hint": "Vous pouvez configurer ici le nom du don Chef dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "ChefTools": {
+                    "Title": "Nom des Ustensiles de cuisinier",
+                    "Hint": "Vous pouvez configurer ici le nom des Ustensiles de cuisinier dans votre partie. Il peut s'agir d'une chaîne localisée. Laisser vide si vous voulez désactiver la présence des Ustensiles de cuisinier dans l'inventaire du personnage pour pouvoir utiliser ce don."
+                },
+                "DurableFeat": {
+                    "Title": "Nom du don Endurant",
+                    "Hint": "Vous pouvez configurer ici le nom du don Endurant dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "PeriaptItem": {
+                    "Title": "Nom de l'objet Amulette de cicatrisation",
+                    "Hint": "Vous pouvez configurer ici le nom de l'objet Amulette de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
+                }
+            },
+            "LongRest": {
+                "RollHitDice": {
+                    "Title": "Activer les dés de vie lors du repos long",
+                    "Hint": "Active les éléments d'interface relatifs aux jets de dés de vie dans la fenêtre de repos long."
+                },
+                "PreRegainHitDice": {
+                    "Title": "Activer la récupération des dés de vie avant la fin d'un repos long",
+                    "Hint": "Cela permet de faire en sorte que les dés de vie soient récupérés avant la fin d'un repos long, afin de pouvoir les jeter pour regagner des points de vie lors de ce même repos."
+                },
+                "HitPointsRecoveryFraction": {
+                    "Title": "Fraction des points de vie à récupérer",
+                    "Hint": "La fraction des points de vie à récupérer lors d'un repos long."
+                },
+                "HitDiceRecoveryFraction": {
+                    "Title": "Fraction des dés de vie à récupérer",
+                    "Hint": "La fraction des dés de vie à récupérer lors d'un repos long."
+                },
+                "HitDiceRecoveryRounding": {
+                    "Title": "Arrondi de la récupération des dés de vie",
+                    "Hint": "Comment arrondir le nombre de dés de vie récupérés lors d'un repos long."
+                },
+                "ResourcesRecoveryFraction": {
+                    "Title": "Fraction des ressources à récupérer",
+                    "Hint": "La fraction des ressources à récupérer lors d'un repos long."
+                },
+                "SpellSlotsRecoveryFraction": {
+                    "Title": "Fraction des emplacements de sort à récupérer",
+                    "Hint": "La fraction des emplacements de sort à récupérer lors d'un repos long (pacte exclu)."
+                },
+                "ItemUsesRecoveryFraction": {
+                    "Title": "Fraction des charges d'objet à récupérer",
+                    "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos long."
+                },
+                "FeatUsesRecoveryFraction": {
+                    "Title": "Fraction des charges d'aptitudes à récupérer",
+                    "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos long."
+                },
+                "DailyUsesRecoveryFraction": {
+                    "Title": "Fraction des charges journalières à récupérer",
+                    "Hint": "La fraction des charges journalières à récupérer lors d'un repos long (objets avec le paramètre \"Jour\" dans les champs d'utilisation limité)."
+                }
+            }
+        }
+    }
+}
