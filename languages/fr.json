@@ -66,7 +66,8 @@
                 "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
                 "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
                 "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
-                "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer."
+                "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
+                "AutoRoll": "Auto"
             },
             "ShortRestWarning": {
                 "Title": "Terminer le repos court ?",
@@ -88,9 +89,12 @@
             },
             "ModuleConfig": {
                 "Title": "Configuration de Rest Recovery",
-                "LongRest": "Paramètres du repos long",
-                "ShortRest": "Paramètres du repos court",
-                "ItemNames": "Paramètres de nommage",
+                "General": "Paramètres généraux",
+                "LongRest": "Repos long",
+                "ShortRest": "Repos court",
+                "ItemNames": "Nommage",
+                "MoreToCome": "Plus de paramètres à venir !",
+                "Request": "Demander une nouvelle fonctionnalité ici.",
                 "Submit": "Soumettre les paramètres"
             }
         },
@@ -168,6 +172,10 @@
                 "PreRegainHitDice": {
                     "Title": "Activer la récupération des dés de vie avant la fin d'un repos long",
                     "Hint": "Cela permet de faire en sorte que les dés de vie soient récupérés avant la fin d'un repos long, afin de pouvoir les jeter pour regagner des points de vie lors de ce même repos."
+                },
+                "EnableAutoRollButton": {
+                    "Title": "Activer le jet automatique des dés de vie",
+                    "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
                 },
                 "HitPointsRecoveryFraction": {
                     "Title": "Fraction des points de vie à récupérer",
