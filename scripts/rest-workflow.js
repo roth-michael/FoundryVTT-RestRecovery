@@ -18,12 +18,20 @@ export default class RestWorkflow {
         return this;
     }
 
+    get maxHP(){
+        return this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0)
+    }
+
+    get currHP(){
+        return this.actor.data.data.attributes.hp.value;
+    }
+
     get healthPercentage() {
-        return this.actor.data.data.attributes.hp.value / this.actor.data.data.attributes.hp.max;
+        return this.currHP / this.maxHP;
     }
 
     get healthRegained() {
-        return this.actor.data.data.attributes.hp.value - this.healthData.startingHealth;
+        return this.currHP - this.healthData.startingHealth;
     }
 
     get totalHitDice() {
@@ -79,9 +87,10 @@ export default class RestWorkflow {
             startingHealth: this.actor.data.data.attributes.hp.value,
             availableHitDice: this.getHitDice(),
             totalHitDice: this.totalHitDice,
+            hitDiceSpent: 0,
             hitPointsToRegain: 0
         }
-        if(getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL){
+        if(this.longRest && (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL)){
             let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
             this.healthData.hitPointsToRegain = hitPointsRecovered;
         }
@@ -249,6 +258,49 @@ export default class RestWorkflow {
 
     }
 
+    async autoSpendHitDice() {
+        const avgHitDiceRegain = this.getAverageHitDiceRoll();
+        const threshold = Math.max(Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain)+5);
+        await this.actor.autoSpendHitDice({ threshold });
+        this.healthData.availableHitDice = this.getHitDice();
+        this.healthData.totalHitDice = this.totalHitDice;
+    }
+
+    getAverageHitDiceRoll() {
+
+        const availableHitDice = Object.entries(this.healthData.availableHitDice).filter(entry => entry[1]);
+
+        if(!availableHitDice.length) return 0;
+
+        const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
+            ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
+            : false;
+        const periapt_mod = periapt && periapt?.data?.data?.attunement === 2 ? 3 : 1
+
+        let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
+            ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
+            : false;
+        durable = durable && durable?.data?.type === "feat";
+
+        const conMod = this.actor.data.data.abilities.con.mod;
+        const totalHitDice = availableHitDice.reduce((acc, entry) => acc + entry[1], 0);
+
+        return availableHitDice.map(entry => {
+            const dieSize = Number(entry[0].split('d')[1]);
+            let val = (dieSize/2) + 0.5;
+            val *= periapt_mod;
+            if(durable){
+                if(conMod <= 0){
+                    val += (-2*conMod+1)/dieSize;
+                }else{
+                    val += (conMod-1)*(conMod)/(2*dieSize);
+                }
+            }
+            return val * entry[1];
+        }).reduce((acc, num) => acc + num, 0) / totalHitDice;
+
+    }
+
     async rollHitDice(hitDice, dialog) {
         const roll = await this.actor.rollHitDie(hitDice, { dialog });
         if (!roll) return;
@@ -296,7 +348,7 @@ export default class RestWorkflow {
 
         if (hpRegained > 0) {
             const curHP = this.actor.data.data.attributes.hp.value;
-            const maxHP = this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0);
+            const maxHP = this.actor.data.data.attributes.hp.max + ((this.actor.data.data.attributes.hp.tempmax ?? 0) ?? 0);
             await this.actor.update({ "data.attributes.hp.value": Math.min(maxHP, curHP + hpRegained) })
         }
 
@@ -376,7 +428,7 @@ export default class RestWorkflow {
             return result;
         }
 
-        const maxHP = this.actor.data.data.attributes.hp.max;
+        const maxHP = this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0);
         const currentHP = this.actor.data.data.attributes.hp.value;
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);

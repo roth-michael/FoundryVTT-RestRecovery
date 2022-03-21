@@ -66,7 +66,8 @@
                 "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
                 "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
                 "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
-                "FullSpells": "You're full on spells, you have no need to regain any spell slots."
+                "FullSpells": "You're full on spells, you have no need to regain any spell slots.",
+                "AutoRoll": "Auto Roll"
             },
             "ShortRestWarning": {
                 "Title": "Finish Short Rest?",
@@ -88,9 +89,12 @@
             },
             "ModuleConfig": {
                 "Title": "Rest Recovery Configuration",
-                "LongRest": "Long Rest Settings",
-                "ShortRest": "Short Rest Settings",
-                "ItemNames": "Feature Name Settings",
+                "General": "General Settings",
+                "LongRest": "Long Rest",
+                "ShortRest": "Short Rest",
+                "ItemNames": "Feature Names",
+                "MoreToCome": "And with more configuration options to come!",
+                "Request": "Request new features here.",
                 "Submit": "Submit Settings"
             }
         },
@@ -168,6 +172,10 @@
                 "PreRegainHitDice": {
                     "Title": "Enable Hit Dice Recovery Before Finishing Long Rest",
                     "Hint": "This makes it so that hit dice are recovered before finishing the long rest, so that you can roll them as a part of this rest."
+                },
+                "EnableAutoRollButton": {
+                    "Title": "Enable Hit Dice Auto Roll Button",
+                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
                 },
                 "HitPointsRecoveryFraction": {
                     "Title": "Hit Points Recovery Fraction",

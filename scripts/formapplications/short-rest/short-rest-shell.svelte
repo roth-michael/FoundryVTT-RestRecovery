@@ -1,13 +1,14 @@
 <script>
+    import { getContext } from 'svelte';
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-    import HealthBar from "../components/HealthBar.svelte";
 
-    import { getContext } from 'svelte';
+    import HealthBar from "../components/HealthBar.svelte";
+    import Dialog from "../components/Dialog.svelte";
+    import HitDieRoller from "../components/HitDieRoller.svelte";
 
     import RestWorkflow from "../../rest-workflow.js";
-    import Dialog from "../components/Dialog.svelte";
     import { getSetting } from "../../lib/lib.js";
 
     const { application } = getContext('external');
@@ -20,7 +21,6 @@
     let form;
     let startedShortRest = false;
 
-    // This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
     $: application.reactive.headerButtonNoClose = startedShortRest;
 
     let newDay = false;
@@ -77,14 +77,24 @@
         startedShortRest = true;
     }
 
+    async function autoRollHitDie(){
+        await workflow.autoSpendHitDice();
+        healthData = workflow.healthData;
+        startedShortRest = true;
+    }
+
     function spendSpellPoint(event, level){
         workflow.spendSpellPoint(level, event.target.checked);
         spellData = workflow.spellData;
     }
 
     export async function updateHealthBar(){
-        currHP = actor.data.data.attributes.hp.value;
-        maxHP = actor.data.data.attributes.hp.max;
+        if(!startedShortRest){
+            workflow.fetchHealthData();
+            healthData = workflow.healthData;
+        }
+        currHP = workflow.currHP;
+        maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
     }
 
@@ -98,25 +108,13 @@
 
         <p>{localize("DND5E.ShortRestHint")}</p>
 
-        <div class="form-group">
-            <label>{localize("DND5E.ShortRestSelect")}</label>
-            <div class="form-fields">
-                <select name="hd" bind:value={selectedHitDice}>
-                {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
-                    <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
-                {/each}
-                </select>
-                <button type="button" disabled="{currHP >= maxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={rollHitDice}>
-                    <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
-                </button>
-            </div>
-            {#if healthData.totalHitDice === 0}
-            <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
-            {/if}
-            {#if currHP >= maxHP}
-            <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullHealth")}</p>
-            {/if}
-        </div>
+        <HitDieRoller
+            selectedHitDice="{selectedHitDice}"
+            healthData="{healthData}"
+            isAtMaxHP="{currHP >= maxHP}"
+            onHitDiceFunction="{rollHitDice}"
+            onAutoFunction="{autoRollHitDie}"
+        />
 
         {#if spellData.feature}
 

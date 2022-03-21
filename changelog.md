@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.0.4
+- Added auto-roll hit dice in short and long rest dialogs
+- Added setting to enable/disable auto-roll button
+- Added text to long rest UI health bar to indicate how much HP is to be gained from long resting
+
 ## Version 1.0.3
 - Added French localization (thank you, DarKDinDoN!)
 - Fixed typo in a Svelte component that caused errors on build

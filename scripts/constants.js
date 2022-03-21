@@ -15,6 +15,7 @@ const CONSTANTS = {
         PERIAPT_ITEM: "periapt-item-name",
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
+        ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
         HP_MULTIPLIER: "recovery-hitpoints",
         HD_MULTIPLIER: "recovery-hitdice",
         HD_ROUNDING: "recovery-rounding",
@@ -40,6 +41,23 @@ const CONSTANTS = {
     },
     GET_DEFAULT_SETTINGS() {
         return {
+
+            /*-------------------------------------------*
+             *           General Rest Settings           *
+             *-------------------------------------------*/
+            [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
+                name: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Title",
+                hint: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Hint",
+                scope: "world",
+                group: "general",
+                config: false,
+                default: true,
+                type: Boolean
+            },
+
+            /*-------------------------------------------*
+             *            Short Rest Settings            *
+             *-------------------------------------------*/
             [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
                 name: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Title",
                 hint: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Hint",
@@ -49,96 +67,10 @@ const CONSTANTS = {
                 default: false,
                 type: Boolean
             },
-            [CONSTANTS.SETTINGS.WIZARD_CLASS]: {
-                name: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.ClassNames.Wizard",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.DRUID_CLASS]: {
-                name: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.ClassNames.Druid",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.BARD_CLASS]: {
-                name: "REST-RECOVERY.Settings.ShortRest.BardClassName.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.BardClassName.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.ClassNames.Bard",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.ARCANE_RECOVERY]: {
-                name: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {
-                name: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.SONG_OF_REST]: {
-                name: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.SongOfRest",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.CHEF_FEAT]: {
-                name: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.ChefFeat",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.CHEF_TOOLS]: {
-                name: "REST-RECOVERY.Settings.ShortRest.ChefTools.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.ChefTools.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.ChefTools",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.DURABLE_FEAT]: {
-                name: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.DurableFeat",
-                type: String
-            },
-            [CONSTANTS.SETTINGS.PERIAPT_ITEM]: {
-                name: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Title",
-                hint: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Hint",
-                scope: "world",
-                group: "itemnames",
-                config: false,
-                default: "REST-RECOVERY.FeatureNames.PeriaptItem",
-                type: String
-            },
+
+            /*-------------------------------------------*
+             *             Long Rest Settings            *
+             *-------------------------------------------*/
             [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
                 name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
                 hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
@@ -283,6 +215,100 @@ const CONSTANTS = {
                     full: "REST-RECOVERY.Fractions.Full",
                 },
                 default: "full",
+            },
+
+            /*-------------------------------------------*
+             *               Item names                  *
+             *-------------------------------------------*/
+            [CONSTANTS.SETTINGS.WIZARD_CLASS]: {
+                name: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.ClassNames.Wizard",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.DRUID_CLASS]: {
+                name: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.ClassNames.Druid",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.BARD_CLASS]: {
+                name: "REST-RECOVERY.Settings.ShortRest.BardClassName.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.BardClassName.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.ClassNames.Bard",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.ARCANE_RECOVERY]: {
+                name: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {
+                name: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.SONG_OF_REST]: {
+                name: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.SongOfRest",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.CHEF_FEAT]: {
+                name: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.ChefFeat",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.CHEF_TOOLS]: {
+                name: "REST-RECOVERY.Settings.ShortRest.ChefTools.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.ChefTools.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.ChefTools",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.DURABLE_FEAT]: {
+                name: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.DurableFeat",
+                type: String
+            },
+            [CONSTANTS.SETTINGS.PERIAPT_ITEM]: {
+                name: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Title",
+                hint: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Hint",
+                scope: "world",
+                group: "itemnames",
+                config: false,
+                default: "REST-RECOVERY.FeatureNames.PeriaptItem",
+                type: String
             },
         };
     }

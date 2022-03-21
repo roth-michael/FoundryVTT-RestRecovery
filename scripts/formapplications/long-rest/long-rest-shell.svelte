@@ -6,6 +6,7 @@
     import HealthBar from "../components/HealthBar.svelte";
     import Dialog from "../components/Dialog.svelte";
     import CustomSettings from "./CustomSettingsDialog.svelte";
+    import HitDieRoller from "../components/HitDieRoller.svelte";
 
     import { getContext } from 'svelte';
 
@@ -17,6 +18,7 @@
 
     export let elementRoot;
     export let actor;
+    let healthBarText;
     let currHP;
     let maxHP;
     let healthPercentage;
@@ -92,11 +94,25 @@
         healthData = workflow.healthData;
     }
 
+    async function autoRollHitDie(){
+        await workflow.autoSpendHitDice();
+        healthData = workflow.healthData;
+        startedLongRest = true;
+    }
+
     export async function updateHealthBar() {
-        currHP = actor.data.data.attributes.hp.value;
-        maxHP = actor.data.data.attributes.hp.max;
+        if(!startedLongRest){
+            workflow.fetchHealthData();
+            healthData = workflow.healthData;
+        }
+        currHP = workflow.currHP;
+        maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
         healthPercentageToGain = (currHP + healthData.hitPointsToRegain) / maxHP;
+        healthBarText = `HP: ${currHP} / ${maxHP}`
+        if(healthData.hitPointsToRegain){
+            healthBarText += ` (+${healthData.hitPointsToRegain})`;
+        }
     }
 
     function showCustomRulesDialog(){
@@ -138,26 +154,14 @@
                 <p class="notes">{localize("REST-RECOVERY.Dialogs.LongRest.BeginExplanation")}</p>
             </div>
         {:else}
-        {#if enableRollHitDice}
-            <div class="form-group">
-                <label>{localize("DND5E.ShortRestSelect")}</label>
-                <div class="form-fields">
-                    <select name="hd" bind:value={selectedHitDice}>
-                        {#each Object.entries(healthData.availableHitDice) as [hitDice, num], index (index)}
-                            <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
-                        {/each}
-                    </select>
-                    <button type="button" disabled="{currHP >= maxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={(event) => { rollHitDice(event) }}>
-                        <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
-                    </button>
-                </div>
-                {#if healthData.totalHitDice === 0}
-                    <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
-                {/if}
-                {#if currHP >= maxHP}
-                    <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullHealth")}</p>
-                {/if}
-            </div>
+            {#if enableRollHitDice}
+                <HitDieRoller
+                    selectedHitDice="{selectedHitDice}"
+                    healthData="{healthData}"
+                    isAtMaxHP="{currHP >= maxHP}"
+                    onHitDiceFunction="{rollHitDice}"
+                    onAutoFunction="{autoRollHitDie}"
+                />
             {/if}
 
             {#if promptNewDay}
@@ -170,7 +174,7 @@
         {/if}
 
         {#if showHealthBar}
-            <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}" progressGhost="{healthPercentageToGain}"/>
+            <HealthBar text="{healthBarText}" progress="{healthPercentage}" progressGhost="{healthPercentageToGain}"/>
         {/if}
 
         <footer class="flexrow" style="margin-top:0.5rem;">

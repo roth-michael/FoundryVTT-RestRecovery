@@ -65,7 +65,8 @@
         <h2 style="text-align: center; margin-bottom: 1rem;">{localize("REST-RECOVERY.Dialogs.ModuleConfig.Title")}</h2>
 
         <nav class="tabs" data-group="primary">
-            <a class="item active" data-tab="longrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.LongRest")}</a>
+            <a class="item active" data-tab="general">{localize("REST-RECOVERY.Dialogs.ModuleConfig.General")}</a>
+            <a class="item" data-tab="longrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.LongRest")}</a>
             <a class="item" data-tab="shortrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ShortRest")}</a>
             <a class="item" data-tab="itemnames">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ItemNames")}</a>
         </nav>
@@ -80,6 +81,19 @@
                     <Setting group="{group}" setting_index="{setting_index}" setting={setting} resetSetting="{resetSetting}"/>
                 </div>
                 {/each}
+
+                {#if settings[group].length < 4}
+                <div style="text-align: center; font-size: 1rem; margin-top:3rem;">
+                    <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}<p>
+                    <p>
+                        <a
+                            style="color: var(--color-text-hyperlink);"
+                            href="https://github.com/fantasycalendar/FoundryVTT-RestRecovery/issues/new?assignees=&labels=&template=feature_request.md&title="
+                            target="_blank"
+                        >{localize("REST-RECOVERY.Dialogs.ModuleConfig.Request")}</a>
+                    </p>
+                </div>
+                {/if}
 
             </div>
             {/each}
