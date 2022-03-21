@@ -13,8 +13,8 @@ Other works by us:
 - [Fantasy Calendar](https://app.fantasy-calendar.com) - The best calendar creator and management app on the internet
 - [Sequencer](https://foundryvtt.com/packages/sequencer) - Wow your players by playing visual effects on the canvas
 - [Tagger](https://foundryvtt.com/packages/tagger) - Tag objects in the scene and retrieve them with a powerful API
-- [Token Ease](https://foundryvtt.com/packages/token-ease) - Drag & drop items into the scene to drop item piles that you can then easily pick up
-- [Item Piles](https://foundryvtt.com/packages/item-piles) - Make your tokens _feel good_ to move around on the board
+- [Token Ease](https://foundryvtt.com/packages/token-ease) - Make your tokens _feel good_ to move around on the board
+- [Item Piles](https://foundryvtt.com/packages/item-piles) - Drag & drop items into the scene to drop item piles that you can then easily pick up
 
 Like what we've done? Buy us a coffee!
 
