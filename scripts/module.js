@@ -1,12 +1,17 @@
 import registerSettings from "./settings.js";
 import registerLibwrappers from "./libwrapper.js";
 import RestWorkflow from "./rest-workflow.js";
+import SettingsShim from "./formapplications/settings/settings.js";
 
 Hooks.once("init", () => {
     registerSettings();
     registerLibwrappers();
     console.log("Rest Recovery 5e | Initialized");
 });
+
+Hooks.on("ready", () => {
+    new SettingsShim().render(true);
+})
 
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);

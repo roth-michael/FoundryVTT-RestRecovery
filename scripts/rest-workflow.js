@@ -85,12 +85,15 @@ export default class RestWorkflow {
         this.healthData = {
             startingHitDice: this.actor.data.data.attributes.hd,
             startingHealth: this.actor.data.data.attributes.hp.value,
-            availableHitDice: this.getHitDice(),
-            totalHitDice: this.totalHitDice,
-            hitDiceSpent: 0,
-            hitPointsToRegain: 0
+            hitDiceSpent: 0
         }
-        if(this.longRest && (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL)){
+        this.refreshHealthData();
+    }
+
+    refreshHealthData(){
+        this.healthData.availableHitDice = this.getHitDice();
+        this.healthData.totalHitDice = this.totalHitDice;
+        if(this.longRest && (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL)){
             let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
             this.healthData.hitPointsToRegain = hitPointsRecovered;
         }
@@ -282,21 +285,30 @@ export default class RestWorkflow {
             : false;
         durable = durable && durable?.data?.type === "feat";
 
+        let blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
+            ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
+            : false;
+        blackBlood = blackBlood && blackBlood?.data?.type === "feat";
+
         const conMod = this.actor.data.data.abilities.con.mod;
         const totalHitDice = availableHitDice.reduce((acc, entry) => acc + entry[1], 0);
 
         return availableHitDice.map(entry => {
             const dieSize = Number(entry[0].split('d')[1]);
-            let val = (dieSize/2) + 0.5;
-            val *= periapt_mod;
+            let average = (dieSize/2) + 0.5;
+            if(blackBlood){
+                average = Array.from(Array(dieSize).keys())
+                    .reduce((acc, num) => acc + Math.max(average, num+1), 0) / dieSize;
+            }
+            average *= periapt_mod;
             if(durable){
                 if(conMod <= 0){
-                    val += (-2*conMod+1)/dieSize;
+                    average += (-2*conMod+1)/dieSize;
                 }else{
-                    val += (conMod-1)*(conMod)/(2*dieSize);
+                    average += (conMod-1)*(conMod)/(2*dieSize);
                 }
             }
-            return val * entry[1];
+            return average * entry[1];
         }).reduce((acc, num) => acc + num, 0) / totalHitDice;
 
     }
@@ -421,6 +433,26 @@ export default class RestWorkflow {
         });
     }
 
+    _finishedRest(updates) {
+
+        const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+        if(maxShortRests > 0) {
+            if(this.longRest) {
+                updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = 0;
+            }else{
+                const currentShortRests = this.actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
+                updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = currentShortRests + 1;
+            }
+        }
+
+        return updates;
+    }
+
+    _evaluateFormula(formula, data){
+        const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
+        return new Roll(rollFormula).evaluate({ async: false }).total;
+    }
+
     _getRestHitPointRecovery(result) {
 
         if (!this.longRest) {
@@ -428,12 +460,18 @@ export default class RestWorkflow {
             return result;
         }
 
+        const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+
         const maxHP = this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0);
         const currentHP = this.actor.data.data.attributes.hp.value;
 
-        const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+        let recoveredHP = this.healthData.hitPointsToRegain;
 
-        const recoveredHP = this.healthData.hitPointsToRegain || Math.floor(maxHP * multiplier);
+        if(!recoveredHP) {
+            recoveredHP = typeof multiplier === "string"
+                ? Math.floor(this._evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data)))
+                : Math.floor(maxHP * multiplier);
+        }
 
         result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
         result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
@@ -475,7 +513,7 @@ export default class RestWorkflow {
                         "data.hitDiceUsed": 0
                     })
                 }
-                results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
+
             } else {
                 const update = results.updates.find(update => update._id === item.id);
                 if (update) {
@@ -483,6 +521,8 @@ export default class RestWorkflow {
                 }
             }
         }
+
+        results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
 
         return results;
 
@@ -494,17 +534,28 @@ export default class RestWorkflow {
         const roundingMethod = determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
         const actorLevel = this.actor.data.data.details.level;
 
-        maxHitDice = Math.clamped(
-            roundingMethod(actorLevel * multiplier),
-            multiplier ? 1 : 0,
-            maxHitDice ?? actorLevel
-        );
+        if(typeof multiplier === "string"){
+
+            const customRegain = this._evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))
+            maxHitDice = Math.clamped(roundingMethod(customRegain),0,maxHitDice ?? actorLevel);
+
+        }else {
+
+            maxHitDice = Math.clamped(
+                roundingMethod(actorLevel * multiplier),
+                multiplier ? 1 : 0,
+                maxHitDice ?? actorLevel
+            );
+
+        }
 
         return { maxHitDice };
 
     }
 
     _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
+
+        updates = this._finishedRest(updates);
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
 
@@ -518,7 +569,9 @@ export default class RestWorkflow {
                 if (recoverShortRestResources && resource.sr) {
                     updates[`data.resources.${key}.value`] = Number(resource.max);
                 } else if (recoverLongRestResources && resource.lr) {
-                    const recoverResources = Math.max(Math.floor(resource.max * multiplier), 1);
+                    const recoverResources = typeof multiplier === "string"
+                        ? this._evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) })
+                        : Math.max(Math.floor(resource.max * multiplier), 1);
                     updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
                 }
             }
@@ -538,7 +591,9 @@ export default class RestWorkflow {
             for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
                 if (!slot.override && !slot.max) continue;
                 let spellMax = slot.override || slot.max;
-                let recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
+                let recoverSpells = typeof multiplier === "string"
+                    ? Math.max(this._evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) }), 1)
+                    : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
                 updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
             }
 
@@ -600,7 +655,9 @@ export default class RestWorkflow {
         const usesMax = item.data.data.uses.max;
         const usesCur = item.data.data.uses.value;
 
-        const amountToRecover = Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
+        const amountToRecover = typeof multiplier === "string"
+            ? this._evaluateFormula(multiplier, foundry.utils.deepClone(item.data.data))
+            : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
 
         const update = updates.find(update => update._id === item.id);
 

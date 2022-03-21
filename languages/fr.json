@@ -122,46 +122,6 @@
                 "IgnoreInactive": {
                     "Title": "Ignorer les personnages joueurs inactifs",
                     "Hint": "Si vous avez un barde avec le Chant de repos ou un personnage avec le don Chef dans votre groupe, ils ne seront considérés comme présents que si le joueur est actif et connecté."
-                },
-                "WizardClassName": {
-                    "Title": "Nom de la classe de Magicien",
-                    "Hint": "Vous pouvez configurer ici le nom de la classe de Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "DruidClassName": {
-                    "Title": "Nom de la classe de Druide",
-                    "Hint": "Vous pouvez configurer ici le nom de la classe de Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "BardClassName": {
-                    "Title": "Nom de la classe de Barde",
-                    "Hint": "Vous pouvez configurer ici le nom de la classe de Barde dans votre partie. Cela permet de savoir quel Chant de repos utiliser. Il peut s'agir d'une chaîne localisée."
-                },
-                "ArcaneRecovery": {
-                    "Title": "Nom de l'aptitude Restauration magique",
-                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Restauration magique du Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "NaturalRecovery": {
-                    "Title": "Nom de l'aptitude Récupération naturelle",
-                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Récupération naturelle du Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "SongOfRest": {
-                    "Title": "Nom de l'aptitude Chant de repos",
-                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Chant de repos du Barde dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "ChefFeat": {
-                    "Title": "Nom du don Chef",
-                    "Hint": "Vous pouvez configurer ici le nom du don Chef dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "ChefTools": {
-                    "Title": "Nom des Ustensiles de cuisinier",
-                    "Hint": "Vous pouvez configurer ici le nom des Ustensiles de cuisinier dans votre partie. Il peut s'agir d'une chaîne localisée. Laisser vide si vous voulez désactiver la présence des Ustensiles de cuisinier dans l'inventaire du personnage pour pouvoir utiliser ce don."
-                },
-                "DurableFeat": {
-                    "Title": "Nom du don Endurant",
-                    "Hint": "Vous pouvez configurer ici le nom du don Endurant dans votre partie. Il peut s'agir d'une chaîne localisée."
-                },
-                "PeriaptItem": {
-                    "Title": "Nom de l'objet Amulette de cicatrisation",
-                    "Hint": "Vous pouvez configurer ici le nom de l'objet Amulette de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
                 }
             },
             "LongRest": {
@@ -208,6 +168,48 @@
                 "DailyUsesRecoveryFraction": {
                     "Title": "Fraction des charges journalières à récupérer",
                     "Hint": "La fraction des charges journalières à récupérer lors d'un repos long (objets avec le paramètre \"Jour\" dans les champs d'utilisation limité)."
+                }
+            },
+            "ItemNames": {
+                "WizardClassName": {
+                    "Title": "Nom de la classe de Magicien",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "DruidClassName": {
+                    "Title": "Nom de la classe de Druide",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "BardClassName": {
+                    "Title": "Nom de la classe de Barde",
+                    "Hint": "Vous pouvez configurer ici le nom de la classe de Barde dans votre partie. Cela permet de savoir quel Chant de repos utiliser. Il peut s'agir d'une chaîne localisée."
+                },
+                "ArcaneRecovery": {
+                    "Title": "Nom de l'aptitude Restauration magique",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Restauration magique du Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "NaturalRecovery": {
+                    "Title": "Nom de l'aptitude Récupération naturelle",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Récupération naturelle du Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "SongOfRest": {
+                    "Title": "Nom de l'aptitude Chant de repos",
+                    "Hint": "Vous pouvez configurer ici le nom de l'aptitude Chant de repos du Barde dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "ChefFeat": {
+                    "Title": "Nom du don Chef",
+                    "Hint": "Vous pouvez configurer ici le nom du don Chef dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "ChefTools": {
+                    "Title": "Nom des Ustensiles de cuisinier",
+                    "Hint": "Vous pouvez configurer ici le nom des Ustensiles de cuisinier dans votre partie. Il peut s'agir d'une chaîne localisée. Laisser vide si vous voulez désactiver la présence des Ustensiles de cuisinier dans l'inventaire du personnage pour pouvoir utiliser ce don."
+                },
+                "DurableFeat": {
+                    "Title": "Nom du don Endurant",
+                    "Hint": "Vous pouvez configurer ici le nom du don Endurant dans votre partie. Il peut s'agir d'une chaîne localisée."
+                },
+                "PeriaptItem": {
+                    "Title": "Nom de l'objet Amulette de cicatrisation",
+                    "Hint": "Vous pouvez configurer ici le nom de l'objet Amulette de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
                 }
             }
         }

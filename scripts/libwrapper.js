@@ -10,7 +10,6 @@ export default function registerLibwrappers() {
     patch_longRest();
     patch_rollHitDie();
 
-
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
     patch_getRestResourceRecovery();
@@ -44,6 +43,7 @@ function patch_shortRest() {
             else if (autoHD) {
                 await this.autoSpendHitDice({ threshold: autoHDThreshold });
             }
+
             return this._rest(
                 chat,
                 newDay,
@@ -129,8 +129,17 @@ function patch_rollHitDie() {
                 : false;
             durable = durable && durable?.data?.type === "feat";
 
+            let blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
+                ? this.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
+                : false;
+            blackBlood = blackBlood && blackBlood?.data?.type === "feat";
+
             const conMod = this.data.data.abilities.con.mod;
             const durableMod = Math.max(2, conMod * 2);
+
+            if(blackBlood){
+                denomination += "r<3";
+            }
 
             if (periapt && durable) {
                 parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`]

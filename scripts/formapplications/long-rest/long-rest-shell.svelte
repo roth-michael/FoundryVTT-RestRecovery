@@ -26,7 +26,6 @@
     let form;
     let startedLongRest = false;
 
-    // This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
     $: application.reactive.headerButtonNoClose = startedLongRest;
 
     let variant = game.settings.get("dnd5e", "restVariant");
@@ -35,7 +34,7 @@
 
     let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
     let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
-    let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL;
+    let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL;
     let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
     const workflow = RestWorkflow.get(actor);
@@ -46,7 +45,7 @@
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
     export async function requestSubmit() {
-        if (enableRollHitDice && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
+        if (enableRollHitDice && healthData.hitDiceSpent === 0 && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
             const doContinue = await TJSDialog.confirm({
                 title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
                 content: {
@@ -84,7 +83,6 @@
         const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
         if (!rolled) return;
         healthData = workflow.healthData;
-        startedLongRest = true;
     }
 
     async function startLongRest() {
@@ -102,7 +100,7 @@
 
     export async function updateHealthBar() {
         if(!startedLongRest){
-            workflow.fetchHealthData();
+            workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
         currHP = workflow.currHP;

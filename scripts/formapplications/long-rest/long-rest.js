@@ -21,7 +21,9 @@ export default class LongRestDialog extends SvelteApplication {
 
         this.hookId = Hooks.on('updateActor', (changedActor) => {
             if (changedActor !== actor) return;
-            this.svelte.applicationShell.updateHealthBar();
+            setTimeout(() => {
+                this.svelte.applicationShell.updateHealthBar();
+            }, 100);
         });
 
     }

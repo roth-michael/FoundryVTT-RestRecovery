@@ -10,6 +10,7 @@
 
     import RestWorkflow from "../../rest-workflow.js";
     import { getSetting } from "../../lib/lib.js";
+    import CONSTANTS from "../../constants.js";
 
     const { application } = getContext('external');
 
@@ -22,6 +23,9 @@
     let startedShortRest = false;
 
     $: application.reactive.headerButtonNoClose = startedShortRest;
+
+    const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+    const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
 
     let newDay = false;
     let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
@@ -90,7 +94,7 @@
 
     export async function updateHealthBar(){
         if(!startedShortRest){
-            workflow.fetchHealthData();
+            workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
         currHP = workflow.currHP;
@@ -106,74 +110,90 @@
 <ApplicationShell bind:elementRoot>
     <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd" class="dialog-content">
 
-        <p>{localize("DND5E.ShortRestHint")}</p>
+        {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
 
-        <HitDieRoller
-            selectedHitDice="{selectedHitDice}"
-            healthData="{healthData}"
-            isAtMaxHP="{currHP >= maxHP}"
-            onHitDiceFunction="{rollHitDice}"
-            onAutoFunction="{autoRollHitDie}"
-        />
+            <p>{localize("DND5E.ShortRestHint")}</p>
 
-        {#if spellData.feature}
+            <HitDieRoller
+                selectedHitDice="{selectedHitDice}"
+                healthData="{healthData}"
+                isAtMaxHP="{currHP >= maxHP}"
+                onHitDiceFunction="{rollHitDice}"
+                onAutoFunction="{autoRollHitDie}"
+            />
 
-            <div class="form-group">
-                <label>{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", { featureName: spellData.feature.name })}</label>
-            </div>
+            {#if spellData.feature}
 
-            {#if spellData.missingSlots && !spellData.has_feature_use}
+                <div class="form-group">
+                    <label>{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", { featureName: spellData.feature.name })}</label>
+                </div>
 
-                <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
-                    featureName: spellData.feature.name
-                })}</p>
+                {#if spellData.missingSlots && !spellData.has_feature_use}
 
-            {:else if spellData.missingSlots}
+                    <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
+                        featureName: spellData.feature.name
+                    })}</p>
 
-                {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
-                    <div class="form-group">
-                        <div class="form-fields" style="justify-content: flex-start;">
-                            <div style="margin-right:5px; flex:0 1 auto;">Level {level}: </div>
-                            <div style="flex:0 1 auto;">
-                                {#each slots as slot, slotIndex (slotIndex)}
-                                    <input
-                                        type='checkbox'
-                                        disabled="{slot.disabled || slot.alwaysDisabled}"
-                                        bind:checked="{slot.checked}"
-                                        on:change="{(event) => { spendSpellPoint(event, level, slotIndex) }}"
-                                    >
-                                {/each}
+                {:else if spellData.missingSlots}
+
+                    {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+                        <div class="form-group">
+                            <div class="form-fields" style="justify-content: flex-start;">
+                                <div style="margin-right:5px; flex:0 1 auto;">Level {level}: </div>
+                                <div style="flex:0 1 auto;">
+                                    {#each slots as slot, slotIndex (slotIndex)}
+                                        <input
+                                            type='checkbox'
+                                            disabled="{slot.disabled || slot.alwaysDisabled}"
+                                            bind:checked="{slot.checked}"
+                                            on:change="{(event) => { spendSpellPoint(event, level, slotIndex) }}"
+                                        >
+                                    {/each}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {/each}
+                    {/each}
 
-                <p style="font-style: italic;">{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
-                    spellSlotsLeft: spellData.pointsTotal - spellData.pointsSpent,
-                })}</p>
+                    <p style="font-style: italic;">{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
+                        spellSlotsLeft: spellData.pointsTotal - spellData.pointsSpent,
+                    })}</p>
 
-            {:else}
+                {:else}
 
-                <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullSpells")}</p>
+                    <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullSpells")}</p>
+
+                {/if}
 
             {/if}
 
-        {/if}
+            {#if promptNewDay}
+            <div class="form-group">
+                <label>{localize("DND5E.NewDay")}</label>
+                <input type="checkbox" name="newDay" bind:checked={newDay}/>
+                <p class="hint">{localize("DND5E.NewDayHint")}</p>
+            </div>
+            {/if}
 
-        {#if promptNewDay}
-        <div class="form-group">
-            <label>{localize("DND5E.NewDay")}</label>
-            <input type="checkbox" name="newDay" bind:checked={newDay}/>
-            <p class="hint">{localize("DND5E.NewDayHint")}</p>
-        </div>
+        {:else}
+
+            <div class="form-group">
+                <label>{localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRests")}</label>
+            </div>
+
+            <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", { max_short_rests: maxShortRests })}</p>
+
         {/if}
 
         <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
 
         <footer class="flexrow" style="margin-top:0.5rem;">
-            <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
-            {#if !startedShortRest}
-                <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>
+            {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
+                <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
+                {#if !startedShortRest}
+                    <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>
+                {/if}
+            {:else}
+                <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-check"></i> {localize("Okay")}</button>
             {/if}
         </footer>
 

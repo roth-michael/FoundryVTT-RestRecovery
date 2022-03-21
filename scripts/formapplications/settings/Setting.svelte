@@ -1,11 +1,15 @@
 <script>
 
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
+    import CONSTANTS from "../../constants.js";
 
+    export let settingsMap
     export let setting;
     export let group;
     export let setting_index;
     export let resetSetting;
+
+    let customFormulaSetting = settingsMap.get(setting.customFormula);
 
 </script>
 
@@ -19,26 +23,33 @@
     </div>
 
     <div class="form-fields input-side">
-        {#if typeof setting.value === "boolean"}
+
+        {#if setting.type === Boolean}
 
             <input type="checkbox" bind:checked={setting.value} disabled={setting.disabled}>
 
         {:else if setting.choices}
 
-            <select bind:value={setting.value}>
-                {#each Object.entries(setting.choices) as [key, choice], index (index)}
-                    <option value="{key}">{localize(choice)}</option>
-                {/each}
-            </select>
+            <div class="choice-container">
+                <select name={setting.key} bind:value={setting.value}>
+                    {#each Object.entries(setting.choices) as [key, choice], index (index)}
+                        <option value="{key}">{localize(choice)}</option>
+                    {/each}
+                </select>
 
-        {:else if typeof setting.value === 'number'}
+                {#if customFormulaSetting && setting.value === CONSTANTS.RECOVERY.CUSTOM}
+                    <input name="{setting.customFormula}" type="text" required bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''}>
+                {/if}
+            </div>
 
-            <input type="number" bind:value={setting.value}>
+        {:else if setting.type === Number}
+
+            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0}>
 
         {:else}
 
             <div class="setting-container">
-                <input type="text" bind:value={setting.value}>
+                <input type="text" required bind:value={setting.value}>
                 <input type="text" disabled value={localize(setting.value)}>
             </div>
 
@@ -58,6 +69,10 @@
     &:hover{
       opacity: 1.0;
     }
+  }
+
+  .invalid{
+    border: 2px solid #d93131;
   }
 
   label {
@@ -85,8 +100,16 @@
     margin-right:1rem;
   }
 
-  input[type="text"], input[type="number"], .setting-container{
+  .choice-container {
+    max-width: 200px;
+  }
+
+  .setting-container{
     min-width: 300px;
+  }
+
+  input[type="number"]{
+    min-width: 100px;
   }
 
 </style>

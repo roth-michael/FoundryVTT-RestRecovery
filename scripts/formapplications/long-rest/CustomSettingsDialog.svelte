@@ -4,10 +4,17 @@
     import CONSTANTS from "../../constants.js";
 
     const settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
-        .filter(entry => entry[1].customSettingsDialog)
+        .filter(setting => setting[1].customSettingsDialog)
         .map(entry => {
-            entry[1].value = getSetting(entry[0]);
-            return entry[1];
+            let [key, setting] = entry;
+            setting.name = localize(setting.name)
+            setting.value = getSetting(key);
+            if(typeof setting.value === "boolean"){
+                setting.value = setting.value ? "Yes" : "No";
+            }else if(typeof setting.value === "string"){
+                setting.value = localize(setting.choices[setting.value])
+            }
+            return setting;
         });
 
 </script>
@@ -25,8 +32,8 @@
         </tr>
         {#each settings as setting, index (index)}
         <tr>
-            <td>{localize(setting.name)}</td>
-            <td>{localize(setting.choices[setting.value])}</td>
+            <td>{setting.name}</td>
+            <td>{setting.value}</td>
         </tr>
         {/each}
     </table>
