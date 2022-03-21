@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.0.5
+- Updated French localization (thank you, DarKDinDoN!)
+
 ## Version 1.0.4
 - Added auto-roll hit dice in short and long rest dialogs
 - Added setting to enable/disable auto-roll button
