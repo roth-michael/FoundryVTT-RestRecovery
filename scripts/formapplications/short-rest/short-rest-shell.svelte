@@ -26,6 +26,7 @@
 
     const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
     const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
+    const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
 
     let newDay = false;
     let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
@@ -110,7 +111,7 @@
 <ApplicationShell bind:elementRoot>
     <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd" class="dialog-content">
 
-        {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
+        {#if enableShortRest}
 
             <p>{localize("DND5E.ShortRestHint")}</p>
 
@@ -187,7 +188,7 @@
         <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
 
         <footer class="flexrow" style="margin-top:0.5rem;">
-            {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
+            {#if enableShortRest}
                 <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
                 {#if !startedShortRest}
                     <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>

@@ -13659,7 +13659,8 @@ class RestWorkflow {
     });
   }
 
-  _finishedRest(updates) {
+  _finishedRest() {
+    const updates = {};
     const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
 
     if (maxShortRests > 0) {
@@ -13783,26 +13784,26 @@ class RestWorkflow {
     recoverShortRestResources = true,
     recoverLongRestResources = true
   } = {}) {
-    updates = this._finishedRest(updates);
+    const finishedRestUpdates = this._finishedRest(updates);
+
     const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
-    if (multiplier === 1.0) return updates;
-    if (!multiplier) return {};
-    updates = {};
+    if (multiplier === 1.0) return _objectSpread2(_objectSpread2({}, updates), finishedRestUpdates);
+    if (!multiplier) return finishedRestUpdates;
 
     for (const [key, resource] of Object.entries(this.actor.data.data.resources)) {
       if (Number.isNumeric(resource.max)) {
         if (recoverShortRestResources && resource.sr) {
-          updates[`data.resources.${key}.value`] = Number(resource.max);
+          finishedRestUpdates[`data.resources.${key}.value`] = Number(resource.max);
         } else if (recoverLongRestResources && resource.lr) {
           const recoverResources = typeof multiplier === "string" ? this._evaluateFormula(multiplier, {
             resource: foundry.utils.deepClone(resource)
           }) : Math.max(Math.floor(resource.max * multiplier), 1);
-          updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
+          finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
         }
       }
     }
 
-    return updates;
+    return finishedRestUpdates;
   }
 
   _getRestSpellRecovery(updates, {
@@ -13902,21 +13903,21 @@ class RestWorkflow {
 
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[28] = list[i][0];
-	child_ctx[29] = list[i][1];
-	child_ctx[31] = i;
+	child_ctx[29] = list[i][0];
+	child_ctx[30] = list[i][1];
+	child_ctx[32] = i;
 	return child_ctx;
 }
 
 function get_each_context_1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[32] = list[i];
-	child_ctx[33] = list;
-	child_ctx[34] = i;
+	child_ctx[33] = list[i];
+	child_ctx[34] = list;
+	child_ctx[35] = i;
 	return child_ctx;
 }
 
-// (177:8) {:else}
+// (178:8) {:else}
 function create_else_block_2(ctx) {
 	let div;
 	let label;
@@ -13955,7 +13956,7 @@ function create_else_block_2(ctx) {
 	};
 }
 
-// (113:8) {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
+// (114:8) {#if enableShortRest}
 function create_if_block_2$1(ctx) {
 	let p;
 	let t1;
@@ -14044,7 +14045,7 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (125:12) {#if spellData.feature}
+// (126:12) {#if spellData.feature}
 function create_if_block_4$1(ctx) {
 	let div;
 	let label;
@@ -14110,7 +14111,7 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (161:16) {:else}
+// (162:16) {:else}
 function create_else_block_1$1(ctx) {
 	let p;
 
@@ -14130,7 +14131,7 @@ function create_else_block_1$1(ctx) {
 	};
 }
 
-// (137:49) 
+// (138:49) 
 function create_if_block_6$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
@@ -14143,7 +14144,7 @@ function create_if_block_6$1(ctx) {
 
 	let t1;
 	let each_value = Object.entries(/*spellData*/ ctx[9].slots);
-	const get_key = ctx => /*levelIndex*/ ctx[31];
+	const get_key = ctx => /*levelIndex*/ ctx[32];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context$1(ctx, each_value, i);
@@ -14192,7 +14193,7 @@ function create_if_block_6$1(ctx) {
 	};
 }
 
-// (131:16) {#if spellData.missingSlots && !spellData.has_feature_use}
+// (132:16) {#if spellData.missingSlots && !spellData.has_feature_use}
 function create_if_block_5$1(ctx) {
 	let p;
 
@@ -14223,7 +14224,7 @@ function create_if_block_5$1(ctx) {
 	};
 }
 
-// (144:36) {#each slots as slot, slotIndex (slotIndex)}
+// (145:36) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -14231,11 +14232,11 @@ function create_each_block_1(key_1, ctx) {
 	let dispose;
 
 	function input_change_handler() {
-		/*input_change_handler*/ ctx[21].call(input, /*each_value_1*/ ctx[33], /*slotIndex*/ ctx[34]);
+		/*input_change_handler*/ ctx[21].call(input, /*each_value_1*/ ctx[34], /*slotIndex*/ ctx[35]);
 	}
 
 	function change_handler(...args) {
-		return /*change_handler*/ ctx[22](/*level*/ ctx[28], /*slotIndex*/ ctx[34], ...args);
+		return /*change_handler*/ ctx[22](/*level*/ ctx[29], /*slotIndex*/ ctx[35], ...args);
 	}
 
 	return {
@@ -14244,12 +14245,12 @@ function create_each_block_1(key_1, ctx) {
 		c() {
 			input = element("input");
 			attr(input, "type", "checkbox");
-			input.disabled = input_disabled_value = /*slot*/ ctx[32].disabled || /*slot*/ ctx[32].alwaysDisabled;
+			input.disabled = input_disabled_value = /*slot*/ ctx[33].disabled || /*slot*/ ctx[33].alwaysDisabled;
 			this.first = input;
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
-			input.checked = /*slot*/ ctx[32].checked;
+			input.checked = /*slot*/ ctx[33].checked;
 
 			if (!mounted) {
 				dispose = [
@@ -14263,12 +14264,12 @@ function create_each_block_1(key_1, ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty[0] & /*spellData*/ 512 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[32].disabled || /*slot*/ ctx[32].alwaysDisabled)) {
+			if (dirty[0] & /*spellData*/ 512 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[33].disabled || /*slot*/ ctx[33].alwaysDisabled)) {
 				input.disabled = input_disabled_value;
 			}
 
 			if (dirty[0] & /*spellData*/ 512) {
-				input.checked = /*slot*/ ctx[32].checked;
+				input.checked = /*slot*/ ctx[33].checked;
 			}
 		},
 		d(detaching) {
@@ -14279,21 +14280,21 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (139:20) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+// (140:20) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
 function create_each_block$1(key_1, ctx) {
 	let div3;
 	let div2;
 	let div0;
 	let t0;
-	let t1_value = /*level*/ ctx[28] + "";
+	let t1_value = /*level*/ ctx[29] + "";
 	let t1;
 	let t2;
 	let t3;
 	let div1;
 	let each_blocks = [];
 	let each_1_lookup = new Map();
-	let each_value_1 = /*slots*/ ctx[29];
-	const get_key = ctx => /*slotIndex*/ ctx[34];
+	let each_value_1 = /*slots*/ ctx[30];
+	const get_key = ctx => /*slotIndex*/ ctx[35];
 
 	for (let i = 0; i < each_value_1.length; i += 1) {
 		let child_ctx = get_each_context_1(ctx, each_value_1, i);
@@ -14342,10 +14343,10 @@ function create_each_block$1(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty[0] & /*spellData*/ 512 && t1_value !== (t1_value = /*level*/ ctx[28] + "")) set_data(t1, t1_value);
+			if (dirty[0] & /*spellData*/ 512 && t1_value !== (t1_value = /*level*/ ctx[29] + "")) set_data(t1, t1_value);
 
 			if (dirty[0] & /*spellData, spendSpellPoint*/ 262656) {
-				each_value_1 = /*slots*/ ctx[29];
+				each_value_1 = /*slots*/ ctx[30];
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div1, destroy_block, create_each_block_1, null, get_each_context_1);
 			}
 		},
@@ -14359,7 +14360,7 @@ function create_each_block$1(key_1, ctx) {
 	};
 }
 
-// (169:12) {#if promptNewDay}
+// (170:12) {#if promptNewDay}
 function create_if_block_3$1(ctx) {
 	let div;
 	let label;
@@ -14412,7 +14413,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (195:12) {:else}
+// (196:12) {:else}
 function create_else_block$1(ctx) {
 	let button;
 	let i;
@@ -14452,7 +14453,7 @@ function create_else_block$1(ctx) {
 	};
 }
 
-// (190:12) {#if maxShortRests > 0 && currentShortRests >= maxShortRests}
+// (191:12) {#if enableShortRest}
 function create_if_block$1(ctx) {
 	let button;
 	let i;
@@ -14517,7 +14518,7 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (192:16) {#if !startedShortRest}
+// (193:16) {#if !startedShortRest}
 function create_if_block_1$1(ctx) {
 	let button;
 	let i;
@@ -14557,7 +14558,7 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (110:0) <ApplicationShell bind:elementRoot>
+// (111:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$1(ctx) {
 	let form_1;
 	let current_block_type_index;
@@ -14573,7 +14574,7 @@ function create_default_slot$1(ctx) {
 	const if_blocks = [];
 
 	function select_block_type(ctx, dirty) {
-		if (/*maxShortRests*/ ctx[10] > 0 && /*currentShortRests*/ ctx[11] >= /*maxShortRests*/ ctx[10]) return 0;
+		if (/*enableShortRest*/ ctx[11]) return 0;
 		return 1;
 	}
 
@@ -14588,7 +14589,7 @@ function create_default_slot$1(ctx) {
 		});
 
 	function select_block_type_2(ctx, dirty) {
-		if (/*maxShortRests*/ ctx[10] > 0 && /*currentShortRests*/ ctx[11] >= /*maxShortRests*/ ctx[10]) return create_if_block$1;
+		if (/*enableShortRest*/ ctx[11]) return create_if_block$1;
 		return create_else_block$1;
 	}
 
@@ -14689,7 +14690,7 @@ function create_fragment$2(ctx) {
 		p(ctx, dirty) {
 			const applicationshell_changes = {};
 
-			if (dirty[0] & /*form, startedShortRest, currHP, maxHP, healthPercentage, newDay, spellData, healthData*/ 1020 | dirty[1] & /*$$scope*/ 16) {
+			if (dirty[0] & /*form, startedShortRest, currHP, maxHP, healthPercentage, newDay, spellData, healthData*/ 1020 | dirty[1] & /*$$scope*/ 32) {
 				applicationshell_changes.$$scope = { dirty, ctx };
 			}
 
@@ -14727,6 +14728,7 @@ function instance$2($$self, $$props, $$invalidate) {
 	let startedShortRest = false;
 	const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
 	const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
+	const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
 	let newDay = false;
 	let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
 	const workflow = RestWorkflow.get(actor);
@@ -14850,7 +14852,7 @@ function instance$2($$self, $$props, $$invalidate) {
 		healthData,
 		spellData,
 		maxShortRests,
-		currentShortRests,
+		enableShortRest,
 		promptNewDay,
 		selectedHitDice,
 		updateSettings,

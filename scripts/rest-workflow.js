@@ -436,7 +436,9 @@ export default class RestWorkflow {
         });
     }
 
-    _finishedRest(updates) {
+    _finishedRest() {
+
+        const updates = {};
 
         const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
         if(maxShortRests > 0) {
@@ -558,29 +560,27 @@ export default class RestWorkflow {
 
     _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
 
-        updates = this._finishedRest(updates);
+        const finishedRestUpdates = this._finishedRest(updates);
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
 
-        if (multiplier === 1.0) return updates;
-        if (!multiplier) return {};
-
-        updates = {};
+        if (multiplier === 1.0) return { ...updates, ...finishedRestUpdates };
+        if (!multiplier) return finishedRestUpdates;
 
         for (const [key, resource] of Object.entries(this.actor.data.data.resources)) {
             if (Number.isNumeric(resource.max)) {
                 if (recoverShortRestResources && resource.sr) {
-                    updates[`data.resources.${key}.value`] = Number(resource.max);
+                    finishedRestUpdates[`data.resources.${key}.value`] = Number(resource.max);
                 } else if (recoverLongRestResources && resource.lr) {
                     const recoverResources = typeof multiplier === "string"
                         ? this._evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) })
                         : Math.max(Math.floor(resource.max * multiplier), 1);
-                    updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
+                    finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
                 }
             }
         }
 
-        return updates;
+        return finishedRestUpdates;
 
     }
 
