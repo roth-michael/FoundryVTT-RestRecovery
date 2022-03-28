@@ -278,7 +278,10 @@ export default class RestWorkflow {
         const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
             ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
             : false;
-        const periapt_mod = periapt && periapt?.data?.data?.attunement === 2 ? 3 : 1
+        const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
+            ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
+            : false;
+        const periapt_mod = (periapt && periapt?.data?.data?.attunement === 2) || (blessing && blessing?.data?.type === "feat") ? 3 : 1
 
         let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
             ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
@@ -462,7 +465,7 @@ export default class RestWorkflow {
 
         const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 
-        const maxHP = this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0);
+        const maxHP = this.actor.data.data.attributes.hp.max;
         const currentHP = this.actor.data.data.attributes.hp.value;
 
         let recoveredHP = this.healthData.hitPointsToRegain;

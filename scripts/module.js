@@ -9,9 +9,9 @@ Hooks.once("init", () => {
     console.log("Rest Recovery 5e | Initialized");
 });
 
-Hooks.on("ready", () => {
+/*Hooks.on("ready", () => {
     new SettingsShim().render(true);
-})
+})*/
 
 Hooks.on('updateActor', (actor) => {
     const workflow = RestWorkflow.get(actor);

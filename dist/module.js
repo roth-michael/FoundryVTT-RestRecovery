@@ -18,6 +18,7 @@ const CONSTANTS = {
      *-------------------------------------------*/
     LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
     PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
+    PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
     HD_ROUNDING: "recovery-rounding",
     HP_MULTIPLIER: "recovery-hitpoints",
     HD_MULTIPLIER: "recovery-hitdice",
@@ -47,6 +48,7 @@ const CONSTANTS = {
     CHEF_TOOLS: "chef-tools-name",
     DURABLE_FEAT: "durable-feat-name",
     PERIAPT_ITEM: "periapt-item-name",
+    WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
     BLACK_BLOOD_FEATURE: "black-blood-feature-name"
   },
   RECOVERY: {
@@ -130,6 +132,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "longrest",
     validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER]: {
+    name: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
+    scope: "world",
+    group: "longrest",
+    validate: CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE,
     config: false,
     default: false,
     type: Boolean
@@ -422,6 +434,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
     group: "itemnames",
     config: false,
     default: "REST-RECOVERY.FeatureNames.PeriaptItem",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING]: {
+    name: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.WoundClosureBlessing",
     type: String
   },
   [CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE]: {
@@ -13465,12 +13486,13 @@ class RestWorkflow {
   }
 
   getAverageHitDiceRoll() {
-    var _periapt$data, _periapt$data$data, _durable, _durable$data, _blackBlood, _blackBlood$data;
+    var _periapt$data, _periapt$data$data, _blessing$data, _durable, _durable$data, _blackBlood, _blackBlood$data;
 
     const availableHitDice = Object.entries(this.healthData.availableHitDice).filter(entry => entry[1]);
     if (!availableHitDice.length) return 0;
     const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
-    const periapt_mod = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 ? 3 : 1;
+    const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true)) : false;
+    const periapt_mod = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 || blessing && (blessing === null || blessing === void 0 ? void 0 : (_blessing$data = blessing.data) === null || _blessing$data === void 0 ? void 0 : _blessing$data.type) === "feat" ? 3 : 1;
     let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
     durable = durable && ((_durable = durable) === null || _durable === void 0 ? void 0 : (_durable$data = _durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
     let blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true)) : false;
@@ -13664,15 +13686,13 @@ class RestWorkflow {
   }
 
   _getRestHitPointRecovery(result) {
-    var _this$actor$data$data3;
-
     if (!this.longRest) {
       result.hitPointsRecovered = Math.max(0, result.hitPointsRecovered);
       return result;
     }
 
     const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
-    const maxHP = this.actor.data.data.attributes.hp.max + ((_this$actor$data$data3 = this.actor.data.data.attributes.hp.tempmax) !== null && _this$actor$data$data3 !== void 0 ? _this$actor$data$data3 : 0);
+    const maxHP = this.actor.data.data.attributes.hp.max;
     const currentHP = this.actor.data.data.attributes.hp.value;
     let recoveredHP = this.healthData.hitPointsToRegain;
 
@@ -16046,7 +16066,7 @@ function patch_rollHitDie() {
   libWrapper.register(CONSTANTS.MODULE_NAME, "CONFIG.Actor.documentClass.prototype.rollHitDie", async function (denomination, {
     dialog = true
   } = {}) {
-    var _periapt, _periapt$data, _periapt$data$data, _durable, _durable$data, _blackBlood, _blackBlood$data, _hp$tempmax;
+    var _periapt$data, _periapt$data$data, _blessing$data, _durable$data, _blackBlood$data, _hp$tempmax;
 
     // If no denomination was provided, choose the first available
     let cls;
@@ -16076,24 +16096,25 @@ function patch_rollHitDie() {
     let parts = [`1${denomination}`, "@abilities.con.mod"];
     const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
     const rollData = foundry.utils.deepClone(this.data.data);
-    let periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
-    periapt = periapt && ((_periapt = periapt) === null || _periapt === void 0 ? void 0 : (_periapt$data = _periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2;
-    let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
-    durable = durable && ((_durable = durable) === null || _durable === void 0 ? void 0 : (_durable$data = _durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
-    let blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true)) : false;
-    blackBlood = blackBlood && ((_blackBlood = blackBlood) === null || _blackBlood === void 0 ? void 0 : (_blackBlood$data = _blackBlood.data) === null || _blackBlood$data === void 0 ? void 0 : _blackBlood$data.type) === "feat";
+    const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
+    const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true)) : false;
+    const woundClosure = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 || blessing && (blessing === null || blessing === void 0 ? void 0 : (_blessing$data = blessing.data) === null || _blessing$data === void 0 ? void 0 : _blessing$data.type) === "feat";
+    const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
+    const isDurable = durable && (durable === null || durable === void 0 ? void 0 : (_durable$data = durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
+    const blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true)) : false;
+    let hasBlackBlood = blackBlood && (blackBlood === null || blackBlood === void 0 ? void 0 : (_blackBlood$data = blackBlood.data) === null || _blackBlood$data === void 0 ? void 0 : _blackBlood$data.type) === "feat";
     const conMod = this.data.data.abilities.con.mod;
     const durableMod = Math.max(2, conMod * 2);
 
-    if (blackBlood) {
+    if (hasBlackBlood) {
       denomination += "r<3";
     }
 
-    if (periapt && durable) {
+    if (woundClosure && isDurable) {
       parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`];
-    } else if (periapt) {
+    } else if (woundClosure) {
       parts[0] = "(" + parts[0] + "*2)";
-    } else if (durable) {
+    } else if (isDurable) {
       parts = [`{1${denomination}+${conMod},${durableMod}}kh`];
     } // Call the roll helper utility
 
@@ -16261,9 +16282,10 @@ Hooks.once("init", () => {
   registerLibwrappers();
   console.log("Rest Recovery 5e | Initialized");
 });
-Hooks.on("ready", () => {
-  new SettingsShim().render(true);
-});
+/*Hooks.on("ready", () => {
+    new SettingsShim().render(true);
+})*/
+
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);
 

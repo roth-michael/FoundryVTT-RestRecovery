@@ -18,6 +18,7 @@ const CONSTANTS = {
          *-------------------------------------------*/
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
+        PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
         HD_ROUNDING: "recovery-rounding",
         HP_MULTIPLIER: "recovery-hitpoints",
         HD_MULTIPLIER: "recovery-hitdice",
@@ -48,6 +49,7 @@ const CONSTANTS = {
         CHEF_TOOLS: "chef-tools-name",
         DURABLE_FEAT: "durable-feat-name",
         PERIAPT_ITEM: "periapt-item-name",
+        WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
         BLACK_BLOOD_FEATURE: "black-blood-feature-name",
     },
 
@@ -132,6 +134,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "longrest",
         validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER]: {
+        name: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Title",
+        hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
+        scope: "world",
+        group: "longrest",
+        validate: CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE,
         config: false,
         default: false,
         type: Boolean
@@ -424,6 +436,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
         group: "itemnames",
         config: false,
         default: "REST-RECOVERY.FeatureNames.PeriaptItem",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING]: {
+        name: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Title",
+        hint: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Hint",
+        scope: "world",
+        group: "itemnames",
+        config: false,
+        default: "REST-RECOVERY.FeatureNames.WoundClosureBlessing",
         type: String
     },
     [CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE]: {

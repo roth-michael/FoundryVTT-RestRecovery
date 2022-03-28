@@ -14,6 +14,7 @@
             "ChefFeat": "Chef",
             "ChefTools": "Cook's Utensils",
             "PeriaptItem": "Periapt of Wound Closure",
+            "WoundClosureBlessing": "Blessing of Wound Closure",
             "DurableFeat": "Durable",
             "BlackBloodFeature": "Black Blood Healing"
         },
@@ -141,6 +142,10 @@
                     "Title": "Enable Hit Dice Recovery Before Finishing Long Rest",
                     "Hint": "This makes it so that hit dice are recovered before finishing the long rest, so that you can roll them as a part of this rest."
                 },
+                "PreRegainHitDiceBuffer": {
+                    "Title": "Enable Hit Dice Max Buffer",
+                    "Hint": "This setting causes each character to always regain hit dice, even if it would put their hit dice above their maximum, so that no hit dice are wasted. Any unused hit dice over their maximum will disappear once the long rest is completed."
+                },
                 "EnableAutoRollButton": {
                     "Title": "Enable Hit Dice Auto Roll Button",
                     "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
@@ -218,6 +223,10 @@
                 "PeriaptItem": {
                     "Title": "Periapt of Wound Closure Name",
                     "Hint": "Here you can configure what the Periapt of Would Closure item is called in your game. This can be a localized string."
+                },
+                "WoundClosureBlessing": {
+                    "Title": "Blessing of Wound Closure Name",
+                    "Hint": "Here you can configure what the Blessing of Would Closure feature is called in your game. This can be a localized string."
                 },
                 "BlackBloodFeature": {
                     "Title": "Black Blood Healing Name",
