@@ -2,7 +2,42 @@ const CONSTANTS = {
   MODULE_NAME: "rest-recovery",
   FLAG_NAME: "data",
   SETTINGS: {
+    /*-------------------------------------------*
+     *           General Rest Settings           *
+     *-------------------------------------------*/
+    ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
+
+    /*-------------------------------------------*
+     *            Short Rest Settings            *
+     *-------------------------------------------*/
     IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
+    MAX_SHORT_RESTS: "max-short-rests-per-long-rest",
+
+    /*-------------------------------------------*
+     *             Long Rest Settings            *
+     *-------------------------------------------*/
+    LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
+    PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
+    PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
+    HD_ROUNDING: "recovery-rounding",
+    HP_MULTIPLIER: "recovery-hitpoints",
+    HD_MULTIPLIER: "recovery-hitdice",
+    RESOURCES_MULTIPLIER: "recovery-resources",
+    SPELLS_MULTIPLIER: "recovery-spells",
+    USES_OTHERS_MULTIPLIER: "recovery-uses-others",
+    USES_FEATS_MULTIPLIER: "recovery-uses-feats",
+    USES_DAILY_MULTIPLIER: "recovery-day",
+    HP_MULTIPLIER_FORMULA: "recovery-hitpoints-formula",
+    HD_MULTIPLIER_FORMULA: "recovery-hitdice-formula",
+    RESOURCES_MULTIPLIER_FORMULA: "recovery-resources-formula",
+    SPELLS_MULTIPLIER_FORMULA: "recovery-spells-formula",
+    USES_OTHERS_MULTIPLIER_FORMULA: "recovery-uses-others-formula",
+    USES_FEATS_MULTIPLIER_FORMULA: "recovery-uses-feats-formula",
+    USES_DAILY_MULTIPLIER_FORMULA: "recovery-day-formula",
+
+    /*-------------------------------------------*
+     *               Item names                  *
+     *-------------------------------------------*/
     WIZARD_CLASS: "wizard-class-name",
     DRUID_CLASS: "druid-class-name",
     BARD_CLASS: "bard-class-name",
@@ -13,24 +48,18 @@ const CONSTANTS = {
     CHEF_TOOLS: "chef-tools-name",
     DURABLE_FEAT: "durable-feat-name",
     PERIAPT_ITEM: "periapt-item-name",
-    LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
-    PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
-    ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
-    HP_MULTIPLIER: "recovery-hitpoints",
-    HD_MULTIPLIER: "recovery-hitdice",
-    HD_ROUNDING: "recovery-rounding",
-    RESOURCES_MULTIPLIER: "recovery-resources",
-    SPELLS_MULTIPLIER: "recovery-spells",
-    USES_OTHERS_MULTIPLIER: "recovery-uses-others",
-    USES_FEATS_MULTIPLIER: "recovery-uses-feats",
-    USES_DAILY_MULTIPLIER: "recovery-day"
+    WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
+    BLACK_BLOOD_FEATURE: "black-blood-feature-name"
   },
-  FULL: "full",
-  HALF: "half",
-  QUARTER: "quarter",
-  NONE: "none",
-  UP: "up",
-  DOWN: "down",
+  RECOVERY: {
+    FULL: "full",
+    HALF: "half",
+    QUARTER: "quarter",
+    NONE: "none",
+    CUSTOM: "custom_formula",
+    UP: "up",
+    DOWN: "down"
+  },
 
   USING_DEFAULT_LONG_REST_SETTINGS() {
     const settings = this.GET_DEFAULT_SETTINGS();
@@ -44,278 +73,387 @@ const CONSTANTS = {
   },
 
   GET_DEFAULT_SETTINGS() {
-    return {
-      /*-------------------------------------------*
-       *           General Rest Settings           *
-       *-------------------------------------------*/
-      [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
-        name: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Hint",
-        scope: "world",
-        group: "general",
-        config: false,
-        default: true,
-        type: Boolean
-      },
-
-      /*-------------------------------------------*
-       *            Short Rest Settings            *
-       *-------------------------------------------*/
-      [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
-        name: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Hint",
-        scope: "world",
-        group: "shortrest",
-        config: false,
-        default: false,
-        type: Boolean
-      },
-
-      /*-------------------------------------------*
-       *             Long Rest Settings            *
-       *-------------------------------------------*/
-      [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
-        name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
-        scope: "world",
-        group: "longrest",
-        config: false,
-        default: false,
-        type: Boolean
-      },
-      [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE]: {
-        name: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
-        scope: "world",
-        group: "longrest",
-        validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
-        config: false,
-        default: false,
-        type: Boolean
-      },
-      [CONSTANTS.SETTINGS.HP_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-      [CONSTANTS.SETTINGS.HD_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "half"
-      },
-      [CONSTANTS.SETTINGS.HD_ROUNDING]: {
-        name: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          down: "REST-RECOVERY.Rounding.RoundDown",
-          up: "REST-RECOVERY.Rounding.RoundUp"
-        },
-        default: "down"
-      },
-      [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-      [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-      [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-      [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-      [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER]: {
-        name: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Hint",
-        scope: "world",
-        group: "longrest",
-        customSettingsDialog: true,
-        config: false,
-        type: String,
-        choices: {
-          none: "REST-RECOVERY.Fractions.None",
-          quarter: "REST-RECOVERY.Fractions.Quarter",
-          half: "REST-RECOVERY.Fractions.Half",
-          full: "REST-RECOVERY.Fractions.Full"
-        },
-        default: "full"
-      },
-
-      /*-------------------------------------------*
-       *               Item names                  *
-       *-------------------------------------------*/
-      [CONSTANTS.SETTINGS.WIZARD_CLASS]: {
-        name: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.WizardClassName.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.ClassNames.Wizard",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.DRUID_CLASS]: {
-        name: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.DruidClassName.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.ClassNames.Druid",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.BARD_CLASS]: {
-        name: "REST-RECOVERY.Settings.ShortRest.BardClassName.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.BardClassName.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.ClassNames.Bard",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.ARCANE_RECOVERY]: {
-        name: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.ArcaneRecovery.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {
-        name: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.NaturalRecovery.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.SONG_OF_REST]: {
-        name: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.SongOfRest.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.SongOfRest",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.CHEF_FEAT]: {
-        name: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.ChefFeat.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.ChefFeat",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.CHEF_TOOLS]: {
-        name: "REST-RECOVERY.Settings.ShortRest.ChefTools.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.ChefTools.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.ChefTools",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.DURABLE_FEAT]: {
-        name: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.DurableFeat.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.DurableFeat",
-        type: String
-      },
-      [CONSTANTS.SETTINGS.PERIAPT_ITEM]: {
-        name: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Title",
-        hint: "REST-RECOVERY.Settings.ShortRest.PeriaptItem.Hint",
-        scope: "world",
-        group: "itemnames",
-        config: false,
-        default: "REST-RECOVERY.FeatureNames.PeriaptItem",
-        type: String
-      }
-    };
+    return foundry.utils.deepClone(CONSTANTS.DEFAULT_SETTINGS);
   }
 
+};
+CONSTANTS.DEFAULT_SETTINGS = {
+  /*-------------------------------------------*
+   *           General Rest Settings           *
+   *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
+    name: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: true,
+    type: Boolean
+  },
+
+  /*-------------------------------------------*
+   *            Short Rest Settings            *
+   *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
+    name: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.IgnoreInactive.Hint",
+    scope: "world",
+    group: "shortrest",
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.MAX_SHORT_RESTS]: {
+    name: "REST-RECOVERY.Settings.ShortRest.MaxShortRests.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.MaxShortRests.Hint",
+    scope: "world",
+    group: "shortrest",
+    customSettingsDialog: true,
+    config: false,
+    default: 0,
+    type: Number
+  },
+
+  /*-------------------------------------------*
+   *             Long Rest Settings            *
+   *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
+    name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
+    scope: "world",
+    group: "longrest",
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE]: {
+    name: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
+    scope: "world",
+    group: "longrest",
+    validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER]: {
+    name: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
+    scope: "world",
+    group: "longrest",
+    validate: CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE,
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.HP_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.HP_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.HP_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@attributes.hp.max"
+  },
+  [CONSTANTS.SETTINGS.HD_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "half"
+  },
+  [CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@details.level / 2"
+  },
+  [CONSTANTS.SETTINGS.HD_ROUNDING]: {
+    name: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.HitDiceRecoveryRounding.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    config: false,
+    type: String,
+    choices: {
+      down: "REST-RECOVERY.Rounding.RoundDown",
+      up: "REST-RECOVERY.Rounding.RoundUp"
+    },
+    default: "down"
+  },
+  [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@resource.max"
+  },
+  [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@slot.max"
+  },
+  [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@uses.max"
+  },
+  [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@uses.max"
+  },
+  [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom"
+    },
+    default: "full"
+  },
+  [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@uses.max"
+  },
+
+  /*-------------------------------------------*
+   *               Item names                  *
+   *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.WIZARD_CLASS]: {
+    name: "REST-RECOVERY.Settings.ItemNames.WizardClassName.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.WizardClassName.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.ClassNames.Wizard",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.DRUID_CLASS]: {
+    name: "REST-RECOVERY.Settings.ItemNames.DruidClassName.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.DruidClassName.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.ClassNames.Druid",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.BARD_CLASS]: {
+    name: "REST-RECOVERY.Settings.ItemNames.BardClassName.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.BardClassName.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.ClassNames.Bard",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.ARCANE_RECOVERY]: {
+    name: "REST-RECOVERY.Settings.ItemNames.ArcaneRecovery.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.ArcaneRecovery.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {
+    name: "REST-RECOVERY.Settings.ItemNames.NaturalRecovery.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.NaturalRecovery.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.SONG_OF_REST]: {
+    name: "REST-RECOVERY.Settings.ItemNames.SongOfRest.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.SongOfRest.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.SongOfRest",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.CHEF_FEAT]: {
+    name: "REST-RECOVERY.Settings.ItemNames.ChefFeat.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.ChefFeat.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.ChefFeat",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.CHEF_TOOLS]: {
+    name: "REST-RECOVERY.Settings.ItemNames.ChefTools.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.ChefTools.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.ChefTools",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.DURABLE_FEAT]: {
+    name: "REST-RECOVERY.Settings.ItemNames.DurableFeat.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.DurableFeat.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.DurableFeat",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.PERIAPT_ITEM]: {
+    name: "REST-RECOVERY.Settings.ItemNames.PeriaptItem.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.PeriaptItem.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.PeriaptItem",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING]: {
+    name: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.WoundClosureBlessing.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.WoundClosureBlessing",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE]: {
+    name: "REST-RECOVERY.Settings.ItemNames.BlackBloodFeature.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.BlackBloodFeature.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    default: "REST-RECOVERY.FeatureNames.BlackBloodFeature",
+    type: String
+  }
 };
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
 
@@ -7954,7 +8092,7 @@ function add_css$2(target) {
 } // (166:0) {:else}
 
 
-function create_else_block_1$1(ctx) {
+function create_else_block_1$1$1(ctx) {
   let div;
   let tjsapplicationheader;
   let t0;
@@ -8512,7 +8650,7 @@ function create_fragment$4$1(ctx) {
   let if_block;
   let if_block_anchor;
   let current;
-  const if_block_creators = [create_if_block$4$1, create_else_block_1$1];
+  const if_block_creators = [create_if_block$4$1, create_else_block_1$1$1];
   const if_blocks = [];
 
   function select_block_type(ctx, dirty) {
@@ -8948,7 +9086,7 @@ function get_each_context$5(ctx, list, i) {
 } // (202:29) 
 
 
-function create_if_block_3$2(ctx) {
+function create_if_block_3$3(ctx) {
   let switch_instance;
   let switch_instance_anchor;
   let current;
@@ -9147,7 +9285,7 @@ function create_if_block$1$1(ctx) {
 } // (214:33) {#if button.icon}
 
 
-function create_if_block_1$4(ctx) {
+function create_if_block_1$5(ctx) {
   let html_tag;
   let raw_value =
   /*button*/
@@ -9197,7 +9335,7 @@ function create_each_block$5(key_1, ctx) {
   let dispose;
   let if_block =
   /*button*/
-  ctx[15].icon && create_if_block_1$4(ctx);
+  ctx[15].icon && create_if_block_1$5(ctx);
 
   function click_handler() {
     return (
@@ -9256,7 +9394,7 @@ function create_each_block$5(key_1, ctx) {
         if (if_block) {
           if_block.p(ctx, dirty);
         } else {
-          if_block = create_if_block_1$4(ctx);
+          if_block = create_if_block_1$5(ctx);
           if_block.c();
           if_block.m(span, t0);
         }
@@ -9324,7 +9462,7 @@ function create_fragment$1$1(ctx) {
   let current;
   let mounted;
   let dispose;
-  const if_block_creators = [create_if_block_2$4, create_if_block_3$2];
+  const if_block_creators = [create_if_block_2$4, create_if_block_3$3];
   const if_blocks = [];
 
   function select_block_type(ctx, dirty) {
@@ -11089,17 +11227,20 @@ function determineLongRestMultiplier(settingKey) {
   const multiplierSetting = getSetting(settingKey);
 
   switch (multiplierSetting) {
-    case "none":
+    case CONSTANTS.RECOVERY.NONE:
       return 0;
 
-    case "quarter":
+    case CONSTANTS.RECOVERY.QUARTER:
       return 0.25;
 
-    case "half":
+    case CONSTANTS.RECOVERY.HALF:
       return 0.5;
 
-    case "full":
+    case CONSTANTS.RECOVERY.FULL:
       return 1.0;
+
+    case CONSTANTS.RECOVERY.CUSTOM:
+      return getSetting(CONSTANTS.DEFAULT_SETTINGS[settingKey].customFormula);
 
     default:
       throw new Error(`Unable to parse recovery multiplier setting for "${settingKey}".`);
@@ -11132,13 +11273,13 @@ function getSetting(key, localize = false) {
 
 function get_each_context$4(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[9] = list[i][0];
-	child_ctx[10] = list[i][1];
-	child_ctx[12] = i;
+	child_ctx[12] = list[i][0];
+	child_ctx[13] = list[i][1];
+	child_ctx[15] = i;
 	return child_ctx;
 }
 
-// (38:8) {:else}
+// (49:8) {:else}
 function create_else_block$2(ctx) {
 	let div;
 	let input0;
@@ -11155,12 +11296,13 @@ function create_else_block$2(ctx) {
 			t = space();
 			input1 = element("input");
 			attr(input0, "type", "text");
-			attr(input0, "class", "svelte-1vsx49n");
+			input0.required = true;
+			attr(input0, "class", "svelte-1mvkigi");
 			attr(input1, "type", "text");
 			input1.disabled = true;
 			input1.value = input1_value_value = localize(/*setting*/ ctx[0].value);
-			attr(input1, "class", "svelte-1vsx49n");
-			attr(div, "class", "setting-container svelte-1vsx49n");
+			attr(input1, "class", "svelte-1mvkigi");
+			attr(div, "class", "setting-container svelte-1mvkigi");
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
@@ -11170,7 +11312,7 @@ function create_else_block$2(ctx) {
 			append(div, input1);
 
 			if (!mounted) {
-				dispose = listen(input0, "input", /*input0_input_handler*/ ctx[8]);
+				dispose = listen(input0, "input", /*input0_input_handler*/ ctx[11]);
 				mounted = true;
 			}
 		},
@@ -11191,8 +11333,8 @@ function create_else_block$2(ctx) {
 	};
 }
 
-// (34:52) 
-function create_if_block_2$3(ctx) {
+// (45:42) 
+function create_if_block_3$2(ctx) {
 	let input;
 	let mounted;
 	let dispose;
@@ -11201,20 +11343,26 @@ function create_if_block_2$3(ctx) {
 		c() {
 			input = element("input");
 			attr(input, "type", "number");
-			attr(input, "class", "svelte-1vsx49n");
+			input.required = true;
+			attr(input, "class", "svelte-1mvkigi");
+			toggle_class(input, "invalid", !/*setting*/ ctx[0].value && /*setting*/ ctx[0].value !== 0);
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
 			set_input_value(input, /*setting*/ ctx[0].value);
 
 			if (!mounted) {
-				dispose = listen(input, "input", /*input_input_handler*/ ctx[7]);
+				dispose = listen(input, "input", /*input_input_handler_1*/ ctx[10]);
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
 			if (dirty & /*setting, Object*/ 1 && to_number(input.value) !== /*setting*/ ctx[0].value) {
 				set_input_value(input, /*setting*/ ctx[0].value);
+			}
+
+			if (dirty & /*setting*/ 1) {
+				toggle_class(input, "invalid", !/*setting*/ ctx[0].value && /*setting*/ ctx[0].value !== 0);
 			}
 		},
 		d(detaching) {
@@ -11225,15 +11373,18 @@ function create_if_block_2$3(ctx) {
 	};
 }
 
-// (26:34) 
-function create_if_block_1$3(ctx) {
+// (31:34) 
+function create_if_block_1$4(ctx) {
+	let div;
 	let select;
 	let each_blocks = [];
 	let each_1_lookup = new Map();
+	let select_name_value;
+	let t;
 	let mounted;
 	let dispose;
 	let each_value = Object.entries(/*setting*/ ctx[0].choices);
-	const get_key = ctx => /*index*/ ctx[12];
+	const get_key = ctx => /*index*/ ctx[15];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context$4(ctx, each_value, i);
@@ -11241,28 +11392,38 @@ function create_if_block_1$3(ctx) {
 		each_1_lookup.set(key, each_blocks[i] = create_each_block$4(key, child_ctx));
 	}
 
+	let if_block = /*customFormulaSetting*/ ctx[4] && /*setting*/ ctx[0].value === CONSTANTS.RECOVERY.CUSTOM && create_if_block_2$3(ctx);
+
 	return {
 		c() {
+			div = element("div");
 			select = element("select");
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].c();
 			}
 
-			attr(select, "class", "svelte-1vsx49n");
-			if (/*setting*/ ctx[0].value === void 0) add_render_callback(() => /*select_change_handler*/ ctx[6].call(select));
+			t = space();
+			if (if_block) if_block.c();
+			attr(select, "name", select_name_value = /*setting*/ ctx[0].key);
+			attr(select, "class", "svelte-1mvkigi");
+			if (/*setting*/ ctx[0].value === void 0) add_render_callback(() => /*select_change_handler*/ ctx[8].call(select));
+			attr(div, "class", "choice-container svelte-1mvkigi");
 		},
 		m(target, anchor) {
-			insert(target, select, anchor);
+			insert(target, div, anchor);
+			append(div, select);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].m(select, null);
 			}
 
 			select_option(select, /*setting*/ ctx[0].value);
+			append(div, t);
+			if (if_block) if_block.m(div, null);
 
 			if (!mounted) {
-				dispose = listen(select, "change", /*select_change_handler*/ ctx[6]);
+				dispose = listen(select, "change", /*select_change_handler*/ ctx[8]);
 				mounted = true;
 			}
 		},
@@ -11272,24 +11433,42 @@ function create_if_block_1$3(ctx) {
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, select, destroy_block, create_each_block$4, null, get_each_context$4);
 			}
 
+			if (dirty & /*setting, Object*/ 1 && select_name_value !== (select_name_value = /*setting*/ ctx[0].key)) {
+				attr(select, "name", select_name_value);
+			}
+
 			if (dirty & /*setting, Object*/ 1) {
 				select_option(select, /*setting*/ ctx[0].value);
 			}
+
+			if (/*customFormulaSetting*/ ctx[4] && /*setting*/ ctx[0].value === CONSTANTS.RECOVERY.CUSTOM) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+				} else {
+					if_block = create_if_block_2$3(ctx);
+					if_block.c();
+					if_block.m(div, null);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
 		},
 		d(detaching) {
-			if (detaching) detach(select);
+			if (detaching) detach(div);
 
 			for (let i = 0; i < each_blocks.length; i += 1) {
 				each_blocks[i].d();
 			}
 
+			if (if_block) if_block.d();
 			mounted = false;
 			dispose();
 		}
 	};
 }
 
-// (22:8) {#if typeof setting.value === "boolean"}
+// (27:8) {#if setting.type === Boolean}
 function create_if_block$5(ctx) {
 	let input;
 	let input_disabled_value;
@@ -11307,7 +11486,7 @@ function create_if_block$5(ctx) {
 			input.checked = /*setting*/ ctx[0].value;
 
 			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler*/ ctx[5]);
+				dispose = listen(input, "change", /*input_change_handler*/ ctx[7]);
 				mounted = true;
 			}
 		},
@@ -11328,10 +11507,10 @@ function create_if_block$5(ctx) {
 	};
 }
 
-// (29:16) {#each Object.entries(setting.choices) as [key, choice], index (index)}
+// (35:20) {#each Object.entries(setting.choices) as [key, choice], index (index)}
 function create_each_block$4(key_1, ctx) {
 	let option;
-	let t_value = localize(/*choice*/ ctx[10]) + "";
+	let t_value = localize(/*choice*/ ctx[13]) + "";
 	let t;
 	let option_value_value;
 
@@ -11341,7 +11520,7 @@ function create_each_block$4(key_1, ctx) {
 		c() {
 			option = element("option");
 			t = text(t_value);
-			option.__value = option_value_value = /*key*/ ctx[9];
+			option.__value = option_value_value = /*key*/ ctx[12];
 			option.value = option.__value;
 			this.first = option;
 		},
@@ -11351,15 +11530,61 @@ function create_each_block$4(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty & /*setting*/ 1 && t_value !== (t_value = localize(/*choice*/ ctx[10]) + "")) set_data(t, t_value);
+			if (dirty & /*setting*/ 1 && t_value !== (t_value = localize(/*choice*/ ctx[13]) + "")) set_data(t, t_value);
 
-			if (dirty & /*setting, Object*/ 1 && option_value_value !== (option_value_value = /*key*/ ctx[9])) {
+			if (dirty & /*setting, Object*/ 1 && option_value_value !== (option_value_value = /*key*/ ctx[12])) {
 				option.__value = option_value_value;
 				option.value = option.__value;
 			}
 		},
 		d(detaching) {
 			if (detaching) detach(option);
+		}
+	};
+}
+
+// (40:16) {#if customFormulaSetting && setting.value === CONSTANTS.RECOVERY.CUSTOM}
+function create_if_block_2$3(ctx) {
+	let input;
+	let input_name_value;
+	let mounted;
+	let dispose;
+
+	return {
+		c() {
+			input = element("input");
+			attr(input, "name", input_name_value = /*setting*/ ctx[0].customFormula);
+			attr(input, "type", "text");
+			input.required = true;
+			attr(input, "class", "svelte-1mvkigi");
+			toggle_class(input, "invalid", /*customFormulaSetting*/ ctx[4].value === '');
+		},
+		m(target, anchor) {
+			insert(target, input, anchor);
+			set_input_value(input, /*customFormulaSetting*/ ctx[4].value);
+
+			if (!mounted) {
+				dispose = listen(input, "input", /*input_input_handler*/ ctx[9]);
+				mounted = true;
+			}
+		},
+		p(ctx, dirty) {
+			if (dirty & /*setting, Object*/ 1 && input_name_value !== (input_name_value = /*setting*/ ctx[0].customFormula)) {
+				attr(input, "name", input_name_value);
+			}
+
+			if (dirty & /*customFormulaSetting*/ 16 && input.value !== /*customFormulaSetting*/ ctx[4].value) {
+				set_input_value(input, /*customFormulaSetting*/ ctx[4].value);
+			}
+
+			if (dirty & /*customFormulaSetting*/ 16) {
+				toggle_class(input, "invalid", /*customFormulaSetting*/ ctx[4].value === '');
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(input);
+			mounted = false;
+			dispose();
 		}
 	};
 }
@@ -11383,9 +11608,9 @@ function create_fragment$7(ctx) {
 	let dispose;
 
 	function select_block_type(ctx, dirty) {
-		if (typeof /*setting*/ ctx[0].value === "boolean") return create_if_block$5;
-		if (/*setting*/ ctx[0].choices) return create_if_block_1$3;
-		if (typeof /*setting*/ ctx[0].value === 'number') return create_if_block_2$3;
+		if (/*setting*/ ctx[0].type === Boolean) return create_if_block$5;
+		if (/*setting*/ ctx[0].choices) return create_if_block_1$4;
+		if (/*setting*/ ctx[0].type === Number) return create_if_block_3$2;
 		return create_else_block$2;
 	}
 
@@ -11408,11 +11633,11 @@ function create_fragment$7(ctx) {
 			div1 = element("div");
 			if_block.c();
 			attr(i, "title", "Reset setting");
-			attr(i, "class", "fas fa-undo reset-setting svelte-1vsx49n");
-			attr(label, "class", "svelte-1vsx49n");
+			attr(i, "class", "fas fa-undo reset-setting svelte-1mvkigi");
+			attr(label, "class", "svelte-1mvkigi");
 			attr(p, "class", "notes");
-			attr(div0, "class", "label-side svelte-1vsx49n");
-			attr(div1, "class", "form-fields input-side svelte-1vsx49n");
+			attr(div0, "class", "label-side svelte-1mvkigi");
+			attr(div1, "class", "form-fields input-side svelte-1mvkigi");
 			attr(div2, "class", "form-group flexrow");
 		},
 		m(target, anchor) {
@@ -11431,7 +11656,7 @@ function create_fragment$7(ctx) {
 			if_block.m(div1, null);
 
 			if (!mounted) {
-				dispose = listen(i, "click", /*click_handler*/ ctx[4]);
+				dispose = listen(i, "click", /*click_handler*/ ctx[6]);
 				mounted = true;
 			}
 		},
@@ -11463,10 +11688,12 @@ function create_fragment$7(ctx) {
 }
 
 function instance$7($$self, $$props, $$invalidate) {
+	let { settingsMap } = $$props;
 	let { setting } = $$props;
 	let { group } = $$props;
 	let { setting_index } = $$props;
 	let { resetSetting } = $$props;
+	let customFormulaSetting = settingsMap.get(setting.customFormula);
 
 	const click_handler = () => {
 		resetSetting(group, setting_index);
@@ -11483,6 +11710,11 @@ function instance$7($$self, $$props, $$invalidate) {
 	}
 
 	function input_input_handler() {
+		customFormulaSetting.value = this.value;
+		$$invalidate(4, customFormulaSetting);
+	}
+
+	function input_input_handler_1() {
 		setting.value = to_number(this.value);
 		$$invalidate(0, setting);
 	}
@@ -11493,6 +11725,7 @@ function instance$7($$self, $$props, $$invalidate) {
 	}
 
 	$$self.$$set = $$props => {
+		if ('settingsMap' in $$props) $$invalidate(5, settingsMap = $$props.settingsMap);
 		if ('setting' in $$props) $$invalidate(0, setting = $$props.setting);
 		if ('group' in $$props) $$invalidate(1, group = $$props.group);
 		if ('setting_index' in $$props) $$invalidate(2, setting_index = $$props.setting_index);
@@ -11504,10 +11737,13 @@ function instance$7($$self, $$props, $$invalidate) {
 		group,
 		setting_index,
 		resetSetting,
+		customFormulaSetting,
+		settingsMap,
 		click_handler,
 		input_change_handler,
 		select_change_handler,
 		input_input_handler,
+		input_input_handler_1,
 		input0_input_handler
 	];
 }
@@ -11517,6 +11753,7 @@ class Setting extends SvelteComponent {
 		super();
 
 		init(this, options, instance$7, create_fragment$7, safe_not_equal, {
+			settingsMap: 5,
 			setting: 0,
 			group: 1,
 			setting_index: 2,
@@ -11544,8 +11781,8 @@ function get_each_context_1$1(ctx, list, i) {
 	return child_ctx;
 }
 
-// (79:16) {#each settings[group] as [key, setting], setting_index (key)}
-function create_each_block_1$1(key_1, ctx) {
+// (81:20) {#if !setting.hidden}
+function create_if_block_1$3(ctx) {
 	let div;
 	let setting;
 	let current;
@@ -11556,19 +11793,18 @@ function create_each_block_1$1(key_1, ctx) {
 			props: {
 				group: /*group*/ ctx[11],
 				setting_index: /*setting_index*/ ctx[17],
+				key: /*key*/ ctx[14],
 				setting: /*setting*/ ctx[15],
-				resetSetting: /*resetSetting*/ ctx[4]
+				settingsMap: /*settingsMap*/ ctx[3],
+				resetSetting: /*resetSetting*/ ctx[5]
 			}
 		});
 
 	return {
-		key: key_1,
-		first: null,
 		c() {
 			div = element("div");
 			create_component(setting.$$.fragment);
 			attr(div, "class", "setting svelte-1tio1xs");
-			this.first = div;
 		},
 		m(target, anchor) {
 			insert(target, div, anchor);
@@ -11576,15 +11812,15 @@ function create_each_block_1$1(key_1, ctx) {
 			current = true;
 
 			if (!mounted) {
-				dispose = listen(div, "change", /*validateSettings*/ ctx[3]);
+				dispose = listen(div, "change", /*validateSettings*/ ctx[4]);
 				mounted = true;
 			}
 		},
-		p(new_ctx, dirty) {
-			ctx = new_ctx;
+		p(ctx, dirty) {
 			const setting_changes = {};
 			if (dirty & /*settings*/ 4) setting_changes.group = /*group*/ ctx[11];
 			if (dirty & /*settings*/ 4) setting_changes.setting_index = /*setting_index*/ ctx[17];
+			if (dirty & /*settings*/ 4) setting_changes.key = /*key*/ ctx[14];
 			if (dirty & /*settings*/ 4) setting_changes.setting = /*setting*/ ctx[15];
 			setting.$set(setting_changes);
 		},
@@ -11606,7 +11842,72 @@ function create_each_block_1$1(key_1, ctx) {
 	};
 }
 
-// (85:16) {#if settings[group].length < 4}
+// (80:16) {#each settings[group] as [key, setting], setting_index (key)}
+function create_each_block_1$1(key_1, ctx) {
+	let first;
+	let if_block_anchor;
+	let current;
+	let if_block = !/*setting*/ ctx[15].hidden && create_if_block_1$3(ctx);
+
+	return {
+		key: key_1,
+		first: null,
+		c() {
+			first = empty();
+			if (if_block) if_block.c();
+			if_block_anchor = empty();
+			this.first = first;
+		},
+		m(target, anchor) {
+			insert(target, first, anchor);
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+			current = true;
+		},
+		p(new_ctx, dirty) {
+			ctx = new_ctx;
+
+			if (!/*setting*/ ctx[15].hidden) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+
+					if (dirty & /*settings*/ 4) {
+						transition_in(if_block, 1);
+					}
+				} else {
+					if_block = create_if_block_1$3(ctx);
+					if_block.c();
+					transition_in(if_block, 1);
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			} else if (if_block) {
+				group_outros();
+
+				transition_out(if_block, 1, 1, () => {
+					if_block = null;
+				});
+
+				check_outros();
+			}
+		},
+		i(local) {
+			if (current) return;
+			transition_in(if_block);
+			current = true;
+		},
+		o(local) {
+			transition_out(if_block);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(first);
+			if (if_block) if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+		}
+	};
+}
+
+// (88:16) {#if settings[group].length < 4}
 function create_if_block$4(ctx) {
 	let div;
 	let p0;
@@ -11644,7 +11945,7 @@ function create_if_block$4(ctx) {
 	};
 }
 
-// (76:12) {#each Object.keys(settings) as group, index (index)}
+// (77:12) {#each Object.keys(settings) as group, index (index)}
 function create_each_block$3(key_1, ctx) {
 	let div;
 	let each_blocks = [];
@@ -11697,7 +11998,7 @@ function create_each_block$3(key_1, ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty & /*validateSettings, Object, settings, resetSetting*/ 28) {
+			if (dirty & /*validateSettings, Object, settings, settingsMap, resetSetting*/ 60) {
 				each_value_1 = /*settings*/ ctx[2][/*group*/ ctx[11]];
 				group_outros();
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div, outro_and_destroy_block, create_each_block_1$1, t0, get_each_context_1$1);
@@ -11749,7 +12050,7 @@ function create_each_block$3(key_1, ctx) {
 	};
 }
 
-// (62:0) <ApplicationShell bind:elementRoot>
+// (63:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$2(ctx) {
 	let form_1;
 	let h2;
@@ -11859,20 +12160,20 @@ function create_default_slot$2(ctx) {
 			append(button, i);
 			append(button, t11);
 			append(button, t12);
-			/*form_1_binding*/ ctx[7](form_1);
+			/*form_1_binding*/ ctx[8](form_1);
 			current = true;
 
 			if (!mounted) {
 				dispose = [
-					listen(button, "click", /*requestSubmit*/ ctx[5]),
-					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[6]), { once: true })
+					listen(button, "click", /*requestSubmit*/ ctx[6]),
+					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[7]), { once: true })
 				];
 
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			if (dirty & /*Object, settings, localize, validateSettings, resetSetting*/ 28) {
+			if (dirty & /*Object, settings, localize, validateSettings, settingsMap, resetSetting*/ 60) {
 				each_value = Object.keys(/*settings*/ ctx[2]);
 				group_outros();
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, section, outro_and_destroy_block, create_each_block$3, null, get_each_context$3);
@@ -11902,7 +12203,7 @@ function create_default_slot$2(ctx) {
 				each_blocks[i].d();
 			}
 
-			/*form_1_binding*/ ctx[7](null);
+			/*form_1_binding*/ ctx[8](null);
 			mounted = false;
 			run_all(dispose);
 		}
@@ -11915,7 +12216,7 @@ function create_fragment$6(ctx) {
 	let current;
 
 	function applicationshell_elementRoot_binding(value) {
-		/*applicationshell_elementRoot_binding*/ ctx[8](value);
+		/*applicationshell_elementRoot_binding*/ ctx[9](value);
 	}
 
 	let applicationshell_props = {
@@ -12006,17 +12307,17 @@ function instance$6($$self, $$props, $$invalidate) {
 		validateSettings();
 	}
 
-	async function requestSubmit() {
+	function requestSubmit() {
+		form.requestSubmit();
+	}
+
+	async function updateSettings() {
 		for (let group of Object.values(settings)) {
 			for (let [key, setting] of group) {
 				await game.settings.set(CONSTANTS.MODULE_NAME, key, setting.value);
 			}
 		}
 
-		form.requestSubmit();
-	}
-
-	function updateSettings() {
 		application.close();
 	}
 
@@ -12040,6 +12341,7 @@ function instance$6($$self, $$props, $$invalidate) {
 		elementRoot,
 		form,
 		settings,
+		settingsMap,
 		validateSettings,
 		resetSetting,
 		requestSubmit,
@@ -13005,13 +13307,16 @@ class RestWorkflow {
     this.healthData = {
       startingHitDice: this.actor.data.data.attributes.hd,
       startingHealth: this.actor.data.data.attributes.hp.value,
-      availableHitDice: this.getHitDice(),
-      totalHitDice: this.totalHitDice,
-      hitDiceSpent: 0,
-      hitPointsToRegain: 0
+      hitDiceSpent: 0
     };
+    this.refreshHealthData();
+  }
 
-    if (this.longRest && (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL)) {
+  refreshHealthData() {
+    this.healthData.availableHitDice = this.getHitDice();
+    this.healthData.totalHitDice = this.totalHitDice;
+
+    if (this.longRest && (getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL)) {
       let {
         hitPointsRecovered
       } = this.actor._getRestHitPointRecovery();
@@ -13181,30 +13486,38 @@ class RestWorkflow {
   }
 
   getAverageHitDiceRoll() {
-    var _periapt$data, _periapt$data$data, _durable, _durable$data;
+    var _periapt$data, _periapt$data$data, _blessing$data, _durable, _durable$data, _blackBlood, _blackBlood$data;
 
     const availableHitDice = Object.entries(this.healthData.availableHitDice).filter(entry => entry[1]);
     if (!availableHitDice.length) return 0;
     const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
-    const periapt_mod = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 ? 3 : 1;
+    const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true)) : false;
+    const periapt_mod = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 || blessing && (blessing === null || blessing === void 0 ? void 0 : (_blessing$data = blessing.data) === null || _blessing$data === void 0 ? void 0 : _blessing$data.type) === "feat" ? 3 : 1;
     let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
     durable = durable && ((_durable = durable) === null || _durable === void 0 ? void 0 : (_durable$data = _durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
+    let blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE) ? this.actor.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true)) : false;
+    blackBlood = blackBlood && ((_blackBlood = blackBlood) === null || _blackBlood === void 0 ? void 0 : (_blackBlood$data = _blackBlood.data) === null || _blackBlood$data === void 0 ? void 0 : _blackBlood$data.type) === "feat";
     const conMod = this.actor.data.data.abilities.con.mod;
     const totalHitDice = availableHitDice.reduce((acc, entry) => acc + entry[1], 0);
     return availableHitDice.map(entry => {
       const dieSize = Number(entry[0].split('d')[1]);
-      let val = dieSize / 2 + 0.5;
-      val *= periapt_mod;
+      let average = dieSize / 2 + 0.5;
+
+      if (blackBlood) {
+        average = Array.from(Array(dieSize).keys()).reduce((acc, num) => acc + Math.max(average, num + 1), 0) / dieSize;
+      }
+
+      average *= periapt_mod;
 
       if (durable) {
         if (conMod <= 0) {
-          val += (-2 * conMod + 1) / dieSize;
+          average += (-2 * conMod + 1) / dieSize;
         } else {
-          val += (conMod - 1) * conMod / (2 * dieSize);
+          average += (conMod - 1) * conMod / (2 * dieSize);
         }
       }
 
-      return val * entry[1];
+      return average * entry[1];
     }).reduce((acc, num) => acc + num, 0) / totalHitDice;
   }
 
@@ -13346,18 +13659,48 @@ class RestWorkflow {
     });
   }
 
-  _getRestHitPointRecovery(result) {
-    var _this$actor$data$data3;
+  _finishedRest() {
+    const updates = {};
+    const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
 
+    if (maxShortRests > 0) {
+      if (this.longRest) {
+        updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = 0;
+      } else {
+        var _this$actor$getFlag;
+
+        const currentShortRests = ((_this$actor$getFlag = this.actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)) === null || _this$actor$getFlag === void 0 ? void 0 : _this$actor$getFlag.currentShortRests) || 0;
+        updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = currentShortRests + 1;
+      }
+    }
+
+    return updates;
+  }
+
+  _evaluateFormula(formula, data) {
+    const rollFormula = Roll.replaceFormulaData(formula, data, {
+      warn: true
+    });
+    return new Roll(rollFormula).evaluate({
+      async: false
+    }).total;
+  }
+
+  _getRestHitPointRecovery(result) {
     if (!this.longRest) {
       result.hitPointsRecovered = Math.max(0, result.hitPointsRecovered);
       return result;
     }
 
-    const maxHP = this.actor.data.data.attributes.hp.max + ((_this$actor$data$data3 = this.actor.data.data.attributes.hp.tempmax) !== null && _this$actor$data$data3 !== void 0 ? _this$actor$data$data3 : 0);
-    const currentHP = this.actor.data.data.attributes.hp.value;
     const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
-    const recoveredHP = this.healthData.hitPointsToRegain || Math.floor(maxHP * multiplier);
+    const maxHP = this.actor.data.data.attributes.hp.max;
+    const currentHP = this.actor.data.data.attributes.hp.value;
+    let recoveredHP = this.healthData.hitPointsToRegain;
+
+    if (!recoveredHP) {
+      recoveredHP = typeof multiplier === "string" ? Math.floor(this._evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))) : Math.floor(maxHP * multiplier);
+    }
+
     result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
     result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
 
@@ -13400,8 +13743,6 @@ class RestWorkflow {
             "data.hitDiceUsed": 0
           });
         }
-
-        results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
       } else {
         const update = results.updates.find(update => update._id === item.id);
 
@@ -13411,18 +13752,29 @@ class RestWorkflow {
       }
     }
 
+    results.hitDiceRecovered = Math.max(0, Math.min(this.actor.data.data.details.level, this.totalHitDice) - this.healthData.startingHitDice);
     return results;
   }
 
   _getMaxHitDiceRecovery({
     maxHitDice = undefined
   } = {}) {
-    var _maxHitDice;
-
     const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
     const roundingMethod = determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
     const actorLevel = this.actor.data.data.details.level;
-    maxHitDice = Math.clamped(roundingMethod(actorLevel * multiplier), multiplier ? 1 : 0, (_maxHitDice = maxHitDice) !== null && _maxHitDice !== void 0 ? _maxHitDice : actorLevel);
+
+    if (typeof multiplier === "string") {
+      var _maxHitDice;
+
+      const customRegain = this._evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data));
+
+      maxHitDice = Math.clamped(roundingMethod(customRegain), 0, (_maxHitDice = maxHitDice) !== null && _maxHitDice !== void 0 ? _maxHitDice : actorLevel);
+    } else {
+      var _maxHitDice2;
+
+      maxHitDice = Math.clamped(roundingMethod(actorLevel * multiplier), multiplier ? 1 : 0, (_maxHitDice2 = maxHitDice) !== null && _maxHitDice2 !== void 0 ? _maxHitDice2 : actorLevel);
+    }
+
     return {
       maxHitDice
     };
@@ -13432,23 +13784,26 @@ class RestWorkflow {
     recoverShortRestResources = true,
     recoverLongRestResources = true
   } = {}) {
+    const finishedRestUpdates = this._finishedRest(updates);
+
     const multiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
-    if (multiplier === 1.0) return updates;
-    if (!multiplier) return {};
-    updates = {};
+    if (multiplier === 1.0) return _objectSpread2(_objectSpread2({}, updates), finishedRestUpdates);
+    if (!multiplier) return finishedRestUpdates;
 
     for (const [key, resource] of Object.entries(this.actor.data.data.resources)) {
       if (Number.isNumeric(resource.max)) {
         if (recoverShortRestResources && resource.sr) {
-          updates[`data.resources.${key}.value`] = Number(resource.max);
+          finishedRestUpdates[`data.resources.${key}.value`] = Number(resource.max);
         } else if (recoverLongRestResources && resource.lr) {
-          const recoverResources = Math.max(Math.floor(resource.max * multiplier), 1);
-          updates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
+          const recoverResources = typeof multiplier === "string" ? this._evaluateFormula(multiplier, {
+            resource: foundry.utils.deepClone(resource)
+          }) : Math.max(Math.floor(resource.max * multiplier), 1);
+          finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
         }
       }
     }
 
-    return updates;
+    return finishedRestUpdates;
   }
 
   _getRestSpellRecovery(updates, {
@@ -13462,7 +13817,9 @@ class RestWorkflow {
         if (!slot.override && !slot.max) continue;
         let spellMax = slot.override || slot.max;
 
-        let _recoverSpells = Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
+        let _recoverSpells = typeof multiplier === "string" ? Math.max(this._evaluateFormula(multiplier, {
+          slot: foundry.utils.deepClone(slot)
+        }), 1) : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
 
         updates[`data.spells.${level}.value`] = Math.min(slot.value + _recoverSpells, spellMax);
       } // Short rest
@@ -13524,7 +13881,7 @@ class RestWorkflow {
   recoverItemUse(updates, item, multiplier) {
     const usesMax = item.data.data.uses.max;
     const usesCur = item.data.data.uses.value;
-    const amountToRecover = Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
+    const amountToRecover = typeof multiplier === "string" ? this._evaluateFormula(multiplier, foundry.utils.deepClone(item.data.data)) : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
     const update = updates.find(update => update._id === item.id);
     const recoverValue = Math.min(usesCur + amountToRecover, usesMax);
 
@@ -13546,22 +13903,150 @@ class RestWorkflow {
 
 function get_each_context$1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[26] = list[i][0];
-	child_ctx[27] = list[i][1];
-	child_ctx[29] = i;
+	child_ctx[29] = list[i][0];
+	child_ctx[30] = list[i][1];
+	child_ctx[32] = i;
 	return child_ctx;
 }
 
 function get_each_context_1(ctx, list, i) {
 	const child_ctx = ctx.slice();
-	child_ctx[30] = list[i];
-	child_ctx[31] = list;
-	child_ctx[32] = i;
+	child_ctx[33] = list[i];
+	child_ctx[34] = list;
+	child_ctx[35] = i;
 	return child_ctx;
 }
 
-// (119:8) {#if spellData.feature}
+// (178:8) {:else}
+function create_else_block_2(ctx) {
+	let div;
+	let label;
+	let t1;
+	let p;
+
+	return {
+		c() {
+			div = element("div");
+			label = element("label");
+			label.textContent = `${localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRests")}`;
+			t1 = space();
+			p = element("p");
+
+			p.textContent = `${localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", {
+				max_short_rests: /*maxShortRests*/ ctx[10]
+			})}`;
+
+			attr(div, "class", "form-group");
+			attr(p, "class", "notes");
+		},
+		m(target, anchor) {
+			insert(target, div, anchor);
+			append(div, label);
+			insert(target, t1, anchor);
+			insert(target, p, anchor);
+		},
+		p: noop,
+		i: noop,
+		o: noop,
+		d(detaching) {
+			if (detaching) detach(div);
+			if (detaching) detach(t1);
+			if (detaching) detach(p);
+		}
+	};
+}
+
+// (114:8) {#if enableShortRest}
 function create_if_block_2$1(ctx) {
+	let p;
+	let t1;
+	let hitdieroller;
+	let t2;
+	let t3;
+	let if_block1_anchor;
+	let current;
+
+	hitdieroller = new HitDieRoller({
+			props: {
+				selectedHitDice: /*selectedHitDice*/ ctx[13],
+				healthData: /*healthData*/ ctx[8],
+				isAtMaxHP: /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4],
+				onHitDiceFunction: /*rollHitDice*/ ctx[16],
+				onAutoFunction: /*autoRollHitDie*/ ctx[17]
+			}
+		});
+
+	let if_block0 = /*spellData*/ ctx[9].feature && create_if_block_4$1(ctx);
+	let if_block1 = /*promptNewDay*/ ctx[12] && create_if_block_3$1(ctx);
+
+	return {
+		c() {
+			p = element("p");
+			p.textContent = `${localize("DND5E.ShortRestHint")}`;
+			t1 = space();
+			create_component(hitdieroller.$$.fragment);
+			t2 = space();
+			if (if_block0) if_block0.c();
+			t3 = space();
+			if (if_block1) if_block1.c();
+			if_block1_anchor = empty();
+		},
+		m(target, anchor) {
+			insert(target, p, anchor);
+			insert(target, t1, anchor);
+			mount_component(hitdieroller, target, anchor);
+			insert(target, t2, anchor);
+			if (if_block0) if_block0.m(target, anchor);
+			insert(target, t3, anchor);
+			if (if_block1) if_block1.m(target, anchor);
+			insert(target, if_block1_anchor, anchor);
+			current = true;
+		},
+		p(ctx, dirty) {
+			const hitdieroller_changes = {};
+			if (dirty[0] & /*healthData*/ 256) hitdieroller_changes.healthData = /*healthData*/ ctx[8];
+			if (dirty[0] & /*currHP, maxHP*/ 24) hitdieroller_changes.isAtMaxHP = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4];
+			hitdieroller.$set(hitdieroller_changes);
+
+			if (/*spellData*/ ctx[9].feature) {
+				if (if_block0) {
+					if_block0.p(ctx, dirty);
+				} else {
+					if_block0 = create_if_block_4$1(ctx);
+					if_block0.c();
+					if_block0.m(t3.parentNode, t3);
+				}
+			} else if (if_block0) {
+				if_block0.d(1);
+				if_block0 = null;
+			}
+
+			if (/*promptNewDay*/ ctx[12]) if_block1.p(ctx, dirty);
+		},
+		i(local) {
+			if (current) return;
+			transition_in(hitdieroller.$$.fragment, local);
+			current = true;
+		},
+		o(local) {
+			transition_out(hitdieroller.$$.fragment, local);
+			current = false;
+		},
+		d(detaching) {
+			if (detaching) detach(p);
+			if (detaching) detach(t1);
+			destroy_component(hitdieroller, detaching);
+			if (detaching) detach(t2);
+			if (if_block0) if_block0.d(detaching);
+			if (detaching) detach(t3);
+			if (if_block1) if_block1.d(detaching);
+			if (detaching) detach(if_block1_anchor);
+		}
+	};
+}
+
+// (126:12) {#if spellData.feature}
+function create_if_block_4$1(ctx) {
 	let div;
 	let label;
 
@@ -13573,13 +14058,13 @@ function create_if_block_2$1(ctx) {
 	let t1;
 	let if_block_anchor;
 
-	function select_block_type(ctx, dirty) {
-		if (/*spellData*/ ctx[9].missingSlots && !/*spellData*/ ctx[9].has_feature_use) return create_if_block_3$1;
-		if (/*spellData*/ ctx[9].missingSlots) return create_if_block_4$1;
-		return create_else_block$1;
+	function select_block_type_1(ctx, dirty) {
+		if (/*spellData*/ ctx[9].missingSlots && !/*spellData*/ ctx[9].has_feature_use) return create_if_block_5$1;
+		if (/*spellData*/ ctx[9].missingSlots) return create_if_block_6$1;
+		return create_else_block_1$1;
 	}
 
-	let current_block_type = select_block_type(ctx);
+	let current_block_type = select_block_type_1(ctx);
 	let if_block = current_block_type(ctx);
 
 	return {
@@ -13605,7 +14090,7 @@ function create_if_block_2$1(ctx) {
 				featureName: /*spellData*/ ctx[9].feature.name
 			}) + "")) set_data(t0, t0_value);
 
-			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
+			if (current_block_type === (current_block_type = select_block_type_1(ctx)) && if_block) {
 				if_block.p(ctx, dirty);
 			} else {
 				if_block.d(1);
@@ -13626,8 +14111,8 @@ function create_if_block_2$1(ctx) {
 	};
 }
 
-// (155:12) {:else}
-function create_else_block$1(ctx) {
+// (162:16) {:else}
+function create_else_block_1$1(ctx) {
 	let p;
 
 	return {
@@ -13646,8 +14131,8 @@ function create_else_block$1(ctx) {
 	};
 }
 
-// (131:45) 
-function create_if_block_4$1(ctx) {
+// (138:49) 
+function create_if_block_6$1(ctx) {
 	let each_blocks = [];
 	let each_1_lookup = new Map();
 	let t0;
@@ -13659,7 +14144,7 @@ function create_if_block_4$1(ctx) {
 
 	let t1;
 	let each_value = Object.entries(/*spellData*/ ctx[9].slots);
-	const get_key = ctx => /*levelIndex*/ ctx[29];
+	const get_key = ctx => /*levelIndex*/ ctx[32];
 
 	for (let i = 0; i < each_value.length; i += 1) {
 		let child_ctx = get_each_context$1(ctx, each_value, i);
@@ -13688,7 +14173,7 @@ function create_if_block_4$1(ctx) {
 			append(p, t1);
 		},
 		p(ctx, dirty) {
-			if (dirty[0] & /*spellData, spendSpellPoint*/ 66048) {
+			if (dirty[0] & /*spellData, spendSpellPoint*/ 262656) {
 				each_value = Object.entries(/*spellData*/ ctx[9].slots);
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, t0.parentNode, destroy_block, create_each_block$1, t0, get_each_context$1);
 			}
@@ -13708,8 +14193,8 @@ function create_if_block_4$1(ctx) {
 	};
 }
 
-// (125:12) {#if spellData.missingSlots && !spellData.has_feature_use}
-function create_if_block_3$1(ctx) {
+// (132:16) {#if spellData.missingSlots && !spellData.has_feature_use}
+function create_if_block_5$1(ctx) {
 	let p;
 
 	let t_value = localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
@@ -13739,7 +14224,7 @@ function create_if_block_3$1(ctx) {
 	};
 }
 
-// (138:32) {#each slots as slot, slotIndex (slotIndex)}
+// (145:36) {#each slots as slot, slotIndex (slotIndex)}
 function create_each_block_1(key_1, ctx) {
 	let input;
 	let input_disabled_value;
@@ -13747,11 +14232,11 @@ function create_each_block_1(key_1, ctx) {
 	let dispose;
 
 	function input_change_handler() {
-		/*input_change_handler*/ ctx[19].call(input, /*each_value_1*/ ctx[31], /*slotIndex*/ ctx[32]);
+		/*input_change_handler*/ ctx[21].call(input, /*each_value_1*/ ctx[34], /*slotIndex*/ ctx[35]);
 	}
 
 	function change_handler(...args) {
-		return /*change_handler*/ ctx[20](/*level*/ ctx[26], /*slotIndex*/ ctx[32], ...args);
+		return /*change_handler*/ ctx[22](/*level*/ ctx[29], /*slotIndex*/ ctx[35], ...args);
 	}
 
 	return {
@@ -13760,12 +14245,12 @@ function create_each_block_1(key_1, ctx) {
 		c() {
 			input = element("input");
 			attr(input, "type", "checkbox");
-			input.disabled = input_disabled_value = /*slot*/ ctx[30].disabled || /*slot*/ ctx[30].alwaysDisabled;
+			input.disabled = input_disabled_value = /*slot*/ ctx[33].disabled || /*slot*/ ctx[33].alwaysDisabled;
 			this.first = input;
 		},
 		m(target, anchor) {
 			insert(target, input, anchor);
-			input.checked = /*slot*/ ctx[30].checked;
+			input.checked = /*slot*/ ctx[33].checked;
 
 			if (!mounted) {
 				dispose = [
@@ -13779,12 +14264,12 @@ function create_each_block_1(key_1, ctx) {
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
 
-			if (dirty[0] & /*spellData*/ 512 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[30].disabled || /*slot*/ ctx[30].alwaysDisabled)) {
+			if (dirty[0] & /*spellData*/ 512 && input_disabled_value !== (input_disabled_value = /*slot*/ ctx[33].disabled || /*slot*/ ctx[33].alwaysDisabled)) {
 				input.disabled = input_disabled_value;
 			}
 
 			if (dirty[0] & /*spellData*/ 512) {
-				input.checked = /*slot*/ ctx[30].checked;
+				input.checked = /*slot*/ ctx[33].checked;
 			}
 		},
 		d(detaching) {
@@ -13795,21 +14280,21 @@ function create_each_block_1(key_1, ctx) {
 	};
 }
 
-// (133:16) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
+// (140:20) {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
 function create_each_block$1(key_1, ctx) {
 	let div3;
 	let div2;
 	let div0;
 	let t0;
-	let t1_value = /*level*/ ctx[26] + "";
+	let t1_value = /*level*/ ctx[29] + "";
 	let t1;
 	let t2;
 	let t3;
 	let div1;
 	let each_blocks = [];
 	let each_1_lookup = new Map();
-	let each_value_1 = /*slots*/ ctx[27];
-	const get_key = ctx => /*slotIndex*/ ctx[32];
+	let each_value_1 = /*slots*/ ctx[30];
+	const get_key = ctx => /*slotIndex*/ ctx[35];
 
 	for (let i = 0; i < each_value_1.length; i += 1) {
 		let child_ctx = get_each_context_1(ctx, each_value_1, i);
@@ -13858,10 +14343,10 @@ function create_each_block$1(key_1, ctx) {
 		},
 		p(new_ctx, dirty) {
 			ctx = new_ctx;
-			if (dirty[0] & /*spellData*/ 512 && t1_value !== (t1_value = /*level*/ ctx[26] + "")) set_data(t1, t1_value);
+			if (dirty[0] & /*spellData*/ 512 && t1_value !== (t1_value = /*level*/ ctx[29] + "")) set_data(t1, t1_value);
 
-			if (dirty[0] & /*spellData, spendSpellPoint*/ 66048) {
-				each_value_1 = /*slots*/ ctx[27];
+			if (dirty[0] & /*spellData, spendSpellPoint*/ 262656) {
+				each_value_1 = /*slots*/ ctx[30];
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value_1, each_1_lookup, div1, destroy_block, create_each_block_1, null, get_each_context_1);
 			}
 		},
@@ -13875,8 +14360,8 @@ function create_each_block$1(key_1, ctx) {
 	};
 }
 
-// (163:8) {#if promptNewDay}
-function create_if_block_1$1(ctx) {
+// (170:12) {#if promptNewDay}
+function create_if_block_3$1(ctx) {
 	let div;
 	let label;
 	let t1;
@@ -13911,7 +14396,7 @@ function create_if_block_1$1(ctx) {
 			append(div, p);
 
 			if (!mounted) {
-				dispose = listen(input, "change", /*input_change_handler_1*/ ctx[21]);
+				dispose = listen(input, "change", /*input_change_handler_1*/ ctx[23]);
 				mounted = true;
 			}
 		},
@@ -13928,8 +14413,113 @@ function create_if_block_1$1(ctx) {
 	};
 }
 
-// (175:12) {#if !startedShortRest}
+// (196:12) {:else}
+function create_else_block$1(ctx) {
+	let button;
+	let i;
+	let t0;
+	let t1_value = localize("Okay") + "";
+	let t1;
+	let mounted;
+	let dispose;
+
+	return {
+		c() {
+			button = element("button");
+			i = element("i");
+			t0 = space();
+			t1 = text(t1_value);
+			attr(i, "class", "fas fa-check");
+			attr(button, "type", "button");
+			attr(button, "class", "dialog-button");
+		},
+		m(target, anchor) {
+			insert(target, button, anchor);
+			append(button, i);
+			append(button, t0);
+			append(button, t1);
+
+			if (!mounted) {
+				dispose = listen(button, "click", /*cancel*/ ctx[15]);
+				mounted = true;
+			}
+		},
+		p: noop,
+		d(detaching) {
+			if (detaching) detach(button);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (191:12) {#if enableShortRest}
 function create_if_block$1(ctx) {
+	let button;
+	let i;
+	let t0;
+	let t1_value = localize("DND5E.Rest") + "";
+	let t1;
+	let t2;
+	let if_block_anchor;
+	let mounted;
+	let dispose;
+	let if_block = !/*startedShortRest*/ ctx[2] && create_if_block_1$1(ctx);
+
+	return {
+		c() {
+			button = element("button");
+			i = element("i");
+			t0 = space();
+			t1 = text(t1_value);
+			t2 = space();
+			if (if_block) if_block.c();
+			if_block_anchor = empty();
+			attr(i, "class", "fas fa-bed");
+			attr(button, "type", "button");
+			attr(button, "class", "dialog-button");
+		},
+		m(target, anchor) {
+			insert(target, button, anchor);
+			append(button, i);
+			append(button, t0);
+			append(button, t1);
+			insert(target, t2, anchor);
+			if (if_block) if_block.m(target, anchor);
+			insert(target, if_block_anchor, anchor);
+
+			if (!mounted) {
+				dispose = listen(button, "click", /*requestSubmit*/ ctx[1]);
+				mounted = true;
+			}
+		},
+		p(ctx, dirty) {
+			if (!/*startedShortRest*/ ctx[2]) {
+				if (if_block) {
+					if_block.p(ctx, dirty);
+				} else {
+					if_block = create_if_block_1$1(ctx);
+					if_block.c();
+					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+				}
+			} else if (if_block) {
+				if_block.d(1);
+				if_block = null;
+			}
+		},
+		d(detaching) {
+			if (detaching) detach(button);
+			if (detaching) detach(t2);
+			if (if_block) if_block.d(detaching);
+			if (detaching) detach(if_block_anchor);
+			mounted = false;
+			dispose();
+		}
+	};
+}
+
+// (193:16) {#if !startedShortRest}
+function create_if_block_1$1(ctx) {
 	let button;
 	let i;
 	let t0;
@@ -13955,7 +14545,7 @@ function create_if_block$1(ctx) {
 			append(button, t1);
 
 			if (!mounted) {
-				dispose = listen(button, "click", /*cancel*/ ctx[13]);
+				dispose = listen(button, "click", /*cancel*/ ctx[15]);
 				mounted = true;
 			}
 		},
@@ -13968,40 +14558,28 @@ function create_if_block$1(ctx) {
 	};
 }
 
-// (106:0) <ApplicationShell bind:elementRoot>
+// (111:0) <ApplicationShell bind:elementRoot>
 function create_default_slot$1(ctx) {
 	let form_1;
-	let p;
-	let t1;
-	let hitdieroller;
-	let t2;
-	let t3;
-	let t4;
+	let current_block_type_index;
+	let if_block0;
+	let t0;
 	let healthbar;
-	let t5;
+	let t1;
 	let footer;
-	let button;
-	let i;
-	let t6;
-	let t7_value = localize("DND5E.Rest") + "";
-	let t7;
-	let t8;
 	let current;
 	let mounted;
 	let dispose;
+	const if_block_creators = [create_if_block_2$1, create_else_block_2];
+	const if_blocks = [];
 
-	hitdieroller = new HitDieRoller({
-			props: {
-				selectedHitDice: /*selectedHitDice*/ ctx[11],
-				healthData: /*healthData*/ ctx[8],
-				isAtMaxHP: /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4],
-				onHitDiceFunction: /*rollHitDice*/ ctx[14],
-				onAutoFunction: /*autoRollHitDie*/ ctx[15]
-			}
-		});
+	function select_block_type(ctx, dirty) {
+		if (/*enableShortRest*/ ctx[11]) return 0;
+		return 1;
+	}
 
-	let if_block0 = /*spellData*/ ctx[9].feature && create_if_block_2$1(ctx);
-	let if_block1 = /*promptNewDay*/ ctx[10] && create_if_block_1$1(ctx);
+	current_block_type_index = select_block_type(ctx);
+	if_block0 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
 	healthbar = new HealthBar({
 			props: {
@@ -14010,32 +14588,23 @@ function create_default_slot$1(ctx) {
 			}
 		});
 
-	let if_block2 = !/*startedShortRest*/ ctx[2] && create_if_block$1(ctx);
+	function select_block_type_2(ctx, dirty) {
+		if (/*enableShortRest*/ ctx[11]) return create_if_block$1;
+		return create_else_block$1;
+	}
+
+	let current_block_type = select_block_type_2(ctx);
+	let if_block1 = current_block_type(ctx);
 
 	return {
 		c() {
 			form_1 = element("form");
-			p = element("p");
-			p.textContent = `${localize("DND5E.ShortRestHint")}`;
-			t1 = space();
-			create_component(hitdieroller.$$.fragment);
-			t2 = space();
-			if (if_block0) if_block0.c();
-			t3 = space();
-			if (if_block1) if_block1.c();
-			t4 = space();
+			if_block0.c();
+			t0 = space();
 			create_component(healthbar.$$.fragment);
-			t5 = space();
+			t1 = space();
 			footer = element("footer");
-			button = element("button");
-			i = element("i");
-			t6 = space();
-			t7 = text(t7_value);
-			t8 = space();
-			if (if_block2) if_block2.c();
-			attr(i, "class", "fas fa-bed");
-			attr(button, "type", "button");
-			attr(button, "class", "dialog-button");
+			if_block1.c();
 			attr(footer, "class", "flexrow");
 			set_style(footer, "margin-top", "0.5rem");
 			attr(form_1, "autocomplete", "off");
@@ -14044,94 +14613,47 @@ function create_default_slot$1(ctx) {
 		},
 		m(target, anchor) {
 			insert(target, form_1, anchor);
-			append(form_1, p);
-			append(form_1, t1);
-			mount_component(hitdieroller, form_1, null);
-			append(form_1, t2);
-			if (if_block0) if_block0.m(form_1, null);
-			append(form_1, t3);
-			if (if_block1) if_block1.m(form_1, null);
-			append(form_1, t4);
+			if_blocks[current_block_type_index].m(form_1, null);
+			append(form_1, t0);
 			mount_component(healthbar, form_1, null);
-			append(form_1, t5);
+			append(form_1, t1);
 			append(form_1, footer);
-			append(footer, button);
-			append(button, i);
-			append(button, t6);
-			append(button, t7);
-			append(footer, t8);
-			if (if_block2) if_block2.m(footer, null);
-			/*form_1_binding*/ ctx[22](form_1);
+			if_block1.m(footer, null);
+			/*form_1_binding*/ ctx[24](form_1);
 			current = true;
 
 			if (!mounted) {
-				dispose = [
-					listen(button, "click", /*requestSubmit*/ ctx[1]),
-					listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[12]))
-				];
-
+				dispose = listen(form_1, "submit", prevent_default(/*updateSettings*/ ctx[14]));
 				mounted = true;
 			}
 		},
 		p(ctx, dirty) {
-			const hitdieroller_changes = {};
-			if (dirty[0] & /*healthData*/ 256) hitdieroller_changes.healthData = /*healthData*/ ctx[8];
-			if (dirty[0] & /*currHP, maxHP*/ 24) hitdieroller_changes.isAtMaxHP = /*currHP*/ ctx[3] >= /*maxHP*/ ctx[4];
-			hitdieroller.$set(hitdieroller_changes);
-
-			if (/*spellData*/ ctx[9].feature) {
-				if (if_block0) {
-					if_block0.p(ctx, dirty);
-				} else {
-					if_block0 = create_if_block_2$1(ctx);
-					if_block0.c();
-					if_block0.m(form_1, t3);
-				}
-			} else if (if_block0) {
-				if_block0.d(1);
-				if_block0 = null;
-			}
-
-			if (/*promptNewDay*/ ctx[10]) if_block1.p(ctx, dirty);
+			if_block0.p(ctx, dirty);
 			const healthbar_changes = {};
 			if (dirty[0] & /*currHP, maxHP*/ 24) healthbar_changes.text = "HP: " + /*currHP*/ ctx[3] + " / " + /*maxHP*/ ctx[4];
 			if (dirty[0] & /*healthPercentage*/ 32) healthbar_changes.progress = /*healthPercentage*/ ctx[5];
 			healthbar.$set(healthbar_changes);
-
-			if (!/*startedShortRest*/ ctx[2]) {
-				if (if_block2) {
-					if_block2.p(ctx, dirty);
-				} else {
-					if_block2 = create_if_block$1(ctx);
-					if_block2.c();
-					if_block2.m(footer, null);
-				}
-			} else if (if_block2) {
-				if_block2.d(1);
-				if_block2 = null;
-			}
+			if_block1.p(ctx, dirty);
 		},
 		i(local) {
 			if (current) return;
-			transition_in(hitdieroller.$$.fragment, local);
+			transition_in(if_block0);
 			transition_in(healthbar.$$.fragment, local);
 			current = true;
 		},
 		o(local) {
-			transition_out(hitdieroller.$$.fragment, local);
+			transition_out(if_block0);
 			transition_out(healthbar.$$.fragment, local);
 			current = false;
 		},
 		d(detaching) {
 			if (detaching) detach(form_1);
-			destroy_component(hitdieroller);
-			if (if_block0) if_block0.d();
-			if (if_block1) if_block1.d();
+			if_blocks[current_block_type_index].d();
 			destroy_component(healthbar);
-			if (if_block2) if_block2.d();
-			/*form_1_binding*/ ctx[22](null);
+			if_block1.d();
+			/*form_1_binding*/ ctx[24](null);
 			mounted = false;
-			run_all(dispose);
+			dispose();
 		}
 	};
 }
@@ -14142,7 +14664,7 @@ function create_fragment$2(ctx) {
 	let current;
 
 	function applicationshell_elementRoot_binding(value) {
-		/*applicationshell_elementRoot_binding*/ ctx[23](value);
+		/*applicationshell_elementRoot_binding*/ ctx[25](value);
 	}
 
 	let applicationshell_props = {
@@ -14168,7 +14690,7 @@ function create_fragment$2(ctx) {
 		p(ctx, dirty) {
 			const applicationshell_changes = {};
 
-			if (dirty[0] & /*form, startedShortRest, currHP, maxHP, healthPercentage, newDay, spellData, healthData*/ 1020 | dirty[1] & /*$$scope*/ 4) {
+			if (dirty[0] & /*form, startedShortRest, currHP, maxHP, healthPercentage, newDay, spellData, healthData*/ 1020 | dirty[1] & /*$$scope*/ 32) {
 				applicationshell_changes.$$scope = { dirty, ctx };
 			}
 
@@ -14204,6 +14726,9 @@ function instance$2($$self, $$props, $$invalidate) {
 	let healthPercentage;
 	let form;
 	let startedShortRest = false;
+	const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+	const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
+	const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
 	let newDay = false;
 	let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
 	const workflow = RestWorkflow.get(actor);
@@ -14269,7 +14794,7 @@ function instance$2($$self, $$props, $$invalidate) {
 
 	async function updateHealthBar() {
 		if (!startedShortRest) {
-			workflow.fetchHealthData();
+			workflow.refreshHealthData();
 			$$invalidate(8, healthData = workflow.healthData);
 		}
 
@@ -14306,7 +14831,7 @@ function instance$2($$self, $$props, $$invalidate) {
 
 	$$self.$$set = $$props => {
 		if ('elementRoot' in $$props) $$invalidate(0, elementRoot = $$props.elementRoot);
-		if ('actor' in $$props) $$invalidate(17, actor = $$props.actor);
+		if ('actor' in $$props) $$invalidate(19, actor = $$props.actor);
 	};
 
 	$$self.$$.update = () => {
@@ -14326,6 +14851,8 @@ function instance$2($$self, $$props, $$invalidate) {
 		newDay,
 		healthData,
 		spellData,
+		maxShortRests,
+		enableShortRest,
 		promptNewDay,
 		selectedHitDice,
 		updateSettings,
@@ -14355,9 +14882,9 @@ class Short_rest_shell extends SvelteComponent {
 			safe_not_equal,
 			{
 				elementRoot: 0,
-				actor: 17,
+				actor: 19,
 				requestSubmit: 1,
-				updateHealthBar: 18
+				updateHealthBar: 20
 			},
 			null,
 			[-1, -1]
@@ -14374,7 +14901,7 @@ class Short_rest_shell extends SvelteComponent {
 	}
 
 	get actor() {
-		return this.$$.ctx[17];
+		return this.$$.ctx[19];
 	}
 
 	set actor(actor) {
@@ -14387,7 +14914,7 @@ class Short_rest_shell extends SvelteComponent {
 	}
 
 	get updateHealthBar() {
-		return this.$$.ctx[18];
+		return this.$$.ctx[20];
 	}
 }
 
@@ -14407,7 +14934,9 @@ class ShortRestDialog extends SvelteApplication {
     }, options), dialogData);
     this.hookId = Hooks.on('updateActor', changedActor => {
       if (changedActor !== actor) return;
-      this.svelte.applicationShell.updateHealthBar();
+      setTimeout(() => {
+        this.svelte.applicationShell.updateHealthBar();
+      }, 100);
     });
   }
 
@@ -14456,15 +14985,15 @@ function get_each_context(ctx, list, i) {
 	return child_ctx;
 }
 
-// (26:8) {#each settings as setting, index (index)}
+// (33:8) {#each settings as setting, index (index)}
 function create_each_block(key_1, ctx) {
 	let tr;
 	let td0;
-	let t0_value = localize(/*setting*/ ctx[1].name) + "";
+	let t0_value = /*setting*/ ctx[1].name + "";
 	let t0;
 	let t1;
 	let td1;
-	let t2_value = localize(/*setting*/ ctx[1].choices[/*setting*/ ctx[1].value]) + "";
+	let t2_value = /*setting*/ ctx[1].value + "";
 	let t2;
 	let t3;
 
@@ -14557,7 +15086,7 @@ function create_fragment$1(ctx) {
 			}
 		},
 		p(ctx, [dirty]) {
-			if (dirty & /*localize, settings*/ 1) {
+			if (dirty & /*settings*/ 1) {
 				each_value = /*settings*/ ctx[0];
 				each_blocks = update_keyed_each(each_blocks, dirty, get_key, 1, ctx, each_value, each_1_lookup, table, destroy_block, create_each_block, null, get_each_context);
 			}
@@ -14575,9 +15104,18 @@ function create_fragment$1(ctx) {
 }
 
 function instance$1($$self) {
-	const settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).filter(entry => entry[1].customSettingsDialog).map(entry => {
-		entry[1].value = getSetting(entry[0]);
-		return entry[1];
+	const settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).filter(setting => setting[1].customSettingsDialog).map(entry => {
+		let [key, setting] = entry;
+		setting.name = localize(setting.name);
+		setting.value = getSetting(key);
+
+		if (typeof setting.value === "boolean") {
+			setting.value = setting.value ? "Yes" : "No";
+		} else if (typeof setting.value === "string") {
+			setting.value = localize(setting.choices[setting.value]);
+		}
+
+		return setting;
 	});
 
 	return [settings];
@@ -14633,7 +15171,7 @@ function create_else_block_1(ctx) {
 	};
 }
 
-// (142:8) {#if usingDefaultSettings}
+// (140:8) {#if usingDefaultSettings}
 function create_if_block_6(ctx) {
 	let p;
 
@@ -14652,7 +15190,7 @@ function create_if_block_6(ctx) {
 	};
 }
 
-// (156:8) {:else}
+// (154:8) {:else}
 function create_else_block(ctx) {
 	let t;
 	let if_block1_anchor;
@@ -14696,7 +15234,7 @@ function create_else_block(ctx) {
 	};
 }
 
-// (149:8) {#if showStartLongRestButton}
+// (147:8) {#if showStartLongRestButton}
 function create_if_block_3(ctx) {
 	let div;
 	let button;
@@ -14751,7 +15289,7 @@ function create_if_block_3(ctx) {
 	};
 }
 
-// (157:12) {#if enableRollHitDice}
+// (155:12) {#if enableRollHitDice}
 function create_if_block_5(ctx) {
 	let hitdieroller;
 	let current;
@@ -14795,7 +15333,7 @@ function create_if_block_5(ctx) {
 	};
 }
 
-// (167:12) {#if promptNewDay}
+// (165:12) {#if promptNewDay}
 function create_if_block_4(ctx) {
 	let div;
 	let label;
@@ -14848,7 +15386,7 @@ function create_if_block_4(ctx) {
 	};
 }
 
-// (176:8) {#if showHealthBar}
+// (174:8) {#if showHealthBar}
 function create_if_block_2(ctx) {
 	let healthbar;
 	let current;
@@ -14891,7 +15429,7 @@ function create_if_block_2(ctx) {
 	};
 }
 
-// (181:12) {#if !showStartLongRestButton}
+// (179:12) {#if !showStartLongRestButton}
 function create_if_block_1(ctx) {
 	let button;
 	let i;
@@ -14931,7 +15469,7 @@ function create_if_block_1(ctx) {
 	};
 }
 
-// (184:12) {#if !startedLongRest}
+// (182:12) {#if !startedLongRest}
 function create_if_block(ctx) {
 	let button;
 	let i;
@@ -14971,7 +15509,7 @@ function create_if_block(ctx) {
 	};
 }
 
-// (139:0) <ApplicationShell bind:elementRoot>
+// (137:0) <ApplicationShell bind:elementRoot>
 function create_default_slot(ctx) {
 	let form_1;
 	let t0;
@@ -15201,7 +15739,7 @@ function instance($$self, $$props, $$invalidate) {
 	let newDay = variant === "normal";
 	let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
 	let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
-	let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FULL;
+	let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL;
 	let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 	const workflow = RestWorkflow.get(actor);
 	let healthData = workflow.healthData;
@@ -15209,7 +15747,7 @@ function instance($$self, $$props, $$invalidate) {
 	let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
 	async function requestSubmit() {
-		if (enableRollHitDice && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
+		if (enableRollHitDice && healthData.hitDiceSpent === 0 && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
 			const doContinue = await TJSDialog.confirm({
 				title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
 				content: {
@@ -15249,7 +15787,6 @@ function instance($$self, $$props, $$invalidate) {
 		const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
 		if (!rolled) return;
 		$$invalidate(11, healthData = workflow.healthData);
-		$$invalidate(2, startedLongRest = true);
 	}
 
 	async function startLongRest() {
@@ -15267,7 +15804,7 @@ function instance($$self, $$props, $$invalidate) {
 
 	async function updateHealthBar() {
 		if (!startedLongRest) {
-			workflow.fetchHealthData();
+			workflow.refreshHealthData();
 			$$invalidate(11, healthData = workflow.healthData);
 		}
 
@@ -15320,7 +15857,6 @@ function instance($$self, $$props, $$invalidate) {
 
 	$$self.$$.update = () => {
 		if ($$self.$$.dirty[0] & /*startedLongRest*/ 4) {
-			// This is a reactive statement. When `draggable` changes `foundryApp.reactive.draggable` is set.
 			application.reactive.headerButtonNoClose = startedLongRest;
 		}
 	};
@@ -15421,7 +15957,9 @@ class LongRestDialog extends SvelteApplication {
     }, options), dialogData);
     this.hookId = Hooks.on('updateActor', changedActor => {
       if (changedActor !== actor) return;
-      this.svelte.applicationShell.updateHealthBar();
+      setTimeout(() => {
+        this.svelte.applicationShell.updateHealthBar();
+      }, 100);
     });
   }
 
@@ -15530,7 +16068,7 @@ function patch_rollHitDie() {
   libWrapper.register(CONSTANTS.MODULE_NAME, "CONFIG.Actor.documentClass.prototype.rollHitDie", async function (denomination, {
     dialog = true
   } = {}) {
-    var _periapt, _periapt$data, _periapt$data$data, _durable, _durable$data, _hp$tempmax;
+    var _periapt$data, _periapt$data$data, _blessing$data, _durable$data, _blackBlood$data, _hp$tempmax;
 
     // If no denomination was provided, choose the first available
     let cls;
@@ -15560,18 +16098,25 @@ function patch_rollHitDie() {
     let parts = [`1${denomination}`, "@abilities.con.mod"];
     const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
     const rollData = foundry.utils.deepClone(this.data.data);
-    let periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
-    periapt = periapt && ((_periapt = periapt) === null || _periapt === void 0 ? void 0 : (_periapt$data = _periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2;
-    let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
-    durable = durable && ((_durable = durable) === null || _durable === void 0 ? void 0 : (_durable$data = _durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
+    const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true)) : false;
+    const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true)) : false;
+    const woundClosure = periapt && (periapt === null || periapt === void 0 ? void 0 : (_periapt$data = periapt.data) === null || _periapt$data === void 0 ? void 0 : (_periapt$data$data = _periapt$data.data) === null || _periapt$data$data === void 0 ? void 0 : _periapt$data$data.attunement) === 2 || blessing && (blessing === null || blessing === void 0 ? void 0 : (_blessing$data = blessing.data) === null || _blessing$data === void 0 ? void 0 : _blessing$data.type) === "feat";
+    const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true)) : false;
+    const isDurable = durable && (durable === null || durable === void 0 ? void 0 : (_durable$data = durable.data) === null || _durable$data === void 0 ? void 0 : _durable$data.type) === "feat";
+    const blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE) ? this.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true)) : false;
+    let hasBlackBlood = blackBlood && (blackBlood === null || blackBlood === void 0 ? void 0 : (_blackBlood$data = blackBlood.data) === null || _blackBlood$data === void 0 ? void 0 : _blackBlood$data.type) === "feat";
     const conMod = this.data.data.abilities.con.mod;
     const durableMod = Math.max(2, conMod * 2);
 
-    if (periapt && durable) {
+    if (hasBlackBlood) {
+      denomination += "r<3";
+    }
+
+    if (woundClosure && isDurable) {
       parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`];
-    } else if (periapt) {
+    } else if (woundClosure) {
       parts[0] = "(" + parts[0] + "*2)";
-    } else if (durable) {
+    } else if (isDurable) {
       parts = [`{1${denomination}+${conMod},${durableMod}}kh`];
     } // Call the roll helper utility
 
@@ -15739,6 +16284,10 @@ Hooks.once("init", () => {
   registerLibwrappers();
   console.log("Rest Recovery 5e | Initialized");
 });
+/*Hooks.on("ready", () => {
+    new SettingsShim().render(true);
+})*/
+
 Hooks.on('updateActor', actor => {
   const workflow = RestWorkflow.get(actor);
 

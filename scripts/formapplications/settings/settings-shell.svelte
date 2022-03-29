@@ -12,7 +12,8 @@
     let form;
 
     let settingsMap = new Map();
-    let settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
+    let settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
+    .map(entry => {
         entry[1].value = getSetting(entry[0]);
         entry[1].disabled = false;
         settingsMap.set(entry[0], entry[1]);
@@ -42,16 +43,16 @@
         validateSettings();
     }
 
-    async function requestSubmit(){
+    function requestSubmit(){
+        form.requestSubmit();
+    }
+
+    async function updateSettings(){
         for(let group of Object.values(settings)) {
             for (let [key, setting] of group) {
                 await game.settings.set(CONSTANTS.MODULE_NAME, key, setting.value);
             }
         }
-        form.requestSubmit();
-    }
-
-    function updateSettings(){
         application.close();
     }
 
@@ -77,9 +78,11 @@
             <div class="tab flex" data-group="primary" data-tab="{group}">
 
                 {#each settings[group] as [key, setting], setting_index (key)}
-                <div class="setting" on:change={validateSettings}>
-                    <Setting group="{group}" setting_index="{setting_index}" setting={setting} resetSetting="{resetSetting}"/>
-                </div>
+                    {#if !setting.hidden}
+                        <div class="setting" on:change={validateSettings}>
+                            <Setting {group} {setting_index} {key} {setting} {settingsMap} {resetSetting}/>
+                        </div>
+                    {/if}
                 {/each}
 
                 {#if settings[group].length < 4}

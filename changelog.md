@@ -1,5 +1,15 @@
 # Rest Recovery Changelog
 
+## Version 1.0.6
+- Added custom formula option for each long rest recovery feature
+- Added feature to be able to limit how many short rests any given actor can take between long rests
+- Added setting that can allow overflowing ones max hit dice at the start of a long rest, losing any over the maximum
+- Added support for the Verdan lineage's Black Blood Healing feature from Acquisitions Incorporated
+- Added support for the Blessing of Wound Closure feature
+- Fixed bug that would cause the long rest chat message to have the incorrect number of regained hit dice
+- Fixed bug that caused characters to regain more than max HP due to temporary max hit points
+- Fixed localization name of Natural Recovery
+
 ## Version 1.0.5
 - Updated French localization (thank you, DarKDinDoN!)
 

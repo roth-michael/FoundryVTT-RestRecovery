@@ -10,7 +10,6 @@ export default function registerLibwrappers() {
     patch_longRest();
     patch_rollHitDie();
 
-
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
     patch_getRestResourceRecovery();
@@ -44,6 +43,7 @@ function patch_shortRest() {
             else if (autoHD) {
                 await this.autoSpendHitDice({ threshold: autoHDThreshold });
             }
+
             return this._rest(
                 chat,
                 newDay,
@@ -119,24 +119,36 @@ function patch_rollHitDie() {
             const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
             const rollData = foundry.utils.deepClone(this.data.data);
 
-            let periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
+            const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
                 ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
                 : false;
-            periapt = periapt && periapt?.data?.data?.attunement === 2;
+            const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
+                ? this.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
+                : false;
+            const woundClosure = (periapt && periapt?.data?.data?.attunement === 2) || (blessing && blessing?.data?.type === "feat");
 
-            let durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
+            const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
                 ? this.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
                 : false;
-            durable = durable && durable?.data?.type === "feat";
+            const isDurable = durable && durable?.data?.type === "feat";
+
+            const blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
+                ? this.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
+                : false;
+            let hasBlackBlood = blackBlood && blackBlood?.data?.type === "feat";
 
             const conMod = this.data.data.abilities.con.mod;
             const durableMod = Math.max(2, conMod * 2);
 
-            if (periapt && durable) {
+            if(hasBlackBlood){
+                denomination += "r<3";
+            }
+
+            if (woundClosure && isDurable) {
                 parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`]
-            } else if (periapt) {
+            } else if (woundClosure) {
                 parts[0] = "(" + parts[0] + "*2)";
-            } else if (durable) {
+            } else if (isDurable) {
                 parts = [`{1${denomination}+${conMod},${durableMod}}kh`]
             }
 
