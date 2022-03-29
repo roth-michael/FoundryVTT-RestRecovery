@@ -3,7 +3,7 @@
 ## Version 1.0.6
 - Added custom formula option for each long rest recovery feature
 - Added feature to be able to limit how many short rests any given actor can take between long rests
-- Added setting that can allow overflowing ones max hit dice at the start of a long rest, losing any over the maximum
+- Added setting that can allow overflowing ones max hit dice at the start of a long rest, losing any over the maximum once the long rest finishes
 - Added support for the Verdan lineage's Black Blood Healing feature from Acquisitions Incorporated
 - Added support for the Blessing of Wound Closure feature
 - Fixed bug that would cause the long rest chat message to have the incorrect number of regained hit dice
