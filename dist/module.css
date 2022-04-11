@@ -3,4 +3,5 @@
 .healthbar.svelte-zkgr9f.svelte-zkgr9f{width:100%;height:20px;border-radius:5px;overflow:hidden;background-color:#a7a7a7}.healthbar.svelte-zkgr9f>div.svelte-zkgr9f{height:100%}.healthbar.svelte-zkgr9f .progress_ghost.svelte-zkgr9f{z-index:1;background-color:#bb7777}.healthbar.svelte-zkgr9f .progress.svelte-zkgr9f{z-index:2;background-color:#d93131;position:relative;top:-20px}.healthbar.svelte-zkgr9f .overlay.svelte-zkgr9f{z-index:3;position:relative;top:-40px;text-align:center;color:white;width:100%;box-shadow:0 0 2px 2px inset rgba(0, 0, 0, 0.25);line-height:20px}
 div.svelte-iivrm9.svelte-iivrm9{margin-bottom:0.5rem;font-size:0.9rem;text-align:center}div.svelte-iivrm9 .header-icon.svelte-iivrm9{font-size:3rem;margin:0}div.svelte-iivrm9 .header.svelte-iivrm9{margin-bottom:0.5rem;font-size:1.2rem}
 table.svelte-gs48np.svelte-gs48np{text-align:center}table.svelte-gs48np th.svelte-gs48np:first-child{width:250px}
+.container.svelte-kcw6kv{max-height:400px;overflow:auto}.sep.svelte-kcw6kv{flex:0;margin:0 3px}.text-center.svelte-kcw6kv{text-align:center}
 /*# sourceMappingURL=module.css.map */
