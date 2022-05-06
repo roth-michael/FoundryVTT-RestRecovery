@@ -8,7 +8,10 @@ export default class RestWorkflow {
     constructor(actor, longRest) {
         this.actor = actor;
         this.longRest = longRest;
+        this.spellSlotsRegainedMessage = "";
+        this.itemsRegainedMessages = [];
         this.finished = false;
+        this.preChatHookId = false;
     }
 
     async setup(){
@@ -51,6 +54,7 @@ export default class RestWorkflow {
     }
 
     static remove(actor) {
+        Hooks.off("preCreateChatMessage", this.preChatHookId);
         return rests.delete(actor.uuid);
     }
 
@@ -155,47 +159,48 @@ export default class RestWorkflow {
             }
         }
 
-        const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature);
-        const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature);
-
-
+        const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature, "wizard");
+        const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature, "druid");
 
         if (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse)) {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
-            this.spellData.pointsTotal = Math.ceil(wizardLevel / 2);
+            this.spellData.pointsTotal = this._evaluateFormula(wizardFeature.data.data.formula, foundry.utils.deepClone(this.actor.data.data));
             this.spellData.className = getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
         } else if (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse)) {
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
-            this.spellData.pointsTotal = Math.ceil(druidLevel / 2);
+            this.spellData.pointsTotal = this._evaluateFormula(druidFeature.data.data.formula, foundry.utils.deepClone(this.actor.data.data));
             this.spellData.className = getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
 
     }
 
-    patchSpellFeature(feature) {
+    patchSpellFeature(feature, className) {
 
         if (feature &&
             (
                 feature.data.data.activation.type !== "special" ||
                 feature.data.data.uses.value === null ||
                 feature.data.data.uses.max === null ||
-                feature.data.data.uses.per !== "lr"
+                feature.data.data.uses.per !== "lr" ||
+                feature.data.data.formula === ""
             )
         ) {
             this.actor.updateEmbeddedDocuments("Item", [{
                 _id: feature.id,
                 "data.activation.type": "special",
-                "data.uses.value": 1,
+                "data.uses.value": feature.data.data.uses.value ?? 1,
                 "data.uses.max": 1,
                 "data.uses.per": "lr",
+                "data.data.actionType": "util",
+                "data.data.formula": `ceil(@classes.${className}.levels/2)`
             }]);
             ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
                 actorName: this.actor.name,
                 recoveryName: this.spellData.feature.name
             }));
-            return true;
+            return (feature.data.data.uses.value ?? 1) > 0;
         }
 
         return feature.data.data.uses.value > 0;
@@ -420,18 +425,10 @@ export default class RestWorkflow {
     }
 
     preFinishRestMessage() {
-        Hooks.once("preCreateChatMessage", (message, data) => {
-            let newContent = `<p>${data.content}</p><p>${game.i18n.localize("REST-RECOVERY.Chat.RegainedSpellSlots")}</p>`;
-            newContent += "<ul>";
-            for (const [level, num] of Object.entries(this.recoveredSlots)) {
-                const numText = game.i18n.localize("REST-RECOVERY.NumberToText." + num);
-                const levelText = ordinalSuffixOf(level);
-                const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
-                newContent += `<li>${game.i18n.format(localization, { number: numText, level: levelText })}</li>`
-            }
-            newContent += "</ul>";
+        if(this.preChatHookId) return;
+        this.preChatHookId = Hooks.once("preCreateChatMessage", (message, data) => {
             message.data.update({
-                content: newContent
+                content: `<p>${data.content}</p>` + this.spellSlotsRegainedMessage + this.itemsRegainedMessages.join("")
             });
         });
     }
@@ -455,7 +452,7 @@ export default class RestWorkflow {
 
     _evaluateFormula(formula, data){
         const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
-        return new Roll(rollFormula).evaluate({ async: false }).total;
+        return new Roll(rollFormula).evaluate({ async: false });
     }
 
     _getRestHitPointRecovery(result) {
@@ -470,7 +467,7 @@ export default class RestWorkflow {
         const maxHP = this.actor.data.data.attributes.hp.max;
         const currentHP = this.actor.data.data.attributes.hp.value;
 
-        let recoveredHP = this.healthData.hitPointsToRegain;
+        let recoveredHP = this.finished ? this.healthData.hitPointsToRegain : 0;
 
         if(!recoveredHP) {
             recoveredHP = typeof multiplier === "string"
@@ -604,10 +601,22 @@ export default class RestWorkflow {
         }else{
 
             if(this.spellData.feature) {
+
                 for (const [slot, num] of Object.entries(this.recoveredSlots)) {
                     const prop = `data.spells.spell${slot}.value`;
                     updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor.data, prop) || 0) + num;
                 }
+
+                this.spellSlotsRegainedMessage = `<p>${game.i18n.localize("REST-RECOVERY.Chat.RegainedSpellSlots")}</p>`;
+                this.spellSlotsRegainedMessage += "<ul>";
+                for (const [level, num] of Object.entries(this.recoveredSlots)) {
+                    const numText = game.i18n.localize("REST-RECOVERY.NumberToText." + num);
+                    const levelText = ordinalSuffixOf(level);
+                    const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
+                    this.spellSlotsRegainedMessage += `<li>${game.i18n.format(localization, { number: numText, level: levelText })}</li>`
+                }
+                this.spellSlotsRegainedMessage += "</ul>";
+
             }
 
         }
@@ -618,11 +627,9 @@ export default class RestWorkflow {
 
     _getRestItemUsesRecovery(updates, args) {
 
-        if (this.longRest) {
-            return this.recoverItemsUses(updates, args);
-        }
+        updates = this.recoverItemsUses(updates, args);
 
-        if (this.spellData.pointsSpent && this.spellData.feature) {
+        if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
             updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
         }
 
@@ -637,34 +644,63 @@ export default class RestWorkflow {
         const othersMultiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER);
         const dailyMultiplier = determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER);
 
+        this.clonedActor = foundry.utils.deepClone(this.actor.data.data);
+
         for (const item of this.actor.items) {
             if (item.data.data.uses) {
+                const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
                 if (recoverLongRestUses && item.data.data.uses.per === "lr") {
                     updates = this.recoverItemUse(updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
                 } else if (recoverDailyUses && item.data.data.uses.per === "day") {
                     updates = this.recoverItemUse(updates, item, dailyMultiplier);
+                } else if (customRecovery) {
+                    updates = this.recoverItemUse(updates, item);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {
                 updates.push({ _id: item.id, "data.recharge.charged": true });
             }
         }
 
+        if(this.itemsRegainedMessages.length){
+            this.itemsRegainedMessages.sort((a, b) => {
+                return a[0] > b[0] || a[1] > b[1];
+            });
+            this.itemsRegainedMessages = this.itemsRegainedMessages.map(line => line[1]);
+            this.itemsRegainedMessages.unshift("<p>In addition, they recovered:</p><ul>")
+            this.itemsRegainedMessages.push('</ul>');
+        }
+
+        this.clonedActor = false;
+
         return updates;
     }
 
 
-    recoverItemUse(updates, item, multiplier) {
+    recoverItemUse(updates, item, multiplier = 1.0) {
 
         const usesMax = item.data.data.uses.max;
         const usesCur = item.data.data.uses.value;
 
-        const amountToRecover = typeof multiplier === "string"
-            ? this._evaluateFormula(multiplier, foundry.utils.deepClone(item.data.data))
-            : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
+        if(usesCur === usesMax) return updates;
+
+        const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
+        const customFormula = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.custom_formula ?? "";
+
+        let amountToRecover;
+        if(customRecovery) {
+            const customRoll = this._evaluateFormula(customFormula, { actor: this.clonedActor, item: foundry.utils.deepClone(item.data.data) });
+            amountToRecover = customRoll.total;
+            const chargeText = customFormula.match(/[1-9]*[0-9]*d[1-9]+[0-9]*/g)?.length ? `<a class="inline-roll roll" title="${customRoll.formula}">${amountToRecover}</a>` : amountToRecover;
+            this.itemsRegainedMessages.push([item.type, `<li>${item.name} regained ${chargeText} uses</li>`])
+        }else {
+            amountToRecover = typeof multiplier === "string"
+                ? this._evaluateFormula(multiplier, foundry.utils.deepClone(item.data.data))
+                : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
+        }
 
         const update = updates.find(update => update._id === item.id);
 
-        const recoverValue = Math.min(usesCur + amountToRecover, usesMax);
+        const recoverValue = Math.max(0, Math.min(usesCur + amountToRecover, usesMax));
 
         if (update) {
             update["data.uses.value"] = recoverValue;

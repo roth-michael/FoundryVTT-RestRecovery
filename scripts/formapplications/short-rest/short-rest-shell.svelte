@@ -3,6 +3,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+    import { TJSDocument }  from '@typhonjs-fvtt/runtime/svelte/store';
 
     import HealthBar from "../components/HealthBar.svelte";
     import Dialog from "../components/Dialog.svelte";
@@ -25,6 +26,7 @@
     $: application.reactive.headerButtonNoClose = startedShortRest;
 
     const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+    const enableRollhitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
     const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
     const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
 
@@ -33,12 +35,12 @@
 
     const workflow = RestWorkflow.get(actor);
 
+    updateHealthBarText();
+
     let healthData = workflow.healthData;
     let spellData = workflow.spellData;
 
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
-
-    updateHealthBar();
 
     export async function requestSubmit() {
         if(workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
@@ -71,6 +73,7 @@
     }
 
     async function cancel(){
+        RestWorkflow.remove(actor);
         application.options.reject();
         application.close();
     }
@@ -93,11 +96,25 @@
         spellData = workflow.spellData;
     }
 
-    export async function updateHealthBar(){
+    const doc = new TJSDocument(actor);
+
+    $: {
+        $doc;
+        const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
+        if(hpUpdate){
+            actorUpdated();
+        }
+    }
+
+    export async function actorUpdated(){
         if(!startedShortRest){
             workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
+        updateHealthBarText();
+    }
+
+    function updateHealthBarText(){
         currHP = workflow.currHP;
         maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
@@ -113,15 +130,19 @@
 
         {#if enableShortRest}
 
-            <p>{localize("DND5E.ShortRestHint")}</p>
+            {#if enableRollhitDice}
+                <p>{localize("DND5E.ShortRestHint")}</p>
 
-            <HitDieRoller
-                selectedHitDice="{selectedHitDice}"
-                healthData="{healthData}"
-                isAtMaxHP="{currHP >= maxHP}"
-                onHitDiceFunction="{rollHitDice}"
-                onAutoFunction="{autoRollHitDie}"
-            />
+                <HitDieRoller
+                    selectedHitDice="{selectedHitDice}"
+                    healthData="{healthData}"
+                    isAtMaxHP="{currHP >= maxHP}"
+                    onHitDiceFunction="{rollHitDice}"
+                    onAutoFunction="{autoRollHitDie}"
+                />
+            {:else}
+                <p>{localize("REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest")}</p>
+            {/if}
 
             {#if spellData.feature}
 

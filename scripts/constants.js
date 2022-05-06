@@ -12,6 +12,7 @@ const CONSTANTS = {
          *-------------------------------------------*/
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
         MAX_SHORT_RESTS: "max-short-rests-per-long-rest",
+        DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
 
         /*-------------------------------------------*
          *             Long Rest Settings            *
@@ -114,6 +115,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         default: 0,
         type: Number
+    },
+    [CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE]: {
+        name: "REST-RECOVERY.Settings.ShortRest.NoHitDice.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.NoHitDice.Hint",
+        scope: "world",
+        group: "shortrest",
+        config: false,
+        default: false,
+        type: Boolean
     },
 
     /*-------------------------------------------*

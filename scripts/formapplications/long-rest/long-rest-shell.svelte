@@ -2,6 +2,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+    import { TJSDocument }  from '@typhonjs-fvtt/runtime/svelte/store';
 
     import HealthBar from "../components/HealthBar.svelte";
     import Dialog from "../components/Dialog.svelte";
@@ -40,7 +41,7 @@
     const workflow = RestWorkflow.get(actor);
 
     let healthData = workflow.healthData;
-    updateHealthBar();
+    updateHealthBarText();
 
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
@@ -69,12 +70,13 @@
     }
 
     async function updateSettings() {
+        workflow.finished = true;
         application.options.resolve(newDay);
         application.close();
     }
 
     async function cancel() {
-        workflow.finished = true;
+        RestWorkflow.remove(actor);
         application.options.reject();
         application.close();
     }
@@ -98,11 +100,26 @@
         startedLongRest = true;
     }
 
-    export async function updateHealthBar() {
+    const doc = new TJSDocument(actor);
+
+    $:
+    {
+        $doc;
+        const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
+        if(hpUpdate){
+            actorUpdated();
+        }
+    }
+
+    async function actorUpdated() {
         if(!startedLongRest){
             workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
+        updateHealthBarText();
+    }
+
+    function updateHealthBarText(){
         currHP = workflow.currHP;
         maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
