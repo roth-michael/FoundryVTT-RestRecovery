@@ -1,5 +1,12 @@
 # Rest Recovery Changelog
 
+## Version 1.1.0
+- Added custom recovery formula option to items
+- Added custom recovery UI for resources, which can be found under the resources in your player sheets (compatible with the [Resources Plus](https://foundryvtt.com/packages/resourcesplus) module)
+- Changed Arcane Recovery and Natural Recovery to refer to the "Other Formula" field when determining how many spell slots the feature allows you to regain
+- Added setting to disable rolling hit dice during short rests
+- Changed description wording of some settings to better reflect what they were actually doing
+
 ## Version 1.0.6
 - Added custom formula option for each long rest recovery feature
 - Added feature to be able to limit how many short rests any given actor can take between long rests

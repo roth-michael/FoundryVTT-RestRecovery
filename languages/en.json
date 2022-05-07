@@ -19,7 +19,7 @@
             "BlackBloodFeature": "Black Blood Healing"
         },
 
-        "PatchedRecovery": "{actorName}'s {recoveryName} has been patched, it now has 1/1 long rest uses.",
+        "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
 
         "Fractions": {
             "None": "None",
@@ -48,9 +48,10 @@
         },
 
         "Chat": {
-            "RegainedSpellSlots": "In addition, they recovered:",
+            "RegainedUses": "In addition, they recovered the following:",
             "SpellSlotList": "{number} {level} level spell slot",
             "SpellSlotListPlural": "{number} {level} level spell slots",
+            "RecoveryNameNum": "{name} regained {number} uses",
             "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",
             "SongOfRestSelf": "{name} enjoys their own Song of Rest.",
             "Chef": "{name} enjoys some delicious food from {chef}.",
@@ -65,6 +66,7 @@
                 "Cancel": "Cancel"
             },
             "ShortRest": {
+                "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
                 "FullHealth": "You're already at full health, so you can't roll any more hit dice.",
                 "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
                 "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
@@ -91,6 +93,13 @@
             "LongRestSettingsDialog": {
                 "Title": "Long Rest Settings",
                 "Content": "These are the settings your GM configured for long rests in this game."
+            },
+            "Resources": {
+                "Name": "Name",
+                "Value": "Value",
+                "Short": "Short",
+                "Long": "Long",
+                "RecoveryFormula": "Recovery Formula"
             },
             "ModuleConfig": {
                 "Title": "Rest Recovery Configuration",
@@ -129,107 +138,111 @@
                     "Hint": "If you have a Bard with the Song of Rest or a Chef in your party, this will only consider them as present if the owning player is active and logged on."
                 },
                 "MaxShortRests": {
-                    "Title": "Maximum Short Rests Per Long Rest",
+                    "Title": "Maximum short rests per long rest",
                     "Hint": "This prevents characters from taking short rests if they reach a number of short rests equal to this number. Taking a long rest resets this counter. Putting zero here disables this setting."
+                },
+                "NoHitDice": {
+                    "Title": "Disable hit dice rolls during short rests",
+                    "Hint": "This prevents characters from rolling hit dice during short rests."
                 }
             },
             "LongRest": {
                 "RollHitDice": {
-                    "Title": "Enable Long Rest Hit Dice Rolls",
+                    "Title": "Enable long rest hit dice rolls",
                     "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
                 },
                 "PreRegainHitDice": {
-                    "Title": "Enable Hit Dice Recovery Before Finishing Long Rest",
+                    "Title": "Enable hit dice recovery before finishing long rest",
                     "Hint": "This makes it so that hit dice are recovered before finishing the long rest, so that you can roll them as a part of this rest."
                 },
                 "PreRegainHitDiceBuffer": {
-                    "Title": "Enable Hit Dice Max Buffer",
+                    "Title": "Enable hit dice max buffer",
                     "Hint": "This setting causes each character to always regain hit dice, even if it would put their hit dice above their maximum, so that no hit dice are wasted. Any unused hit dice over their maximum will disappear once the long rest is completed."
                 },
                 "EnableAutoRollButton": {
-                    "Title": "Enable Hit Dice Auto Roll Button",
+                    "Title": "Enable hit dice auto roll button",
                     "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
                 },
                 "HitPointsRecoveryFraction": {
-                    "Title": "Hit Points Recovery Fraction",
-                    "Hint": "The fraction missing hit points to recover on a long rest."
+                    "Title": "Hit points recovery fraction",
+                    "Hint": "The fraction of hit points to recover on a long rest."
                 },
                 "HitDiceRecoveryFraction": {
-                    "Title": "Hit Dice Recovery Fraction",
+                    "Title": "Hit dice recovery fraction",
                     "Hint": "The fraction of hit dice to recover on a long rest."
                 },
                 "HitDiceRecoveryRounding": {
-                    "Title": "Hit Dice Recovery Rounding",
+                    "Title": "Hit Dice Recovery rounding",
                     "Hint": "How to round the number of hit dice recovered."
                 },
                 "ResourcesRecoveryFraction": {
-                    "Title": "Resources Recovery Fraction",
+                    "Title": "Resources recovery fraction",
                     "Hint": "The fraction of resources to recover on a long rest."
                 },
                 "SpellSlotsRecoveryFraction": {
-                    "Title": "Spell Slots Recovery Fraction",
+                    "Title": "Spell slots recovery fraction",
                     "Hint": "The fraction of spell slots to recover on a long rest (pact slots excluded)."
                 },
                 "ItemUsesRecoveryFraction": {
-                    "Title": "Item Uses Recovery Fraction",
+                    "Title": "Item uses recovery fraction",
                     "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a long rest."
                 },
                 "FeatUsesRecoveryFraction": {
-                    "Title": "Feat Uses Recovery Fraction",
+                    "Title": "Feat uses recovery fraction",
                     "Hint": "The fraction of feat uses to recover on a long rest."
                 },
                 "DailyUsesRecoveryFraction": {
-                    "Title": "Daily Uses Recovery Fraction",
+                    "Title": "Daily uses recovery fraction",
                     "Hint": "The fraction of daily uses to recover on a long rest (items with the \"Day\" recovery setting)."
                 }
             },
             "ItemNames": {
                 "WizardClassName": {
-                    "Title": "Wizard Class Name",
+                    "Title": "Wizard class name",
                     "Hint": "Here you can configure what the Wizard class is called in your game. This can be a localized string."
                 },
                 "DruidClassName": {
-                    "Title": "Druid Class Name",
+                    "Title": "Druid class name",
                     "Hint": "Here you can configure what the Druid class is called in your game. This can be a localized string."
                 },
                 "BardClassName": {
-                    "Title": "Bard Class Name",
+                    "Title": "Bard class name",
                     "Hint": "Here you can configure what the Bard class is called in your game. This is used to determine who's Song of Rest to use. This can be a localized string."
                 },
                 "ArcaneRecovery": {
-                    "Title": "Arcane Recovery Name",
+                    "Title": "Arcane Recovery name",
                     "Hint": "Here you can configure what a wizard's Arcane Recovery feature is called in your game. This can be a localized string."
                 },
                 "NaturalRecovery": {
-                    "Title": "Natural Recovery Name",
+                    "Title": "Natural Recovery name",
                     "Hint": "Here you can configure what a druid's Natural Recovery feature is called in your game. This can be a localized string."
                 },
                 "SongOfRest": {
-                    "Title": "Song of Rest Name",
+                    "Title": "Song of Rest name",
                     "Hint": "Here you can configure what a bard's Song of Rest feature is called in your game. This can be a localized string."
                 },
                 "ChefFeat": {
-                    "Title": "Chef Feat Name",
+                    "Title": "Chef feat name",
                     "Hint": "Here you can configure what the Chef feat is called in your game. This can be a localized string."
                 },
                 "ChefTools": {
-                    "Title": "Chef Tools Name",
+                    "Title": "Chef Tools name",
                     "Hint": "Here you can configure what the chef tools item is called in your game. This can be a localized string. Leave this blank if you want to disable chef requiring tools to use the feat."
                 },
                 "DurableFeat": {
-                    "Title": "Durable Feat Name",
+                    "Title": "Durable feat name",
                     "Hint": "Here you can configure what the Durable feat is called in your game. This can be a localized string."
                 },
                 "PeriaptItem": {
-                    "Title": "Periapt of Wound Closure Name",
+                    "Title": "Periapt of Wound Closure name",
                     "Hint": "Here you can configure what the Periapt of Would Closure item is called in your game. This can be a localized string."
                 },
                 "WoundClosureBlessing": {
-                    "Title": "Blessing of Wound Closure Name",
+                    "Title": "Blessing of Wound Closure name",
                     "Hint": "Here you can configure what the Blessing of Would Closure feature is called in your game. This can be a localized string."
                 },
                 "BlackBloodFeature": {
-                    "Title": "Black Blood Healing Name",
+                    "Title": "Black Blood Healing name",
                     "Hint": "Here you can configure what a Verdan's Black Blood Healing feature is called in your game. This can be a localized string."
                 }
             }

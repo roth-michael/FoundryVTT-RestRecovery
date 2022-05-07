@@ -1,14 +1,14 @@
 import CustomSvelteApplication from "../custom-svelte-application.js";
-import LongRestShell from './long-rest-shell.svelte';
+import ResourceConfigShell from './resource-config-shell.svelte';
 
-export default class LongRestDialog extends CustomSvelteApplication {
+export default class ResourceConfig extends CustomSvelteApplication {
 
     constructor(actor, options = {}, dialogData = {}) {
         super({
-            title: `${game.i18n.localize("DND5E.LongRest")}: ${actor.name}`,
+            title: `${game.i18n.localize("DND5E.ShortRest")}: ${actor.name}`,
             zIndex: 102,
             svelte: {
-                class: LongRestShell,
+                class: ResourceConfigShell,
                 target: document.body,
                 props: {
                     actor
@@ -16,16 +16,18 @@ export default class LongRestDialog extends CustomSvelteApplication {
             },
             close: () => this.options.reject(),
             ...options
-        }, dialogData);
+        }, {
+            resizable: true,
+            ...dialogData
+        });
     }
 
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             closeOnSubmit: false,
-            width: 350,
+            width: 550,
             height: "auto",
             classes: ["dnd5e dialog"]
         })
     }
-
 }

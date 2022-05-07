@@ -79,4 +79,4 @@ If a character is **attuned** to this item, any hit die rolled is doubled. Accor
 
 # Contributing
 
-In order to contribute to this module, you will need to run `npm install` and then `npm run build-watch` in order to build the module the `./dist` folders.
+In order to contribute to this module, you will need to run `npm install` and then `npm run build-watch` in order to build the module's `./dist` folders.

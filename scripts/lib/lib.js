@@ -50,3 +50,8 @@ export function getSetting(key, localize = false) {
     if (localize) return game.i18n.localize(value);
     return value;
 }
+
+export function evaluateFormula(formula, data){
+    const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
+    return new Roll(rollFormula).evaluate({ async: false });
+}
