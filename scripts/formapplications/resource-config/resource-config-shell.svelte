@@ -4,7 +4,7 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
 
-    import { getSetting } from "../../lib/lib.js";
+    import * as lib from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
 
     const { application } = getContext('external');
@@ -18,21 +18,53 @@
     const resources = Object.entries(actor.data.data.resources)
         .map(entry => {
             let resource = entry[1];
-            resource.path = entry[0];
-            resource.flags = {
-                formula: "",
-                evaluated_formula: ""
-            };
+            resource.path = `data.resources.${entry[0]}`;
+            resource.flagPath = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${entry[0]}.formula`;
+            resource.formula = getProperty(actor.data, `${resource.flagPath}`) ?? "";
             return resource;
         })
         .filter((resource, index) => resource.path !== "count" && index < count);
 
     function requestSubmit(){
+        let valid = true;
+        const actorData = foundry.utils.deepClone(actor.data.data);
+        for(let i = 0; i < resources.length; i++){
+            const resource = resources[i];
+            if(!resource.formula) continue;
+            try {
+                const roll = lib.evaluateFormula(resource.formula, actorData);
+                if(!roll){
+                    valid = false;
+                }
+            }catch(err){
+                const resourceName = resource.label ? `Resource "${resource.label}"` : 'Resource ' + (i+1);
+                ui.notifications.warn(`Rest Recovery for 5e: ${resourceName} has a problem with its formula, please fix this.`);
+                valid = false;
+            }
+        }
+        if(!valid) return false;
         form.requestSubmit();
     }
 
-    function updateSettings(){
-
+    async function updateSettings(){
+        const flagUpdates = Object.fromEntries(resources.map(resource => {
+            return [resource.flagPath, resource.formula];
+        }));
+        const resourceUpdates = Object.fromEntries(resources.map(resource => {
+            return [resource.path, {
+                label: resource.label,
+                value: Number(resource.value),
+                max: Number(resource.max),
+                sr: resource.sr,
+                lr: resource.lr
+            }];
+        }));
+        await actor.update({
+            ...flagUpdates,
+            ...resourceUpdates
+        })
+        application.options.resolve();
+        application.close();
     }
 
 </script>
@@ -49,17 +81,17 @@
             <table>
 
                 <tr>
-                    <th style="width:auto;">Name</th>
-                    <th style="width:20%;">Value</th>
-                    <th style="width:auto;">Short Rest</th>
-                    <th style="width:auto;">Long Rest</th>
-                    <th style="width:auto;">Recovery Formula</th>
+                    <th style="width:auto;">{localize("REST-RECOVERY.Dialogs.Resources.Name")}</th>
+                    <th style="width:20%;">{localize("REST-RECOVERY.Dialogs.Resources.Value")}</th>
+                    <th style="width:auto;">{localize("REST-RECOVERY.Dialogs.Resources.Short")}</th>
+                    <th style="width:auto;">{localize("REST-RECOVERY.Dialogs.Resources.Long")}</th>
+                    <th style="width:auto;">{localize("REST-RECOVERY.Dialogs.Resources.RecoveryFormula")}</th>
                 </tr>
 
                 {#each resources as resource, index (index)}
                 <tr>
                     <td>
-                        <input type="text" bind:value={resource.label}/>
+                        <input type="text" bind:value={resource.label} placeholder="Resource {index+1}"/>
                     </td>
                     <td>
                         <div class="flexrow">
@@ -69,13 +101,13 @@
                         </div>
                     </td>
                     <td class="text-center">
-                        <input type="checkbox" bind:value={resource.lr}>
+                        <input type="checkbox" bind:checked={resource.sr}>
                     </td>
                     <td class="text-center">
-                        <input type="checkbox" bind:value={resource.sr}>
+                        <input type="checkbox" bind:checked={resource.lr}>
                     </td>
                     <td>
-                        <input type="text" bind:value={resource.flags.formula}>
+                        <input type="text" bind:value={resource.formula}>
                     </td>
                 </tr>
                 {/each}

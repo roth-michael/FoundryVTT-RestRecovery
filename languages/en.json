@@ -19,7 +19,7 @@
             "BlackBloodFeature": "Black Blood Healing"
         },
 
-        "PatchedRecovery": "{actorName}'s {recoveryName} has been patched, it now has 1/1 long rest uses.",
+        "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
 
         "Fractions": {
             "None": "None",
@@ -48,9 +48,10 @@
         },
 
         "Chat": {
-            "RegainedSpellSlots": "In addition, they recovered:",
+            "RegainedUses": "In addition, they recovered the following:",
             "SpellSlotList": "{number} {level} level spell slot",
             "SpellSlotListPlural": "{number} {level} level spell slots",
+            "RecoveryNameNum": "{name} regained {number} uses",
             "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",
             "SongOfRestSelf": "{name} enjoys their own Song of Rest.",
             "Chef": "{name} enjoys some delicious food from {chef}.",
@@ -92,6 +93,13 @@
             "LongRestSettingsDialog": {
                 "Title": "Long Rest Settings",
                 "Content": "These are the settings your GM configured for long rests in this game."
+            },
+            "Resources": {
+                "Name": "Name",
+                "Value": "Value",
+                "Short": "Short",
+                "Long": "Long",
+                "RecoveryFormula": "Recovery Formula"
             },
             "ModuleConfig": {
                 "Title": "Rest Recovery Configuration",

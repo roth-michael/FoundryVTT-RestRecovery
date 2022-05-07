@@ -19,7 +19,7 @@
             "BlackBloodFeature": "Récupération des sangs-noirs"
         },
 
-        "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patché, il possède maintenant une valeur de récupération de 1/1 sur un repos long.",
+        "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patchéR.",
 
         "Fractions": {
             "None": "Aucun",
@@ -48,9 +48,10 @@
         },
 
         "Chat": {
-            "RegainedSpellSlots": "Le personnage récupère en plus :",
+            "RegainedUses": "Le personnage récupère en plus :",
             "SpellSlotList": "{number} emplacement de sort de niveau {level}",
             "SpellSlotListPlural": "{number} emplacements de sort de niveau {level}",
+
             "SongOfRest": "{name} profite du Chant de repos de {bard}.",
             "SongOfRestSelf": "{name} profite de son propre Chant de repos.",
             "Chef": "{name} profite du délicieux met préparé par {chef}.",
