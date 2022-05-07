@@ -19,7 +19,7 @@
             "BlackBloodFeature": "Récupération des sangs-noirs"
         },
 
-        "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patchéR.",
+        "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patché.",
 
         "Fractions": {
             "None": "Aucun",
