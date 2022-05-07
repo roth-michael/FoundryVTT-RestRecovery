@@ -95,6 +95,7 @@
                 "Content": "These are the settings your GM configured for long rests in this game."
             },
             "Resources": {
+                "Title": "Resource Configuration",
                 "Name": "Name",
                 "Value": "Value",
                 "Short": "Short",

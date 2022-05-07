@@ -5,7 +5,7 @@ export default class ResourceConfig extends CustomSvelteApplication {
 
     constructor(actor, options = {}, dialogData = {}) {
         super({
-            title: `${game.i18n.localize("DND5E.ShortRest")}: ${actor.name}`,
+            title: `${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Title")}: ${actor.name}`,
             zIndex: 102,
             svelte: {
                 class: ResourceConfigShell,
