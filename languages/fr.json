@@ -51,7 +51,7 @@
             "RegainedUses": "Le personnage récupère en plus :",
             "SpellSlotList": "{number} emplacement de sort de niveau {level}",
             "SpellSlotListPlural": "{number} emplacements de sort de niveau {level}",
-
+            "RecoveryNameNum": "{name} récupère {number} utilisations",
             "SongOfRest": "{name} profite du Chant de repos de {bard}.",
             "SongOfRestSelf": "{name} profite de son propre Chant de repos.",
             "Chef": "{name} profite du délicieux met préparé par {chef}.",
@@ -66,6 +66,7 @@
                 "Cancel": "Annuler"
             },
             "ShortRest": {
+                "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
                 "FullHealth": "Vous ne pouvez plus lancer de dés de vie, car vous êtes déjà à votre maximum de points de vie.",
                 "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
                 "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
@@ -92,6 +93,14 @@
             "LongRestSettingsDialog": {
                 "Title": "Paramètres de repos long",
                 "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
+            },
+            "Resources": {
+                "Title": "Configuration des ressources",
+                "Name": "Nom",
+                "Value": "Valeur",
+                "Short": "Court",
+                "Long": "Long",
+                "RecoveryFormula": "Formule de récupération"
             },
             "ModuleConfig": {
                 "Title": "Configuration de Rest Recovery",
@@ -132,6 +141,10 @@
                 "MaxShortRests": {
                     "Title": "Nombre maximum de repos courts par repos long",
                     "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
+                },
+                "NoHitDice": {
+                    "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
+                    "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
                 }
             },
             "LongRest": {
