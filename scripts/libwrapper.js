@@ -116,6 +116,7 @@ function patch_rollHitDie() {
 
             // Prepare roll data
             let parts = [`1${denomination}`, "@abilities.con.mod"];
+
             const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
             const rollData = foundry.utils.deepClone(this.data.data);
 
@@ -150,6 +151,11 @@ function patch_rollHitDie() {
                 parts[0] = "(" + parts[0] + "*2)";
             } else if (isDurable) {
                 parts = [`{1${denomination}+${conMod},${durableMod}}kh`]
+            }
+
+            const hitDieBonus = getProperty(this.data, `flags.dnd5e.hitDieBonus`);
+            if(hitDieBonus){
+                parts.push(hitDieBonus);
             }
 
             // Call the roll helper utility

@@ -134,7 +134,7 @@
                 <p>{localize("DND5E.ShortRestHint")}</p>
 
                 <HitDieRoller
-                    selectedHitDice="{selectedHitDice}"
+                    bind:selectedHitDice="{selectedHitDice}"
                     healthData="{healthData}"
                     isAtMaxHP="{currHP >= maxHP}"
                     onHitDiceFunction="{rollHitDice}"

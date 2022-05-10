@@ -171,7 +171,7 @@
         {:else}
             {#if enableRollHitDice}
                 <HitDieRoller
-                    selectedHitDice="{selectedHitDice}"
+                    bind:selectedHitDice="{selectedHitDice}"
                     healthData="{healthData}"
                     isAtMaxHP="{currHP >= maxHP}"
                     onHitDiceFunction="{rollHitDice}"

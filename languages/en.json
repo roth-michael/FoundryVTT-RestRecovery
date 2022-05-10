@@ -114,6 +114,14 @@
             }
         },
 
+        "Traits": {
+            "Title": "Rest Recovery",
+            "HitDieBonus": {
+                "Title": "Hit Die Bonus",
+                "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+            }
+        },
+
         "Settings": {
             "Reset": {
                 "Title": "Reset settings to default",
@@ -173,7 +181,7 @@
                     "Hint": "The fraction of hit dice to recover on a long rest."
                 },
                 "HitDiceRecoveryRounding": {
-                    "Title": "Hit Dice Recovery rounding",
+                    "Title": "Hit dice recovery rounding",
                     "Hint": "How to round the number of hit dice recovered."
                 },
                 "ResourcesRecoveryFraction": {

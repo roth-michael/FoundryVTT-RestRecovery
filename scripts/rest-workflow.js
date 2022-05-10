@@ -15,6 +15,27 @@ export default class RestWorkflow {
         this.preChatHookId = false;
     }
 
+    static intitialize(){
+        Hooks.on('updateActor', (actor) => {
+            const workflow = RestWorkflow.get(actor);
+            if (workflow && workflow.finished) {
+                workflow.preFinishRestMessage();
+            }
+        });
+
+        Hooks.on("restCompleted", (actor) => {
+            RestWorkflow.remove(actor);
+        });
+
+        CONFIG.DND5E.characterFlags.hitDieBonus = {
+            name: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Hint"),
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            type: String,
+            placeholder: "0"
+        };
+    }
+
     async setup(){
         this.fetchHealthData();
         this.fetchFeatures();
