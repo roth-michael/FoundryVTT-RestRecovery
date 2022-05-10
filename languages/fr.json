@@ -114,6 +114,14 @@
             }
         },
 
+        "Traits": {
+            "Title": "Repos et récupération",
+            "HitDieBonus": {
+                "Title": "Bonus au dé de vie",
+                "Hint": "À chaque fois que ce personnage lance un dé de vie, ce champ applique un bonus à ce lancé. Cela peut être une formule, comme \"1d6 + 3\"."
+            }
+        },
+
         "Settings": {
             "Reset": {
                 "Title": "Réinitialiser les paramètres par défaut",
