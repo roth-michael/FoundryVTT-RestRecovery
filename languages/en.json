@@ -181,7 +181,7 @@
                     "Hint": "The fraction of hit dice to recover on a long rest."
                 },
                 "HitDiceRecoveryRounding": {
-                    "Title": "Hit Dice Recovery rounding",
+                    "Title": "Hit dice recovery rounding",
                     "Hint": "How to round the number of hit dice recovered."
                 },
                 "ResourcesRecoveryFraction": {
