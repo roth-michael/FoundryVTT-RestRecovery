@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.1.1
+- Added `Hit Die Bonus` under the Special Traits menu of characters, which can be used to add a modifier to the characters' hit die rolls.
+- Fixed issue where multiclassed characters would be unable to roll certain classes' hit die
+
 ## Version 1.1.0
 - Added custom recovery formula option to items
 - Added custom recovery UI for resources, which can be found under the resources in your player sheets (compatible with the [Resources Plus](https://foundryvtt.com/packages/resourcesplus) module)

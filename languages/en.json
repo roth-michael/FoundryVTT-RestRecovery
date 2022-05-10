@@ -114,6 +114,14 @@
             }
         },
 
+        "Traits": {
+            "Title": "Rest Recovery",
+            "HitDieBonus": {
+                "Title": "Hit Die Bonus",
+                "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+            }
+        },
+
         "Settings": {
             "Reset": {
                 "Title": "Reset settings to default",
