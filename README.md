@@ -53,7 +53,7 @@ This module adds support for Wizards' Arcane Recovery and Land Druids' Natural R
 
 If the Arcane/Natural Recovery Feature does not have any uses remaining or if there are no spell slots to recover, the spell slot UI will be hidden.
 
-### Feature: [Feature: Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)
+### Feature: [Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)
 
 If there's a character that is assigned to a player with levels in the Bard class and someone rolls hit dice, the module will automatically roll the appropriate dice based on the bard's level.
 
