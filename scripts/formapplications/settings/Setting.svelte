@@ -31,26 +31,28 @@
         {:else if setting.choices}
 
             <div class="choice-container">
-                <select name={setting.key} bind:value={setting.value}>
+                <select name={setting.key} bind:value={setting.value} disabled={setting.disabled}>
                     {#each Object.entries(setting.choices) as [key, choice], index (index)}
                         <option value="{key}">{localize(choice)}</option>
                     {/each}
                 </select>
 
                 {#if customFormulaSetting && setting.value === CONSTANTS.RECOVERY.CUSTOM}
-                    <input name="{setting.customFormula}" type="text" required bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''}>
+                    <input name="{setting.customFormula}" type="text" required bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''} disabled={setting.disabled}>
                 {/if}
             </div>
 
         {:else if setting.type === Number}
 
-            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0}>
+            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0} disabled={setting.disabled}>
 
         {:else}
 
             <div class="setting-container">
-                <input type="text" required bind:value={setting.value}>
-                <input type="text" disabled value={localize(setting.value)}>
+                <input type="text" required bind:value={setting.value} disabled={setting.disabled}>
+                {#if setting.localize}
+                    <input type="text" disabled value={localize(setting.value)}>
+                {/if}
             </div>
 
         {/if}

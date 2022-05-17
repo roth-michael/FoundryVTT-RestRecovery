@@ -47,6 +47,21 @@
             "5th": "5th"
         },
 
+        "FoodAndDrink": {
+            "BothSame": "They enjoyed the filling feeling of {item}.",
+            "BothRegular": "They enjoyed the regular selection of food and drink in this locale.",
+            "BothNone": "They didn't eat or drink anything today.",
+            "Both": "They enjoyed their own food and drink:",
+            "FoodRegularDrink": "They enjoyed the regular selection of drink in this locale, and ate:",
+            "FoodNoDrink": "They didn't drink anything, but ate:",
+            "DrinkRegularFood": "They enjoyed the regular selection of food in this locale, and drank:",
+            "DrinkNoFood": "They didn't eat anything, but drank:",
+
+            "NoExhaustion": "But they managed to avoid exhaustion.",
+            "Exhaustion": "But they suffered {exhaustion} levels of exhaustion."
+
+        },
+
         "Chat": {
             "RegainedUses": "In addition, they recovered the following:",
             "SpellSlotList": "{number} {level} level spell slot",
@@ -84,7 +99,18 @@
                 "Begin": "Begin Long Rest",
                 "BeginExplanation": "By beginning your long rest, you will regain some of your hit dice so that you can roll them to regain hit points.",
                 "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots differently.",
-                "CustomRulesLink": "Check out the custom rules."
+                "CustomRulesLink": "Check out the custom rules.",
+                "RestTab": "Resting",
+                "FoodAndWaterTab": "Food & Water",
+                "FoodWaterRequirement": "You need <strong>{food}</strong> lbs of food and <strong>{water}</strong> gallons of water each day.",
+                "EatToday": "What did you eat today?",
+                "DrinkToday": "What did you drink today?",
+                "FoodAmount": "Food amount:",
+                "DrinkAmount": "Drink amount:",
+                "NoFood": "If you finish this day without eating, <strong>you will automatically suffer 1 level of exhaustion.</strong>",
+                "HalfFood": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
+                "NoDrink": "If you finish this day without drinking, <strong>you will automatically suffer {exhaustion} level of exhaustion.</strong>",
+                "HalfDrink": "If you finish this day without drinking the full amount, you must make a DC {dc} Constitution saving throw or suffer {exhaustion} level of exhaustion."
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -95,6 +121,7 @@
                 "Content": "These are the settings your GM configured for long rests in this game."
             },
             "Resources": {
+                "Configure": "Configure Resource Recovery",
                 "Title": "Resource Configuration",
                 "Name": "Name",
                 "Value": "Value",
@@ -108,6 +135,7 @@
                 "LongRest": "Long Rest",
                 "ShortRest": "Short Rest",
                 "ItemNames": "Feature Names",
+                "FoodAndWater": "Food & Water",
                 "MoreToCome": "And with more configuration options to come!",
                 "Request": "Request new features here.",
                 "Submit": "Submit Settings"
@@ -119,6 +147,10 @@
             "HitDieBonus": {
                 "Title": "Hit Die Bonus",
                 "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+            },
+            "NoFoodWater": {
+                "Title": "Disable Food & Water Requirement",
+                "Hint": "If enabled, this character does not require food or water, similar to the Undying Nature warlock feature."
             }
         },
 
@@ -141,6 +173,38 @@
                 "Title": "Enable debugging",
                 "Label": "Prints debug messages to the console"
             },
+            "General": {
+                "EnableAutoRollButton": {
+                    "Title": "Enable hit dice auto roll button",
+                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
+                }
+            },
+            "FoodAndWater": {
+                "EnableFoodAndWater": {
+                    "Title": "Enable food and water automation",
+                    "Hint": "This enables sub-features relating to food and water automation, as seen below."
+                },
+                "FoodPoundsPerDay": {
+                    "Title": "Pounds of food required per day",
+                    "Hint": "This configures how many pounds of food a character needs per day."
+                },
+                "WaterGallonsPerDay": {
+                    "Title": "Gallons of water required per day",
+                    "Hint": "This configures how many gallons of water a character needs per day."
+                },
+                "AutomateFoodWaterExhaustion": {
+                    "Title": "Automate food & water exhaustion",
+                    "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough."
+                },
+                "HalfFoodDuration": {
+                    "Title": "Maximum days on half food",
+                    "Hint": "This configures how many days a character can survive on half-amounts of food before suffering from automatic exhaustion."
+                },
+                "HalfWaterSaveDC": {
+                    "Title": "Half water exhaustion DC",
+                    "Hint": "This configures the Constitution saving throw DC that characters must make if they drink only half of the required amount of water."
+                }
+            },
             "ShortRest": {
                 "IgnoreInactive": {
                     "Title": "Ignore inactive player characters",
@@ -156,6 +220,10 @@
                 }
             },
             "LongRest": {
+                "AutomateExhaustion": {
+                    "Title": "Enable exhaustion automation",
+                    "Hint": "This makes it so that exhaustion is subtracted by 1 every long rest."
+                },
                 "RollHitDice": {
                     "Title": "Enable long rest hit dice rolls",
                     "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
@@ -167,10 +235,6 @@
                 "PreRegainHitDiceBuffer": {
                     "Title": "Enable hit dice max buffer",
                     "Hint": "This setting causes each character to always regain hit dice, even if it would put their hit dice above their maximum, so that no hit dice are wasted. Any unused hit dice over their maximum will disappear once the long rest is completed."
-                },
-                "EnableAutoRollButton": {
-                    "Title": "Enable hit dice auto roll button",
-                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
                 },
                 "HitPointsRecoveryFraction": {
                     "Title": "Hit points recovery fraction",

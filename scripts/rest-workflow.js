@@ -1,5 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
+import { evaluateFormula, getConsumableItemDayUses, getSetting } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -8,46 +9,25 @@ export default class RestWorkflow {
     constructor(actor, longRest) {
         this.actor = actor;
         this.longRest = longRest;
+        this.finished = false;
+        this.preChatHookId = false;
+
         this.spellSlotsRegainedMessage = "";
         this.itemsRegainedMessages = [];
         this.resourcesRegainedMessages = [];
-        this.finished = false;
-        this.preChatHookId = false;
+        this.foodAndDrinkMessage = "";
+
+        this.food = false;
+        this.foodLevel = 1;
+        this.drink = false;
+        this.drinkLevel = 1;
     }
 
-    static intitialize(){
-        Hooks.on('updateActor', (actor) => {
-            const workflow = RestWorkflow.get(actor);
-            if (workflow && workflow.finished) {
-                workflow.preFinishRestMessage();
-            }
-        });
-
-        Hooks.on("restCompleted", (actor) => {
-            RestWorkflow.remove(actor);
-        });
-
-        CONFIG.DND5E.characterFlags.hitDieBonus = {
-            name: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Title"),
-            hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Hint"),
-            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
-            type: String,
-            placeholder: "0"
-        };
-    }
-
-    async setup(){
-        this.fetchHealthData();
-        this.fetchFeatures();
-        this.fetchSpellData();
-        return this;
-    }
-
-    get maxHP(){
+    get maxHP() {
         return this.actor.data.data.attributes.hp.max + (this.actor.data.data.attributes.hp.tempmax ?? 0)
     }
 
-    get currHP(){
+    get currHP() {
         return this.actor.data.data.attributes.hp.value;
     }
 
@@ -71,13 +51,42 @@ export default class RestWorkflow {
         }).filter(entry => entry[1]));
     }
 
+    static initialize() {
+        Hooks.on('updateActor', (actor) => {
+            const workflow = RestWorkflow.get(actor);
+            if (workflow && workflow.finished) {
+                workflow.preFinishRestMessage();
+            }
+        });
+
+        Hooks.on("dnd5e.restCompleted", (actor) => {
+            RestWorkflow.remove(actor);
+        });
+
+        CONFIG.DND5E.characterFlags.hitDieBonus = {
+            name: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Hint"),
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            type: String,
+            placeholder: "0"
+        };
+
+        CONFIG.DND5E.characterFlags.noFoodWater = {
+            name: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Hint"),
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            type: Boolean,
+            placeholder: false
+        };
+    }
+
     static get(actor) {
         return rests.get(actor.uuid);
     }
 
     static remove(actor) {
         const rest = this.get(actor);
-        if(rest?.preChatHookId) {
+        if (rest?.preChatHookId) {
             Hooks.off("preCreateChatMessage", rest.preChatHookId);
         }
         return rests.delete(actor.uuid);
@@ -110,6 +119,13 @@ export default class RestWorkflow {
 
     }
 
+    async setup() {
+        this.fetchHealthData();
+        this.fetchFeatures();
+        this.fetchSpellData();
+        return this;
+    }
+
     fetchHealthData() {
         this.healthData = {
             startingHitDice: this.actor.data.data.attributes.hd,
@@ -119,10 +135,10 @@ export default class RestWorkflow {
         this.refreshHealthData();
     }
 
-    refreshHealthData(){
+    refreshHealthData() {
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
-        if(this.longRest && (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL)){
+        if (this.longRest && (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL)) {
             let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
             this.healthData.hitPointsToRegain = hitPointsRecovered;
         }
@@ -281,7 +297,7 @@ export default class RestWorkflow {
 
         }
 
-        if(this.features.bardFeature) {
+        if (this.features.bardFeature) {
             if (bardLevel >= 17) {
                 this.features.songOfRest = "1d12";
             } else if (bardLevel >= 13) {
@@ -297,7 +313,7 @@ export default class RestWorkflow {
 
     async autoSpendHitDice() {
         const avgHitDiceRegain = this.getAverageHitDiceRoll();
-        const threshold = Math.max(Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain)+5);
+        const threshold = Math.max(Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain) + 5);
         await this.actor.autoSpendHitDice({ threshold });
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
@@ -307,7 +323,7 @@ export default class RestWorkflow {
 
         const availableHitDice = Object.entries(this.healthData.availableHitDice).filter(entry => entry[1]);
 
-        if(!availableHitDice.length) return 0;
+        if (!availableHitDice.length) return 0;
 
         const periapt = lib.getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
             ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
@@ -332,17 +348,17 @@ export default class RestWorkflow {
 
         return availableHitDice.map(entry => {
             const dieSize = Number(entry[0].split('d')[1]);
-            let average = (dieSize/2) + 0.5;
-            if(blackBlood){
+            let average = (dieSize / 2) + 0.5;
+            if (blackBlood) {
                 average = Array.from(Array(dieSize).keys())
-                    .reduce((acc, num) => acc + Math.max(average, num+1), 0) / dieSize;
+                    .reduce((acc, num) => acc + Math.max(average, num + 1), 0) / dieSize;
             }
             average *= periapt_mod;
-            if(durable){
-                if(conMod <= 0){
-                    average += (-2*conMod+1)/dieSize;
-                }else{
-                    average += (conMod-1)*(conMod)/(2*dieSize);
+            if (durable) {
+                if (conMod <= 0) {
+                    average += (-2 * conMod + 1) / dieSize;
+                } else {
+                    average += (conMod - 1) * (conMod) / (2 * dieSize);
                 }
             }
             return average * entry[1];
@@ -454,12 +470,15 @@ export default class RestWorkflow {
     }
 
     preFinishRestMessage() {
-        if(this.preChatHookId) return;
+        if (this.preChatHookId) return;
         this.preChatHookId = Hooks.once("preCreateChatMessage", (message, data) => {
-            let extra = this.spellSlotsRegainedMessage + this.itemsRegainedMessages.join("") + this.resourcesRegainedMessages.join("");
-            if(extra.length){
+            let extra = this.spellSlotsRegainedMessage
+                + this.itemsRegainedMessages.join("")
+                + this.resourcesRegainedMessages.join("")
+            if (extra.length) {
                 extra = `<p>${game.i18n.localize('REST-RECOVERY.Chat.RegainedUses')}</p>` + extra;
             }
+            extra += this.foodAndDrinkMessage;
             message.data.update({
                 content: `<p>${data.content}</p>` + extra
             });
@@ -468,19 +487,64 @@ export default class RestWorkflow {
 
     _finishedRest() {
 
-        const updates = {};
+        let updates = {};
 
         const maxShortRests = lib.getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
-        if(maxShortRests > 0) {
-            if(this.longRest) {
-                updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = 0;
-            }else{
-                const currentShortRests = getProperty(this.actor.data, `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`) || 0;
-                updates[`flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.currentShortRests`] = currentShortRests + 1;
+        if (maxShortRests > 0) {
+            if (this.longRest) {
+                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = 0;
+            } else {
+                const currentShortRests = getProperty(this.actor.data, `${CONSTANTS.FLAGS.BASE}.currentShortRests`) || 0;
+                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = currentShortRests + 1;
             }
         }
 
+        if(this.longRest){
+            updates = this._handleFoodWaterExhaustion(updates);
+        }
+
         return updates;
+    }
+
+    _handleFoodWaterExhaustion(updates){
+
+        let actorExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
+
+        if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+
+            let actorDaysWithoutFood = getProperty(this.actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
+
+            let actorExhaustionThreshold = evaluateFormula(
+                getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
+                foundry.utils.deepClone(this.actor.data.data)
+            )?.total ?? 4;
+
+            if (this.food === CONSTANTS.CONSUMABLE.NONE || this.foodLevel === 0.5) {
+                actorDaysWithoutFood += this.food === CONSTANTS.CONSUMABLE.NONE ? 1 : 0.5;
+                if (actorDaysWithoutFood > actorExhaustionThreshold) {
+                    actorExhaustion++;
+                }
+            } else if (this.foodLevel === 1 && this.food !== CONSTANTS.CONSUMABLE.NONE) {
+                actorDaysWithoutFood = 0;
+            }
+
+            if (this.drink === CONSTANTS.CONSUMABLE.NONE) {
+                actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+            } else if (this.drink === 0.5) {
+                // automate con save here
+            }
+
+            actorExhaustion = Math.min(actorExhaustion, 6);
+
+            updates[CONSTANTS.FLAGS.STARVATION] = actorDaysWithoutFood;
+            updates['data.attributes.exhaustion'] = actorExhaustion;
+
+        }
+
+        updates['data.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - 1, 6));
+
+        return updates;
+
     }
 
     _getRestHitPointRecovery(result) {
@@ -497,7 +561,7 @@ export default class RestWorkflow {
 
         let recoveredHP = this.finished ? this.healthData.hitPointsToRegain : 0;
 
-        if(!recoveredHP) {
+        if (!recoveredHP) {
             recoveredHP = typeof multiplier === "string"
                 ? Math.floor(lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total)
                 : Math.floor(maxHP * multiplier);
@@ -522,9 +586,9 @@ export default class RestWorkflow {
 
     }
 
-    _getRestHitDiceRecoveryPost(results, { forced = false }={}) {
+    _getRestHitDiceRecoveryPost(results, { forced = false } = {}) {
 
-        if(forced){
+        if (forced) {
             return results;
         }
 
@@ -564,12 +628,12 @@ export default class RestWorkflow {
         const roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
         const actorLevel = this.actor.data.data.details.level;
 
-        if(typeof multiplier === "string"){
+        if (typeof multiplier === "string") {
 
             const customRegain = lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total;
-            maxHitDice = Math.clamped(roundingMethod(customRegain),0,maxHitDice ?? actorLevel);
+            maxHitDice = Math.clamped(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
 
-        }else {
+        } else {
 
             maxHitDice = Math.clamped(
                 roundingMethod(actorLevel * multiplier),
@@ -590,25 +654,28 @@ export default class RestWorkflow {
         const actorCopy = foundry.utils.deepClone(this.actor.data.data);
 
         const customRecoveryResources = Object.entries(this.actor.data.data.resources).filter(entry => {
-            return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor.data, `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${entry[0]}.formula`)
+            return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
         });
 
         const regularResources = Object.entries(this.actor.data.data.resources).filter(entry => {
-            return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && !getProperty(this.actor.data, `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${entry[0]}.formula`)
+            return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && !getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
         });
 
         for (const [key, resource] of customRecoveryResources) {
             if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
-                const customFormula = getProperty(this.actor.data, `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${key}.formula`);
+                const customFormula = getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
                 const customRoll = lib.evaluateFormula(customFormula, actorCopy);
                 finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
 
                 const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
-                this.resourcesRegainedMessages.push(`<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", { name: resource.label, number: chargeText })}</li>`)
+                this.resourcesRegainedMessages.push(`<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
+                    name: resource.label,
+                    number: chargeText
+                })}</li>`)
             }
         }
 
-        if(this.resourcesRegainedMessages.length){
+        if (this.resourcesRegainedMessages.length) {
             this.resourcesRegainedMessages.unshift('<ul>')
             this.resourcesRegainedMessages.push('</ul>');
         }
@@ -649,12 +716,12 @@ export default class RestWorkflow {
                 updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
             }
 
-        // Short rest
-        }else{
+            // Short rest
+        } else {
 
-            if(this.spellData.feature) {
+            if (this.spellData.feature) {
 
-                if(!foundry.utils.isObjectEmpty(this.recoveredSlots)) {
+                if (!foundry.utils.isObjectEmpty(this.recoveredSlots)) {
 
                     for (const [slot, num] of Object.entries(this.recoveredSlots)) {
                         const prop = `data.spells.spell${slot}.value`;
@@ -685,7 +752,7 @@ export default class RestWorkflow {
 
     _getRestItemUsesRecovery(updates, args) {
 
-        updates = this.recoverItemsUses(updates, args);
+        updates = this._recoverItemsUses(updates, args);
 
         if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
             updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
@@ -695,7 +762,7 @@ export default class RestWorkflow {
 
     }
 
-    recoverItemsUses(updates, args) {
+    _recoverItemsUses(updates, args) {
         const { recoverLongRestUses, recoverDailyUses } = args;
 
         const featsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER);
@@ -708,18 +775,18 @@ export default class RestWorkflow {
             if (item.data.data.uses) {
                 const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
                 if (recoverLongRestUses && item.data.data.uses.per === "lr") {
-                    updates = this.recoverItemUse(clonedActor, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
+                    updates = this._recoverItemUse(clonedActor, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
                 } else if (recoverDailyUses && item.data.data.uses.per === "day") {
-                    updates = this.recoverItemUse(clonedActor, updates, item, dailyMultiplier);
+                    updates = this._recoverItemUse(clonedActor, updates, item, dailyMultiplier);
                 } else if (customRecovery) {
-                    updates = this.recoverItemUse(clonedActor, updates, item);
+                    updates = this._recoverItemUse(clonedActor, updates, item);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {
                 updates.push({ _id: item.id, "data.recharge.charged": true });
             }
         }
 
-        if(this.itemsRegainedMessages.length){
+        if (this.itemsRegainedMessages.length) {
             this.itemsRegainedMessages.sort((a, b) => {
                 return a[0] > b[0] || a[1] > b[1] ? -1 : 1;
             });
@@ -728,27 +795,35 @@ export default class RestWorkflow {
             this.itemsRegainedMessages.push('</ul>');
         }
 
+        updates = this._handleFoodAndDrinkItems(updates);
+
         return updates;
     }
 
 
-    recoverItemUse(actor, updates, item, multiplier = 1.0) {
+    _recoverItemUse(actor, updates, item, multiplier = 1.0) {
 
         const usesMax = item.data.data.uses.max;
         const usesCur = item.data.data.uses.value;
 
-        if(usesCur === usesMax) return updates;
+        if (usesCur === usesMax) return updates;
 
         const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
         const customFormula = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.custom_formula ?? "";
 
         let recoverValue;
-        if(customRecovery) {
-            const customRoll = lib.evaluateFormula(customFormula, { actor: actor, item: foundry.utils.deepClone(item.data.data) });
+        if (customRecovery) {
+            const customRoll = lib.evaluateFormula(customFormula, {
+                actor: actor,
+                item: foundry.utils.deepClone(item.data.data)
+            });
             recoverValue = Math.max(0, Math.min(usesCur + customRoll.total, usesMax));
             const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(usesMax - usesCur, customRoll.total)}</a>`;
-            this.itemsRegainedMessages.push([item.type, `<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", { name: item.name, number: chargeText })}</li>`])
-        }else {
+            this.itemsRegainedMessages.push([item.type, `<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
+                name: item.name,
+                number: chargeText
+            })}</li>`])
+        } else {
             recoverValue = typeof multiplier === "string"
                 ? lib.evaluateFormula(multiplier, foundry.utils.deepClone(item.data.data))?.total
                 : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
@@ -768,6 +843,93 @@ export default class RestWorkflow {
 
         return updates;
 
+    }
+
+    _handleFoodAndDrinkItems(updates) {
+
+        if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
+
+        const originalUpdates = foundry.utils.duplicate(updates);
+
+        const itemFood = this.food !== CONSTANTS.CONSUMABLE.REGULAR && this.food !== CONSTANTS.CONSUMABLE.NONE;
+        const itemDrink = this.drink !== CONSTANTS.CONSUMABLE.REGULAR && this.drink !== CONSTANTS.CONSUMABLE.NONE;
+
+        if (this.food === this.drink) {
+            if (this.food === CONSTANTS.CONSUMABLE.REGULAR) {
+                this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.BothRegular")
+            } else if (this.food === CONSTANTS.CONSUMABLE.NONE) {
+                this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.BothNone")
+            } else {
+                const item = this.actor.items.get(this.food);
+                if(item) {
+                    this.foodAndDrinkMessage = game.i18n.format("REST-RECOVERY.FoodAndDrink.BothSame", {
+                        item: item.name
+                    });
+                    const { path, worthPerDay } = lib.getConsumableItemDayUses(item);
+                    const subtract = (1 / worthPerDay) / this.foodLevel;
+                    updates.push({
+                        _id: this.food,
+                        [path]: getProperty(item.data, path) - subtract
+                    })
+                }
+            }
+        } else {
+
+            if(itemFood && itemDrink){
+                const food = this.actor.items.get(this.food);
+                const drink = this.actor.items.get(this.drink);
+                if(food && drink) {
+                    this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.Both");
+                }
+            }else if(itemFood && !itemDrink){
+                const food = this.actor.items.get(this.food);
+                if(food) {
+                    const localization = this.drink === CONSTANTS.CONSUMABLE.REGULAR
+                        ? "REST-RECOVERY.FoodAndDrink.FoodRegularDrink"
+                        : "REST-RECOVERY.FoodAndDrink.FoodNoDrink";
+                    this.foodAndDrinkMessage = game.i18n.localize(localization);
+                }
+            }else if(itemDrink && !itemFood){
+                const drink = this.actor.items.get(this.drink);
+                if(drink) {
+                    const localization = this.food === CONSTANTS.CONSUMABLE.REGULAR
+                        ? "REST-RECOVERY.FoodAndDrink.DrinkRegularFood"
+                        : "REST-RECOVERY.FoodAndDrink.DrinkNoFood";
+                    this.foodAndDrinkMessage = game.i18n.localize(localization);
+                }
+            }
+
+            this.foodAndDrinkMessage += "<ul>";
+            if(itemFood){
+                const food = this.actor.items.get(this.food);
+                const { path, worthPerDay } = lib.getConsumableItemDayUses(food);
+                const subtract = (1 / worthPerDay) / this.foodLevel;
+                updates.push({
+                    _id: this.food,
+                    [path]: getProperty(food.data, path) - subtract
+                })
+                this.foodAndDrinkMessage += `<li>${food.name} (${subtract})</li>`;
+            }
+
+            if(itemDrink){
+                const drink = this.actor.items.get(this.drink);
+                const { path, worthPerDay } = lib.getConsumableItemDayUses(drink);
+                const subtract = (1 / worthPerDay) / this.drinkLevel;
+                updates.push({
+                    _id: this.drink,
+                    [path]: getProperty(drink.data, path) - subtract
+                })
+                this.foodAndDrinkMessage += `<li>${drink.name} (${subtract})</li>`;
+            }
+            this.foodAndDrinkMessage += "</ul>";
+        }
+
+
+        if(this.foodAndDrinkMessage){
+            this.foodAndDrinkMessage = `<p>${this.foodAndDrinkMessage}</p>`;
+        }
+
+        return originalUpdates;
     }
 
 }

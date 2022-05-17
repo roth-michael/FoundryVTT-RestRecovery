@@ -8,6 +8,16 @@ const CONSTANTS = {
         ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
 
         /*-------------------------------------------*
+         *          Food and Water Settings          *
+         *-------------------------------------------*/
+        ENABLE_FOOD_AND_WATER: "enable-food-and-water",
+        FOOD_POUNDS_PER_DAY: "food-pounds-per-day",
+        WATER_GALLONS_PER_DAY: "water-gallons-per-day",
+        AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
+        HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
+        HALF_WATER_SAVE_DC: "half-water-save-dc",
+
+        /*-------------------------------------------*
          *            Short Rest Settings            *
          *-------------------------------------------*/
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
@@ -17,6 +27,7 @@ const CONSTANTS = {
         /*-------------------------------------------*
          *             Long Rest Settings            *
          *-------------------------------------------*/
+        AUTOMATE_EXHAUSTION: "automate-exhaustion",
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
         PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
@@ -85,13 +96,87 @@ CONSTANTS.DEFAULT_SETTINGS = {
      *           General Rest Settings           *
      *-------------------------------------------*/
     [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
-        name: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Hint",
+        name: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Title",
+        hint: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Hint",
         scope: "world",
         group: "general",
         config: false,
         default: true,
         type: Boolean
+    },
+
+    /*-------------------------------------------*
+     *          Food and Water Settings          *
+     *-------------------------------------------*/
+    [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Hint",
+        scope: "world",
+        group: "foodandwater",
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.FOOD_POUNDS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.FoodPoundsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodPoundsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.WATER_GALLONS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.WaterGallonsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterGallonsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+                || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
+        },
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: "3+max(1,@abilities.con.mod)",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: 15,
+        type: Number
     },
 
     /*-------------------------------------------*
@@ -129,6 +214,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
     /*-------------------------------------------*
      *             Long Rest Settings            *
      *-------------------------------------------*/
+    [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION]: {
+        name: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Title",
+        hint: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Hint",
+        scope: "world",
+        group: "longrest",
+        config: false,
+        default: false,
+        type: Boolean
+    },
     [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
         name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
         hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
@@ -143,7 +237,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
         scope: "world",
         group: "longrest",
-        validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value
+        },
         config: false,
         default: false,
         type: Boolean
@@ -153,7 +249,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
         scope: "world",
         group: "longrest",
-        validate: CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
+        },
         config: false,
         default: false,
         type: Boolean
@@ -364,6 +462,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Wizard",
         type: String
     },
@@ -373,6 +472,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Druid",
         type: String
     },
@@ -382,6 +482,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Bard",
         type: String
     },
@@ -391,6 +492,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
         type: String
     },
@@ -400,6 +502,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
         type: String
     },
@@ -409,6 +512,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.SongOfRest",
         type: String
     },
@@ -418,6 +522,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ChefFeat",
         type: String
     },
@@ -427,6 +532,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ChefTools",
         type: String
     },
@@ -436,6 +542,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.DurableFeat",
         type: String
     },
@@ -445,6 +552,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.PeriaptItem",
         type: String
     },
@@ -454,6 +562,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.WoundClosureBlessing",
         type: String
     },
@@ -463,11 +572,26 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.BlackBloodFeature",
         type: String
     }
 };
 
+const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`
+CONSTANTS.FLAGS = {
+    BASE: baseFlag,
+    RESOURCES: baseFlag + ".resources",
+    RECOVERY: baseFlag + ".recovery",
+    CONSUMABLE: baseFlag + ".consumable",
+    STARVATION: baseFlag + ".starvation"
+}
+
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
+
+CONSTANTS.CONSUMABLE = {
+    NONE: "none",
+    REGULAR: "regular"
+}
 
 export default CONSTANTS;

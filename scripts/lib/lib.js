@@ -55,3 +55,28 @@ export function evaluateFormula(formula, data){
     const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
     return new Roll(rollFormula).evaluate({ async: false });
 }
+
+export function getConsumableItemsFromActor(actor){
+
+    const items = actor.items.map(item => {
+        const consumableUses = getConsumableItemDayUses(item);
+        if(!consumableUses.uses > 0) return false;
+        const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+        return { id: item.id, name: item.name, uses: consumableUses.uses, worth: consumableData.worth, type: consumableData.type };
+    }).filter(Boolean);
+
+    return {
+        foods: items.filter(item => item.type === "food" || item.type === "both"),
+        drinks: items.filter(item => item.type === "water" || item.type === "both")
+    };
+
+}
+
+export function getConsumableItemDayUses(item){
+    const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+    if(!consumableData?.enabled) return 0;
+    const worthPerDay = consumableData.worth;
+    const path = consumableData.use === "quantity" ? "data.quantity" : "data.uses.value";
+    const uses = (getProperty(item.data, path) ?? 0) * worthPerDay;
+    return { uses, path, worthPerDay };
+}

@@ -1,10 +1,14 @@
 <script>
+    import CONSTANTS from "../../constants.js";
+
     import { getContext } from 'svelte';
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-    import CONSTANTS from "../../constants.js";
+
     import { getSetting } from "../../lib/lib.js";
+
     import Setting from "./Setting.svelte";
+    import Tabs from "../components/Tabs.svelte";
 
     const { application } = getContext('external');
 
@@ -30,7 +34,7 @@
         for(const group of Object.keys(settings)){
             for(let index = 0; index < settings[group].length; index++){
                 if(!settings[group][index][1].validate) continue;
-                settings[group][index][1].disabled = !settingsMap.get(settings[group][index][1].validate).value;
+                settings[group][index][1].disabled = settings[group][index][1].validate(settingsMap);
 
                 if(!settings[group][index][1].disabled) continue;
                 settings[group][index][1].value = settings[group][index][1].default;
@@ -56,6 +60,8 @@
         application.close();
     }
 
+    let activeTab = "general";
+
 </script>
 
 <svelte:options accessors={true}/>
@@ -65,17 +71,18 @@
 
         <h2 style="text-align: center; margin-bottom: 1rem;">{localize("REST-RECOVERY.Dialogs.ModuleConfig.Title")}</h2>
 
-        <nav class="tabs" data-group="primary">
-            <a class="item active" data-tab="general">{localize("REST-RECOVERY.Dialogs.ModuleConfig.General")}</a>
-            <a class="item" data-tab="longrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.LongRest")}</a>
-            <a class="item" data-tab="shortrest">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ShortRest")}</a>
-            <a class="item" data-tab="itemnames">{localize("REST-RECOVERY.Dialogs.ModuleConfig.ItemNames")}</a>
-        </nav>
+        <Tabs bind:activeTab tabs={[
+            { value: "general", label: "REST-RECOVERY.Dialogs.ModuleConfig.General" },
+            { value: "longrest", label: "REST-RECOVERY.Dialogs.ModuleConfig.LongRest" },
+            { value: "shortrest", label: "REST-RECOVERY.Dialogs.ModuleConfig.ShortRest" },
+            { value: "itemnames", label: "REST-RECOVERY.Dialogs.ModuleConfig.ItemNames" },
+            { value: "foodandwater", label: "REST-RECOVERY.Dialogs.ModuleConfig.FoodAndWater" },
+        ]}/>
 
         <section class="tab-body">
 
             {#each Object.keys(settings) as group, index (index)}
-            <div class="tab flex" data-group="primary" data-tab="{group}">
+            <div class="tab flex" class:active={activeTab === group} data-group="primary" data-tab="{group}">
 
                 {#each settings[group] as [key, setting], setting_index (key)}
                     {#if !setting.hidden}
@@ -109,12 +116,6 @@
 </ApplicationShell>
 
 <style lang="scss">
-
-  .tabs {
-    border-bottom: 1px solid rgba(0,0,0,0.25);
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.5rem;
-  }
 
   .tab-body {
     max-height: 660px;
