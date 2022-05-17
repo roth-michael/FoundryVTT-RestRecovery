@@ -42,7 +42,7 @@
     let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
     const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER);
-    const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION);
+    const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
     const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
 
     const actorExhaustion = getProperty(actor.data, "data.attributes.exhaustion") ?? 0;
@@ -264,7 +264,7 @@
                                 <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoFood")}</p>
                             {:else}
                                 <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfFood", {
-                                    days: Math.ceil(actorExhaustionThreshold - actorDaysWithoutFood) / foodLevel
+                                    days: Math.ceil(actorExhaustionThreshold - actorDaysWithoutFood) / (selectedFood === CONSTANTS.CONSUMABLE.NONE ? 1 : foodLevel)
                                 })}</p>
                             {/if}
                         {/if}

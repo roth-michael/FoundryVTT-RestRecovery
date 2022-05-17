@@ -508,6 +508,8 @@ export default class RestWorkflow {
 
     _handleFoodWaterExhaustion(updates){
 
+        if(!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
+
         let actorExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
 
         if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
@@ -531,7 +533,7 @@ export default class RestWorkflow {
             if (this.drink === CONSTANTS.CONSUMABLE.NONE) {
                 actorExhaustion += actorExhaustion > 0 ? 2 : 1;
             } else if (this.drink === 0.5) {
-                // automate con save here
+                // TODO: automate con save here
             }
 
             actorExhaustion = Math.min(actorExhaustion, 6);
