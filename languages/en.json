@@ -194,7 +194,7 @@
                 },
                 "AutomateFoodWaterExhaustion": {
                     "Title": "Automate food & water exhaustion",
-                    "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough."
+                    "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough. Requires long rest exhaustion automation to be enabled."
                 },
                 "HalfFoodDuration": {
                     "Title": "Maximum days on half food",
