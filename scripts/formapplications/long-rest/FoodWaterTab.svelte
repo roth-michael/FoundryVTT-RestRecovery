@@ -36,6 +36,9 @@
     let hasAccessToWater = false;
     let halfWater = false;
 
+    let externalFoodSourceAccess = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS);
+    let externalWaterSourceAccess = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS);
+
     let newFoodSatedValue = actorFoodSatedValue;
     let newWaterSatedValue = actorWaterSatedValue;
 
@@ -47,16 +50,10 @@
     refreshConsumableItems();
 
     function toggleAccessToFood(){
-        if(hasAccessToFood) {
-            halfFood = 'full';
-            newFoodSatedValue = actorRequiredFood - actorFoodSatedValue;
-        }else{
-            halfFood = false;
-            newFoodSatedValue = actorFoodSatedValue;
-        }
-
-        calculateAmountOfItems();
-        refreshConsumableItems();
+        halfFood = hasAccessToFood
+            ? externalFoodSourceAccess
+            : false;
+        toggleAmountOfFood();
     }
 
     function toggleAmountOfFood(){
@@ -71,16 +68,10 @@
     }
 
     function toggleAccessToWater(){
-        if(hasAccessToWater) {
-            halfWater = 'full';
-            newWaterSatedValue = actorRequiredWater;
-        }else{
-            halfWater = false;
-            newWaterSatedValue = actorWaterSatedValue;
-        }
-
-        calculateAmountOfItems();
-        refreshConsumableItems();
+        halfWater = hasAccessToWater
+            ? externalWaterSourceAccess
+            : false;
+        toggleAmountOfWater();
     }
 
     function toggleAmountOfWater(){
@@ -249,19 +240,21 @@
                 food: Math.max(0, actorRequiredFood - newFoodSatedValue)
             })}</p>
 
-            <label class="checkbox">
-                <input type="checkbox" bind:checked={hasAccessToFood} on:change={toggleAccessToFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFood")}
-            </label>
+            {#if externalFoodSourceAccess === "half" || externalFoodSourceAccess === "full"}
+                <label class="checkbox">
+                    <input type="checkbox" bind:checked={hasAccessToFood} on:change={toggleAccessToFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFood")}
+                </label>
 
-            {#if hasAccessToFood}
-            <p>
-                <label class="checkbox">
-                    <input type="radio" value="full" bind:group={halfFood} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodFull")}
-                </label>
-                <label class="checkbox">
-                    <input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodHalf")}
-                </label>
-            </p>
+                {#if hasAccessToFood}
+                <p>
+                    <label class="checkbox">
+                        <input type="radio" value="full" bind:group={halfFood} disabled={externalFoodSourceAccess === "half"} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodFull")}
+                    </label>
+                    <label class="checkbox">
+                        <input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodHalf")}
+                    </label>
+                </p>
+                {/if}
             {/if}
         {:else}
             <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodSated")}</p>
@@ -274,19 +267,21 @@
                 water: Math.max(0, actorRequiredWater - newWaterSatedValue)
             })}</p>
 
-            <label class="checkbox">
-                <input type="checkbox" class="red" bind:checked={hasAccessToWater} on:change={toggleAccessToWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWater")}
-            </label>
+            {#if externalWaterSourceAccess === "half" || externalWaterSourceAccess === "full"}
+                <label class="checkbox">
+                    <input type="checkbox" class="red" bind:checked={hasAccessToWater} on:change={toggleAccessToWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWater")}
+                </label>
 
-            {#if hasAccessToWater}
-            <p>
-                <label class="checkbox">
-                    <input type="radio" value="full" bind:group={halfWater} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterFull")}
-                </label>
-                <label class="checkbox">
-                    <input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterHalf")}
-                </label>
-            </p>
+                {#if hasAccessToWater}
+                <p>
+                    <label class="checkbox">
+                        <input type="radio" value="full" bind:group={halfWater} disabled={externalWaterSourceAccess === "half"} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterFull")}
+                    </label>
+                    <label class="checkbox">
+                        <input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterHalf")}
+                    </label>
+                </p>
+                {/if}
             {/if}
         {:else}
             <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.WaterSated")}</p>

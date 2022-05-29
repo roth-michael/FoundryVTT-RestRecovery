@@ -122,7 +122,7 @@
                 "FoodSated": "You've already eaten enough today.",
                 "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water today.",
                 "WaterSated": "You've already drank enough today.",
-                "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
+                "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer <strong>1 level of exhaustion</strong> in <strong>{days} days</strong>.",
                 "FoodExhaustion": "Because you are starving, you will automatically suffer <strong>1 level of exhaustion</strong> if you finish this day without having eaten the full required amount of food.",
                 "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
                 "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
