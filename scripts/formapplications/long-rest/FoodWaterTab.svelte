@@ -250,16 +250,16 @@
             })}</p>
 
             <label class="checkbox">
-                <input type="checkbox" bind:checked={hasAccessToFood} on:change={toggleAccessToFood}> Has access to external food
+                <input type="checkbox" bind:checked={hasAccessToFood} on:change={toggleAccessToFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFood")}
             </label>
 
             {#if hasAccessToFood}
             <p>
                 <label class="checkbox">
-                    <input type="radio" value="full" bind:group={halfFood} on:change={toggleAmountOfFood}> Eat until sated
+                    <input type="radio" value="full" bind:group={halfFood} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodFull")}
                 </label>
                 <label class="checkbox">
-                    <input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}> Eat half amount needed
+                    <input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodHalf")}
                 </label>
             </p>
             {/if}
@@ -275,16 +275,16 @@
             })}</p>
 
             <label class="checkbox">
-                <input type="checkbox" class="red" bind:checked={hasAccessToWater} on:change={toggleAccessToWater}> Has access to external water
+                <input type="checkbox" class="red" bind:checked={hasAccessToWater} on:change={toggleAccessToWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWater")}
             </label>
 
             {#if hasAccessToWater}
             <p>
                 <label class="checkbox">
-                    <input type="radio" value="full" bind:group={halfWater} on:change={toggleAmountOfWater}> Drink until sated
+                    <input type="radio" value="full" bind:group={halfWater} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterFull")}
                 </label>
                 <label class="checkbox">
-                    <input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}> Drink half amount needed
+                    <input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterHalf")}
                 </label>
             </p>
             {/if}

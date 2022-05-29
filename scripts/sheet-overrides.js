@@ -4,9 +4,9 @@ import { getSetting } from "./lib/lib.js";
 import * as lib from "./lib/lib.js";
 
 export default function registerSheetOverrides() {
-    Hooks.on("renderItemSheet5e", patchItemSheet);
-    Hooks.on("renderActorSheet5e", patchActorSheet);
-    Hooks.on("renderAbilityUseDialog", patchAbilityUseDialog)
+    Hooks.on("renderItemSheet5e", patch_itemSheet);
+    Hooks.on("renderActorSheet5e", patch_actorSheet);
+    Hooks.on("renderAbilityUseDialog", patch_AbilityUseDialog)
     registerTraits();
 }
 
@@ -51,7 +51,7 @@ function registerTraits(){
 }
 
 
-function patchActorSheet(app, html, data){
+function patch_actorSheet(app, html, data){
     let actor = game.actors.get(data.actor._id);
     let border = true;
     let targetElem = html.find('.center-pane .attributes')[0];
@@ -72,16 +72,16 @@ function patchActorSheet(app, html, data){
     });
 }
 
-function patchItemSheet(app, html, { item } = {}){
+function patch_itemSheet(app, html, { item } = {}){
 
     if(getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable"){
-        applyItemConsumableInputs(app, html, item);
+        patch_itemConsumableInputs(app, html, item);
     }
 
-    applyItemCustomRecovery(app, html, item);
+    patch_itemCustomRecovery(app, html, item);
 }
 
-function applyItemConsumableInputs(app, html, item){
+function patch_itemConsumableInputs(app, html, item){
 
     const customConsumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
 
@@ -120,7 +120,7 @@ function applyItemConsumableInputs(app, html, item){
 
 }
 
-function applyItemCustomRecovery(app, html, item){
+function patch_itemCustomRecovery(app, html, item){
 
     const customRecovery = getProperty(item, `${CONSTANTS.FLAGS.RECOVERY}.enabled`) ?? false;
     const customFormula =  getProperty(item, `${CONSTANTS.FLAGS.RECOVERY}.custom_formula`) ?? "";
@@ -141,7 +141,7 @@ function applyItemCustomRecovery(app, html, item){
 
 }
 
-function patchAbilityUseDialog(app, html, data){
+function patch_AbilityUseDialog(app, html){
 
     if(!app.item) return;
 
@@ -163,12 +163,14 @@ function patchAbilityUseDialog(app, html, data){
 
     const fullUseAvailable = app.item.data.data.uses.value >= 1.0;
 
-    let additionalHtml = "";
+    let additionalHtml;
 
     if(customConsumable.dayWorth){
 
         let localizationString = "REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + lib.capitalizeFirstLetter(customConsumable.type);
-        additionalHtml = `<p style='border-top: 1px solid rgba(0,0,0,0.25); margin:0.5rem 0; padding: 0.5rem 0;' class='notes'>${game.i18n.localize(localizationString)}</p>`;
+        additionalHtml = `<p style='border-top: 1px solid rgba(0,0,0,0.25); margin:0.5rem 0; padding: 0.5rem 0;' class='notes'>
+            ${game.i18n.localize(localizationString)}
+        </p>`;
 
     }else{
 
@@ -177,8 +179,8 @@ function patchAbilityUseDialog(app, html, data){
         <div style="margin-bottom:0.5rem;">
             <input type="radio" name="consumeAmount" value="full"
                 ${fullUseAvailable ? "checked" : ""}
-                ${!fullUseAvailable ? "disabled" : ""}/> Full amount
-            <input type="radio" name="consumeAmount" value="half" ${!fullUseAvailable ? "checked" : ""}/> Half amount
+                ${!fullUseAvailable ? "disabled" : ""}/> ${game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.FullUnit")}
+            <input type="radio" name="consumeAmount" value="half" ${!fullUseAvailable ? "checked" : ""}/> ${game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.HalfUnit")}
         </div>`;
 
         if(actorRequiredFood && (customConsumable.type === "both" || customConsumable.type === "food")) {
@@ -186,7 +188,9 @@ function patchAbilityUseDialog(app, html, data){
             if (actorFoodSatedValue >= actorRequiredFood) {
                 additionalHtml += game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.SatedFood");
             }else{
-                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedFood", { units: actorRequiredFood - actorFoodSatedValue });
+                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedFood", {
+                    units: actorRequiredFood - actorFoodSatedValue
+                });
             }
             additionalHtml += "</p>";
         }
@@ -196,11 +200,14 @@ function patchAbilityUseDialog(app, html, data){
             if (actorWaterSatedValue >= actorRequiredWater) {
                 additionalHtml += game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.SatedWater");
             }else{
-                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedWater", { units: actorRequiredWater - actorWaterSatedValue });
+                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedWater", {
+                    units: actorRequiredWater - actorWaterSatedValue
+                });
             }
             additionalHtml += "</p>";
         }
     }
+
     targetElem.append($(additionalHtml));
 
     app.options.height = "auto";

@@ -127,7 +127,13 @@
                 "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
                 "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
                 "DragDrop": "Drag and drop items to consume, or select:",
-                "DayWorth": "One use of item worth entire day of {type}"
+                "DayWorth": "One use of item worth entire day of {type}",
+                "ExternalFood": "Has access to external food source",
+                "ExternalFoodFull": "Eat until sated",
+                "ExternalFoodHalf": "Eat half amount needed",
+                "ExternalWater": "Has access to external water source",
+                "ExternalWaterFull": "Drink until sated",
+                "ExternalWaterHalf": "Drink half amount needed"
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -174,7 +180,9 @@
                 "SatedFood": "You are already sated, you will gain no benefits from eating this.",
                 "NotSatedFood": "You need to eat {units} units to be sated.",
                 "SatedWater": "You are already sated, you will gain no benefits from drinking this.",
-                "NotSatedWater": "You require {units} units of water to be sated."
+                "NotSatedWater": "You require {units} units of water to be sated.",
+                "FullUnit": "Consume full unit",
+                "HalfUnit": "Consume half unit"
             }
         },
 
@@ -235,6 +243,14 @@
                 "WaterUnitsPerDay": {
                     "Title": "Units of water required per day",
                     "Hint": "This configures how many units of water characters needs per day. Setting this to 0 disables water requirement altogether."
+                },
+                "ExternalFoodAccess": {
+                    "Title": "Access to external food source",
+                    "Hint": "This configures whether players will be able to pick \"External Food Source\" during long rests as a replacement for consumable items. \"Full\" means full access like in inns and cities, \"Half\" means limited access or poor food, \"None\" means wilderness or starvation."
+                },
+                "ExternalWaterAccess": {
+                    "Title": "Access to external water source",
+                    "Hint": "Same as above, but for water. Keep in mind that \"Half\" and \"None\" will cause characters to experience exhaustion almost immediately unless they have access to consumable items."
                 },
                 "AutomateFoodWaterExhaustion": {
                     "Title": "Automate food & water exhaustion",

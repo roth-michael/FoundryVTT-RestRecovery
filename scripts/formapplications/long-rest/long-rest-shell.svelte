@@ -39,7 +39,7 @@
 
     let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
     let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
-    let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL;
+    let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
     let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
     const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);

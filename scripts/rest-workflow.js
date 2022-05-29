@@ -113,7 +113,7 @@ export default class RestWorkflow {
     refreshHealthData() {
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
-        if (this.longRest && (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL)) {
+        if (this.longRest && (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL)) {
             let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
             this.healthData.hitPointsToRegain = hitPointsRecovered;
         }

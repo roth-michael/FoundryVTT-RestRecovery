@@ -16,15 +16,15 @@ export function ordinalSuffixOf(i) {
 export function determineLongRestMultiplier(settingKey) {
     const multiplierSetting = getSetting(settingKey);
     switch (multiplierSetting) {
-        case CONSTANTS.RECOVERY.NONE:
+        case CONSTANTS.FRACTIONS.NONE:
             return 0;
-        case CONSTANTS.RECOVERY.QUARTER:
+        case CONSTANTS.FRACTIONS.QUARTER:
             return 0.25;
-        case CONSTANTS.RECOVERY.HALF:
+        case CONSTANTS.FRACTIONS.HALF:
             return 0.5;
-        case CONSTANTS.RECOVERY.FULL:
+        case CONSTANTS.FRACTIONS.FULL:
             return 1.0;
-        case CONSTANTS.RECOVERY.CUSTOM:
+        case CONSTANTS.FRACTIONS.CUSTOM:
             return getSetting(CONSTANTS.DEFAULT_SETTINGS[settingKey].customFormula);
         default:
             throw new Error(`Unable to parse recovery multiplier setting for "${settingKey}".`);

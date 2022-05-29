@@ -37,7 +37,7 @@
                     {/each}
                 </select>
 
-                {#if customFormulaSetting && setting.value === CONSTANTS.RECOVERY.CUSTOM}
+                {#if customFormulaSetting && setting.value === CONSTANTS.FRACTIONS.CUSTOM}
                     <input name="{setting.customFormula}" type="text" required bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''} disabled={setting.disabled}>
                 {/if}
             </div>
