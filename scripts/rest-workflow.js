@@ -63,8 +63,7 @@ export default class RestWorkflow {
     }
 
     static remove(actor) {
-        const rest = this.get(actor);
-        return rests.delete(actor.uuid);
+        rests.delete(actor.uuid);
     }
 
     static make(actor, longRest = false) {
@@ -74,27 +73,7 @@ export default class RestWorkflow {
         return workflow.setup();
     }
 
-    static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
-
-        const workflow = this.get(actor);
-
-        if (!runWrap) {
-            if (workflow && workflow[fnName]) {
-                return wrapped(workflow[fnName](args));
-            }
-            return wrapped(args);
-        }
-
-        let updates = wrapped(args);
-        if (workflow && workflow[fnName]) {
-            updates = workflow[fnName](updates, args);
-        }
-
-        return updates;
-
-    }
-
-    async setup() {
+    setup() {
         this.fetchHealthData();
         this.fetchFeatures();
         this.fetchSpellData();
@@ -189,6 +168,26 @@ export default class RestWorkflow {
             this.spellData.pointsTotal = lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
+
+    }
+
+    static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+
+        const workflow = this.get(actor);
+
+        if (!runWrap) {
+            if (workflow && workflow[fnName]) {
+                return wrapped(workflow[fnName](args));
+            }
+            return wrapped(args);
+        }
+
+        let updates = wrapped(args);
+        if (workflow && workflow[fnName]) {
+            updates = workflow[fnName](updates, args);
+        }
+
+        return updates;
 
     }
 
@@ -467,112 +466,111 @@ export default class RestWorkflow {
 
     _handleFoodWaterExhaustion(updates){
 
-        if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+        let actorInitialExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
+        let actorExhaustion = actorInitialExhaustion;
+        let exhaustionToRemove = 1;
 
-            let actorInitialExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
-            let actorExhaustion = actorInitialExhaustion;
-            let exhaustionToRemove = 1;
+        if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
 
             let totalFoodEatenToday = 0;
             let totalWaterDrankToday = 0;
 
-            if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
+            const {
+                actorRequiredFood,
+                actorRequiredWater,
+                actorFoodSatedValue,
+                actorWaterSatedValue
+            } = lib.getActorConsumableValues(this.actor);
 
-                const {
-                    actorRequiredFood,
-                    actorRequiredWater,
-                    actorFoodSatedValue,
-                    actorWaterSatedValue
-                } = lib.getActorConsumableValues(this.actor);
+            let actorDaysWithoutFood = getProperty(this.actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
-                let actorDaysWithoutFood = getProperty(this.actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
+            const items = this.consumableData.items.filter(item => item.amount);
+            let foodItems = items.filter(item => item.type === "both" || item.type === "food");
+            let waterItems = items.filter(item => item => item.type === "both" || item.type === "water");
 
-                const items = this.consumableData.items.filter(item => item.amount);
-                let foodItems = items.filter(item => item.type === "both" || item.type === "food");
-                let waterItems = items.filter(item => item => item.type === "both" || item.type === "water");
+            if(actorRequiredFood) {
 
-                if(actorRequiredFood) {
+                let actorExhaustionThreshold = lib.evaluateFormula(
+                    lib.getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
+                    foundry.utils.deepClone(this.actor.data.data)
+                )?.total ?? 4;
 
-                    let actorExhaustionThreshold = lib.evaluateFormula(
-                        lib.getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
-                        foundry.utils.deepClone(this.actor.data.data)
-                    )?.total ?? 4;
-
-                    if(this.consumableData.hasAccessToFood) {
-                        totalFoodEatenToday = this.consumableData.halfFood === "full"
-                            ? actorRequiredFood
-                            : actorRequiredFood/2;
-                    } else {
-                        totalFoodEatenToday = foodItems.reduce((acc, item) => {
-                            acc += item.consumable.dayWorth ? actorRequiredFood : item.amount;
-                            return acc;
-                        }, actorFoodSatedValue);
-                    }
-
-                    totalFoodEatenToday = Math.min(actorRequiredFood, totalFoodEatenToday);
-
-                    if (totalFoodEatenToday <= (actorRequiredFood / 2)) {
-                        if (totalFoodEatenToday === 0) {
-                            exhaustionToRemove = 0;
-                            actorDaysWithoutFood += 1;
-                            this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodNone"));
-                        }else {
-                            actorDaysWithoutFood += 0.5;
-                            this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodHalf"));
-                        }
-                    } else {
-                        actorDaysWithoutFood = 0;
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodFull"));
-                    }
-
-                    if (actorDaysWithoutFood > actorExhaustionThreshold) {
-                        actorExhaustion++;
-                    }
-
-                    setProperty(updates, CONSTANTS.FLAGS.STARVATION, actorDaysWithoutFood);
-
+                if(this.consumableData.hasAccessToFood) {
+                    totalFoodEatenToday = this.consumableData.halfFood === "full"
+                        ? actorRequiredFood
+                        : actorRequiredFood/2;
+                } else {
+                    totalFoodEatenToday = foodItems.reduce((acc, item) => {
+                        acc += item.consumable.dayWorth ? actorRequiredFood : item.amount;
+                        return acc;
+                    }, actorFoodSatedValue);
                 }
 
-                if(actorRequiredWater) {
+                totalFoodEatenToday = Math.min(actorRequiredFood, totalFoodEatenToday);
 
-                    if(this.consumableData.hasAccessToWater) {
-                        totalWaterDrankToday = this.consumableData.halfWater === "full"
-                            ? actorRequiredWater
-                            : actorRequiredWater/2;
-                    } else {
-                        totalWaterDrankToday = waterItems.reduce((acc, item) => {
-                            acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
-                            return acc;
-                        }, actorWaterSatedValue);
-                    }
-
-                    totalWaterDrankToday = Math.min(actorRequiredWater, totalWaterDrankToday);
-
-                    if (totalWaterDrankToday === 0) {
-                        actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                if (totalFoodEatenToday <= (actorRequiredFood / 2)) {
+                    if (totalFoodEatenToday === 0) {
                         exhaustionToRemove = 0;
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterNone"));
-                    } else if (totalWaterDrankToday <= (actorRequiredWater/2)) {
-                        // TODO: automate con save here
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterHalf"));
-                    }else{
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterFull"));
+                        actorDaysWithoutFood += 1;
+                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodNone"));
+                    }else {
+                        actorDaysWithoutFood += 0.5;
+                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodHalf"));
                     }
+                } else {
+                    actorDaysWithoutFood = 0;
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodFull"));
                 }
 
-                if(actorExhaustion > actorInitialExhaustion){
-                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
-                        exhaustion: actorExhaustion - actorInitialExhaustion
-                    }));
+                if (actorDaysWithoutFood > actorExhaustionThreshold) {
+                    actorExhaustion++;
                 }
 
-                setProperty(updates, CONSTANTS.FLAGS.SATED_FOOD, 0);
-                setProperty(updates, CONSTANTS.FLAGS.SATED_WATER, 0);
+                setProperty(updates, CONSTANTS.FLAGS.STARVATION, actorDaysWithoutFood);
 
             }
 
-            setProperty(updates, 'data.attributes.exhaustion', Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6)));
+            if(actorRequiredWater) {
 
+                if(this.consumableData.hasAccessToWater) {
+                    totalWaterDrankToday = this.consumableData.halfWater === "full"
+                        ? actorRequiredWater
+                        : actorRequiredWater/2;
+                } else {
+                    totalWaterDrankToday = waterItems.reduce((acc, item) => {
+                        acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
+                        return acc;
+                    }, actorWaterSatedValue);
+                }
+
+                totalWaterDrankToday = Math.min(actorRequiredWater, totalWaterDrankToday);
+
+                if (totalWaterDrankToday === 0) {
+                    actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                    exhaustionToRemove = 0;
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterNone"));
+                } else if (totalWaterDrankToday <= (actorRequiredWater/2)) {
+                    // TODO: automate con save here
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterHalf"));
+                }else{
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterFull"));
+                }
+            }
+
+            if(actorExhaustion > actorInitialExhaustion && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
+                this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
+                    exhaustion: actorExhaustion - actorInitialExhaustion
+                }));
+            }
+
+            setProperty(updates, CONSTANTS.FLAGS.SATED_FOOD, 0);
+            setProperty(updates, CONSTANTS.FLAGS.SATED_WATER, 0);
+
+        }
+
+
+        if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+            setProperty(updates, 'data.attributes.exhaustion', Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6)));
         }
 
         if(this.foodAndWaterMessage.length){
@@ -585,22 +583,20 @@ export default class RestWorkflow {
 
     _displayRestResultMessage(chatMessage){
 
-        chatMessage.then((message) => {
-            let extra = this.spellSlotsRegainedMessage
-                + this.itemsRegainedMessages.join("")
-                + this.resourcesRegainedMessages.join("")
-            if (extra.length) {
-                extra = `<p>${game.i18n.localize('REST-RECOVERY.Chat.RegainedUses')}</p>` + extra;
-            }
-            if (this.foodAndWaterMessage.length) {
-                extra += this.foodAndWaterMessage.join("");
-            }
-            message.update({
-                content: `<p>${message.data.content}</p>` + extra
-            });
-        });
+        let extra = this.spellSlotsRegainedMessage
+            + this.itemsRegainedMessages.join("")
+            + this.resourcesRegainedMessages.join("")
+        if (extra.length) {
+            extra = `<p>${game.i18n.localize('REST-RECOVERY.Chat.RegainedUses')}</p>` + extra;
+        }
 
-        return chatMessage;
+        if (this.foodAndWaterMessage.length) {
+            extra += this.foodAndWaterMessage.join("");
+        }
+
+        return chatMessage.update({
+            content: `<p>${chatMessage.data.content}</p>` + extra
+        });
 
     }
 
@@ -956,6 +952,7 @@ export default class RestWorkflow {
     static _setupFoodListeners(){
 
         Hooks.on("closeApplication", (app) => {
+            if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
             if(!app?.item) return;
             const item = app.item;
             const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
@@ -972,6 +969,7 @@ export default class RestWorkflow {
         });
 
         Hooks.on('preUpdateItem', (item, data) => {
+            if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
             if(getProperty(data, CONSTANTS.FLAGS.CONSUMABLE)?.enabled && !lib.isRealNumber(getProperty(item.data, "data.uses.max"))){
                 return this._patchConsumableItem(item, data);
             }
@@ -983,6 +981,7 @@ export default class RestWorkflow {
     }
 
     static _patchConsumableItem(item, data){
+        if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
         data["data.uses.value"] = 1;
         data["data.uses.max"] = 1;
         data["data.uses.per"] = "charges";
@@ -992,6 +991,8 @@ export default class RestWorkflow {
     }
 
     static _handleConsumableItem(item, data){
+
+        if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
 
         const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
 
