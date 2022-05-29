@@ -10,6 +10,7 @@ export default function registerLibwrappers() {
     patch_shortRest();
     patch_longRest();
     patch_rollHitDie();
+    patch_displayRestResultMessage();
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
     patch_getRestResourceRecovery();
@@ -190,6 +191,17 @@ function patch_rollHitDie() {
     );
 }
 
+function patch_displayRestResultMessage() {
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Actor.documentClass.prototype._displayRestResultMessage",
+        function (wrapped, args) {
+            return RestWorkflow.wrapperFn(this, wrapped, args, "_displayRestResultMessage")
+        }
+    )
+
+}
+
 function patch_getRestHitPointRecovery() {
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
@@ -284,6 +296,8 @@ function patch_getUsageUpdates(){
                 actorUpdates[`data.spells.${consumeSpellLevel}.value`] = Math.max(spells - 1, 0);
             }
 
+            const consumeFull = RestWorkflow.itemsListened.get(this.id);
+
             // Consume Limited Usage
             if ( consumeUsage ) {
                 const uses = id.uses || {};
@@ -291,7 +305,7 @@ function patch_getUsageUpdates(){
                 let used = false;
 
                 // Reduce usages
-                const remaining = Math.max(available - 1, 0);
+                const remaining = Math.max(available - (consumeFull ? 1 : 0.5), 0);
                 if ( available > 0 ) {
                     used = true;
                     itemUpdates["data.uses.value"] = remaining;

@@ -106,80 +106,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     },
 
     /*-------------------------------------------*
-     *          Food and Water Settings          *
-     *-------------------------------------------*/
-    [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Hint",
-        scope: "world",
-        group: "foodandwater",
-        config: false,
-        default: false,
-        type: Boolean
-    },
-    [CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Hint",
-        scope: "world",
-        group: "foodandwater",
-        validate: (settingsMap) => {
-            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
-        },
-        config: false,
-        default: 1,
-        type: Number
-    },
-    [CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Hint",
-        scope: "world",
-        group: "foodandwater",
-        validate: (settingsMap) => {
-            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
-        },
-        config: false,
-        default: 1,
-        type: Number
-    },
-    [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
-        scope: "world",
-        group: "foodandwater",
-        validate: (settingsMap) => {
-            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-                || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
-        },
-        config: false,
-        default: false,
-        type: Boolean
-    },
-    [CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Hint",
-        scope: "world",
-        group: "foodandwater",
-        validate: (settingsMap) => {
-            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
-        },
-        config: false,
-        default: "3+max(1,@abilities.con.mod)",
-        type: String
-    },
-    [CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Hint",
-        scope: "world",
-        group: "foodandwater",
-        validate: (settingsMap) => {
-            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
-        },
-        config: false,
-        default: 15,
-        type: Number
-    },
-
-    /*-------------------------------------------*
      *            Short Rest Settings            *
      *-------------------------------------------*/
     [CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS]: {
@@ -575,6 +501,85 @@ CONSTANTS.DEFAULT_SETTINGS = {
         localize: true,
         default: "REST-RECOVERY.FeatureNames.BlackBloodFeature",
         type: String
+    },
+
+
+    /*-------------------------------------------*
+     *          Food and Water Settings          *
+     *-------------------------------------------*/
+    [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+                || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
+        },
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: "3+max(1,@abilities.con.mod)",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: 15,
+        type: Number
     }
 };
 

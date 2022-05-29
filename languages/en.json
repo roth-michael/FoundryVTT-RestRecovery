@@ -35,6 +35,12 @@
             "RoundUp": "Round Up"
         },
 
+        "Misc": {
+            "Food": "Food",
+            "Water": "Water",
+            "Both": "Both"
+        },
+
         "NumberToText": {
             "1": "One",
             "2": "Two",
@@ -69,16 +75,17 @@
                 "RequiredSatedWater": "They require {units} units of water to be sated for the day.",
                 "SatedFood": "They don't require any more food today.",
                 "SatedWater": "They don't require any more water today.",
-                "BothSame": "They enjoyed the filling feeling of {item}.",
-                "BothRegular": "They enjoyed the regular selection of food and drink in this locale.",
-                "BothNone": "They didn't eat or drink anything today.",
-                "Both": "They enjoyed their own food and drink:",
-                "FoodRegularWater": "They enjoyed the regular selection of drink in this locale, and ate:",
-                "FoodNoWater": "They didn't drink anything, but ate:",
-                "WaterRegularFood": "They enjoyed the regular selection of food in this locale, and drank:",
-                "WaterNoFood": "They didn't eat anything, but drank:",
+
+                "FoodFull": "They ate enough to be sated today.",
+                "FoodHalf": "They could only find half of the amount of food they needed.",
+                "FoodNone": "They didn't eat anything today.",
+
+                "WaterFull": "They drank enough to be sated today.",
+                "WaterHalf": "They could only find half of the amount of food they needed.",
+                "WaterNone": "They didn't drink anything today.",
+
                 "NoExhaustion": "But they managed to avoid exhaustion.",
-                "Exhaustion": "But they suffered {exhaustion} levels of exhaustion."
+                "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion."
             }
         },
 
@@ -115,16 +122,12 @@
                 "FoodSated": "You've already eaten enough today.",
                 "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water today.",
                 "WaterSated": "You've already drank enough today.",
-                "EatToday": "What did you eat today?",
-                "DrinkToday": "What did you drink today?",
-                "FoodAmount": "Food amount:",
-                "WaterAmount": "Drink amount:",
-                "NoFood": "If you finish this day having eaten less than half of the required amount of food, <strong>you will automatically suffer 1 level of exhaustion.</strong>",
-                "HalfFood": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
-                "NoWater": "If you finish this day having drank less than half of the requirement amount of water, <strong>you will automatically suffer {exhaustion} levels of exhaustion.</strong>",
-                "HalfWater": "If you finish this day without drinking the full amount, you must make a <strong>DC {dc} Constitution saving throw</strong> or suffer <strong>{exhaustion} levels of exhaustion.</strong>",
-                "DragDropItem": "Drag and drop items to consume, or select:",
-                "DragDrop": "Drag and drop items to consume"
+                "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
+                "FoodExhaustion": "Because you are starving, you will automatically suffer <strong>1 level of exhaustion</strong> if you finish this day without having eaten the full required amount of food.",
+                "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
+                "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
+                "DragDrop": "Drag and drop items to consume, or select:",
+                "DayWorth": "One use of item worth entire day of {type}"
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -156,9 +159,6 @@
             },
             "ItemOverrides": {
                 "Title": "Rest Recovery: Food & Water",
-                "Food": "Food",
-                "Water": "Water",
-                "Both": "Both",
                 "Enabled": "Enabled",
                 "Formula": "Formula:",
                 "IsConsumable": "Item is consumable",
@@ -172,7 +172,7 @@
                 "DayWorthTitleWater": "This type of consumable is worth an entire day worth of water.",
                 "DayWorthTitleCont": "You will not need to consume anything of that type until the next day. You cannot eat half of this type of consumable.",
                 "SatedFood": "You are already sated, you will gain no benefits from eating this.",
-                "NotSatedFood": "You need to eat ${units} units to be sated.",
+                "NotSatedFood": "You need to eat {units} units to be sated.",
                 "SatedWater": "You are already sated, you will gain no benefits from drinking this.",
                 "NotSatedWater": "You require {units} units of water to be sated."
             }

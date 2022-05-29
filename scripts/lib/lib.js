@@ -64,7 +64,7 @@ export function getConsumableItemsFromActor(actor){
         const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
         return {
             id: item.id,
-            name: item.name
+            name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumableData.type)) + ")",
         };
     }).filter(Boolean);
 
@@ -117,4 +117,8 @@ export function getActorConsumableValues(actor){
 
 export function capitalizeFirstLetter(str){
     return str.slice(0,1).toUpperCase() + str.slice(1);
+}
+
+export function roundHalf(num) {
+    return Math.round(num*2)/2;
 }

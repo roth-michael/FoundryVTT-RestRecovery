@@ -45,7 +45,7 @@
     height: 0.8rem;
     font-size: 0.5rem;
     box-shadow: 0 0 0 0 rgba(217, 49, 49, 1);
-    animation: pulse 2s infinite;
+    animation: pulse 1s infinite;
     background-color: rgb(217, 49, 49);
     border-radius: 50%;
   }
