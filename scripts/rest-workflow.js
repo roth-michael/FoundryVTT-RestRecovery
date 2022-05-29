@@ -1074,7 +1074,7 @@ export default class RestWorkflow {
                     speaker: ChatMessage.getSpeaker({ actor: item.parent }),
                     content: message,
                 });
-            }, 450)
+            }, 1000)
         }
 
     }
