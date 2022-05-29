@@ -2,7 +2,9 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
     import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-    import { TJSDocument }  from '@typhonjs-fvtt/runtime/svelte/store';
+    import { TJSDocument } from '@typhonjs-fvtt/runtime/svelte/store';
+
+    import { getContext } from 'svelte';
 
     import HealthBar from "../components/HealthBar.svelte";
     import Dialog from "../components/Dialog.svelte";
@@ -10,10 +12,9 @@
     import HitDieRoller from "../components/HitDieRoller.svelte";
     import Tabs from "../components/Tabs.svelte";
 
-    import { getContext } from 'svelte';
-
+    import FoodWaterTab from "./FoodWaterTab.svelte";
     import RestWorkflow from "../../rest-workflow.js";
-    import { evaluateFormula, getConsumableItemsFromActor, getSetting } from "../../lib/lib.js";
+    import { getActorConsumableValues, getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
 
     const { application } = getContext('external');
@@ -41,23 +42,10 @@
     let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.RECOVERY.FULL;
     let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
-    const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER);
-    const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
-    const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
+    const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
+    const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && !actorNeedsNoFoodWater;
 
-    const actorExhaustion = getProperty(actor.data, "data.attributes.exhaustion") ?? 0;
-    const actorDaysWithoutFood = getProperty(actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
-    const actorExhaustionThreshold = evaluateFormula(
-        getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
-        foundry.utils.deepClone(actor.data.data)
-    )?.total ?? 4;
-
-    let { foods, drinks } = getConsumableItemsFromActor(actor);
-
-    let selectedFood = foods[0]?.id ?? CONSTANTS.CONSUMABLE.REGULAR;
-    let selectedDrink = drinks[0]?.id ?? CONSTANTS.CONSUMABLE.REGULAR;
-    let foodLevel = 1;
-    let drinkLevel = 1;
+    let { actorRequiredFood, actorRequiredWater } = getActorConsumableValues(actor);
 
     const workflow = RestWorkflow.get(actor);
 
@@ -91,10 +79,6 @@
     }
 
     async function updateSettings() {
-        if(enableFoodAndWater){
-            workflow.food = selectedFood;
-            workflow.drink = selectedDrink;
-        }
         workflow.finished = true;
         application.options.resolve(newDay);
         application.close();
@@ -119,7 +103,7 @@
         healthData = workflow.healthData;
     }
 
-    async function autoRollHitDie(){
+    async function autoRollHitDie() {
         await workflow.autoSpendHitDice();
         healthData = workflow.healthData;
         startedLongRest = true;
@@ -131,31 +115,31 @@
     {
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
-        if(hpUpdate){
+        if (hpUpdate) {
             actorUpdated();
         }
     }
 
     async function actorUpdated() {
-        if(!startedLongRest){
+        if (!startedLongRest) {
             workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
         updateHealthBarText();
     }
 
-    function updateHealthBarText(){
+    function updateHealthBarText() {
         currHP = workflow.currHP;
         maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
         healthPercentageToGain = (currHP + healthData.hitPointsToRegain) / maxHP;
         healthBarText = `HP: ${currHP} / ${maxHP}`
-        if(healthData.hitPointsToRegain){
+        if (healthData.hitPointsToRegain) {
             healthBarText += ` (+${healthData.hitPointsToRegain})`;
         }
     }
 
-    function showCustomRulesDialog(){
+    function showCustomRulesDialog() {
         TJSDialog.prompt({
             title: localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"),
             content: {
@@ -196,14 +180,7 @@
                     <p class="notes"><a style="color: var(--color-text-hyperlink);" on:click={showCustomRulesDialog}>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRulesLink")}</a></p>
                 {/if}
 
-                {#if showStartLongRestButton}
-                    <div class="form-group" style="margin: 1rem 0;">
-                        <button type="button" style="flex:0 1 auto;" on:click={startLongRest}>
-                            <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.Begin")}
-                        </button>
-                        <p class="notes">{localize("REST-RECOVERY.Dialogs.LongRest.BeginExplanation")}</p>
-                    </div>
-                {:else}
+                {#if !showStartLongRestButton}
                     {#if enableRollHitDice}
                         <HitDieRoller
                             bind:selectedHitDice="{selectedHitDice}"
@@ -229,90 +206,27 @@
 
             </div>
 
-            {#if enableFoodAndWater}
-            <div class="tab" class:active={activeTab === "foodwater"} data-group="primary" data-tab="foodwater">
-
-                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodWaterRequirement", {
-                    food: getSetting(CONSTANTS.SETTINGS.FOOD_POUNDS_PER_DAY),
-                    water: getSetting(CONSTANTS.SETTINGS.WATER_GALLONS_PER_DAY)
-                })}</p>
-
-                <div class="flex">
-                    <div>
-                        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.EatToday")}</p>
-                        <select style="width:100%;" bind:value={selectedFood}>
-                            {#each foods as food (food.id)}
-                                <option value={food.id}>{food.name} ({food.uses} left, worth {food.worth})</option>
-                            {/each}
-                            <option value={CONSTANTS.CONSUMABLE.REGULAR}>Access to external food source</option>
-                            <option value={CONSTANTS.CONSUMABLE.NONE}>{@html localize("REST-RECOVERY.Fractions.None")}</option>
-                        </select>
-                        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodAmount")}</p>
-                        <div>
-                            <label class="checkbox" style="margin-right:1rem;">
-                                <input type="radio" disabled={selectedFood === CONSTANTS.CONSUMABLE.NONE} bind:group={foodLevel} value={1}>
-                                {@html localize("REST-RECOVERY.Fractions.Full")}
-                            </label>
-                            <label class="checkbox">
-                                <input type="radio" disabled={selectedFood === CONSTANTS.CONSUMABLE.NONE} bind:group={foodLevel} value={0.5}>
-                                {@html localize("REST-RECOVERY.Fractions.Half")}
-                            </label>
-                        </div>
-
-                        {#if enableAutomatedExhaustion && (selectedFood === CONSTANTS.CONSUMABLE.NONE || foodLevel === 0.5)}
-                            {#if actorDaysWithoutFood > actorExhaustionThreshold}
-                                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoFood")}</p>
-                            {:else}
-                                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfFood", {
-                                    days: Math.ceil(actorExhaustionThreshold - actorDaysWithoutFood) / (selectedFood === CONSTANTS.CONSUMABLE.NONE ? 1 : foodLevel)
-                                })}</p>
-                            {/if}
-                        {/if}
-                    </div>
-                    <div>
-                        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.DrinkToday")}</p>
-                        <select style="width:100%;" bind:value={selectedDrink}>
-                            {#each drinks as drink (drink.id)}
-                                <option value={drink.id}>{drink.name} - {drink.uses} left, worth {drink.worth} days</option>
-                            {/each}
-                            <option value={CONSTANTS.CONSUMABLE.REGULAR}>Access to external water source</option>
-                            <option value={CONSTANTS.CONSUMABLE.NONE}>{@html localize("REST-RECOVERY.Fractions.None")}</option>
-                        </select>
-                        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.DrinkAmount")}</p>
-                        <div>
-                            <label class="checkbox" style="margin-right:1rem;">
-                                <input type="radio" disabled={selectedDrink === CONSTANTS.CONSUMABLE.NONE} bind:group={drinkLevel} value={1}>
-                                {@html localize("REST-RECOVERY.Fractions.Full")}
-                            </label>
-                            <label class="checkbox">
-                                <input type="radio" disabled={selectedDrink === CONSTANTS.CONSUMABLE.NONE} bind:group={drinkLevel} value={0.5}>
-                                {@html localize("REST-RECOVERY.Fractions.Half")}
-                            </label>
-                        </div>
-                        {#if enableAutomatedExhaustion && (selectedDrink === CONSTANTS.CONSUMABLE.NONE || drinkLevel === 0.5)}
-                            {#if selectedDrink === CONSTANTS.CONSUMABLE.NONE}
-                                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoDrink", {
-                                    exhaustion: actorExhaustion > 0 ? 2 : 1
-                                })}</p>
-                            {:else if drinkLevel === 0.5}
-                                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfDrink", {
-                                    dc: halfWaterSaveDC,
-                                    exhaustion: actorExhaustion > 0 ? 2 : 1
-                                })}</p>
-                            {/if}
-                        {/if}
-                    </div>
+            {#if enableFoodAndWater && (actorRequiredFood || actorRequiredWater)}
+                <div class="tab" class:active={activeTab === "foodwater"} data-group="primary" data-tab="foodwater">
+                    <FoodWaterTab {actor} {workflow}/>
                 </div>
-
-            </div>
             {/if}
 
         </section>
 
 
+        {#if showStartLongRestButton && activeTab !== "foodwater"}
+            <div class="form-group" style="margin: 0.5rem 0;">
+                <p class="notes">{localize("REST-RECOVERY.Dialogs.LongRest.BeginExplanation")}</p>
+            </div>
+        {/if}
         <footer class="flexrow" style="margin-top:0.5rem;">
             {#if !showStartLongRestButton}
             <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
+            {:else}
+            <button type="button" class="dialog-button" on:click={startLongRest}>
+                <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.Begin")}
+            </button>
             {/if}
             {#if !startedLongRest}
                 <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>

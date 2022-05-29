@@ -60,9 +60,14 @@ export function getConsumableItemsFromActor(actor){
 
     const items = actor.items.map(item => {
         const consumableUses = getConsumableItemDayUses(item);
-        if(!consumableUses.uses > 0) return false;
+        if(!consumableUses > 0) return false;
         const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
-        return { id: item.id, name: item.name, uses: consumableUses.uses, worth: consumableData.worth, type: consumableData.type };
+        return {
+            id: item.id,
+            name: item.name,
+            uses: consumableUses,
+            type: consumableData.type
+        };
     }).filter(Boolean);
 
     return {
@@ -75,8 +80,48 @@ export function getConsumableItemsFromActor(actor){
 export function getConsumableItemDayUses(item){
     const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
     if(!consumableData?.enabled) return 0;
-    const worthPerDay = consumableData.worth;
-    const path = consumableData.use === "quantity" ? "data.quantity" : "data.uses.value";
-    const uses = (getProperty(item.data, path) ?? 0) * worthPerDay;
-    return { uses, path, worthPerDay };
+    return (getProperty(item.data, "data.uses.value") ?? 1);
+}
+
+export function isRealNumber(inNumber) {
+    return !isNaN(inNumber)
+        && typeof inNumber === "number"
+        && isFinite(inNumber);
+}
+
+export function getActorConsumableValues(actor){
+
+    let actorFoodSatedValue = getProperty(actor.data, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
+    let actorWaterSatedValue = getProperty(actor.data, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
+
+    let actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
+
+    let foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
+    let actorRequiredFoodUnits = getProperty(actor.data, `flags.dnd5e.foodUnits`);
+    let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && foodUnitsSetting !== 0
+        ? actorRequiredFoodUnits
+        : foodUnitsSetting;
+
+    let waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
+    let actorRequiredWaterUnits = getProperty(actor.data, `flags.dnd5e.waterUnits`);
+    let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
+        ? actorRequiredWaterUnits
+        : waterUnitsSetting;
+
+    if(actorNeedsNoFoodWater){
+        actorRequiredFood = 0;
+        actorRequiredWater = 0;
+    }
+
+    return {
+        actorRequiredFood,
+        actorRequiredWater,
+        actorFoodSatedValue,
+        actorWaterSatedValue
+    }
+
+}
+
+export function capitalizeFirstLetter(str){
+    return str.slice(0,1).toUpperCase() + str.slice(1);
 }

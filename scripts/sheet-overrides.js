@@ -1,10 +1,55 @@
 import CONSTANTS from "./constants.js";
 import ResourceConfig from "./formapplications/resource-config/resource-config.js";
+import { getSetting } from "./lib/lib.js";
+import * as lib from "./lib/lib.js";
 
 export default function registerSheetOverrides() {
     Hooks.on("renderItemSheet5e", patchItemSheet);
     Hooks.on("renderActorSheet5e", patchActorSheet);
+    Hooks.on("renderAbilityUseDialog", patchAbilityUseDialog)
+    registerTraits();
 }
+
+function registerTraits(){
+
+    CONFIG.DND5E.characterFlags.hitDieBonus = {
+        section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+        name: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Title"),
+        hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Hint"),
+        type: String,
+        placeholder: "0"
+    };
+
+    if(getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
+
+        CONFIG.DND5E.characterFlags.foodUnits = {
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            name: game.i18n.localize("REST-RECOVERY.Traits.FoodUnitsPerDay.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.FoodUnitsPerDay.Hint"),
+            type: Number,
+            placeholder: getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY)
+        };
+
+        CONFIG.DND5E.characterFlags.waterUnits = {
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            name: game.i18n.localize("REST-RECOVERY.Traits.WaterUnitsPerDay.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.WaterUnitsPerDay.Hint"),
+            type: Number,
+            placeholder: getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY)
+        };
+
+        CONFIG.DND5E.characterFlags.noFoodWater = {
+            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+            name: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Title"),
+            hint: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Hint"),
+            type: Boolean,
+            placeholder: false
+        };
+
+    }
+
+}
+
 
 function patchActorSheet(app, html, data){
     let actor = game.actors.get(data.actor._id);
@@ -29,7 +74,7 @@ function patchActorSheet(app, html, data){
 
 function patchItemSheet(app, html, { item } = {}){
 
-    if(item.type === "consumable"){
+    if(getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable"){
         applyItemConsumableInputs(app, html, item);
     }
 
@@ -43,35 +88,34 @@ function applyItemConsumableInputs(app, html, item){
     let targetElem = html.find('.form-header')?.[1];
     if (!targetElem) return;
     $(`
-        <div class="form-header">Rest Recovery: Food & Water</div>
+        <div class="form-header">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Title")}</div>
         <div class="form-group">
             <div class="form-fields" style="margin-right:0.5rem;">
                 <label class="checkbox" style="font-size:13px;">
-                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE}.enabled" ${customConsumable.enabled ? "checked" : ""}> Item is consumable
+                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE}.enabled" ${customConsumable.enabled ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable")}
                 </label>
             </div>
-            <div class="form-fields">
-                <label style="flex:0 1 auto;">Use type:</label>
-                <select name="${CONSTANTS.FLAGS.CONSUMABLE}.use" ${!customConsumable.enabled ? "disabled" : ""}>
-                    <option ${customConsumable.use === "quantity" ? "selected" : ""} value="quantity">Quantity</option>
-                    <option ${customConsumable.use === "charges" ? "selected" : ""} value="charges">Charges</option>
+            <div class="form-fields" style="margin-right:0.5rem;">
+                <label style="flex:0 1 auto;">Type:</label>
+                <select name="${CONSTANTS.FLAGS.CONSUMABLE}.type" ${!customConsumable.enabled ? "disabled" : ""}>
+                    <option ${customConsumable.type === "food" ? "selected" : ""} value="food">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Food")}</option>
+                    <option ${customConsumable.type === "water" ? "selected" : ""} value="water">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Water")}</option>
+                    <option ${customConsumable.type === "both" ? "selected" : ""} value="both">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Both")}</option>
                 </select>
             </div>
         </div>
+        
         <div class="form-group">
             <div class="form-fields" style="margin-right:0.5rem;">
-                <label style="flex:0 1 auto;">Worth in days:</label>
-                <input type="text" data-dtype="Number" name="${CONSTANTS.FLAGS.CONSUMABLE}.worth" value="${customConsumable.worth ?? '1'}" ${!customConsumable.enabled ? "disabled" : ""}>
-            </div>
-            <div class="form-fields">
-                <label style="flex:0 1 auto;">Type of consumable:</label>
-                <select name="${CONSTANTS.FLAGS.CONSUMABLE}.type" ${!customConsumable.enabled ? "disabled" : ""}>
-                    <option ${customConsumable.type === "food" ? "selected" : ""} value="food">Food</option>
-                    <option ${customConsumable.type === "water" ? "selected" : ""} value="water">Water</option>
-                    <option ${customConsumable.type === "both" ? "selected" : ""} value="both">Both</option>
-                </select>
+                <label class="checkbox" style="font-size:13px;">
+                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE}.dayWorth" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+                </label>
             </div>
         </div>
+        
+        <small style="display:${customConsumable.enabled ? "block" : "none"}; margin: 0.5rem 0;">
+            ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.ChargesDescription")}
+        </small>
     `).insertBefore(targetElem);
 
 }
@@ -87,12 +131,79 @@ function applyItemCustomRecovery(app, html, item){
         <div class="form-fields">
             <label class="checkbox">
                 <input type="checkbox" name="${CONSTANTS.FLAGS.RECOVERY}.enabled" ${customRecovery ? "checked" : ""}>
-                Enabled
+                ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Enabled")}
             </label>
             <span style="flex: 0 0 auto; margin: 0 0.25rem;">|</span>
-            <span class="sep" style="flex: 0 0 auto; margin-right: 0.25rem;">Formula:</span>
+            <span class="sep" style="flex: 0 0 auto; margin-right: 0.25rem;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Formula")}</span>
             <input type="text" name="${CONSTANTS.FLAGS.RECOVERY}.custom_formula" ${!customRecovery ? "disabled" : ""} value="${customRecovery ? customFormula : ""}">
         </div>
     </div>`).insertAfter(targetElem);
+
+}
+
+function patchAbilityUseDialog(app, html, data){
+
+    if(!app.item) return;
+
+    const customConsumable = getProperty(app.item.data, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+
+    if(!customConsumable.enabled || !app.item.data.data.uses.max) return;
+
+    let {
+        actorRequiredFood,
+        actorRequiredWater,
+        actorFoodSatedValue,
+        actorWaterSatedValue
+    } = lib.getActorConsumableValues(app.item.parent);
+
+    if(!actorRequiredFood && !actorRequiredWater) return;
+
+    let content = html.find(".dialog-content");
+    let targetElem = content.children().first();
+
+    const fullUseAvailable = app.item.data.data.uses.value >= 1.0;
+
+    let additionalHtml = "";
+
+    if(customConsumable.dayWorth){
+
+        let localizationString = "REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + lib.capitalizeFirstLetter(customConsumable.type);
+        additionalHtml = `<p style='border-top: 1px solid rgba(0,0,0,0.25); margin:0.5rem 0; padding: 0.5rem 0;' class='notes'>${game.i18n.localize(localizationString)}</p>`;
+
+    }else{
+
+        additionalHtml = `
+        <p>${game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.Title")}</p>
+        <div style="margin-bottom:0.5rem;">
+            <input type="radio" name="consumeAmount" value="full"
+                ${fullUseAvailable ? "checked" : ""}
+                ${!fullUseAvailable ? "disabled" : ""}/> Full amount
+            <input type="radio" name="consumeAmount" value="half" ${!fullUseAvailable ? "checked" : ""}/> Half amount
+        </div>`;
+
+        if(actorRequiredFood && (customConsumable.type === "both" || customConsumable.type === "food")) {
+            additionalHtml += "<p style='border-top: 1px solid rgba(0,0,0,0.25); margin:0.5rem 0; padding: 0.5rem 0;' class='notes'>";
+            if (actorFoodSatedValue >= actorRequiredFood) {
+                additionalHtml += game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.SatedFood");
+            }else{
+                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedFood", { units: actorRequiredFood - actorFoodSatedValue });
+            }
+            additionalHtml += "</p>";
+        }
+
+        if(actorRequiredWater && customConsumable.type === "water") {
+            additionalHtml += "<p style='border-top: 1px solid rgba(0,0,0,0.25); margin:0.5rem 0; padding: 0.5rem 0;' class='notes'>";
+            if (actorWaterSatedValue >= actorRequiredWater) {
+                additionalHtml += game.i18n.localize("REST-RECOVERY.Dialogs.AbilityUse.SatedWater");
+            }else{
+                additionalHtml += game.i18n.format("REST-RECOVERY.Dialogs.AbilityUse.NotSatedWater", { units: actorRequiredWater - actorWaterSatedValue });
+            }
+            additionalHtml += "</p>";
+        }
+    }
+    targetElem.append($(additionalHtml));
+
+    app.options.height = "auto";
+    app.setPosition();
 
 }

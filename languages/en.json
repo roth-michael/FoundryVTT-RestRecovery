@@ -20,6 +20,7 @@
         },
 
         "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
+        "PatchedConsumable": "Updated {itemName} with uses.",
 
         "Fractions": {
             "None": "None",
@@ -47,21 +48,6 @@
             "5th": "5th"
         },
 
-        "FoodAndDrink": {
-            "BothSame": "They enjoyed the filling feeling of {item}.",
-            "BothRegular": "They enjoyed the regular selection of food and drink in this locale.",
-            "BothNone": "They didn't eat or drink anything today.",
-            "Both": "They enjoyed their own food and drink:",
-            "FoodRegularDrink": "They enjoyed the regular selection of drink in this locale, and ate:",
-            "FoodNoDrink": "They didn't drink anything, but ate:",
-            "DrinkRegularFood": "They enjoyed the regular selection of food in this locale, and drank:",
-            "DrinkNoFood": "They didn't eat anything, but drank:",
-
-            "NoExhaustion": "But they managed to avoid exhaustion.",
-            "Exhaustion": "But they suffered {exhaustion} levels of exhaustion."
-
-        },
-
         "Chat": {
             "RegainedUses": "In addition, they recovered the following:",
             "SpellSlotList": "{number} {level} level spell slot",
@@ -70,7 +56,30 @@
             "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",
             "SongOfRestSelf": "{name} enjoys their own Song of Rest.",
             "Chef": "{name} enjoys some delicious food from {chef}.",
-            "ChefSelf": "{name} enjoys their own delicious food."
+            "ChefSelf": "{name} enjoys their own delicious food.",
+
+            "FoodAndWater": {
+                "ConsumedBothDayWorth": "{actorName} consumed {itemName} for a full day's worth of food and water.",
+                "ConsumedBoth": "{actorName} consumed {itemName} for {charges} units of food and water.",
+                "ConsumedFoodDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
+                "ConsumedFood": "{actorName} ate {itemName} for {charges} units of food.",
+                "ConsumedWaterDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
+                "ConsumedWater": "{actorName} drank {itemName} for {charges} units of water.",
+                "RequiredSatedFood": "They require {units} units of food to be sated for the day.",
+                "RequiredSatedWater": "They require {units} units of water to be sated for the day.",
+                "SatedFood": "They don't require any more food today.",
+                "SatedWater": "They don't require any more water today.",
+                "BothSame": "They enjoyed the filling feeling of {item}.",
+                "BothRegular": "They enjoyed the regular selection of food and drink in this locale.",
+                "BothNone": "They didn't eat or drink anything today.",
+                "Both": "They enjoyed their own food and drink:",
+                "FoodRegularWater": "They enjoyed the regular selection of drink in this locale, and ate:",
+                "FoodNoWater": "They didn't drink anything, but ate:",
+                "WaterRegularFood": "They enjoyed the regular selection of food in this locale, and drank:",
+                "WaterNoFood": "They didn't eat anything, but drank:",
+                "NoExhaustion": "But they managed to avoid exhaustion.",
+                "Exhaustion": "But they suffered {exhaustion} levels of exhaustion."
+            }
         },
 
         "Dialogs": {
@@ -102,15 +111,19 @@
                 "CustomRulesLink": "Check out the custom rules.",
                 "RestTab": "Resting",
                 "FoodAndWaterTab": "Food & Water",
-                "FoodWaterRequirement": "You need <strong>{food}</strong> lbs of food and <strong>{water}</strong> gallons of water each day.",
+                "FoodRequirement": "You need to eat another <strong>{food}</strong> units of food today.",
+                "FoodSated": "You've already eaten enough today.",
+                "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water today.",
+                "WaterSated": "You've already drank enough today.",
                 "EatToday": "What did you eat today?",
                 "DrinkToday": "What did you drink today?",
                 "FoodAmount": "Food amount:",
-                "DrinkAmount": "Drink amount:",
-                "NoFood": "If you finish this day without eating, <strong>you will automatically suffer 1 level of exhaustion.</strong>",
+                "WaterAmount": "Drink amount:",
+                "NoFood": "If you finish this day having eaten less than half of the required amount of food, <strong>you will automatically suffer 1 level of exhaustion.</strong>",
                 "HalfFood": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
-                "NoDrink": "If you finish this day without drinking, <strong>you will automatically suffer {exhaustion} level of exhaustion.</strong>",
-                "HalfDrink": "If you finish this day without drinking the full amount, you must make a DC {dc} Constitution saving throw or suffer {exhaustion} level of exhaustion."
+                "NoWater": "If you finish this day having drank less than half of the requirement amount of water, <strong>you will automatically suffer {exhaustion} levels of exhaustion.</strong>",
+                "HalfWater": "If you finish this day without drinking the full amount, you must make a <strong>DC {dc} Constitution saving throw</strong> or suffer <strong>{exhaustion} levels of exhaustion.</strong>",
+                "DragDrop": "Drag and drop items to consume"
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -139,6 +152,28 @@
                 "MoreToCome": "And with more configuration options to come!",
                 "Request": "Request new features here.",
                 "Submit": "Submit Settings"
+            },
+            "ItemOverrides": {
+                "Title": "Rest Recovery: Food & Water",
+                "Food": "Food",
+                "Water": "Water",
+                "Both": "Both",
+                "Enabled": "Enabled",
+                "Formula": "Formula:",
+                "IsConsumable": "Item is consumable",
+                "DayWorth": "One charge worth entire day worth",
+                "ChargesDescription": "Rest Recovery's food and water system uses the item's charges - one charge equals one unit of food or water."
+            },
+            "AbilityUse": {
+                "Title": "Select how much of this item you want to consume:",
+                "DayWorthTitleBoth": "This type of consumable is worth an entire day worth of both food and water.",
+                "DayWorthTitleFood": "This type of consumable is worth an entire day worth of food.",
+                "DayWorthTitleWater": "This type of consumable is worth an entire day worth of water.",
+                "DayWorthTitleCont": "You will not need to consume anything of that type until the next day. You cannot eat half of this type of consumable.",
+                "SatedFood": "You are already sated, you will gain no benefits from eating this.",
+                "NotSatedFood": "You need to eat ${units} units to be sated.",
+                "SatedWater": "You are already sated, you will gain no benefits from drinking this.",
+                "NotSatedWater": "You require {units} units of water to be sated."
             }
         },
 
@@ -148,9 +183,17 @@
                 "Title": "Hit Die Bonus",
                 "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
             },
+            "FoodUnitsPerDay": {
+                "Title": "Units of food required per day",
+                "Hint": "This overrides how many units of food this character needs per day."
+            },
+            "WaterUnitsPerDay": {
+                "Title": "Units of water required per day",
+                "Hint": "This overrides how many units of water this character needs per day."
+            },
             "NoFoodWater": {
                 "Title": "Disable Food & Water Requirement",
-                "Hint": "If enabled, this character does not require food or water, similar to the Undying Nature warlock feature."
+                "Hint": "If enabled, this character does not require any food or water, similar to the Undying Nature warlock feature."
             }
         },
 
@@ -184,13 +227,13 @@
                     "Title": "Enable food and water automation",
                     "Hint": "This enables sub-features relating to food and water automation, as seen below."
                 },
-                "FoodPoundsPerDay": {
-                    "Title": "Pounds of food required per day",
-                    "Hint": "This configures how many pounds of food a character needs per day."
+                "FoodUnitsPerDay": {
+                    "Title": "Units of food required per day",
+                    "Hint": "This configures how many units of food characters needs per day. Setting this to 0 disables food requirement altogether."
                 },
-                "WaterGallonsPerDay": {
-                    "Title": "Gallons of water required per day",
-                    "Hint": "This configures how many gallons of water a character needs per day."
+                "WaterUnitsPerDay": {
+                    "Title": "Units of water required per day",
+                    "Hint": "This configures how many units of water characters needs per day. Setting this to 0 disables water requirement altogether."
                 },
                 "AutomateFoodWaterExhaustion": {
                     "Title": "Automate food & water exhaustion",
@@ -198,7 +241,7 @@
                 },
                 "HalfFoodDuration": {
                     "Title": "Maximum days on half food",
-                    "Hint": "This configures how many days a character can survive on half-amounts of food before suffering from automatic exhaustion."
+                    "Hint": "This configures how many days characters can survive on half-amounts of food before suffering from automatic exhaustion."
                 },
                 "HalfWaterSaveDC": {
                     "Title": "Half water exhaustion DC",

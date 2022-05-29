@@ -1,6 +1,5 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
-import { evaluateFormula, getConsumableItemDayUses, getSetting } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -15,11 +14,11 @@ export default class RestWorkflow {
         this.spellSlotsRegainedMessage = "";
         this.itemsRegainedMessages = [];
         this.resourcesRegainedMessages = [];
-        this.foodAndDrinkMessage = "";
+        this.foodAndWaterMessage = "";
 
         this.food = false;
         this.foodLevel = 1;
-        this.drink = false;
+        this.water = false;
         this.drinkLevel = 1;
     }
 
@@ -63,21 +62,8 @@ export default class RestWorkflow {
             RestWorkflow.remove(actor);
         });
 
-        CONFIG.DND5E.characterFlags.hitDieBonus = {
-            name: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Title"),
-            hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieBonus.Hint"),
-            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
-            type: String,
-            placeholder: "0"
-        };
+        this._setupFoodListeners();
 
-        CONFIG.DND5E.characterFlags.noFoodWater = {
-            name: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Title"),
-            hint: game.i18n.localize("REST-RECOVERY.Traits.NoFoodWater.Hint"),
-            section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
-            type: Boolean,
-            placeholder: false
-        };
     }
 
     static get(actor) {
@@ -478,7 +464,7 @@ export default class RestWorkflow {
             if (extra.length) {
                 extra = `<p>${game.i18n.localize('REST-RECOVERY.Chat.RegainedUses')}</p>` + extra;
             }
-            extra += this.foodAndDrinkMessage;
+            extra += this.foodAndWaterMessage;
             message.data.update({
                 content: `<p>${data.content}</p>` + extra
             });
@@ -512,12 +498,14 @@ export default class RestWorkflow {
 
         let actorExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
 
-        if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+        const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
+
+        if(!actorNeedsNoFoodWater && lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
 
             let actorDaysWithoutFood = getProperty(this.actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
-            let actorExhaustionThreshold = evaluateFormula(
-                getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
+            let actorExhaustionThreshold = lib.evaluateFormula(
+                lib.getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
                 foundry.utils.deepClone(this.actor.data.data)
             )?.total ?? 4;
 
@@ -530,9 +518,9 @@ export default class RestWorkflow {
                 actorDaysWithoutFood = 0;
             }
 
-            if (this.drink === CONSTANTS.CONSUMABLE.NONE) {
+            if (this.water === CONSTANTS.CONSUMABLE.NONE) {
                 actorExhaustion += actorExhaustion > 0 ? 2 : 1;
-            } else if (this.drink === 0.5) {
+            } else if (this.water === 0.5) {
                 // TODO: automate con save here
             }
 
@@ -797,7 +785,7 @@ export default class RestWorkflow {
             this.itemsRegainedMessages.push('</ul>');
         }
 
-        updates = this._handleFoodAndDrinkItems(updates);
+        updates = this._handleFoodAndWaterItems(updates);
 
         return updates;
     }
@@ -847,28 +835,28 @@ export default class RestWorkflow {
 
     }
 
-    _handleFoodAndDrinkItems(updates) {
+    _handleFoodAndWaterItems(updates) {
 
-        if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
+        const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
 
-        const originalUpdates = foundry.utils.duplicate(updates);
+        if(!actorNeedsNoFoodWater || !lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
 
-        const itemFood = this.food !== CONSTANTS.CONSUMABLE.REGULAR && this.food !== CONSTANTS.CONSUMABLE.NONE;
-        const itemDrink = this.drink !== CONSTANTS.CONSUMABLE.REGULAR && this.drink !== CONSTANTS.CONSUMABLE.NONE;
+        const itemFood = this.food && this.food !== CONSTANTS.CONSUMABLE.REGULAR && this.food !== CONSTANTS.CONSUMABLE.NONE;
+        const itemWater = this.water && this.water !== CONSTANTS.CONSUMABLE.REGULAR && this.water !== CONSTANTS.CONSUMABLE.NONE;
 
-        if (this.food === this.drink) {
+        if (this.food === this.water) {
             if (this.food === CONSTANTS.CONSUMABLE.REGULAR) {
-                this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.BothRegular")
+                this.foodAndWaterMessage = game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.BothRegular")
             } else if (this.food === CONSTANTS.CONSUMABLE.NONE) {
-                this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.BothNone")
+                this.foodAndWaterMessage = game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.BothNone")
             } else {
                 const item = this.actor.items.get(this.food);
                 if(item) {
-                    this.foodAndDrinkMessage = game.i18n.format("REST-RECOVERY.FoodAndDrink.BothSame", {
+                    this.foodAndWaterMessage = game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.BothSame", {
                         item: item.name
                     });
-                    const { path, worthPerDay } = lib.getConsumableItemDayUses(item);
-                    const subtract = (1 / worthPerDay) / this.foodLevel;
+                    const { path } = lib.getConsumableItemDayUses(item);
+                    const subtract = 1 / this.foodLevel;
                     updates.push({
                         _id: this.food,
                         [path]: getProperty(item.data, path) - subtract
@@ -877,61 +865,197 @@ export default class RestWorkflow {
             }
         } else {
 
-            if(itemFood && itemDrink){
+            if(itemFood && itemWater){
                 const food = this.actor.items.get(this.food);
-                const drink = this.actor.items.get(this.drink);
+                const drink = this.actor.items.get(this.water);
                 if(food && drink) {
-                    this.foodAndDrinkMessage = game.i18n.localize("REST-RECOVERY.FoodAndDrink.Both");
+                    this.foodAndWaterMessage = game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.Both");
                 }
-            }else if(itemFood && !itemDrink){
+            }else if(itemFood && !itemWater){
                 const food = this.actor.items.get(this.food);
                 if(food) {
-                    const localization = this.drink === CONSTANTS.CONSUMABLE.REGULAR
-                        ? "REST-RECOVERY.FoodAndDrink.FoodRegularDrink"
-                        : "REST-RECOVERY.FoodAndDrink.FoodNoDrink";
-                    this.foodAndDrinkMessage = game.i18n.localize(localization);
+                    const localization = this.water === CONSTANTS.CONSUMABLE.REGULAR
+                        ? "REST-RECOVERY.Chat.FoodAndWater.FoodRegularWater"
+                        : "REST-RECOVERY.Chat.FoodAndWater.FoodNoWater";
+                    this.foodAndWaterMessage = game.i18n.localize(localization);
                 }
-            }else if(itemDrink && !itemFood){
-                const drink = this.actor.items.get(this.drink);
+            }else if(itemWater && !itemFood){
+                const drink = this.actor.items.get(this.water);
                 if(drink) {
                     const localization = this.food === CONSTANTS.CONSUMABLE.REGULAR
-                        ? "REST-RECOVERY.FoodAndDrink.DrinkRegularFood"
-                        : "REST-RECOVERY.FoodAndDrink.DrinkNoFood";
-                    this.foodAndDrinkMessage = game.i18n.localize(localization);
+                        ? "REST-RECOVERY.Chat.FoodAndWater.WaterRegularFood"
+                        : "REST-RECOVERY.Chat.FoodAndWater.WaterNoFood";
+                    this.foodAndWaterMessage = game.i18n.localize(localization);
                 }
             }
 
-            this.foodAndDrinkMessage += "<ul>";
+            this.foodAndWaterMessage += "<ul>";
             if(itemFood){
                 const food = this.actor.items.get(this.food);
-                const { path, worthPerDay } = lib.getConsumableItemDayUses(food);
-                const subtract = (1 / worthPerDay) / this.foodLevel;
+                const { path } = lib.getConsumableItemDayUses(food);
+                const subtract = 1 / this.foodLevel;
                 updates.push({
                     _id: this.food,
-                    [path]: getProperty(food.data, path) - subtract
+                    "data.uses.value": getProperty(food.data, path) - subtract
                 })
-                this.foodAndDrinkMessage += `<li>${food.name} (${subtract})</li>`;
+                this.foodAndWaterMessage += `<li>${food.name} (${subtract})</li>`;
             }
 
-            if(itemDrink){
-                const drink = this.actor.items.get(this.drink);
-                const { path, worthPerDay } = lib.getConsumableItemDayUses(drink);
-                const subtract = (1 / worthPerDay) / this.drinkLevel;
+            if(itemWater){
+                const drink = this.actor.items.get(this.water);
+                const { path } = lib.getConsumableItemDayUses(drink);
+                const subtract = 1 / this.drinkLevel;
                 updates.push({
-                    _id: this.drink,
-                    [path]: getProperty(drink.data, path) - subtract
+                    _id: this.water,
+                    "data.uses.value": getProperty(drink.data, path) - subtract
                 })
-                this.foodAndDrinkMessage += `<li>${drink.name} (${subtract})</li>`;
+                this.foodAndWaterMessage += `<li>${drink.name} (${subtract})</li>`;
             }
-            this.foodAndDrinkMessage += "</ul>";
+            this.foodAndWaterMessage += "</ul>";
         }
 
 
-        if(this.foodAndDrinkMessage){
-            this.foodAndDrinkMessage = `<p>${this.foodAndDrinkMessage}</p>`;
+        if(this.foodAndWaterMessage){
+            this.foodAndWaterMessage = `<p>${this.foodAndWaterMessage}</p>`;
         }
 
-        return originalUpdates;
+        return updates;
+    }
+
+    static _setupFoodListeners(){
+
+        const itemsListened = new Map();
+        Hooks.on("closeApplication", (app) => {
+            if(!app?.item) return;
+            const item = app.item;
+            const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+            if(!consumable?.enabled) return;
+            let consumeFull = true;
+            const element = app.element.find('input[name="consumeAmount"]:checked');
+            if(element.length){
+                consumeFull = element.val() === "full";
+            }
+            itemsListened.set(item.id, consumeFull);
+            setTimeout(() => {
+                itemsListened.delete(item.id)
+            }, 150);
+        });
+
+        Hooks.on('preUpdateItem', (item, data) => {
+            if(getProperty(data, CONSTANTS.FLAGS.CONSUMABLE)?.enabled && !lib.isRealNumber(getProperty(item.data, "data.uses.max"))){
+                return this._patchConsumableItem(item, data);
+            }
+            if(!itemsListened.has(item.id)) return;
+            const consumeFull = itemsListened.get(item.id);
+            itemsListened.delete(item.id)
+            const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+            if(!consumable?.enabled) return;
+            return this._handleConsumableItem(item, data, consumeFull);
+        });
+    }
+
+    static _patchConsumableItem(item, data){
+        data["data.uses.value"] = 1;
+        data["data.uses.max"] = 1;
+        data["data.uses.per"] = "charges";
+        ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedConsumable", {
+            itemName: item.name
+        }));
+    }
+
+    static _handleConsumableItem(item, data, consumeFull){
+
+        const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+
+        const actorUpdates = {};
+
+        let {
+            actorRequiredFood,
+            actorRequiredWater,
+            actorFoodSatedValue,
+            actorWaterSatedValue
+        } = lib.getActorConsumableValues(item.parent);
+
+        const currCharges = getProperty(item.data, "data.uses.value");
+        const newCharges = getProperty(data, "data.uses.value") ?? (currCharges - 1.0);
+
+        let chargesUsed = currCharges - newCharges;
+
+        if(chargesUsed === 1 && !consumeFull){
+            chargesUsed = 0.5;
+        }
+
+        let message;
+
+        if(consumable.type === "both") {
+
+            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
+            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
+
+            const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
+            message = "<p>" + game.i18n.format(localize, {
+                actorName: item.parent.name,
+                itemName: item.name,
+                charges: chargesUsed
+            }) + "</p>";
+
+            if(!consumable.dayWorth) {
+                message += actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] >= actorRequiredFood
+                    ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedFood") + "</p>"
+                    : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
+                message += actorUpdates[CONSTANTS.FLAGS.SATED_WATER] >= actorRequiredWater
+                    ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedWater") + "</p>"
+                    : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
+            }
+
+        }else if(consumable.type === "food"){
+
+            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
+
+            const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
+            message = "<p>" + game.i18n.format(localize, {
+                actorName: item.parent.name,
+                itemName: item.name,
+                charges: chargesUsed
+            }) + "</p>";
+
+            message += actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] >= actorRequiredFood
+                ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedFood") + "</p>"
+                : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
+
+        }else if(consumable.type === "water"){
+
+            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
+
+            const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
+            message = "<p>" + game.i18n.format(localize, {
+                actorName: item.parent.name,
+                itemName: item.name,
+                charges: chargesUsed
+            }) + "</p>";
+
+            message += actorUpdates[CONSTANTS.FLAGS.SATED_WATER] >= actorRequiredWater
+                ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedWater") + "</p>"
+                : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
+        }
+
+        setProperty(data, 'data.uses.value', currCharges - chargesUsed);
+
+        if(!foundry.utils.isObjectEmpty(actorUpdates)){
+            item.parent.update(actorUpdates);
+        }
+
+        if(message){
+            setTimeout(() => {
+                ChatMessage.create({
+                    flavor: "Rest Recovery",
+                    user: game.user.id,
+                    speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+                    content: message,
+                });
+            }, 450)
+        }
+
     }
 
 }

@@ -18,6 +18,6 @@ Hooks.once("ready", () => {
 
     //game.actors.getName("Zanna").items.getName("Waterskin").sheet.render(true);
 
-    new SettingsShim().render(true);
+    //new SettingsShim().render(true);
 
 })

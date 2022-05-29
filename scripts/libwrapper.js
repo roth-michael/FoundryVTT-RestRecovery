@@ -6,15 +6,18 @@ import { getSetting } from "./lib/lib.js";
 
 export default function registerLibwrappers() {
 
+    // Actors
     patch_shortRest();
     patch_longRest();
     patch_rollHitDie();
-
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
     patch_getRestResourceRecovery();
     patch_getRestSpellRecovery();
     patch_getRestItemUsesRecovery();
+
+    // Items
+    patch_getUsageUpdates();
 
 }
 
@@ -237,6 +240,84 @@ function patch_getRestItemUsesRecovery() {
         function (wrapped, args) {
             return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestItemUsesRecovery")
         }
+    )
+}
+
+function patch_getUsageUpdates(){
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Item.documentClass.prototype._getUsageUpdates",
+        function ({consumeQuantity, consumeRecharge, consumeResource, consumeSpellLevel, consumeUsage}) {
+
+            // Reference item data
+            const id = this.data.data;
+            const actorUpdates = {};
+            const itemUpdates = {};
+            const resourceUpdates = [];
+
+            // Consume Recharge
+            if ( consumeRecharge ) {
+                const recharge = id.recharge || {};
+                if ( recharge.charged === false ) {
+                    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+                    return false;
+                }
+                itemUpdates["data.recharge.charged"] = false;
+            }
+
+            // Consume Limited Resource
+            if ( consumeResource ) {
+                const canConsume = this._handleConsumeResource(itemUpdates, actorUpdates, resourceUpdates);
+                if ( canConsume === false ) return false;
+            }
+
+            // Consume Spell Slots
+            if ( consumeSpellLevel ) {
+                if ( Number.isNumeric(consumeSpellLevel) ) consumeSpellLevel = `spell${consumeSpellLevel}`;
+                const level = this.actor?.data.data.spells[consumeSpellLevel];
+                const spells = Number(level?.value ?? 0);
+                if ( spells === 0 ) {
+                    const label = game.i18n.localize(consumeSpellLevel === "pact" ? "DND5E.SpellProgPact" : `DND5E.SpellLevel${id.level}`);
+                    ui.notifications.warn(game.i18n.format("DND5E.SpellCastNoSlots", {name: this.name, level: label}));
+                    return false;
+                }
+                actorUpdates[`data.spells.${consumeSpellLevel}.value`] = Math.max(spells - 1, 0);
+            }
+
+            // Consume Limited Usage
+            if ( consumeUsage ) {
+                const uses = id.uses || {};
+                const available = Number(uses.value ?? 0);
+                let used = false;
+
+                // Reduce usages
+                const remaining = Math.max(available - 1, 0);
+                if ( available > 0 ) {
+                    used = true;
+                    itemUpdates["data.uses.value"] = remaining;
+                }
+
+                // Reduce quantity if not reducing usages or if usages hit 0 and we are set to consumeQuantity
+                if ( consumeQuantity && (!used || (remaining === 0)) ) {
+                    const q = Number(id.quantity ?? 1);
+                    if ( q >= 1 ) {
+                        used = true;
+                        itemUpdates["data.quantity"] = Math.max(q - 1, 0);
+                        itemUpdates["data.uses.value"] = uses.max ?? 1;
+                    }
+                }
+
+                // If the item was not used, return a warning
+                if ( !used ) {
+                    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+                    return false;
+                }
+            }
+
+            // Return the configured usage
+            return { itemUpdates, actorUpdates, resourceUpdates };
+        },
+        "OVERRIDE"
     )
 }
 

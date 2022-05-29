@@ -11,8 +11,8 @@ const CONSTANTS = {
          *          Food and Water Settings          *
          *-------------------------------------------*/
         ENABLE_FOOD_AND_WATER: "enable-food-and-water",
-        FOOD_POUNDS_PER_DAY: "food-pounds-per-day",
-        WATER_GALLONS_PER_DAY: "water-gallons-per-day",
+        FOOD_UNITS_PER_DAY: "food-units-per-day",
+        WATER_UNITS_PER_DAY: "water-units-per-day",
         AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
         HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
         HALF_WATER_SAVE_DC: "half-water-save-dc",
@@ -117,9 +117,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         default: false,
         type: Boolean
     },
-    [CONSTANTS.SETTINGS.FOOD_POUNDS_PER_DAY]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.FoodPoundsPerDay.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodPoundsPerDay.Hint",
+    [CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Hint",
         scope: "world",
         group: "foodandwater",
         validate: (settingsMap) => {
@@ -129,9 +129,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         default: 1,
         type: Number
     },
-    [CONSTANTS.SETTINGS.WATER_GALLONS_PER_DAY]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.WaterGallonsPerDay.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterGallonsPerDay.Hint",
+    [CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Hint",
         scope: "world",
         group: "foodandwater",
         validate: (settingsMap) => {
@@ -584,14 +584,16 @@ CONSTANTS.FLAGS = {
     RESOURCES: baseFlag + ".resources",
     RECOVERY: baseFlag + ".recovery",
     CONSUMABLE: baseFlag + ".consumable",
-    STARVATION: baseFlag + ".starvation"
+    STARVATION: baseFlag + ".starvation",
+    SATED_FOOD: baseFlag + ".sated.food",
+    SATED_WATER: baseFlag + ".sated.water"
 }
-
-CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
 
 CONSTANTS.CONSUMABLE = {
     NONE: "none",
     REGULAR: "regular"
 }
+
+CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
 
 export default CONSTANTS;
