@@ -51,6 +51,10 @@ export function getSetting(key, localize = false) {
     return value;
 }
 
+export function setSetting(key, value) {
+    return game.settings.set(CONSTANTS.MODULE_NAME, key, value);
+}
+
 export function evaluateFormula(formula, data){
     const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
     return new Roll(rollFormula).evaluate({ async: false });

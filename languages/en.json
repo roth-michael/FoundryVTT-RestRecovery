@@ -96,6 +96,23 @@
                 "Confirm": "Reset Module Settings",
                 "Cancel": "Cancel"
             },
+            "SaveProfile": {
+                "Title": "Create New Module Profile",
+                "OverrideProfile": "Your new profile cannot have the same name as an old profile",
+                "Empty": "Your new profile cannot have an empty name"
+            },
+            "DiscardChanges": {
+                "Title": "Unsaved Changes",
+                "Content": "You have unsaved changes to this profile. Are you sure you want to switch profile?"
+            },
+            "ResetDefaultChanges": {
+                "Title": "Reset default setting",
+                "Content": "Are you sure you want to reset the \"Default\" module profile to its default values?"
+            },
+            "DeleteProfile": {
+                "Title": "Delete profile",
+                "Content": "Are you sure you want to delete the \"{profile}\" module profile?"
+            },
             "ShortRest": {
                 "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
                 "FullHealth": "You're already at full health, so you can't roll any more hit dice.",
@@ -161,7 +178,8 @@
                 "FoodAndWater": "Food & Water",
                 "MoreToCome": "And with more configuration options to come!",
                 "Request": "Request new features here.",
-                "Submit": "Submit Settings"
+                "Submit": "Submit Settings",
+                "ModuleProfile": "Module Profile:"
             },
             "ItemOverrides": {
                 "Title": "Rest Recovery: Food & Water",

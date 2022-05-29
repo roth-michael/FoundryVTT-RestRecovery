@@ -1,16 +1,8 @@
 import CONSTANTS from "./constants.js";
 import SettingsShim from "./formapplications/settings/settings.js";
+import { getSetting } from "./lib/lib.js";
 
 export default function registerSettings() {
-
-    game.settings.registerMenu(CONSTANTS.MODULE_NAME, "resetToDefaults", {
-        name: "REST-RECOVERY.Settings.Reset.Title",
-        label: "REST-RECOVERY.Settings.Reset.Label",
-        hint: "REST-RECOVERY.Settings.Reset.Hint",
-        icon: "fas fa-refresh",
-        type: ResetSettingsDialog,
-        restricted: true
-    });
 
     game.settings.registerMenu(CONSTANTS.MODULE_NAME, "configureRest", {
         name: "REST-RECOVERY.Settings.Configure.Title",
@@ -25,6 +17,36 @@ export default function registerSettings() {
         game.settings.register(CONSTANTS.MODULE_NAME, name, data);
     }
 
+    let customSettings = !!Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).find(setting => {
+        return getSetting(setting[0]) !== setting[1].default;
+    })
+
+    game.settings.register(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE, {
+        scope: "world",
+        config: false,
+        default: customSettings ? "Custom" : "Default",
+        type: String
+    });
+
+    const moduleProfiles = {
+        "Default": Object.fromEntries(Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
+            return [entry[0], entry[1].default];
+        }))
+    };
+
+    if(customSettings){
+        moduleProfiles["Custom"] = Object.fromEntries(Object.keys(CONSTANTS.GET_DEFAULT_SETTINGS()).map(key => {
+            return [key, getSetting(key)];
+        }));
+    }
+
+    game.settings.register(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.MODULE_PROFILES, {
+        scope: "world",
+        config: false,
+        default: moduleProfiles,
+        type: Object
+    });
+
     game.settings.register(CONSTANTS.MODULE_NAME, "quick-hd-roll", {
         name: "REST-RECOVERY.Settings.QuickHDRoll.Title",
         hint: "REST-RECOVERY.Settings.QuickHDRoll.Hint",
@@ -34,35 +56,4 @@ export default function registerSettings() {
         type: Boolean
     });
 
-}
-
-class ResetSettingsDialog extends FormApplication {
-    constructor(...args) {
-        super(...args);
-        return new Dialog({
-            title: game.i18n.localize("REST-RECOVERY.Dialogs.ResetSettings.Title"),
-            content: `<p class="rest-recovery-dialog-important">${game.i18n.localize("REST-RECOVERY.Dialogs.ResetSettings.Content")}</p>`,
-            buttons: {
-                confirm: {
-                    icon: '<i class="fas fa-check"></i>',
-                    label: game.i18n.localize("REST-RECOVERY.Dialogs.ResetSettings.Confirm"),
-                    callback: () => {
-                        resetSettings();
-                    }
-                },
-                cancel: {
-                    icon: '<i class="fas fa-times"></i>',
-                    label: game.i18n.localize("REST-RECOVERY.Dialogs.ResetSettings.Cancel")
-                }
-            },
-            default: "cancel"
-        })
-    }
-}
-
-async function resetSettings() {
-    for (const [name, data] of Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())) {
-        await game.settings.set(CONSTANTS.MODULE_NAME, name, data.default);
-    }
-    window.location.reload();
 }

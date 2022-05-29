@@ -2,6 +2,13 @@ const CONSTANTS = {
     MODULE_NAME: "rest-recovery",
     FLAG_NAME: "data",
     SETTINGS: {
+
+        /*-------------------------------------------*
+         *          Global Module Settings           *
+         *-------------------------------------------*/
+        MODULE_PROFILES: "module-profiles",
+        ACTIVE_MODULE_PROFILE: "active-module-profile",
+
         /*-------------------------------------------*
          *           General Rest Settings           *
          *-------------------------------------------*/
