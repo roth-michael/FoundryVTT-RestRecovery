@@ -58,22 +58,15 @@ export function evaluateFormula(formula, data){
 
 export function getConsumableItemsFromActor(actor){
 
-    const items = actor.items.map(item => {
+    return actor.items.map(item => {
         const consumableUses = getConsumableItemDayUses(item);
         if(!consumableUses > 0) return false;
         const consumableData = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
         return {
             id: item.id,
-            name: item.name,
-            uses: consumableUses,
-            type: consumableData.type
+            name: item.name
         };
     }).filter(Boolean);
-
-    return {
-        foods: items.filter(item => item.type === "food" || item.type === "both"),
-        drinks: items.filter(item => item.type === "water" || item.type === "both")
-    };
 
 }
 

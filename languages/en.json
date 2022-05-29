@@ -123,6 +123,7 @@
                 "HalfFood": "If you finish this day without having eaten the full amount of food, you will automatically suffer 1 level of exhaustion in <strong>{days} days</strong>.",
                 "NoWater": "If you finish this day having drank less than half of the requirement amount of water, <strong>you will automatically suffer {exhaustion} levels of exhaustion.</strong>",
                 "HalfWater": "If you finish this day without drinking the full amount, you must make a <strong>DC {dc} Constitution saving throw</strong> or suffer <strong>{exhaustion} levels of exhaustion.</strong>",
+                "DragDropItem": "Drag and drop items to consume, or select:",
                 "DragDrop": "Drag and drop items to consume"
             },
             "LongRestWarning": {

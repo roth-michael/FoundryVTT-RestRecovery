@@ -45,7 +45,12 @@
     const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
     const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && !actorNeedsNoFoodWater;
 
-    let { actorRequiredFood, actorRequiredWater } = getActorConsumableValues(actor);
+    let {
+        actorRequiredFood,
+        actorRequiredWater,
+        actorFoodSatedValue,
+        actorWaterSatedValue
+    } = getActorConsumableValues(actor);
 
     const workflow = RestWorkflow.get(actor);
 
@@ -165,7 +170,10 @@
         {#if enableFoodAndWater}
         <Tabs bind:activeTab tabs={[
             { value: "rest", icon: "fas fa-bed", label: "REST-RECOVERY.Dialogs.LongRest.RestTab" },
-            { value: "foodwater", icon: "fas fa-drumstick-bite", label: "REST-RECOVERY.Dialogs.LongRest.FoodAndWaterTab" }
+            {
+                value: "foodwater", icon: "fas fa-drumstick-bite", label: "REST-RECOVERY.Dialogs.LongRest.FoodAndWaterTab",
+                highlight: (actorRequiredFood && actorFoodSatedValue < actorRequiredFood) || (actorRequiredWater && actorWaterSatedValue < actorRequiredWater)
+            }
         ]} />
         {/if}
 

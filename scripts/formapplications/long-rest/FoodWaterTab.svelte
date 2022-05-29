@@ -6,8 +6,7 @@
         evaluateFormula,
         getActorConsumableValues,
         getConsumableItemsFromActor,
-        getSetting,
-        isRealNumber
+        getSetting
     } from "../../lib/lib.js";
 
     export let actor;
@@ -29,6 +28,9 @@
         actorFoodSatedValue,
         actorWaterSatedValue
     } = getActorConsumableValues(actor);
+
+    let actorConsumableItems = getConsumableItemsFromActor(actor);
+    let selectedItem = actorConsumableItems?.[0]?.id ?? "";
 
     let hasAccessToFood = false;
     let halfFood = false;
@@ -95,7 +97,13 @@
 
         if(!actor) return;
 
-        const item = actor.items.get(drop.data._id);
+        addConsumableItem(drop.data._id);
+
+    }
+
+    function addConsumableItem(itemId){
+
+        const item = actor.items.get(itemId);
 
         if(!item){
             // Todo: Notify couldn't find item
@@ -139,6 +147,8 @@
         });
 
         consumableItems = consumableItems;
+
+        workflow.consumableItems = consumableItems;
 
         calculateAmountOfItems();
 
@@ -230,7 +240,7 @@
             <span class="item-name">{item.name}</span>
 
             <label class="checkbox">
-                <input type="radio" value="full" bind:group={item.amount} on:change={calculateAmountOfItems}> Full
+                <input type="radio" value="full" disabled={!item.hasFullUse} bind:group={item.amount} on:change={calculateAmountOfItems}> Full
             </label>
             <label class="checkbox">
                 <input type="radio" value="half" bind:group={item.amount} on:change={calculateAmountOfItems}> Half
@@ -241,9 +251,19 @@
         {/each}
     {/if}
 
-    {#if (actorRequiredFood && actorFoodSatedValue < actorRequiredFood && !hasAccessToFood) || (actorRequiredWater && actorWaterSatedValue < actorRequiredWater && !hasAccessToWater)}
+    {#if actorConsumableItems.length && ((actorRequiredFood && actorFoodSatedValue < actorRequiredFood && !hasAccessToFood) || (actorRequiredWater && actorWaterSatedValue < actorRequiredWater && !hasAccessToWater))}
         <div class="dragDropBox" on:dragstart={preventDefault} on:drop={dropData} on:dragover={preventDefault}>
-            <div>{localize("REST-RECOVERY.Dialogs.LongRest.DragDrop")}</div>
+            <div class="form-fields">
+                <p>{localize("REST-RECOVERY.Dialogs.LongRest.DragDrop")}</p>
+                <div class="flexrow">
+                    <select bind:value={selectedItem}>
+                        {#each actorConsumableItems as item, index (item.id)}
+                            <option value={item.id}>{item.name}</option>
+                        {/each}
+                    </select>
+                    <button type="button">+</button>
+                </div>
+            </div>
         </div>
     {/if}
 
@@ -275,13 +295,17 @@
       border: 2px dashed rgba(0,0,0,0.25);
       margin-top:0.5rem;
 
-      div {
+      & > div {
         position: absolute;
         top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
+        left: 25%;
+        transform: translate(-12.5%, -50%);
         margin:0;
+      }
 
+      button {
+        flex: 0 1 30px;
+        line-height: 0;
       }
     }
 

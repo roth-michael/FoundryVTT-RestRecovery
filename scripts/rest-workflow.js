@@ -16,10 +16,7 @@ export default class RestWorkflow {
         this.resourcesRegainedMessages = [];
         this.foodAndWaterMessage = "";
 
-        this.food = false;
-        this.foodLevel = 1;
-        this.water = false;
-        this.drinkLevel = 1;
+        this.consumableItems = [];
     }
 
     get maxHP() {
