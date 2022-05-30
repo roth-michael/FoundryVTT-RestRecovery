@@ -5,7 +5,7 @@
     "systems": [
         "dnd5e"
     ],
-    "version": "1.1.!6",
+    "version": "1.1.!7",
     "authors": [
         {
             "name": "Wasp",
@@ -40,5 +40,5 @@
     "compatibleCoreVersion": "9",
     "url": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery",
     "manifest": "https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-RestRecovery/next/module.json",
-    "download": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/download/1.1.!6/module.zip"
+    "download": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/download/1.1.!7/module.zip"
 }
