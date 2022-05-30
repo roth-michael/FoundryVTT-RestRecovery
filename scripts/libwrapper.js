@@ -9,6 +9,7 @@ export default function registerLibwrappers() {
     // Actors
     patch_shortRest();
     patch_longRest();
+    patch_rest();
     patch_rollHitDie();
     patch_displayRestResultMessage();
     patch_getRestHitPointRecovery();
@@ -81,6 +82,62 @@ function patch_longRest() {
                 newDay,
                 true
             );
+        },
+        "OVERRIDE"
+    );
+}
+
+function patch_rest() {
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Actor.documentClass.prototype._rest",
+        async function (chat, newDay, longRest, dhd=0, dhp=0) {
+            let hitPointsRecovered = 0;
+            let hitPointUpdates = {};
+            let hitDiceRecovered = 0;
+            let hitDiceUpdates = [];
+
+            // Recover hit points & hit dice on long rest
+            if ( longRest ) {
+                ({ updates: hitPointUpdates, hitPointsRecovered } = await this._getRestHitPointRecovery());
+                ({ updates: hitDiceUpdates, hitDiceRecovered } = await this._getRestHitDiceRecovery());
+            }
+
+            // Figure out the rest of the changes
+            const result = {
+                dhd: dhd + hitDiceRecovered,
+                dhp: dhp + hitPointsRecovered,
+                updateData: {
+                    ...hitPointUpdates,
+                    ...await this._getRestResourceRecovery({ recoverShortRestResources: !longRest, recoverLongRestResources: longRest }),
+                    ...await this._getRestSpellRecovery({ recoverSpells: longRest })
+                },
+                updateItems: [
+                    ...hitDiceUpdates,
+                    ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+                ],
+                longRest,
+                newDay
+            };
+
+            // Perform updates
+            await this.update(result.updateData);
+            await this.updateEmbeddedDocuments("Item", result.updateItems);
+
+            // Display a Chat Message summarizing the rest effects
+            if ( chat ) await this._displayRestResultMessage(result, longRest);
+
+            if ( Hooks._hooks.restCompleted?.length ) console.warn(
+                "The restCompleted hook has been deprecated in favor of dnd5e.restCompleted. "
+                + "The original hook will be removed in dnd5e 1.8."
+            );
+
+            Hooks.callAll("restCompleted", this, result);
+
+            Hooks.callAll("dnd5e.restCompleted", this, result);
+
+            // Return data summarizing the rest effects
+            return result;
         },
         "OVERRIDE"
     );

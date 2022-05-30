@@ -1,5 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
+import { getSetting } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -443,7 +444,7 @@ export default class RestWorkflow {
 
     }
 
-    _finishedRest() {
+    async _finishedRest() {
 
         let updates = {};
 
@@ -458,13 +459,13 @@ export default class RestWorkflow {
         }
 
         if(this.longRest){
-            updates = this._handleFoodWaterExhaustion(updates);
+            updates = await this._handleFoodWaterExhaustion(updates);
         }
 
         return updates;
     }
 
-    _handleFoodWaterExhaustion(updates){
+    async _handleFoodWaterExhaustion(updates){
 
         let actorInitialExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
         let actorExhaustion = actorInitialExhaustion;
@@ -486,7 +487,7 @@ export default class RestWorkflow {
 
             const items = this.consumableData.items.filter(item => item.amount);
             let foodItems = items.filter(item => item.type === "both" || item.type === "food");
-            let waterItems = items.filter(item => item => item.type === "both" || item.type === "water");
+            let waterItems = items.filter(item => item.type === "both" || item.type === "water");
 
             if(actorRequiredFood) {
 
@@ -514,6 +515,7 @@ export default class RestWorkflow {
                         actorDaysWithoutFood += 1;
                         this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodNone"));
                     }else {
+                        exhaustionToRemove = 0;
                         actorDaysWithoutFood += 0.5;
                         this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodHalf"));
                     }
@@ -548,12 +550,27 @@ export default class RestWorkflow {
                 if (totalWaterDrankToday === 0) {
                     actorExhaustion += actorExhaustion > 0 ? 2 : 1;
                     exhaustionToRemove = 0;
-                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterNone"));
+                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterNone"));
                 } else if (totalWaterDrankToday <= (actorRequiredWater/2)) {
-                    // TODO: automate con save here
-                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterHalf"));
+                    const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
+                    if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && halfWaterSaveDC) {
+                        exhaustionToRemove = 0;
+                        let roll = await this.actor.rollAbilitySave("con", {
+                            targetValue: halfWaterSaveDC
+                        });
+                        if (!roll) {
+                            roll = await this.actor.rollAbilitySave("con", {
+                                targetValue: halfWaterSaveDC,
+                                fastForward: true
+                            });
+                        }
+                        if (roll.total < halfWaterSaveDC){
+                            actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                        }
+                    }
+                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterHalf"));
                 }else{
-                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.WaterFull"));
+                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterFull"));
                 }
             }
 
@@ -567,7 +584,6 @@ export default class RestWorkflow {
             setProperty(updates, CONSTANTS.FLAGS.SATED_WATER, 0);
 
         }
-
 
         if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
             setProperty(updates, 'data.attributes.exhaustion', Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6)));
@@ -700,9 +716,9 @@ export default class RestWorkflow {
 
     }
 
-    _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
+    async _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
 
-        const finishedRestUpdates = this._finishedRest(updates);
+        const finishedRestUpdates = await this._finishedRest(updates);
 
         const actorCopy = foundry.utils.deepClone(this.actor.data.data);
 

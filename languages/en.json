@@ -77,11 +77,11 @@
                 "SatedWater": "They don't require any more water today.",
 
                 "FoodFull": "They ate enough to be sated today.",
-                "FoodHalf": "They could only find half of the amount of food they needed.",
+                "FoodHalf": "They only ate half of the amount of food they needed.",
                 "FoodNone": "They didn't eat anything today.",
 
                 "WaterFull": "They drank enough to be sated today.",
-                "WaterHalf": "They could only find half of the amount of food they needed.",
+                "WaterHalf": "They only drank half of the amount of water they needed.",
                 "WaterNone": "They didn't drink anything today.",
 
                 "NoExhaustion": "But they managed to avoid exhaustion.",
@@ -276,7 +276,7 @@
                 },
                 "HalfFoodDuration": {
                     "Title": "Maximum days on half food",
-                    "Hint": "This configures how many days characters can survive on half-amounts of food before suffering from automatic exhaustion."
+                    "Hint": "This configures how many days characters can survive without eating food before suffering from automatic exhaustion."
                 },
                 "HalfWaterSaveDC": {
                     "Title": "Half water exhaustion DC",
