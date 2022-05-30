@@ -527,23 +527,28 @@ export default class RestWorkflow {
                     localize += "None";
                 }
 
-                actorFoodSatedValue = Math.min(actorRequiredFood, actorFoodSatedValue);
-
-                if (actorFoodSatedValue <= (actorRequiredFood / 2)) {
-                    exhaustionToRemove = 0;
-                    actorDaysWithoutFood += actorFoodSatedValue === 0 ? 1 : 0.5;
-                } else {
-                    actorDaysWithoutFood = 0;
-                }
-
                 this.foodAndWaterMessage.push(game.i18n.localize(localize));
 
-                if (actorDaysWithoutFood > actorExhaustionThreshold) {
-                    actorExhaustion++;
-                    exhaustionGain = true;
-                }
+                actorFoodSatedValue = Math.min(actorRequiredFood, actorFoodSatedValue);
 
-                updates[CONSTANTS.FLAGS.STARVATION] = actorDaysWithoutFood;
+                if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)) {
+
+                    if (actorFoodSatedValue <= (actorRequiredFood / 2)) {
+                        exhaustionToRemove = 0;
+                        actorDaysWithoutFood += actorFoodSatedValue === 0 ? 1 : 0.5;
+                    } else {
+                        actorDaysWithoutFood = 0;
+
+                    }
+
+                    if (actorDaysWithoutFood > actorExhaustionThreshold) {
+                        actorExhaustion++;
+                        exhaustionGain = true;
+                    }
+
+                    updates[CONSTANTS.FLAGS.STARVATION] = actorDaysWithoutFood;
+
+                }
 
             }
 
@@ -582,39 +587,40 @@ export default class RestWorkflow {
 
                 }
 
+                this.foodAndWaterMessage.push(game.i18n.localize(localize));
+
                 actorWaterSatedValue = Math.min(actorRequiredWater, actorWaterSatedValue);
 
-                if (actorWaterSatedValue === 0) {
-                    actorExhaustion += actorExhaustion > 0 ? 2 : 1;
-                    exhaustionGain = true;
-                    exhaustionToRemove = 0;
-                } else if (actorWaterSatedValue <= (actorRequiredWater/2)) {
-                    const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
-                    if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && halfWaterSaveDC) {
+                if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)) {
+                    if (actorWaterSatedValue === 0) {
+                        actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                        exhaustionGain = true;
                         exhaustionToRemove = 0;
-                        let roll = await this.actor.rollAbilitySave("con", {
-                            targetValue: halfWaterSaveDC
-                        });
-                        if (!roll) {
-                            roll = await this.actor.rollAbilitySave("con", {
-                                targetValue: halfWaterSaveDC,
-                                fastForward: true
+                    } else if (actorWaterSatedValue <= (actorRequiredWater / 2)) {
+                        const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
+                        if (halfWaterSaveDC) {
+                            exhaustionToRemove = 0;
+                            let roll = await this.actor.rollAbilitySave("con", {
+                                targetValue: halfWaterSaveDC
                             });
-                        }
-                        if (roll.total < halfWaterSaveDC){
-                            actorExhaustion += actorExhaustion > 0 ? 2 : 1;
-                            exhaustionGain = true;
-                        }else{
-                            exhaustionSave = true;
+                            if (!roll) {
+                                roll = await this.actor.rollAbilitySave("con", {
+                                    targetValue: halfWaterSaveDC,
+                                    fastForward: true
+                                });
+                            }
+                            if (roll.total < halfWaterSaveDC) {
+                                actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                                exhaustionGain = true;
+                            } else {
+                                exhaustionSave = true;
+                            }
                         }
                     }
                 }
-
-                this.foodAndWaterMessage.push(game.i18n.localize(localize));
-
             }
 
-            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
+            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)){
                 if(exhaustionGain){
                     this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
                         exhaustion: actorExhaustion - actorInitialExhaustion
@@ -631,7 +637,7 @@ export default class RestWorkflow {
 
         if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
             updates['data.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6));
-            if(updates['data.attributes.exhaustion'] === 6){
+            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION) && updates['data.attributes.exhaustion'] === 6){
                 this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.ExhaustionDeath", { actorName: this.actor.name }));
             }
         }
