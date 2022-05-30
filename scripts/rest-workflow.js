@@ -172,7 +172,7 @@ export default class RestWorkflow {
 
     }
 
-    static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+    static async wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
 
         const workflow = this.get(actor);
 
@@ -183,9 +183,9 @@ export default class RestWorkflow {
             return wrapped(args);
         }
 
-        let updates = wrapped(args);
+        let updates = await wrapped(args);
         if (workflow && workflow[fnName]) {
-            updates = workflow[fnName](updates, args);
+            updates = await workflow[fnName](updates, args);
         }
 
         return updates;
@@ -469,14 +469,13 @@ export default class RestWorkflow {
 
         let actorInitialExhaustion = getProperty(this.actor.data, "data.attributes.exhaustion") ?? 0;
         let actorExhaustion = actorInitialExhaustion;
+        let exhaustionGain = false;
+        let exhaustionSave = false;
         let exhaustionToRemove = 1;
 
         if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
 
-            let totalFoodEatenToday = 0;
-            let totalWaterDrankToday = 0;
-
-            const {
+            let {
                 actorRequiredFood,
                 actorRequiredWater,
                 actorFoodSatedValue,
@@ -491,67 +490,105 @@ export default class RestWorkflow {
 
             if(actorRequiredFood) {
 
+                let localize = "REST-RECOVERY.Chat.FoodAndWater.Food"
+
                 let actorExhaustionThreshold = lib.evaluateFormula(
                     lib.getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
                     foundry.utils.deepClone(this.actor.data.data)
                 )?.total ?? 4;
 
                 if(this.consumableData.hasAccessToFood) {
-                    totalFoodEatenToday = this.consumableData.halfFood === "full"
+
+                    if(actorFoodSatedValue >= (actorRequiredFood / 2)){
+                        localize += actorFoodSatedValue >= actorRequiredFood ? "Full" : "Half";
+                    }else{
+                        localize += "None";
+                    }
+
+                    localize += lib.capitalizeFirstLetter(this.consumableData.halfFood);
+
+                    actorFoodSatedValue += this.consumableData.halfFood === "full"
                         ? actorRequiredFood
                         : actorRequiredFood/2;
+
                 } else {
-                    totalFoodEatenToday = foodItems.reduce((acc, item) => {
-                        acc += item.consumable.dayWorth ? actorRequiredFood : item.amount;
+
+                    actorFoodSatedValue += foodItems.reduce((acc, item) => {
+                        acc += item.consumable.dayWorth ? 100000000000 : item.amount;
                         return acc;
                     }, actorFoodSatedValue);
+
+                    if(actorFoodSatedValue >= (actorRequiredFood / 2)){
+                        localize += actorFoodSatedValue >= actorRequiredFood ? "Full" : "Half";
+                    }else{
+                        localize += "None";
+                    }
+
+                    localize += "None";
                 }
 
-                totalFoodEatenToday = Math.min(actorRequiredFood, totalFoodEatenToday);
+                actorFoodSatedValue = Math.min(actorRequiredFood, actorFoodSatedValue);
 
-                if (totalFoodEatenToday <= (actorRequiredFood / 2)) {
-                    if (totalFoodEatenToday === 0) {
-                        exhaustionToRemove = 0;
-                        actorDaysWithoutFood += 1;
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodNone"));
-                    }else {
-                        exhaustionToRemove = 0;
-                        actorDaysWithoutFood += 0.5;
-                        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodHalf"));
-                    }
+                if (actorFoodSatedValue <= (actorRequiredFood / 2)) {
+                    exhaustionToRemove = 0;
+                    actorDaysWithoutFood += actorFoodSatedValue === 0 ? 1 : 0.5;
                 } else {
                     actorDaysWithoutFood = 0;
-                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.FoodFull"));
                 }
+
+                this.foodAndWaterMessage.push(game.i18n.localize(localize));
 
                 if (actorDaysWithoutFood > actorExhaustionThreshold) {
                     actorExhaustion++;
+                    exhaustionGain = true;
                 }
 
-                setProperty(updates, CONSTANTS.FLAGS.STARVATION, actorDaysWithoutFood);
+                updates[CONSTANTS.FLAGS.STARVATION] = actorDaysWithoutFood;
 
             }
 
             if(actorRequiredWater) {
 
+                let localize = "REST-RECOVERY.Chat.FoodAndWater.Water"
+
                 if(this.consumableData.hasAccessToWater) {
-                    totalWaterDrankToday = this.consumableData.halfWater === "full"
+
+                    if(actorWaterSatedValue >= (actorRequiredWater / 2)){
+                        localize += actorWaterSatedValue >= actorRequiredWater ? "Full" : "Half"
+                    }else{
+                        localize += "None"
+                    }
+
+                    localize += lib.capitalizeFirstLetter(this.consumableData.halfWater);
+
+                    actorWaterSatedValue += this.consumableData.halfWater === "full"
                         ? actorRequiredWater
                         : actorRequiredWater/2;
+
                 } else {
-                    totalWaterDrankToday = waterItems.reduce((acc, item) => {
+
+                    actorWaterSatedValue = waterItems.reduce((acc, item) => {
                         acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
                         return acc;
                     }, actorWaterSatedValue);
+
+                    if(actorWaterSatedValue >= (actorRequiredWater / 2)){
+                        localize += actorWaterSatedValue >= actorRequiredWater ? "Full" : "Half"
+                    }else{
+                        localize += "None"
+                    }
+
+                    localize += "None";
+
                 }
 
-                totalWaterDrankToday = Math.min(actorRequiredWater, totalWaterDrankToday);
+                actorWaterSatedValue = Math.min(actorRequiredWater, actorWaterSatedValue);
 
-                if (totalWaterDrankToday === 0) {
+                if (actorWaterSatedValue === 0) {
                     actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                    exhaustionGain = true;
                     exhaustionToRemove = 0;
-                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterNone"));
-                } else if (totalWaterDrankToday <= (actorRequiredWater/2)) {
+                } else if (actorWaterSatedValue <= (actorRequiredWater/2)) {
                     const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
                     if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && halfWaterSaveDC) {
                         exhaustionToRemove = 0;
@@ -566,27 +603,37 @@ export default class RestWorkflow {
                         }
                         if (roll.total < halfWaterSaveDC){
                             actorExhaustion += actorExhaustion > 0 ? 2 : 1;
+                            exhaustionGain = true;
+                        }else{
+                            exhaustionSave = true;
                         }
                     }
-                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterHalf"));
-                }else{
-                    this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.WaterFull"));
+                }
+
+                this.foodAndWaterMessage.push(game.i18n.localize(localize));
+
+            }
+
+            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
+                if(exhaustionGain){
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
+                        exhaustion: actorExhaustion - actorInitialExhaustion
+                    }));
+                }else if(exhaustionSave){
+                    this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.NoExhaustion"));
                 }
             }
 
-            if(actorExhaustion > actorInitialExhaustion && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
-                this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
-                    exhaustion: actorExhaustion - actorInitialExhaustion
-                }));
-            }
-
-            setProperty(updates, CONSTANTS.FLAGS.SATED_FOOD, 0);
-            setProperty(updates, CONSTANTS.FLAGS.SATED_WATER, 0);
+            updates[CONSTANTS.FLAGS.SATED_FOOD] = 0;
+            updates[CONSTANTS.FLAGS.SATED_WATER] = 0;
 
         }
 
         if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
-            setProperty(updates, 'data.attributes.exhaustion', Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6)));
+            updates['data.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6));
+            if(updates['data.attributes.exhaustion'] === 6){
+                this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.ExhaustionDeath", { actorName: this.actor.name }));
+            }
         }
 
         if(this.foodAndWaterMessage.length){
@@ -610,10 +657,13 @@ export default class RestWorkflow {
             extra += this.foodAndWaterMessage.join("");
         }
 
-        return chatMessage.update({
+        chatMessage.update({
             content: `<p>${chatMessage.data.content}</p>` + extra
+        }).then(() => {
+            ui.chat.scrollBottom();
         });
 
+        return chatMessage;
     }
 
     _getRestHitPointRecovery(result) {
@@ -953,8 +1003,8 @@ export default class RestWorkflow {
                 itemsToDelete.push(itemD.id);
             }else{
                 if(consumeQuantity && newUses === 0){
-                    setProperty(update, "data.uses.value", getProperty(itemD.data, "data.uses.max") ?? 1);
-                    setProperty(update, "data.quantity", quantity - 1);
+                    update["data.uses.value"] = getProperty(itemD.data, "data.uses.max") ?? 1;
+                    update["data.quantity"] = quantity - 1;
                 }
                 updates.push(update);
             }
@@ -1029,8 +1079,8 @@ export default class RestWorkflow {
 
         if(consumable.type === "both") {
 
-            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
-            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
+            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
+            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
 
             const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
             message = "<p>" + game.i18n.format(localize, {
@@ -1050,7 +1100,7 @@ export default class RestWorkflow {
 
         }else if(consumable.type === "food"){
 
-            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
+            actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
 
             const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
             message = "<p>" + game.i18n.format(localize, {
@@ -1065,7 +1115,7 @@ export default class RestWorkflow {
 
         }else if(consumable.type === "water"){
 
-            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
+            actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
 
             const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
             message = "<p>" + game.i18n.format(localize, {

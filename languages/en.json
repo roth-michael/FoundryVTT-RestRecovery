@@ -76,16 +76,23 @@
                 "SatedFood": "They don't require any more food today.",
                 "SatedWater": "They don't require any more water today.",
 
-                "FoodFull": "They ate enough to be sated today.",
-                "FoodHalf": "They only ate half of the amount of food they needed.",
-                "FoodNone": "They didn't eat anything today.",
+                "FoodFullNone": "They ate enough of their own food to be sated today.",
+                "FoodHalfNone": "They ate of their own food, but only half of the amount that they needed today.",
+                "FoodHalfHalf": "They ate from an external source and of their own food to be sated today.",
+                "FoodNoneFull": "They ate enough food from an external source to be sated today.",
+                "FoodNoneHalf": "They ate from an external source, but only half of the amount that they needed today.",
+                "FoodNoneNone": "They didn't eat anything today.",
 
-                "WaterFull": "They drank enough to be sated today.",
-                "WaterHalf": "They only drank half of the amount of water they needed.",
-                "WaterNone": "They didn't drink anything today.",
+                "WaterFullNone": "They drank enough of their own water to be sated today.",
+                "WaterHalfNone": "They drank of their own water, but only half of the amount that they needed today.",
+                "WaterHalfHalf": "They drank from an external source and of their own water to be sated today.",
+                "WaterNoneFull": "They drank enough water from an external source to be sated today.",
+                "WaterNoneHalf": "They drank from an external source, but only half of the amount that they needed today.",
+                "WaterNoneNone": "They didn't drink anything today.",
 
                 "NoExhaustion": "But they managed to avoid exhaustion.",
-                "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion."
+                "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion.",
+                "ExhaustionDeath": "Regrettably, {actorName} reached 6 levels of exhaustion and perished."
             }
         },
 
