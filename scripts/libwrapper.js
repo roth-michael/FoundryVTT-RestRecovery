@@ -24,6 +24,10 @@ export default function registerLibwrappers() {
 }
 
 function patch_shortRest() {
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ["dnd5e-helpers"], [
+        "CONFIG.Actor.documentClass.prototype.shortRest"
+    ]);
+
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
         "CONFIG.Actor.documentClass.prototype.shortRest",
@@ -62,6 +66,10 @@ function patch_shortRest() {
 }
 
 function patch_longRest() {
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ["dnd5e-helpers"], [
+        "CONFIG.Actor.documentClass.prototype.longRest"
+    ]);
+
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
         "CONFIG.Actor.documentClass.prototype.longRest",
