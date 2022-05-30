@@ -122,7 +122,7 @@
         if(!consumable?.enabled) return;
 
         const usesLeft = getProperty(item.data, "data.uses.value");
-        const maxUses = getProperty(item.data, "data.uses.value");
+        const maxUses = getProperty(item.data, "data.uses.max");
 
         if(usesLeft < 0.5){
             // Todo: Notify item has no uses
@@ -310,7 +310,7 @@
                     {/if}
                 </div>
 
-                <button type="button" on:click={() => { removeConsumableItem(index) }}>X</button>
+                <button type="button" on:click={() => { removeConsumableItem(index) }}><i class="fas fa-times"></i></button>
             </div>
             {/each}
         </div>
@@ -326,7 +326,7 @@
                             <option value={item.id}>{item.name}</option>
                         {/each}
                     </select>
-                    <button type="button" on:click={() => { addConsumableItem(selectedItem) }}>+</button>
+                    <button class="consumable-add-button" type="button" on:click={() => { addConsumableItem(selectedItem) }}><i class="fas fa-plus"></i></button>
                 </div>
             </div>
         </div>
@@ -416,6 +416,7 @@
       button {
         flex: 0 1 30px;
         line-height: 0;
+        font-size: 0.5rem;
       }
     }
 

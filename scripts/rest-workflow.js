@@ -55,6 +55,12 @@ export default class RestWorkflow {
             RestWorkflow.remove(actor);
         });
 
+        Hooks.on("updateActor", (actor, data) => {
+            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
+
+            }
+        });
+
         this._setupFoodListeners();
 
     }
@@ -485,8 +491,8 @@ export default class RestWorkflow {
             let actorDaysWithoutFood = getProperty(this.actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
             const items = this.consumableData.items.filter(item => item.amount);
-            let foodItems = items.filter(item => item.type === "both" || item.type === "food");
-            let waterItems = items.filter(item => item.type === "both" || item.type === "water");
+            let foodItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "food");
+            let waterItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "water");
 
             if(actorRequiredFood) {
 
@@ -538,7 +544,6 @@ export default class RestWorkflow {
                         actorDaysWithoutFood += actorFoodSatedValue === 0 ? 1 : 0.5;
                     } else {
                         actorDaysWithoutFood = 0;
-
                     }
 
                     if (actorDaysWithoutFood > actorExhaustionThreshold) {
@@ -998,7 +1003,7 @@ export default class RestWorkflow {
             const newUses = getProperty(update, "data.uses.value") ?? item.usesLeft - item.amount;
             update["data.uses.value"] = newUses;
 
-            if(updateIndex) {
+            if(updateIndex > -1) {
                 updates.splice(updateIndex, 1);
             }
 

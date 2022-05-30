@@ -98,9 +98,9 @@ function patch_itemConsumableInputs(app, html, item){
             <div class="form-fields" style="margin-right:0.5rem;">
                 <label style="flex:0 1 auto;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Type")}</label>
                 <select name="${CONSTANTS.FLAGS.CONSUMABLE}.type" ${!customConsumable.enabled ? "disabled" : ""}>
-                    <option ${customConsumable.type === "food" ? "selected" : ""} value="food">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Food")}</option>
-                    <option ${customConsumable.type === "water" ? "selected" : ""} value="water">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Water")}</option>
-                    <option ${customConsumable.type === "both" ? "selected" : ""} value="both">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Both")}</option>
+                    <option ${customConsumable.type === "food" ? "selected" : ""} value="food">${game.i18n.localize("REST-RECOVERY.Misc.Food")}</option>
+                    <option ${customConsumable.type === "water" ? "selected" : ""} value="water">${game.i18n.localize("REST-RECOVERY.Misc.Water")}</option>
+                    <option ${customConsumable.type === "both" ? "selected" : ""} value="both">${game.i18n.localize("REST-RECOVERY.Misc.Both")}</option>
                 </select>
             </div>
         </div>

@@ -15,18 +15,6 @@ const CONSTANTS = {
         ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
 
         /*-------------------------------------------*
-         *          Food and Water Settings          *
-         *-------------------------------------------*/
-        ENABLE_FOOD_AND_WATER: "enable-food-and-water",
-        FOOD_UNITS_PER_DAY: "food-units-per-day",
-        WATER_UNITS_PER_DAY: "water-units-per-day",
-        EXTERNAL_FOOD_ACCESS: "external-food-access",
-        EXTERNAL_WATER_ACCESS: "external-water-access",
-        AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
-        HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
-        HALF_WATER_SAVE_DC: "half-water-save-dc",
-
-        /*-------------------------------------------*
          *            Short Rest Settings            *
          *-------------------------------------------*/
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
@@ -72,6 +60,18 @@ const CONSTANTS = {
         PERIAPT_ITEM: "periapt-item-name",
         WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
         BLACK_BLOOD_FEATURE: "black-blood-feature-name",
+
+        /*-------------------------------------------*
+         *          Food and Water Settings          *
+         *-------------------------------------------*/
+        ENABLE_FOOD_AND_WATER: "enable-food-and-water",
+        FOOD_UNITS_PER_DAY: "food-units-per-day",
+        WATER_UNITS_PER_DAY: "water-units-per-day",
+        EXTERNAL_FOOD_ACCESS: "external-food-access",
+        EXTERNAL_WATER_ACCESS: "external-water-access",
+        AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
+        HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
+        HALF_WATER_SAVE_DC: "half-water-save-dc",
     },
 
     FRACTIONS: {
