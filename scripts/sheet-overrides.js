@@ -96,7 +96,7 @@ function patch_itemConsumableInputs(app, html, item){
                 </label>
             </div>
             <div class="form-fields" style="margin-right:0.5rem;">
-                <label style="flex:0 1 auto;">Type:</label>
+                <label style="flex:0 1 auto;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Type")}</label>
                 <select name="${CONSTANTS.FLAGS.CONSUMABLE}.type" ${!customConsumable.enabled ? "disabled" : ""}>
                     <option ${customConsumable.type === "food" ? "selected" : ""} value="food">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Food")}</option>
                     <option ${customConsumable.type === "water" ? "selected" : ""} value="water">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Water")}</option>
@@ -127,7 +127,7 @@ function patch_itemCustomRecovery(app, html, item){
     let targetElem = html.find('.uses-per')?.[0];
     if (!targetElem) return;
     $(`<div class="form-group" title="Module: Rest Recovery for 5e">
-        <label>Uses Custom Recovery <i class="fas fa-info-circle"></i></label>
+        <label>${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.UsesCustomRecovery")} <i class="fas fa-info-circle"></i></label>
         <div class="form-fields">
             <label class="checkbox">
                 <input type="checkbox" name="${CONSTANTS.FLAGS.RECOVERY}.enabled" ${customRecovery ? "checked" : ""}>

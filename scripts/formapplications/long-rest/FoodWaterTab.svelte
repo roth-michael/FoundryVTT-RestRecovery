@@ -303,7 +303,7 @@
                         <input type="number" bind:value={item.amount} on:change={() => {
                             item.amount = Math.max(0.5, Math.min(item.usesLeft, roundHalf(item.amount)));
                             calculateAmountOfItems();
-                        }}> Amount to consume
+                        }}> {localize("REST-RECOVERY.Dialogs.LongRest.AmountToConsume")}
                     </label>
                     {:else}
                         <label>{localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.consumable.type))}</label>

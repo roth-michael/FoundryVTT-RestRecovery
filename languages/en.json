@@ -157,7 +157,8 @@
                 "ExternalFoodHalf": "Eat half amount needed",
                 "ExternalWater": "Has access to external water source",
                 "ExternalWaterFull": "Drink until sated",
-                "ExternalWaterHalf": "Drink half amount needed"
+                "ExternalWaterHalf": "Drink half amount needed",
+                "AmountToConsume": "Amount To Consume"
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -190,6 +191,8 @@
             },
             "ItemOverrides": {
                 "Title": "Rest Recovery: Food & Water",
+                "UsesCustomRecovery": "Uses Custom Recovery",
+                "Type": "Type:",
                 "Enabled": "Enabled",
                 "Formula": "Formula:",
                 "IsConsumable": "Item is consumable",
