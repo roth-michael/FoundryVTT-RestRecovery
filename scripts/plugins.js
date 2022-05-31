@@ -7,7 +7,7 @@ export async function handleDFredsConvenientEffects(actor, data){
     const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
     const actorUuid = actor.uuid;
 
-    for(let level = 1; level <= 6; level++) {
+    for(let level = 1; level <= 5; level++) {
         let levelName = `Exhaustion ${level}`;
         if (levelName !== exhaustionEffectName && game?.dfreds?.effectInterface.hasEffectApplied({
             effectName: levelName,
@@ -20,7 +20,9 @@ export async function handleDFredsConvenientEffects(actor, data){
         }
     }
 
-    await game?.dfreds?.effectInterface.addEffect({ effectName: exhaustionEffectName, uuid: actorUuid });
+    if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
+        await game?.dfreds?.effectInterface.addEffect({ effectName: exhaustionEffectName, uuid: actorUuid });
+    }
 
 }
 
@@ -32,13 +34,15 @@ export async function handleCombatUtilityBelt(actor, data){
 
     const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
 
-    for(let level = 1; level <= 6; level++) {
+    for(let level = 1; level <= 5; level++) {
         let levelName = `Exhaustion ${level}`;
         if (levelName !== exhaustionEffectName && game.cub.hasCondition(levelName, actor, { warn: false })){
             await game.cub.removeCondition(levelName, actor, { warn: false });
         }
     }
 
-    await game.cub.addCondition(exhaustionEffectName, actor);
+    if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
+        await game.cub.addCondition(exhaustionEffectName, actor);
+    }
 
 }

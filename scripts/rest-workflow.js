@@ -57,8 +57,10 @@ export default class RestWorkflow {
 
         Hooks.on("preUpdateActor", (actor, data) => {
             if(!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
+
             const exhaustion = getProperty(data, "data.attributes.exhaustion");
             if(exhaustion === undefined || !rests.get(actor.uuid)) return;
+
             switch(lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION)){
                 case CONSTANTS.MODULES.DFREDS:
                     if(!game.modules.get(CONSTANTS.MODULES.DFREDS)?.active) return;
