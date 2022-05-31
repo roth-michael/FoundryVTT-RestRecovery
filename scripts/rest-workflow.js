@@ -381,9 +381,8 @@ export default class RestWorkflow {
             const roll = new Roll('1d8').evaluate({ async: false });
             hpRegained += roll.total;
 
-            const isOwnChef = this.features.bard === this.actor;
             await roll.toMessage({
-                flavor: game.i18n.format("REST-RECOVERY.Chat.Chef" + (isOwnChef ? "Self" : ""), {
+                flavor: game.i18n.format("REST-RECOVERY.Chat.Chef" + (chefActor === this.actor ? "Self" : ""), {
                     name: this.actor.name,
                     chef: chefActor.name
                 }),
