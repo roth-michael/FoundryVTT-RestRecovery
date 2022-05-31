@@ -9,10 +9,7 @@ export async function handleDFredsConvenientEffects(actor, data){
 
     for(let level = 1; level <= 5; level++) {
         let levelName = `Exhaustion ${level}`;
-        if (levelName !== exhaustionEffectName && game?.dfreds?.effectInterface.hasEffectApplied({
-            effectName: levelName,
-            uuid: actorUuid
-        })){
+        if (levelName !== exhaustionEffectName && game?.dfreds?.effectInterface.hasEffectApplied(levelName, actorUuid)){
             await game?.dfreds?.effectInterface.removeEffect({
                 effectName: levelName,
                 uuid: actorUuid
