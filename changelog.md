@@ -4,6 +4,7 @@
 - Added module profile management, you can now quickly configure different settings for different locales or situations
 - Added fully featured food & water automation
 - Added exhaustion automation, by itself and/or together with food automation
+- Added support for exhaustion integration with Combat Utility Belt and DFred's Convenient Effects
 - Fixed compatibility warning between Rest Recovery and DnD5e Helpers
 
 ## Version 1.1.2

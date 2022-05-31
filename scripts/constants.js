@@ -25,6 +25,7 @@ const CONSTANTS = {
          *             Long Rest Settings            *
          *-------------------------------------------*/
         AUTOMATE_EXHAUSTION: "automate-exhaustion",
+        EXHAUSTION_INTEGRATION: "exhaustion-integration",
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
         PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
@@ -83,6 +84,11 @@ const CONSTANTS = {
 
         UP: "up",
         DOWN: "down",
+    },
+
+    MODULES: {
+        DFREDS: "dfreds-convenient-effects",
+        CUB: "combat-utility-belt"
     },
 
     USING_DEFAULT_LONG_REST_SETTINGS(){
@@ -158,6 +164,23 @@ CONSTANTS.DEFAULT_SETTINGS = {
         default: false,
         type: Boolean
     },
+    [CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION]: {
+        name: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Title",
+        hint: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Hint",
+        scope: "world",
+        group: "longrest",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value
+        },
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds",
+            [CONSTANTS.MODULES.CUB]: "REST-RECOVERY.Modules.CUB",
+        },
+        default: CONSTANTS.FRACTIONS.NONE,
+    },
     [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
         name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
         hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
@@ -207,7 +230,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.HP_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -233,7 +256,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "half",
+        default: CONSTANTS.FRACTIONS.HALF,
     },
     [CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -252,10 +275,10 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            down: "REST-RECOVERY.Rounding.RoundDown",
-            up: "REST-RECOVERY.Rounding.RoundUp",
+            [CONSTANTS.FRACTIONS.DOWN]: "REST-RECOVERY.Rounding.RoundDown",
+            [CONSTANTS.FRACTIONS.UP]: "REST-RECOVERY.Rounding.RoundUp",
         },
-        default: "down",
+        default: CONSTANTS.FRACTIONS.DOWN,
     },
     [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
@@ -273,7 +296,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -299,7 +322,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -325,7 +348,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -351,7 +374,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -377,7 +400,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
             [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA]: {
         scope: "world",

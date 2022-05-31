@@ -14,7 +14,9 @@
     export let actor;
     export let workflow;
 
-    const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
+    const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)
+        && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
+
     const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
 
     const actorExhaustion = getProperty(actor.data, "data.attributes.exhaustion") ?? 0;
@@ -333,8 +335,7 @@
     {/if}
 
     {#if enableAutomatedExhaustion}
-
-        {#if newFoodSatedValue < actorRequiredFood}
+        {#if actorRequiredFood && newFoodSatedValue < actorRequiredFood}
             {#if actorDaysWithoutFood < actorExhaustionThreshold}
                 <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodAlmostExhaustion", {
                     days: (actorExhaustionThreshold - actorDaysWithoutFood) * (newFoodSatedValue > 0 && newFoodSatedValue <= (actorRequiredFood/2) ? 2 : 1)
@@ -344,12 +345,13 @@
             {/if}
         {/if}
 
-        {#if newWaterSatedValue > 0 && newWaterSatedValue <= (actorRequiredWater/2)}
-            <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfWater", { dc: halfWaterSaveDC, exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
-        {:else if newWaterSatedValue === 0}
-            <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoWater", { exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
+        {#if actorRequiredWater}
+            {#if newWaterSatedValue > 0 && newWaterSatedValue <= (actorRequiredWater/2)}
+                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfWater", { dc: halfWaterSaveDC, exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
+            {:else if newWaterSatedValue === 0}
+                <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoWater", { exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
+            {/if}
         {/if}
-
     {/if}
 
 

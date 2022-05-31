@@ -22,6 +22,11 @@
         "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
         "PatchedConsumable": "Updated {itemName} with uses.",
 
+        "Modules": {
+            "DFreds": "DFreds Convenient Effects",
+            "CUB": "Combat Utility Belt"
+        },
+
         "Fractions": {
             "None": "None",
             "Quarter": "Quarter",
@@ -311,6 +316,10 @@
                 "AutomateExhaustion": {
                     "Title": "Enable exhaustion automation",
                     "Hint": "This makes it so that exhaustion is subtracted by 1 every long rest."
+                },
+                "ExhaustionIntegration": {
+                    "Title": "Exhaustion Module Integration",
+                    "Hint": "This setting allows you to use other modules in order to apply their respective exhaustion active effects on characters."
                 },
                 "RollHitDice": {
                     "Title": "Enable long rest hit dice rolls",

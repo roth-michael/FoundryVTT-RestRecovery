@@ -1,6 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
-import { getSetting } from "./lib/lib.js";
+import * as plugins from "./plugins.js";
 
 const rests = new Map();
 
@@ -55,9 +55,17 @@ export default class RestWorkflow {
             RestWorkflow.remove(actor);
         });
 
-        Hooks.on("updateActor", (actor, data) => {
-            if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)){
-
+        Hooks.on("preUpdateActor", (actor, data) => {
+            if(!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
+            const exhaustion = getProperty(data, "data.attributes.exhaustion");
+            if(exhaustion === undefined || !rests.get(actor.uuid)) return;
+            switch(lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION)){
+                case CONSTANTS.MODULES.DFREDS:
+                    if(!game.modules.get(CONSTANTS.MODULES.DFREDS)?.active) return;
+                    return plugins.handleDFredsConvenientEffects(actor, data)
+                case CONSTANTS.MODULES.CUB:
+                    if(!game.modules.get(CONSTANTS.MODULES.CUB)?.active) return;
+                    return plugins.handleCombatUtilityBelt(actor, data)
             }
         });
 
@@ -596,13 +604,13 @@ export default class RestWorkflow {
 
                 actorWaterSatedValue = Math.min(actorRequiredWater, actorWaterSatedValue);
 
-                if(lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)) {
-                    if (actorWaterSatedValue === 0) {
+                if (actorWaterSatedValue < actorRequiredWater && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)) {
+                    if(actorWaterSatedValue < (actorRequiredWater/2)) {
                         actorExhaustion += actorExhaustion > 0 ? 2 : 1;
                         exhaustionGain = true;
                         exhaustionToRemove = 0;
-                    } else if (actorWaterSatedValue <= (actorRequiredWater / 2)) {
-                        const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
+                    }else{
+                        const halfWaterSaveDC = lib.getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
                         if (halfWaterSaveDC) {
                             exhaustionToRemove = 0;
                             let roll = await this.actor.rollAbilitySave("con", {

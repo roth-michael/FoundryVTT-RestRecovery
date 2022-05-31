@@ -366,7 +366,7 @@ function patch_getUsageUpdates(){
                 actorUpdates[`data.spells.${consumeSpellLevel}.value`] = Math.max(spells - 1, 0);
             }
 
-            const consumeFull = RestWorkflow.itemsListened.get(this.id);
+            const consumeFull = RestWorkflow.itemsListened.get(this.id) ?? true;
 
             // Consume Limited Usage
             if ( consumeUsage ) {
