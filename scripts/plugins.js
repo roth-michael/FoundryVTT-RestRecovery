@@ -1,45 +1,60 @@
-export async function handleDFredsConvenientEffects(actor, data){
+import CONSTANTS from "./constants.js";
 
-    if(!game?.dfreds?.effectInterface) return;
+export default class plugins {
 
-    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+    static _integrationMap = {
+        [CONSTANTS.MODULES.DFREDS+"-exhaustion"]: this.handleDFredsConvenientEffects,
+        [CONSTANTS.MODULES.CUB+"-exhaustion"]: this.handleCombatUtilityBelt
+    }
 
-    const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
-    const actorUuid = actor.uuid;
+    static handleIntegration(integration, ...args){
+        if(!this._integrationMap[integration]) return;
+        return this._integrationMap[integration](...args);
+    }
 
-    for(let level = 1; level <= 5; level++) {
-        let levelName = `Exhaustion ${level}`;
-        if (levelName !== exhaustionEffectName && game?.dfreds?.effectInterface.hasEffectApplied(levelName, actorUuid)){
-            await game?.dfreds?.effectInterface.removeEffect({
-                effectName: levelName,
-                uuid: actorUuid
-            });
+    static async handleDFredsConvenientEffects(actor, data){
+
+        if(!game.modules.get(CONSTANTS.MODULES.DFREDS)?.active) return;
+        if(!game?.dfreds?.effectInterface) return;
+        const DFREDS = game?.dfreds?.effectInterface;
+
+        const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+        const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
+        const actorUuid = actor.uuid;
+
+        for(let level = 1; level <= 5; level++) {
+            let levelName = `Exhaustion ${level}`;
+            if (levelName !== exhaustionEffectName && DFREDS.hasEffectApplied(levelName, actorUuid)){
+                await DFREDS.removeEffect({
+                    effectName: levelName,
+                    uuid: actorUuid
+                });
+            }
+        }
+
+        if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
+            await DFREDS.addEffect({ effectName: exhaustionEffectName, uuid: actorUuid });
         }
     }
 
-    if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
-        await game?.dfreds?.effectInterface.addEffect({ effectName: exhaustionEffectName, uuid: actorUuid });
-    }
+    static async handleCombatUtilityBelt(actor, data){
 
-}
+        if(!game.modules.get(CONSTANTS.MODULES.CUB)?.active) return;
+        if(!game?.cub?.enhancedConditions?.supported) return;
+        const CUB = game.cub;
 
-export async function handleCombatUtilityBelt(actor, data){
+        const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+        const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
 
-    if(!game?.cub?.enhancedConditions?.supported) return;
+        for(let level = 1; level <= 5; level++) {
+            let levelName = `Exhaustion ${level}`;
+            if (levelName !== exhaustionEffectName && CUB.hasCondition(levelName, actor, { warn: false })){
+                await CUB.removeCondition(levelName, actor, { warn: false });
+            }
+        }
 
-    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
-
-    const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
-
-    for(let level = 1; level <= 5; level++) {
-        let levelName = `Exhaustion ${level}`;
-        if (levelName !== exhaustionEffectName && game.cub.hasCondition(levelName, actor, { warn: false })){
-            await game.cub.removeCondition(levelName, actor, { warn: false });
+        if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
+            await CUB.addCondition(exhaustionEffectName, actor);
         }
     }
-
-    if(exhaustionLevel >= 1 && exhaustionLevel <= 5) {
-        await game.cub.addCondition(exhaustionEffectName, actor);
-    }
-
 }

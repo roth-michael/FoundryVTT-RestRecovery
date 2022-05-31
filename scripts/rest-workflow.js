@@ -1,6 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
-import * as plugins from "./plugins.js";
+import plugins from "./plugins.js";
 
 const rests = new Map();
 
@@ -57,18 +57,10 @@ export default class RestWorkflow {
 
         Hooks.on("preUpdateActor", (actor, data) => {
             if(!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
-
             const exhaustion = getProperty(data, "data.attributes.exhaustion");
             if(exhaustion === undefined || !rests.get(actor.uuid)) return;
-
-            switch(lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION)){
-                case CONSTANTS.MODULES.DFREDS:
-                    if(!game.modules.get(CONSTANTS.MODULES.DFREDS)?.active) return;
-                    return plugins.handleDFredsConvenientEffects(actor, data)
-                case CONSTANTS.MODULES.CUB:
-                    if(!game.modules.get(CONSTANTS.MODULES.CUB)?.active) return;
-                    return plugins.handleCombatUtilityBelt(actor, data)
-            }
+            const integration = lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
+            return plugins.handleIntegration(integration+"-exhaustion", actor, data);
         });
 
         this._setupFoodListeners();

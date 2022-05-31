@@ -84,6 +84,9 @@ function patch_itemSheet(app, html, { item } = {}){
 function patch_itemConsumableInputs(app, html, item){
 
     const customConsumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+    const uses = Number(getProperty(item, "data.uses.max"));
+    const per = getProperty(item, "data.uses.per");
+    const validUses = uses && uses > 0 && per;
 
     let targetElem = html.find('.form-header')?.[1];
     if (!targetElem) return;
@@ -113,8 +116,8 @@ function patch_itemConsumableInputs(app, html, item){
             </div>
         </div>
         
-        <small style="display:${customConsumable.enabled ? "block" : "none"}; margin: 0.5rem 0;">
-            ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.ChargesDescription")}
+        <small style="display:${customConsumable.enabled && !validUses ? "block" : "none"}; margin: 0.5rem 0;">
+            <i class="fas fa-info-circle" style="color:rgb(217, 49, 49);"></i> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.ChargesDescription")}
         </small>
     `).insertBefore(targetElem);
 
