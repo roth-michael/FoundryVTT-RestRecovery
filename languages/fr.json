@@ -102,14 +102,9 @@
         },
 
         "Dialogs": {
-            "ResetSettings": {
-                "Title": "Rest Recovery | Réinitialiser les paramètres",
-                "Content": "Êtes-vous sûr de vouloir réinitialiser les paramètres de ce module ?<br><strong>AUCUNE RETOUR EN ARRIÈRE POSSIBLE !</strong>",
-                "Confirm": "Réinitialiser les paramètres",
-                "Cancel": "Annuler"
-            },
             "SaveProfile": {
                 "Title": "Créer un profil",
+                "Enter": "Tapez le nom du profil :",
                 "OverrideProfile": "Votre nouveau profil ne peut pas avoir le même nom que l'ancien",
                 "Empty": "Votre nouveau profil ne peut pas avoir titre vide"
             },
@@ -192,7 +187,9 @@
                 "MoreToCome": "Plus de paramètres à venir !",
                 "Request": "Demander une nouvelle fonctionnalité ici.",
                 "Submit": "Soumettre les paramètres",
-                "ModuleProfile": "Profil du module :"
+                "ModuleProfile": "Profil :",
+                "ImportProfile": "Importer un profil",
+                "ExportProfile": "Exporter un profil"
             },
             "ItemOverrides": {
                 "Title": "Rest Recovery : Nourriture & eau",
@@ -240,11 +237,6 @@
         },
 
         "Settings": {
-            "Reset": {
-                "Title": "Réinitialiser les paramètres par défaut",
-                "Label": "Réinitialiser les paramètres de repos",
-                "Hint": "Ceci réinitialisera tous les paramètres du module à leurs valeurs par défaut."
-            },
             "Configure": {
                 "Title": "Configuration du module",
                 "Label": "Paramètres de repos",
@@ -289,9 +281,9 @@
                     "Title": "Automatiser l'épuisement en l'absence de nourriture et d'eau",
                     "Hint": "Activé ce paramètre fait en sorte que les personnages souffrent automatiquement de niveau d'épuisement s'ils ne mangent pas ou ne boivent pas assez. Ceci requiert le paramètre d'épuisement activé dans la fenêtre de configuration des repos long."
                 },
-                "HalfFoodDuration": {
-                    "Title": "Nombre maximum de jours en ne mangeant que la moitié de ce qui est requis par jour",
-                    "Hint": "Ce paramètre indique combien de jours un personnage peut passer sans manger avant de périr."
+                "NoFoodDuration": {
+                    "Title": "Nombre maximum de jours sans manger",
+                    "Hint": "Ce paramètre indique combien de jours un personnage peut passer sans manger avant de souffrir de l'épuisement."
                 },
                 "HalfWaterSaveDC": {
                     "Title": "DD de l'épuisement dû au manque d'eau",
