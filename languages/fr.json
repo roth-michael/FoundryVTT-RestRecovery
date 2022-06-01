@@ -260,14 +260,14 @@
             },
             "General": {
                 "EnableAutoRollButton": {
-                    "Title": "Enable hit dice auto roll button",
-                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
+                    "Title": "Activer le jet automatique des dés de vie",
+                    "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
                 }
             },
             "FoodAndWater": {
                 "EnableFoodAndWater": {
-                    "Title": "Activer le jet automatique des dés de vie",
-                    "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
+                    "Title": "Activer l'automatisation de la nourritur et de l'eau",
+                    "Hint": "Cela active les fonctionnalités liées à la nourriture et l'eau, ci-dessous."
                 },
                 "FoodUnitsPerDay": {
                     "Title": "Nombre d'unités de nourriture requis par jour",
