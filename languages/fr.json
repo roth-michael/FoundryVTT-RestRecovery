@@ -20,6 +20,12 @@
         },
 
         "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patché.",
+        "PatchedConsumable": "Utilisations de l'objet {itemName} mises à jour.",
+
+        "Modules": {
+            "DFreds": "DFreds Convenient Effects",
+            "CUB": "Combat Utility Belt"
+        },
 
         "Fractions": {
             "None": "Aucun",
@@ -32,6 +38,12 @@
         "Rounding": {
             "RoundDown": "Arrondi inférieur",
             "RoundUp": "Arrondi supérieur"
+        },
+
+        "Misc": {
+            "Food": "Nourriture",
+            "Water": "Eau",
+            "Both": "Les deux"
         },
 
         "NumberToText": {
@@ -55,7 +67,38 @@
             "SongOfRest": "{name} profite du Chant de repos de {bard}.",
             "SongOfRestSelf": "{name} profite de son propre Chant de repos.",
             "Chef": "{name} profite du délicieux met préparé par {chef}.",
-            "ChefSelf": "{name} profite de son prope met."
+            "ChefSelf": "{name} profite de son prope met.",
+
+            "FoodAndWater": {
+                "ConsumedBothDayWorth": "{actorName} a consommé {itemName} pour l'équivalent d'une journée complète de nourriture et d'eau.",
+                "ConsumedBoth": "{actorName} a consommé {itemName} pour l'équivalent de {charges} unités d'eau et de nourriture.",
+                "ConsumedFoodDayWorth": "{actorName} a mangé {itemName} pour l'équivalent d'une journée complète de nourriture.",
+                "ConsumedFood": "{actorName} a mangé {itemName} pour l'équivalent de {charges} unités de nourriture.",
+                "ConsumedWaterDayWorth": "{actorName} a bu {itemName} pour l'équivalent d'une journée complète d'eau.",
+                "ConsumedWater": "{actorName} a bu {itemName} pour l'équivalent de {charges} unités d'eau.",
+                "RequiredSatedFood": "Requiert encore {units} unités de nourriture pour être repu pour la journée.",
+                "RequiredSatedWater": "Requiert encore {units} unités d'eau pour être hydraté pour la journée.",
+                "SatedFood": "Pas de nourriture supplémentaire nécessaire pour la journée.",
+                "SatedWater": "Pas d'eau supplémentaire nécessaire pour la journée.",
+
+                "FoodFullNone": "A mangé assez de sa prope nourriture pour être repu pour la journée.",
+                "FoodHalfNone": "A mangé de sa prope nourriture, mais uniquementl la moitié de ce qui est nécessaire pour la journée.",
+                "FoodHalfHalf": "A mangé assez d'une source externe et de sa propre nourriture pour être repu pour la journée.",
+                "FoodNoneFull": "A mangé assez d'une source externe de nourriture pour être repu pour la journée.",
+                "FoodNoneHalf": "A mangé d'une source externe de nourriture, mais uniquementl la moitié de ce qui est nécessaire pour la journée.",
+                "FoodNoneNone": "N'a pas mangé de la journée.",
+
+                "WaterFullNone": "A bu assez de sa prope eau pour être hydraté pour la journée.",
+                "WaterHalfNone": "A bu de sa prope eau, mais uniquementl la moitié de ce qui est nécessaire pour la journée.",
+                "WaterHalfHalf": "A bu assez d'une source externe et de sa propre eau pour être hydraté pour la journée.",
+                "WaterNoneFull": "A bu assez d'une source externe d'eau pour être hydraté pour la journée.",
+                "WaterNoneHalf": "A bu d'une source externe d'eau, mais uniquementl la moitié de ce qui est nécessaire pour la journée.",
+                "WaterNoneNone": "N'a pas bu de la journée.",
+
+                "NoExhaustion": "Mais a évité l'épuisement.",
+                "Exhaustion": "Et souffre de {exhaustion} niveau d'épuisement.",
+                "ExhaustionDeath": "Malheureusement, {actorName} a péri en atteignant le niveau 6 d'épuisement."
+            }
         },
 
         "Dialogs": {
@@ -64,6 +107,23 @@
                 "Content": "Êtes-vous sûr de vouloir réinitialiser les paramètres de ce module ?<br><strong>AUCUNE RETOUR EN ARRIÈRE POSSIBLE !</strong>",
                 "Confirm": "Réinitialiser les paramètres",
                 "Cancel": "Annuler"
+            },
+            "SaveProfile": {
+                "Title": "Créer un profil",
+                "OverrideProfile": "Votre nouveau profil ne peut pas avoir le même nom que l'ancien",
+                "Empty": "Votre nouveau profil ne peut pas avoir titre vide"
+            },
+            "DiscardChanges": {
+                "Title": "Annuler les modifications",
+                "Content": "Vous avez des modifications non sauvegardées. Êtes-vous certain de vouloir changer de profil ?"
+            },
+            "ResetDefaultChanges": {
+                "Title": "Réinitialiser les paramètres",
+                "Content": "Êtes-vous certain de vouloir réinitialiser les paramètres par défaut du profil par défaut ?"
+            },
+            "DeleteProfile": {
+                "Title": "Supprimer le profil",
+                "Content": "Êtes-vous certain de vouloir supprimer le profil \"{profile}\" ?"
             },
             "ShortRest": {
                 "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
@@ -84,7 +144,26 @@
                 "Begin": "Commencer le repos long",
                 "BeginExplanation": "En commençant votre repos long, vous allez récupérer une partie de vos dés de vie que vous pourrez ensuite lancer pour récupérer des points de vie.",
                 "CustomRules": "Vous jouez avec des règles personnalisées, ce qui signifie que vous pourriez récupérer de façon différente des points de vie, des dés de vie, des aptitudes de classe, des charges d'objets à usage limité et des emplacements de sort.",
-                "CustomRulesLink": "Voir les règles personnalisées."
+                "CustomRulesLink": "Voir les règles personnalisées.",
+                "RestTab": "Repos",
+                "FoodAndWaterTab": "Nourriture & eau",
+                "FoodRequirement": "Vous avez besoin d'une autre unité de <strong>{food}</strong> pour la journée.",
+                "FoodSated": "Vous avez assez mangé pour la journée.",
+                "WaterRequirement": "Vous avez besoin d'une autre unité d'<strong>{water}</strong> pour la journée.",
+                "WaterSated": "Vous avez assez bu pour la journée.",
+                "FoodAlmostExhaustion": "Si vous terminez la journée sans avoir manger la quantité requise de nourriture, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> dans <strong>{days} jours</strong>.",
+                "FoodExhaustion": "Parce que vous êtes affamé, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> si vous finnissez la journée sans manger la quantité requise de nourriture par jour.",
+                "NoWater": "Vous allez automatiquement souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> Si vous terminez la journée en buvant moins de la moitié d'eau requise par jour.",
+                "HalfWater": "Vous devez un jet de sauvegarde de Consitution DD {dc} ou souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> si vous terminez la journée sans boire la quantité requise d'eau par jour.",
+                "DragDrop": "Glissez et déposez des objets consommables, ou sélectionnez :",
+                "DayWorth": "Une utilisation de cet objet est l'équivalent d'une journée de {type}",
+                "ExternalFood": "Accès à une source externe de nourriture",
+                "ExternalFoodFull": "Manger jusqu'à être repu",
+                "ExternalFoodHalf": "Manger la moitié nécessaire par jour",
+                "ExternalWater": "Accès à une source externe d'eau",
+                "ExternalWaterFull": "Boire jusqu'à être hydraté",
+                "ExternalWaterHalf": "Boire la moitié nécessaire par jour",
+                "AmountToConsume": "Montant à consommer"
             },
             "LongRestWarning": {
                 "Title": "Terminer le repos long ?",
@@ -95,6 +174,7 @@
                 "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
             },
             "Resources": {
+                "Configure": "Configuration de la récupération des ressources",
                 "Title": "Configuration des ressources",
                 "Name": "Nom",
                 "Value": "Valeur",
@@ -108,9 +188,34 @@
                 "LongRest": "Repos long",
                 "ShortRest": "Repos court",
                 "ItemNames": "Nommage",
+                "FoodAndWater": "Nourriture & eau",
                 "MoreToCome": "Plus de paramètres à venir !",
                 "Request": "Demander une nouvelle fonctionnalité ici.",
-                "Submit": "Soumettre les paramètres"
+                "Submit": "Soumettre les paramètres",
+                "ModuleProfile": "Profil du module :"
+            },
+            "ItemOverrides": {
+                "Title": "Rest Recovery : Nourriture & eau",
+                "UsesCustomRecovery": "Récupération personnalisée",
+                "Type": "Type :",
+                "Enabled": "Activé",
+                "Formula": "Formule :",
+                "IsConsumable": "Est un consommable",
+                "DayWorth": "Une charge suffisante pour une journée complète",
+                "ChargesDescription": "Le système de nourriture et d'eau de Rest Recovery nécessite l'objet d'avoir des charges à utiliser. Une charge étant l'équivalent d'une unité de nourriture ou d'eau."
+            },
+            "AbilityUse": {
+                "Title": "Sélectionnez la quantité à consommer de l'objet :",
+                "DayWorthTitleBoth": "Ce type de consommable est l'équivalent d'une journée complète de nourriture et d'eau.",
+                "DayWorthTitleFood": "Ce type de consommable est l'équivalent d'une journée complète de nourriture.",
+                "DayWorthTitleWater": "Ce type de consommable est l'équivalent d'une journée complète d'eau'.",
+                "DayWorthTitleCont": "Vous n'aurez pas besoin de consommer quoique ce soit de ce type avant la journée prochaine. Vous ne pouvez pas consommer la moitié de ce type de consommable.",
+                "SatedFood": "Vous êtes déjà repu, vous ne tirerez aucun bénéfice de manger ceci.",
+                "NotSatedFood": "Vous devez manger {units} unités pour être repu.",
+                "SatedWater": "Vous êtes déjà hydraté, vous ne tirerez aucun bénéfice de boire ceci.",
+                "NotSatedWater": "Vous devez boire {units} unités pour être hydraté.",
+                "FullUnit": "Consommer une unité complète",
+                "HalfUnit": "Consommer une moité d'unité"
             }
         },
 
@@ -119,6 +224,18 @@
             "HitDieBonus": {
                 "Title": "Bonus au dé de vie",
                 "Hint": "À chaque fois que ce personnage lance un dé de vie, ce champ applique un bonus à ce lancé. Cela peut être une formule, comme \"1d6 + 3\"."
+            },
+            "FoodUnitsPerDay": {
+                "Title": "Nombre d'unités de nourriture requis par jour",
+                "Hint": "Ce champ redéfinit le nombre d'unités de nourriture dont le personnage a besoin par jour."
+            },
+            "WaterUnitsPerDay": {
+                "Title": "Nombre d'unités d'eau requis par jour",
+                "Hint": "Ce champ redéfinit le nombre d'unités d'eau dont le personnage a besoin par jour."
+            },
+            "NoFoodWater": {
+                "Title": "Désactiver la consommation de nourriture et d'eau",
+                "Hint": "Si activé, le personnage n'a pas besoin de manger ou de boire. Utile pour des capacité comme \"De nature immortelle\" du sorcier."
             }
         },
 
@@ -141,6 +258,46 @@
                 "Title": "Activer le mode debug",
                 "Label": "Afficher des messages de debug dans la console"
             },
+            "General": {
+                "EnableAutoRollButton": {
+                    "Title": "Enable hit dice auto roll button",
+                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
+                }
+            },
+            "FoodAndWater": {
+                "EnableFoodAndWater": {
+                    "Title": "Activer le jet automatique des dés de vie",
+                    "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
+                },
+                "FoodUnitsPerDay": {
+                    "Title": "Nombre d'unités de nourriture requis par jour",
+                    "Hint": "Ce paramètre permet de configurer le nombre d'unités de nourriture requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation de nourriture."
+                },
+                "WaterUnitsPerDay": {
+                    "Title": "Nombre d'unités d'eau requis par jour",
+                    "Hint": "Ce paramètre permet de configurer le nombre d'unités d'eau requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation d'eau."
+                },
+                "ExternalFoodAccess": {
+                    "Title": "Accès à une source externe de nourriture",
+                    "Hint": "Ce paramètre permet de configurer si les joueurs pourront sélectionner l'option \"Source de nourriture externe\" en guise de remplacement de la consommation d'un objet, durant un repos long. \"Complet\" signifie aucun problème pour en trouver comme dans des villes avec des tavernes , \"Moitié\" signifie une accès limité ou une nourriture de mauvaise qualité, \"Aucun\" signifie des étendues sauvages ou une famine."
+                },
+                "ExternalWaterAccess": {
+                    "Title": "Accès à une source externe d'eau",
+                    "Hint": "Comme pour la nourriture, mais pour l'eau. Garder à l'esprit que \"Moitié\" et \"Aucun\" vont causer très rapidement de l'épuisement aux personnages s'il n'ont pas de consommables (et si l'option sur l'épuisement est activée)."
+                },
+                "AutomateFoodWaterExhaustion": {
+                    "Title": "Automatiser l'épuisement en l'absence de nourriture et d'eau",
+                    "Hint": "Activé ce paramètre fait en sorte que les personnages souffrent automatiquement de niveau d'épuisement s'ils ne mangent pas ou ne boivent pas assez. Ceci requiert le paramètre d'épuisement activé dans la fenêtre de configuration des repos long."
+                },
+                "HalfFoodDuration": {
+                    "Title": "Nombre maximum de jours en ne mangeant que la moitié de ce qui est requis par jour",
+                    "Hint": "Ce paramètre indique combien de jours un personnage peut passer sans manger avant de périr."
+                },
+                "HalfWaterSaveDC": {
+                    "Title": "DD de l'épuisement dû au manque d'eau",
+                    "Hint": "Ce paramètre configure la valeur du DD du jet de sauvegare de Constitution si les personnages boivent seulement la moitié de l'eau requise par jour."
+                }
+            },
             "ShortRest": {
                 "IgnoreInactive": {
                     "Title": "Ignorer les personnages joueurs inactifs",
@@ -156,6 +313,14 @@
                 }
             },
             "LongRest": {
+                "AutomateExhaustion": {
+                    "Title": "Activer l'automatisation de l'épuisement",
+                    "Hint": "Cela fait en sorte que l'épuisement est réduit de 1 à chaque repos long."
+                },
+                "ExhaustionIntegration": {
+                    "Title": "Gestion de l'épuisement pas un module tiers",
+                    "Hint": "Ce paramètre permet de sélectionner un module tiers afin d'appliquer automatiquement les niveaux d'épuisement (ainsi que leurs effets actifs) sur les personnages."
+                },
                 "RollHitDice": {
                     "Title": "Activer les dés de vie lors du repos long",
                     "Hint": "Active les éléments d'interface relatifs aux jets de dés de vie dans la fenêtre de repos long."
@@ -167,10 +332,6 @@
                 "PreRegainHitDiceBuffer": {
                     "Title": "Activer la récupération maximum de dés de vie",
                     "Hint": "Ce paramètre permet au personnage de toujours regagner le maximum de dés de vie. Et ce, même si cela devrait l'amener au-dessus de son maximum de dés de vie, de façon à n'en pas gacher inutilement. Tout dé de vie en trop restant et non utilisé après un repos long sera décompter (afin de respecter la limite maximum). "
-                },
-                "EnableAutoRollButton": {
-                    "Title": "Activer le jet automatique des dés de vie",
-                    "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
                 },
                 "HitPointsRecoveryFraction": {
                     "Title": "Fraction des points de vie à récupérer",
