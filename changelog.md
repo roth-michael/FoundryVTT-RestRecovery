@@ -1,7 +1,7 @@
 # Rest Recovery Changelog
 
 ## Version 1.2.1
-- Added french localization (again, thank you DarKDinDoN!)
+- Updated French localization (again, thank you DarKDinDoN!)
 - Added header buttons to the settings UI to export and import module profiles
 - Fixed issue that would make characters not regain hit dice during long rests
 - Fixed some minor localization issues

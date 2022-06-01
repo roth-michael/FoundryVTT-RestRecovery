@@ -166,12 +166,12 @@ export default class RestWorkflow {
         const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature, "wizard");
         const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature, "druid");
 
-        if (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse)) {
+        if (wizardFeatureUse && (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse))) {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
             this.spellData.pointsTotal = lib.evaluateFormula(wizardFeature?.data?.data?.formula || "ceil(@classes.wizard.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
-        } else if (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse)) {
+        } else if (druidFeatureUse && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
             this.spellData.pointsTotal = lib.evaluateFormula(druidFeature?.data?.data?.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
