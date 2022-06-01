@@ -169,12 +169,12 @@ export default class RestWorkflow {
         if (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse)) {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
-            this.spellData.pointsTotal = lib.evaluateFormula(wizardFeature.data.data.formula || "ceil(@classes.wizard.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
+            this.spellData.pointsTotal = lib.evaluateFormula(wizardFeature?.data?.data?.formula || "ceil(@classes.wizard.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
         } else if (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse)) {
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
-            this.spellData.pointsTotal = lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
+            this.spellData.pointsTotal = lib.evaluateFormula(druidFeature?.data?.data?.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total ?? 0?.total;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
 
@@ -420,7 +420,7 @@ export default class RestWorkflow {
 
         let { maxHitDice } = this._getMaxHitDiceRecovery();
 
-        let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
+        let { updates, hitDiceRecovered } = await this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
 
         let hitDiceLeftToRecover = maxHitDice - hitDiceRecovered;
 
@@ -446,7 +446,7 @@ export default class RestWorkflow {
 
         await this.actor.updateEmbeddedDocuments("Item", updates);
 
-        this.healthData.availableHitDice = this.getHitDice()
+        this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
 
     }

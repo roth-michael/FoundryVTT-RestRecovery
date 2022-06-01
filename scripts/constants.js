@@ -71,7 +71,7 @@ const CONSTANTS = {
         EXTERNAL_FOOD_ACCESS: "external-food-access",
         EXTERNAL_WATER_ACCESS: "external-water-access",
         AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
-        HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
+        NO_FOOD_DURATION_MODIFIER: "no-food-duration-modifier",
         HALF_WATER_SAVE_DC: "half-water-save-dc",
     },
 
@@ -625,9 +625,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         default: false,
         type: Boolean
     },
-    [CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER]: {
-        name: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Title",
-        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Hint",
+    [CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.NoFoodDuration.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.NoFoodDuration.Hint",
         scope: "world",
         group: "foodandwater",
         validate: (settingsMap) => {

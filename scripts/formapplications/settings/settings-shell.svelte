@@ -15,14 +15,16 @@
     const { application } = getContext('external');
 
     export let elementRoot;
+    export let profiles;
+    export let selectedProfile;
     let form;
 
     let settingsMap = new Map();
 
     let settings = {};
 
-    let profiles = getSetting(CONSTANTS.SETTINGS.MODULE_PROFILES);
-    let selectedProfile = getSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE);
+    profiles = getSetting(CONSTANTS.SETTINGS.MODULE_PROFILES);
+    selectedProfile = getSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE);
 
     loadSettings()
     validateSettings();

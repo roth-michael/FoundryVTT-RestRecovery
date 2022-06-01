@@ -9,7 +9,7 @@
 
     export let form;
     export let existingProfiles;
-    let profileName = "New Preset";
+    export let profileName = "New Preset";
 
 
     export async function requestSubmit() {
@@ -32,14 +32,14 @@
 <form bind:this={form} on:submit|preventDefault={savePreset} autocomplete=off class="dialog-content">
 
     <div class="form-control">
-        <label>Enter preset name:</label>
+        <label>{localize("REST-RECOVERY.Dialogs.SaveProfile.Enter")}</label>
         <input type="text" bind:value={profileName}>
     </div>
 
     {#if profileName === ""}
-        <div class="notification error">{@html localize("REST-RECOVERY.Dialogs.SaveProfile.Empty")}</div>
+        <div class="notification error">{localize("REST-RECOVERY.Dialogs.SaveProfile.Empty")}</div>
     {:else if existingProfiles.indexOf(profileName) > -1}
-        <div class="notification error">{@html localize("REST-RECOVERY.Dialogs.SaveProfile.OverrideProfile")}</div>
+        <div class="notification error">{localize("REST-RECOVERY.Dialogs.SaveProfile.OverrideProfile")}</div>
     {/if}
 
     <footer>

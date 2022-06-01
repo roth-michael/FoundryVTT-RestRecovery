@@ -74,7 +74,7 @@
                 "ConsumedBoth": "{actorName} consumed {itemName} for {charges} units of food and water.",
                 "ConsumedFoodDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
                 "ConsumedFood": "{actorName} ate {itemName} for {charges} units of food.",
-                "ConsumedWaterDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
+                "ConsumedWaterDayWorth": "{actorName} drank {itemName} for a full day's worth of water.",
                 "ConsumedWater": "{actorName} drank {itemName} for {charges} units of water.",
                 "RequiredSatedFood": "They require {units} units of food to be sated for the day.",
                 "RequiredSatedWater": "They require {units} units of water to be sated for the day.",
@@ -102,14 +102,9 @@
         },
 
         "Dialogs": {
-            "ResetSettings": {
-                "Title": "Rest Recovery | Reset Settings",
-                "Content": "Are you sure you want to reset all of the Rest Recovery module settings' to their defaults?<br><strong>THIS CANNOT BE UNDONE!</strong>",
-                "Confirm": "Reset Module Settings",
-                "Cancel": "Cancel"
-            },
             "SaveProfile": {
                 "Title": "Create New Module Profile",
+                "Enter": "Enter preset name:",
                 "OverrideProfile": "Your new profile cannot have the same name as an old profile",
                 "Empty": "Your new profile cannot have an empty name"
             },
@@ -192,7 +187,9 @@
                 "MoreToCome": "And with more configuration options to come!",
                 "Request": "Request new features here.",
                 "Submit": "Submit Settings",
-                "ModuleProfile": "Module Profile:"
+                "ModuleProfile": "Module Profile:",
+                "ImportProfile": "Import Profile",
+                "ExportProfile": "Export Profile"
             },
             "ItemOverrides": {
                 "Title": "Rest Recovery: Food & Water",
@@ -240,11 +237,6 @@
         },
 
         "Settings": {
-            "Reset": {
-                "Title": "Reset settings to default",
-                "Label": "Reset Rest Recovery Settings",
-                "Hint": "This will reset all of the module's settings back to their defaults."
-            },
             "Configure": {
                 "Title": "Module Configuration",
                 "Label": "Configure Rest",
@@ -289,8 +281,8 @@
                     "Title": "Automate food & water exhaustion",
                     "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough. Requires long rest exhaustion automation to be enabled."
                 },
-                "HalfFoodDuration": {
-                    "Title": "Maximum days on half food",
+                "NoFoodDuration": {
+                    "Title": "Maximum days with no food",
                     "Hint": "This configures how many days characters can survive without eating food before suffering from automatic exhaustion."
                 },
                 "HalfWaterSaveDC": {
