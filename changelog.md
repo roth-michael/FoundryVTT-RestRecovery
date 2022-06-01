@@ -1,5 +1,15 @@
 # Rest Recovery Changelog
 
+## Version 1.2.0
+- Added module profile management, you can now quickly configure different settings for different locales or situations
+- Added fully featured food & water automation
+- Added exhaustion automation, by itself and/or together with food automation
+- Added support for exhaustion integration with Combat Utility Belt and DFred's Convenient Effects
+- Fixed compatibility warning between Rest Recovery and DnD5e Helpers
+
+## Version 1.1.2
+- Updated French localization (thank you DarKDinDoN!)
+
 ## Version 1.1.1
 - Added `Hit Die Bonus` under the Special Traits menu of characters, which can be used to add a modifier to the characters' hit die rolls
 - Fixed issue where multiclassed characters would be unable to roll certain classes' hit die

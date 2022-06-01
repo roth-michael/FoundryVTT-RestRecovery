@@ -2,6 +2,13 @@ const CONSTANTS = {
     MODULE_NAME: "rest-recovery",
     FLAG_NAME: "data",
     SETTINGS: {
+
+        /*-------------------------------------------*
+         *          Global Module Settings           *
+         *-------------------------------------------*/
+        MODULE_PROFILES: "module-profiles",
+        ACTIVE_MODULE_PROFILE: "active-module-profile",
+
         /*-------------------------------------------*
          *           General Rest Settings           *
          *-------------------------------------------*/
@@ -17,6 +24,8 @@ const CONSTANTS = {
         /*-------------------------------------------*
          *             Long Rest Settings            *
          *-------------------------------------------*/
+        AUTOMATE_EXHAUSTION: "automate-exhaustion",
+        EXHAUSTION_INTEGRATION: "exhaustion-integration",
         LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
         PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
         PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
@@ -52,9 +61,21 @@ const CONSTANTS = {
         PERIAPT_ITEM: "periapt-item-name",
         WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
         BLACK_BLOOD_FEATURE: "black-blood-feature-name",
+
+        /*-------------------------------------------*
+         *          Food and Water Settings          *
+         *-------------------------------------------*/
+        ENABLE_FOOD_AND_WATER: "enable-food-and-water",
+        FOOD_UNITS_PER_DAY: "food-units-per-day",
+        WATER_UNITS_PER_DAY: "water-units-per-day",
+        EXTERNAL_FOOD_ACCESS: "external-food-access",
+        EXTERNAL_WATER_ACCESS: "external-water-access",
+        AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
+        HALF_FOOD_DURATION_MODIFIER: "half-food-duration-modifier",
+        HALF_WATER_SAVE_DC: "half-water-save-dc",
     },
 
-    RECOVERY: {
+    FRACTIONS: {
         FULL: "full",
         HALF: "half",
         QUARTER: "quarter",
@@ -63,6 +84,11 @@ const CONSTANTS = {
 
         UP: "up",
         DOWN: "down",
+    },
+
+    MODULES: {
+        DFREDS: "dfreds-convenient-effects",
+        CUB: "combat-utility-belt"
     },
 
     USING_DEFAULT_LONG_REST_SETTINGS(){
@@ -85,8 +111,8 @@ CONSTANTS.DEFAULT_SETTINGS = {
      *           General Rest Settings           *
      *-------------------------------------------*/
     [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
-        name: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Title",
-        hint: "REST-RECOVERY.Settings.LongRest.EnableAutoRollButton.Hint",
+        name: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Title",
+        hint: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Hint",
         scope: "world",
         group: "general",
         config: false,
@@ -129,6 +155,32 @@ CONSTANTS.DEFAULT_SETTINGS = {
     /*-------------------------------------------*
      *             Long Rest Settings            *
      *-------------------------------------------*/
+    [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION]: {
+        name: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Title",
+        hint: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Hint",
+        scope: "world",
+        group: "longrest",
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION]: {
+        name: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Title",
+        hint: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Hint",
+        scope: "world",
+        group: "longrest",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value
+        },
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds",
+            [CONSTANTS.MODULES.CUB]: "REST-RECOVERY.Modules.CUB",
+        },
+        default: CONSTANTS.FRACTIONS.NONE,
+    },
     [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
         name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
         hint: "REST-RECOVERY.Settings.LongRest.RollHitDice.Hint",
@@ -143,7 +195,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
         scope: "world",
         group: "longrest",
-        validate: CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value
+        },
         config: false,
         default: false,
         type: Boolean
@@ -153,7 +207,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
         scope: "world",
         group: "longrest",
-        validate: CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
+        },
         config: false,
         default: false,
         type: Boolean
@@ -168,13 +224,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.HP_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -194,13 +250,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "half",
+        default: CONSTANTS.FRACTIONS.HALF,
     },
     [CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -219,10 +275,10 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            down: "REST-RECOVERY.Rounding.RoundDown",
-            up: "REST-RECOVERY.Rounding.RoundUp",
+            [CONSTANTS.FRACTIONS.DOWN]: "REST-RECOVERY.Rounding.RoundDown",
+            [CONSTANTS.FRACTIONS.UP]: "REST-RECOVERY.Rounding.RoundUp",
         },
-        default: "down",
+        default: CONSTANTS.FRACTIONS.DOWN,
     },
     [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
@@ -234,13 +290,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -260,13 +316,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -286,13 +342,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -312,13 +368,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -338,13 +394,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.RECOVERY.NONE]: "REST-RECOVERY.Fractions.None",
-            [CONSTANTS.RECOVERY.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-            [CONSTANTS.RECOVERY.HALF]: "REST-RECOVERY.Fractions.Half",
-            [CONSTANTS.RECOVERY.FULL]: "REST-RECOVERY.Fractions.Full",
-            [CONSTANTS.RECOVERY.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
         },
-        default: "full",
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA]: {
         scope: "world",
@@ -364,6 +420,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Wizard",
         type: String
     },
@@ -373,6 +430,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Druid",
         type: String
     },
@@ -382,6 +440,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.ClassNames.Bard",
         type: String
     },
@@ -391,6 +450,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
         type: String
     },
@@ -400,6 +460,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
         type: String
     },
@@ -409,6 +470,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.SongOfRest",
         type: String
     },
@@ -418,6 +480,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ChefFeat",
         type: String
     },
@@ -427,6 +490,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.ChefTools",
         type: String
     },
@@ -436,6 +500,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.DurableFeat",
         type: String
     },
@@ -445,6 +510,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.PeriaptItem",
         type: String
     },
@@ -454,6 +520,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.WoundClosureBlessing",
         type: String
     },
@@ -463,10 +530,142 @@ CONSTANTS.DEFAULT_SETTINGS = {
         scope: "world",
         group: "itemnames",
         config: false,
+        localize: true,
         default: "REST-RECOVERY.FeatureNames.BlackBloodFeature",
         type: String
+    },
+
+
+    /*-------------------------------------------*
+     *          Food and Water Settings          *
+     *-------------------------------------------*/
+    [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.EnableFoodAndWater.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.WaterUnitsPerDay.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: 1,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodAccess.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodAccess.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        config: false,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        choices: {
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None"
+        },
+        default: "full",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterAccess.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterAccess.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        config: false,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        choices: {
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None"
+        },
+        default: "full",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
+        scope: "world",
+        group: "foodandwater",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+                || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
+        },
+        config: false,
+        default: false,
+        type: Boolean
+    },
+    [CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfFoodDuration.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: "3+max(1,@abilities.con.mod)",
+        type: String
+    },
+    [CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+        },
+        config: false,
+        default: 15,
+        type: Number
     }
 };
+
+const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`
+CONSTANTS.FLAGS = {
+    BASE: baseFlag,
+    RESOURCES: baseFlag + ".resources",
+    RECOVERY: baseFlag + ".recovery",
+    CONSUMABLE: baseFlag + ".consumable",
+    STARVATION: baseFlag + ".starvation",
+    SATED_FOOD: baseFlag + ".sated.food",
+    SATED_WATER: baseFlag + ".sated.water"
+}
+
+CONSTANTS.CONSUMABLE = {
+    NONE: "none",
+    REGULAR: "regular"
+}
 
 CONSTANTS.PATH = `modules/${CONSTANTS.MODULE_NAME}/`;
 

@@ -22,7 +22,7 @@ export default class LongRestDialog extends CustomSvelteApplication {
     static get defaultOptions() {
         return foundry.utils.mergeObject(super.defaultOptions, {
             closeOnSubmit: false,
-            width: 350,
+            width: 400,
             height: "auto",
             classes: ["dnd5e dialog"]
         })

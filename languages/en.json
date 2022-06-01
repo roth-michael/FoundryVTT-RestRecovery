@@ -20,6 +20,12 @@
         },
 
         "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
+        "PatchedConsumable": "Updated {itemName} with uses.",
+
+        "Modules": {
+            "DFreds": "DFreds Convenient Effects",
+            "CUB": "Combat Utility Belt"
+        },
 
         "Fractions": {
             "None": "None",
@@ -32,6 +38,12 @@
         "Rounding": {
             "RoundDown": "Round Down",
             "RoundUp": "Round Up"
+        },
+
+        "Misc": {
+            "Food": "Food",
+            "Water": "Water",
+            "Both": "Both"
         },
 
         "NumberToText": {
@@ -55,7 +67,38 @@
             "SongOfRest": "{name} enjoys {bard}'s Song of Rest.",
             "SongOfRestSelf": "{name} enjoys their own Song of Rest.",
             "Chef": "{name} enjoys some delicious food from {chef}.",
-            "ChefSelf": "{name} enjoys their own delicious food."
+            "ChefSelf": "{name} enjoys their own delicious food.",
+
+            "FoodAndWater": {
+                "ConsumedBothDayWorth": "{actorName} consumed {itemName} for a full day's worth of food and water.",
+                "ConsumedBoth": "{actorName} consumed {itemName} for {charges} units of food and water.",
+                "ConsumedFoodDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
+                "ConsumedFood": "{actorName} ate {itemName} for {charges} units of food.",
+                "ConsumedWaterDayWorth": "{actorName} ate {itemName} for a full day's worth of food.",
+                "ConsumedWater": "{actorName} drank {itemName} for {charges} units of water.",
+                "RequiredSatedFood": "They require {units} units of food to be sated for the day.",
+                "RequiredSatedWater": "They require {units} units of water to be sated for the day.",
+                "SatedFood": "They don't require any more food today.",
+                "SatedWater": "They don't require any more water today.",
+
+                "FoodFullNone": "They ate enough of their own food to be sated today.",
+                "FoodHalfNone": "They ate of their own food, but only half of the amount that they needed today.",
+                "FoodHalfHalf": "They ate from an external source and of their own food to be sated today.",
+                "FoodNoneFull": "They ate enough food from an external source to be sated today.",
+                "FoodNoneHalf": "They ate from an external source, but only half of the amount that they needed today.",
+                "FoodNoneNone": "They didn't eat anything today.",
+
+                "WaterFullNone": "They drank enough of their own water to be sated today.",
+                "WaterHalfNone": "They drank of their own water, but only half of the amount that they needed today.",
+                "WaterHalfHalf": "They drank from an external source and of their own water to be sated today.",
+                "WaterNoneFull": "They drank enough water from an external source to be sated today.",
+                "WaterNoneHalf": "They drank from an external source, but only half of the amount that they needed today.",
+                "WaterNoneNone": "They didn't drink anything today.",
+
+                "NoExhaustion": "But they managed to avoid exhaustion.",
+                "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion.",
+                "ExhaustionDeath": "Regrettably, {actorName} reached 6 levels of exhaustion and perished."
+            }
         },
 
         "Dialogs": {
@@ -64,6 +107,23 @@
                 "Content": "Are you sure you want to reset all of the Rest Recovery module settings' to their defaults?<br><strong>THIS CANNOT BE UNDONE!</strong>",
                 "Confirm": "Reset Module Settings",
                 "Cancel": "Cancel"
+            },
+            "SaveProfile": {
+                "Title": "Create New Module Profile",
+                "OverrideProfile": "Your new profile cannot have the same name as an old profile",
+                "Empty": "Your new profile cannot have an empty name"
+            },
+            "DiscardChanges": {
+                "Title": "Unsaved Changes",
+                "Content": "You have unsaved changes to this profile. Are you sure you want to switch profile?"
+            },
+            "ResetDefaultChanges": {
+                "Title": "Reset default setting",
+                "Content": "Are you sure you want to reset the \"Default\" module profile to its default values?"
+            },
+            "DeleteProfile": {
+                "Title": "Delete profile",
+                "Content": "Are you sure you want to delete the \"{profile}\" module profile?"
             },
             "ShortRest": {
                 "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
@@ -84,7 +144,26 @@
                 "Begin": "Begin Long Rest",
                 "BeginExplanation": "By beginning your long rest, you will regain some of your hit dice so that you can roll them to regain hit points.",
                 "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots differently.",
-                "CustomRulesLink": "Check out the custom rules."
+                "CustomRulesLink": "Check out the custom rules.",
+                "RestTab": "Resting",
+                "FoodAndWaterTab": "Food & Water",
+                "FoodRequirement": "You need to eat another <strong>{food}</strong> units of food today.",
+                "FoodSated": "You've already eaten enough today.",
+                "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water today.",
+                "WaterSated": "You've already drank enough today.",
+                "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer <strong>1 level of exhaustion</strong> in <strong>{days} days</strong>.",
+                "FoodExhaustion": "Because you are starving, you will automatically suffer <strong>1 level of exhaustion</strong> if you finish this day without having eaten the full required amount of food.",
+                "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
+                "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
+                "DragDrop": "Drag and drop items to consume, or select:",
+                "DayWorth": "One use of item worth entire day of {type}",
+                "ExternalFood": "Has access to external food source",
+                "ExternalFoodFull": "Eat until sated",
+                "ExternalFoodHalf": "Eat half amount needed",
+                "ExternalWater": "Has access to external water source",
+                "ExternalWaterFull": "Drink until sated",
+                "ExternalWaterHalf": "Drink half amount needed",
+                "AmountToConsume": "Amount To Consume"
             },
             "LongRestWarning": {
                 "Title": "Finish Long Rest?",
@@ -95,6 +174,7 @@
                 "Content": "These are the settings your GM configured for long rests in this game."
             },
             "Resources": {
+                "Configure": "Configure Resource Recovery",
                 "Title": "Resource Configuration",
                 "Name": "Name",
                 "Value": "Value",
@@ -108,9 +188,34 @@
                 "LongRest": "Long Rest",
                 "ShortRest": "Short Rest",
                 "ItemNames": "Feature Names",
+                "FoodAndWater": "Food & Water",
                 "MoreToCome": "And with more configuration options to come!",
                 "Request": "Request new features here.",
-                "Submit": "Submit Settings"
+                "Submit": "Submit Settings",
+                "ModuleProfile": "Module Profile:"
+            },
+            "ItemOverrides": {
+                "Title": "Rest Recovery: Food & Water",
+                "UsesCustomRecovery": "Uses Custom Recovery",
+                "Type": "Type:",
+                "Enabled": "Enabled",
+                "Formula": "Formula:",
+                "IsConsumable": "Item is consumable",
+                "DayWorth": "One charge worth entire day worth",
+                "ChargesDescription": "Rest Recovery's food and water system requires the item to have charges to be used - one charge equals one unit of food or water."
+            },
+            "AbilityUse": {
+                "Title": "Select how much of this item you want to consume:",
+                "DayWorthTitleBoth": "This type of consumable is worth an entire day worth of both food and water.",
+                "DayWorthTitleFood": "This type of consumable is worth an entire day worth of food.",
+                "DayWorthTitleWater": "This type of consumable is worth an entire day worth of water.",
+                "DayWorthTitleCont": "You will not need to consume anything of that type until the next day. You cannot eat half of this type of consumable.",
+                "SatedFood": "You are already sated, you will gain no benefits from eating this.",
+                "NotSatedFood": "You need to eat {units} units to be sated.",
+                "SatedWater": "You are already sated, you will gain no benefits from drinking this.",
+                "NotSatedWater": "You require {units} units of water to be sated.",
+                "FullUnit": "Consume full unit",
+                "HalfUnit": "Consume half unit"
             }
         },
 
@@ -119,6 +224,18 @@
             "HitDieBonus": {
                 "Title": "Hit Die Bonus",
                 "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+            },
+            "FoodUnitsPerDay": {
+                "Title": "Units of food required per day",
+                "Hint": "This overrides how many units of food this character needs per day."
+            },
+            "WaterUnitsPerDay": {
+                "Title": "Units of water required per day",
+                "Hint": "This overrides how many units of water this character needs per day."
+            },
+            "NoFoodWater": {
+                "Title": "Disable Food & Water Requirement",
+                "Hint": "If enabled, this character does not require any food or water, similar to the Undying Nature warlock feature."
             }
         },
 
@@ -141,6 +258,46 @@
                 "Title": "Enable debugging",
                 "Label": "Prints debug messages to the console"
             },
+            "General": {
+                "EnableAutoRollButton": {
+                    "Title": "Enable hit dice auto roll button",
+                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
+                }
+            },
+            "FoodAndWater": {
+                "EnableFoodAndWater": {
+                    "Title": "Enable food and water automation",
+                    "Hint": "This enables sub-features relating to food and water automation, as seen below."
+                },
+                "FoodUnitsPerDay": {
+                    "Title": "Units of food required per day",
+                    "Hint": "This configures how many units of food characters needs per day. Setting this to 0 disables food requirement altogether."
+                },
+                "WaterUnitsPerDay": {
+                    "Title": "Units of water required per day",
+                    "Hint": "This configures how many units of water characters needs per day. Setting this to 0 disables water requirement altogether."
+                },
+                "ExternalFoodAccess": {
+                    "Title": "Access to external food source",
+                    "Hint": "This configures whether players will be able to pick \"External Food Source\" during long rests as a replacement for consumable items. \"Full\" means full access like in inns and cities, \"Half\" means limited access or poor food, \"None\" means wilderness or starvation."
+                },
+                "ExternalWaterAccess": {
+                    "Title": "Access to external water source",
+                    "Hint": "Same as above, but for water. Keep in mind that \"Half\" and \"None\" will cause characters to experience exhaustion almost immediately unless they have access to consumable items."
+                },
+                "AutomateFoodWaterExhaustion": {
+                    "Title": "Automate food & water exhaustion",
+                    "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough. Requires long rest exhaustion automation to be enabled."
+                },
+                "HalfFoodDuration": {
+                    "Title": "Maximum days on half food",
+                    "Hint": "This configures how many days characters can survive without eating food before suffering from automatic exhaustion."
+                },
+                "HalfWaterSaveDC": {
+                    "Title": "Half water exhaustion DC",
+                    "Hint": "This configures the Constitution saving throw DC that characters must make if they drink only half of the required amount of water."
+                }
+            },
             "ShortRest": {
                 "IgnoreInactive": {
                     "Title": "Ignore inactive player characters",
@@ -156,6 +313,14 @@
                 }
             },
             "LongRest": {
+                "AutomateExhaustion": {
+                    "Title": "Enable exhaustion automation",
+                    "Hint": "This makes it so that exhaustion is subtracted by 1 every long rest."
+                },
+                "ExhaustionIntegration": {
+                    "Title": "Exhaustion Module Integration",
+                    "Hint": "This setting allows you to use other modules in order to apply their respective exhaustion active effects on characters."
+                },
                 "RollHitDice": {
                     "Title": "Enable long rest hit dice rolls",
                     "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
@@ -167,10 +332,6 @@
                 "PreRegainHitDiceBuffer": {
                     "Title": "Enable hit dice max buffer",
                     "Hint": "This setting causes each character to always regain hit dice, even if it would put their hit dice above their maximum, so that no hit dice are wasted. Any unused hit dice over their maximum will disappear once the long rest is completed."
-                },
-                "EnableAutoRollButton": {
-                    "Title": "Enable hit dice auto roll button",
-                    "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
                 },
                 "HitPointsRecoveryFraction": {
                     "Title": "Hit points recovery fraction",
