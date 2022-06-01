@@ -22,7 +22,7 @@
     const actorExhaustion = getProperty(actor.data, "data.attributes.exhaustion") ?? 0;
     const actorDaysWithoutFood = getProperty(actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
     const actorExhaustionThreshold = evaluateFormula(
-        getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
+        getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
         foundry.utils.deepClone(actor.data.data)
     )?.total ?? 4;
 

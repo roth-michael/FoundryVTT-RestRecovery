@@ -500,7 +500,7 @@ export default class RestWorkflow {
                 let localize = "REST-RECOVERY.Chat.FoodAndWater.Food"
 
                 let actorExhaustionThreshold = lib.evaluateFormula(
-                    lib.getSetting(CONSTANTS.SETTINGS.HALF_FOOD_DURATION_MODIFIER),
+                    lib.getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
                     foundry.utils.deepClone(this.actor.data.data)
                 )?.total ?? 4;
 
