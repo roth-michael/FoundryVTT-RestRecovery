@@ -13,7 +13,6 @@ class Settings extends SvelteApplication {
                 target: document.body
             },
             width: 600,
-            tabs: [{ navSelector: ".tabs", contentSelector: ".tab-body", initial: "mainsettings" }],
             ...options
         }, { dialogData });
 

@@ -6,19 +6,28 @@ import { getSetting } from "./lib/lib.js";
 
 export default function registerLibwrappers() {
 
+    // Actors
     patch_shortRest();
     patch_longRest();
+    patch_rest();
     patch_rollHitDie();
-
+    patch_displayRestResultMessage();
     patch_getRestHitPointRecovery();
     patch_getRestHitDiceRecovery();
     patch_getRestResourceRecovery();
     patch_getRestSpellRecovery();
     patch_getRestItemUsesRecovery();
 
+    // Items
+    patch_getUsageUpdates();
+
 }
 
 function patch_shortRest() {
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ["dnd5e-helpers"], [
+        "CONFIG.Actor.documentClass.prototype.shortRest"
+    ]);
+
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
         "CONFIG.Actor.documentClass.prototype.shortRest",
@@ -57,6 +66,10 @@ function patch_shortRest() {
 }
 
 function patch_longRest() {
+    libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ["dnd5e-helpers"], [
+        "CONFIG.Actor.documentClass.prototype.longRest"
+    ]);
+
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
         "CONFIG.Actor.documentClass.prototype.longRest",
@@ -77,6 +90,62 @@ function patch_longRest() {
                 newDay,
                 true
             );
+        },
+        "OVERRIDE"
+    );
+}
+
+function patch_rest() {
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Actor.documentClass.prototype._rest",
+        async function (chat, newDay, longRest, dhd=0, dhp=0) {
+            let hitPointsRecovered = 0;
+            let hitPointUpdates = {};
+            let hitDiceRecovered = 0;
+            let hitDiceUpdates = [];
+
+            // Recover hit points & hit dice on long rest
+            if ( longRest ) {
+                ({ updates: hitPointUpdates, hitPointsRecovered } = await this._getRestHitPointRecovery());
+                ({ updates: hitDiceUpdates, hitDiceRecovered } = await this._getRestHitDiceRecovery());
+            }
+
+            // Figure out the rest of the changes
+            const result = {
+                dhd: dhd + hitDiceRecovered,
+                dhp: dhp + hitPointsRecovered,
+                updateData: {
+                    ...hitPointUpdates,
+                    ...await this._getRestResourceRecovery({ recoverShortRestResources: !longRest, recoverLongRestResources: longRest }),
+                    ...await this._getRestSpellRecovery({ recoverSpells: longRest })
+                },
+                updateItems: [
+                    ...hitDiceUpdates,
+                    ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+                ],
+                longRest,
+                newDay
+            };
+
+            // Perform updates
+            await this.update(result.updateData);
+            await this.updateEmbeddedDocuments("Item", result.updateItems);
+
+            // Display a Chat Message summarizing the rest effects
+            if ( chat ) await this._displayRestResultMessage(result, longRest);
+
+            if ( Hooks._hooks.restCompleted?.length ) console.warn(
+                "The restCompleted hook has been deprecated in favor of dnd5e.restCompleted. "
+                + "The original hook will be removed in dnd5e 1.8."
+            );
+
+            Hooks.callAll("restCompleted", this, result);
+
+            Hooks.callAll("dnd5e.restCompleted", this, result);
+
+            // Return data summarizing the rest effects
+            return result;
         },
         "OVERRIDE"
     );
@@ -187,6 +256,22 @@ function patch_rollHitDie() {
     );
 }
 
+function patch_displayRestResultMessage() {
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Actor.documentClass.prototype._displayRestResultMessage",
+        async function (wrapped, ...args) {
+            const result = await wrapped(...args);
+            const workflow = RestWorkflow.get(this);
+            if(workflow){
+                await workflow._displayRestResultMessage(result)
+            }
+            return result;
+        }
+    )
+
+}
+
 function patch_getRestHitPointRecovery() {
     libWrapper.register(
         CONSTANTS.MODULE_NAME,
@@ -237,6 +322,86 @@ function patch_getRestItemUsesRecovery() {
         function (wrapped, args) {
             return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestItemUsesRecovery")
         }
+    )
+}
+
+function patch_getUsageUpdates(){
+    libWrapper.register(
+        CONSTANTS.MODULE_NAME,
+        "CONFIG.Item.documentClass.prototype._getUsageUpdates",
+        function ({consumeQuantity, consumeRecharge, consumeResource, consumeSpellLevel, consumeUsage}) {
+
+            // Reference item data
+            const id = this.data.data;
+            const actorUpdates = {};
+            const itemUpdates = {};
+            const resourceUpdates = [];
+
+            // Consume Recharge
+            if ( consumeRecharge ) {
+                const recharge = id.recharge || {};
+                if ( recharge.charged === false ) {
+                    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+                    return false;
+                }
+                itemUpdates["data.recharge.charged"] = false;
+            }
+
+            // Consume Limited Resource
+            if ( consumeResource ) {
+                const canConsume = this._handleConsumeResource(itemUpdates, actorUpdates, resourceUpdates);
+                if ( canConsume === false ) return false;
+            }
+
+            // Consume Spell Slots
+            if ( consumeSpellLevel ) {
+                if ( Number.isNumeric(consumeSpellLevel) ) consumeSpellLevel = `spell${consumeSpellLevel}`;
+                const level = this.actor?.data.data.spells[consumeSpellLevel];
+                const spells = Number(level?.value ?? 0);
+                if ( spells === 0 ) {
+                    const label = game.i18n.localize(consumeSpellLevel === "pact" ? "DND5E.SpellProgPact" : `DND5E.SpellLevel${id.level}`);
+                    ui.notifications.warn(game.i18n.format("DND5E.SpellCastNoSlots", {name: this.name, level: label}));
+                    return false;
+                }
+                actorUpdates[`data.spells.${consumeSpellLevel}.value`] = Math.max(spells - 1, 0);
+            }
+
+            const consumeFull = RestWorkflow.itemsListened.get(this.id) ?? true;
+
+            // Consume Limited Usage
+            if ( consumeUsage ) {
+                const uses = id.uses || {};
+                const available = Number(uses.value ?? 0);
+                let used = false;
+
+                // Reduce usages
+                const remaining = Math.max(available - (consumeFull ? 1 : 0.5), 0);
+                if ( available > 0 ) {
+                    used = true;
+                    itemUpdates["data.uses.value"] = remaining;
+                }
+
+                // Reduce quantity if not reducing usages or if usages hit 0 and we are set to consumeQuantity
+                if ( consumeQuantity && (!used || (remaining === 0)) ) {
+                    const q = Number(id.quantity ?? 1);
+                    if ( q >= 1 ) {
+                        used = true;
+                        itemUpdates["data.quantity"] = Math.max(q - 1, 0);
+                        itemUpdates["data.uses.value"] = uses.max ?? 1;
+                    }
+                }
+
+                // If the item was not used, return a warning
+                if ( !used ) {
+                    ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
+                    return false;
+                }
+            }
+
+            // Return the configured usage
+            return { itemUpdates, actorUpdates, resourceUpdates };
+        },
+        "OVERRIDE"
     )
 }
 

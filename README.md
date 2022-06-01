@@ -53,13 +53,9 @@ This module adds support for Wizards' Arcane Recovery and Land Druids' Natural R
 
 If the Arcane/Natural Recovery Feature does not have any uses remaining or if there are no spell slots to recover, the spell slot UI will be hidden.
 
-### Feature: [Feature: Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)
+### Feature: [Song of Rest](https://www.dndbeyond.com/classes/bard#SongofRest-80)
 
 If there's a character that is assigned to a player with levels in the Bard class and someone rolls hit dice, the module will automatically roll the appropriate dice based on the bard's level.
-
-### Feature: [Blessing of Wound Closure](https://www.dndbeyond.com/sources/dmg/other-rewards#BlessingOfWoundClosure)
-
-Similar to above, but as a feature.
 
 ### Feat: [Durable](https://www.dndbeyond.com/feats/durable)
 
@@ -76,6 +72,10 @@ If a character has the lineage feature of a Verdan's Black Blood Healing, any hi
 ### Item: [Periapt of Wound Closure](https://www.dndbeyond.com/magic-items/periapt-of-wound-closure)
 
 If a character is **attuned** to this item, any hit die rolled is doubled. According to RAW, this doubling happens _before_ the constitution modifier is added to the hit die roll.
+
+### Feature: [Blessing of Wound Closure](https://www.dndbeyond.com/sources/dmg/other-rewards#BlessingOfWoundClosure)
+
+Similar to above, but as a feature.
 
 # Contributing
 
