@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.2
+- Fixed issue with references to old settings
+- Fixed minor issue with the module confusing Druid and Wizard spell slot recovery features
+
 ## Version 1.2.1
 - Updated French localization (again, thank you DarKDinDoN!)
 - Added header buttons to the settings UI to export and import module profiles
