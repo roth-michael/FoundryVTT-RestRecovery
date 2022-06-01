@@ -1,6 +1,7 @@
 # Rest Recovery Changelog
 
 ## Version 1.2.2
+- Minor updates to French localization
 - Fixed issue with references to old settings
 - Fixed minor issue with the module confusing Druid and Wizard spell slot recovery features
 
