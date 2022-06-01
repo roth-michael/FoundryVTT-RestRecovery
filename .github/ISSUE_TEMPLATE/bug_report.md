@@ -2,8 +2,8 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: ''
-assignees: ''
+labels: bug
+assignees: Haxxer
 
 ---
 
@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Setup:**
  - Foundry Version: [e.g. 9.238]
  - System Version: [e.g. DND5e 1.5.7]
- - Item Piles Version: [e.g. 1.0.0]
+ - Rest Recovery Version: [e.g. 1.0.0]
  - Browser & version [e.g. Google Chrome 98.0.4758.82]
 
 **Active modules:**
