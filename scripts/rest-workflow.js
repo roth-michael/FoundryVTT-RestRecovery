@@ -170,14 +170,14 @@ export default class RestWorkflow {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
             this.spellData.pointsTotal = wizardFeature
-                ? lib.evaluateFormula(wizardFeature.data.data.formula || "ceil(@classes.wizard.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total
+                ? lib.evaluateFormula(wizardFeature.data.data.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData())?.total
                 : 0;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
         } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
             this.spellData.pointsTotal = druidFeature
-                ? lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total
+                ? lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData())?.total
                 : 0;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
@@ -223,7 +223,7 @@ export default class RestWorkflow {
                 "data.uses.max": 1,
                 "data.uses.per": "lr",
                 "data.actionType": "util",
-                "data.formula": `ceil(@classes.${className}.levels/2)`
+                "data.formula": `ceil(@classes.${className.toLowerCase()}.levels/2)`
             }]);
             ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
                 actorName: this.actor.name,
@@ -505,7 +505,7 @@ export default class RestWorkflow {
 
                 let actorExhaustionThreshold = lib.evaluateFormula(
                     lib.getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
-                    foundry.utils.deepClone(this.actor.data.data)
+                    this.actor.getRollData()
                 )?.total ?? 4;
 
                 if(this.consumableData.hasAccessToFood) {
@@ -698,7 +698,7 @@ export default class RestWorkflow {
 
         if (!recoveredHP) {
             recoveredHP = typeof multiplier === "string"
-                ? Math.floor(lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total)
+                ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
                 : Math.floor(maxHP * multiplier);
         }
 
@@ -765,7 +765,7 @@ export default class RestWorkflow {
 
         if (typeof multiplier === "string") {
 
-            const customRegain = lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total;
+            const customRegain = lib.evaluateFormula(multiplier, this.actor.getRollData())?.total;
             maxHitDice = Math.clamped(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
 
         } else {
@@ -786,8 +786,6 @@ export default class RestWorkflow {
 
         const finishedRestUpdates = await this._finishedRest(updates);
 
-        const actorCopy = foundry.utils.deepClone(this.actor.data.data);
-
         const customRecoveryResources = Object.entries(this.actor.data.data.resources).filter(entry => {
             return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
         });
@@ -799,7 +797,7 @@ export default class RestWorkflow {
         for (const [key, resource] of customRecoveryResources) {
             if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
                 const customFormula = getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
-                const customRoll = lib.evaluateFormula(customFormula, actorCopy);
+                const customRoll = lib.evaluateFormula(customFormula, this.actor.getRollData());
                 finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
 
                 const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
@@ -905,17 +903,17 @@ export default class RestWorkflow {
         const othersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER);
         const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER);
 
-        const clonedActor = foundry.utils.deepClone(this.actor.data.data);
+        const actorRollData = this.actor.getRollData();
 
         for (const item of this.actor.items) {
             if (item.data.data.uses) {
                 const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
                 if (recoverLongRestUses && item.data.data.uses.per === "lr") {
-                    updates = this._recoverItemUse(clonedActor, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
                 } else if (recoverDailyUses && item.data.data.uses.per === "day") {
-                    updates = this._recoverItemUse(clonedActor, updates, item, dailyMultiplier);
+                    updates = this._recoverItemUse(actorRollData, updates, item, dailyMultiplier);
                 } else if (customRecovery) {
-                    updates = this._recoverItemUse(clonedActor, updates, item);
+                    updates = this._recoverItemUse(actorRollData, updates, item);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {
                 updates.push({ _id: item.id, "data.recharge.charged": true });

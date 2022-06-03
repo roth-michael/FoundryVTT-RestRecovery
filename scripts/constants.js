@@ -19,6 +19,7 @@ const CONSTANTS = {
          *-------------------------------------------*/
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
         MAX_SHORT_RESTS: "max-short-rests-per-long-rest",
+        MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
         DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
 
         /*-------------------------------------------*
@@ -150,6 +151,19 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         default: false,
         type: Boolean
+    },
+    [CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND]: {
+        name: "REST-RECOVERY.Settings.ShortRest.MinHitDieSpend.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.MinHitDieSpend.Hint",
+        scope: "world",
+        group: "shortrest",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return settingsMap.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
+        },
+        config: false,
+        default: 0,
+        type: Number
     },
 
     /*-------------------------------------------*

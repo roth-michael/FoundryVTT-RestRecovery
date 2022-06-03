@@ -299,6 +299,10 @@
                     "Title": "Nombre maximum de repos courts par repos long",
                     "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
                 },
+                "MinHitDieSpend": {
+                    "Title": "Nombre minimum de dés de vie à dépenser",
+                    "Hint": "Ce paramètre oblige les personnages à dépenser un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
+                },
                 "NoHitDice": {
                     "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
                     "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."

@@ -261,6 +261,10 @@
                     "Title": "Enable food and water automation",
                     "Hint": "This enables sub-features relating to food and water automation, as seen below."
                 },
+                "RollConsumableItems": {
+                    "Title": "Disable rolling consumable items on rest",
+                    "Hint": "This setting will disable the automatic rolling of consumable items when finishing the long rest."
+                },
                 "FoodUnitsPerDay": {
                     "Title": "Units of food required per day",
                     "Hint": "This configures how many units of food characters needs per day. Setting this to 0 disables food requirement altogether."
@@ -298,6 +302,10 @@
                 "MaxShortRests": {
                     "Title": "Maximum short rests per long rest",
                     "Hint": "This prevents characters from taking short rests if they reach a number of short rests equal to this number. Taking a long rest resets this counter. Putting zero here disables this setting."
+                },
+                "MinHitDieSpend": {
+                    "Title": "Minimum hit die spend",
+                    "Hint": "This prevents characters from finishing a short rest if they do not spend this number of hit dice. Putting zero here disables this setting."
                 },
                 "NoHitDice": {
                     "Title": "Disable hit dice rolls during short rests",

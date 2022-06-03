@@ -11,28 +11,30 @@
     import Setting from "./Setting.svelte";
     import Tabs from "../components/Tabs.svelte";
     import SaveProfileDialog from "./SaveProfileDialog.svelte";
+    import API from "../../api.js";
 
     const { application } = getContext('external');
 
     export let elementRoot;
     export let profiles;
-    export let selectedProfile;
+    export let activeProfile;
     let form;
 
     let settingsMap = new Map();
 
     let settings = {};
 
-    profiles = getSetting(CONSTANTS.SETTINGS.MODULE_PROFILES);
-    selectedProfile = getSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE);
+    profiles = API.getAllProfiles()
+    activeProfile = API.getActiveProfile()
 
     loadSettings()
     validateSettings();
 
     function loadSettings(){
+        const profileData = API.getProfileData(activeProfile);
         settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
             .map(entry => {
-                entry[1].value = getSetting(entry[0]);
+                entry[1].value = profileData[entry[0]] ?? getSetting(entry[0]);
                 entry[1].disabled = false;
                 settingsMap.set(entry[0], entry[1]);
                 return entry;
@@ -41,7 +43,6 @@
                 r[a[1].group].push(a);
                 return r;
             }, Object.create(null));
-
     }
 
     function validateSettings(){
@@ -49,12 +50,11 @@
             for(let index = 0; index < settings[group].length; index++){
                 if(!settings[group][index][1].validate) continue;
                 settings[group][index][1].disabled = settings[group][index][1].validate(settingsMap);
-
                 if(!settings[group][index][1].disabled) continue;
                 settings[group][index][1].value = settings[group][index][1].default;
             }
         }
-        profiles[selectedProfile] = Object.fromEntries(Array.from(settingsMap).map(entry => {
+        profiles[activeProfile] = Object.fromEntries(Array.from(settingsMap).map(entry => {
             return [entry[0], entry[1].value];
         }));
     }
@@ -64,24 +64,11 @@
         validateSettings();
     }
 
-    function requestSubmit(){
-        form.requestSubmit();
-    }
-
-    async function updateSettings(){
-        await setSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE, selectedProfile);
-        await setSetting(CONSTANTS.SETTINGS.MODULE_PROFILES, profiles);
-        for(let [key, setting] of Array.from(settingsMap)) {
-            await setSetting(key, setting.value);
-        }
-        application.close();
-    }
-
     async function deletePreset(){
 
         const result = await TJSDialog.confirm({
             title: localize("REST-RECOVERY.Dialogs.DeleteProfile.Title"),
-            content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: selectedProfile }),
+            content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: activeProfile }),
             modal: true,
             draggable: false,
             autoClose: true,
@@ -92,10 +79,11 @@
             return;
         }
 
-        delete profiles[selectedProfile];
-        selectedProfile = "Default";
+        delete profiles[activeProfile];
+        activeProfile = "Default";
         profiles = profiles;
         loadProfile();
+
     }
 
     async function newPreset(){
@@ -120,23 +108,22 @@
 
         if(!result) return;
 
-        profiles[result] = foundry.utils.duplicate(profiles[selectedProfile]);
-        setSetting(CONSTANTS.SETTINGS.MODULE_PROFILES, profiles);
-
-        selectedProfile = result;
-
+        profiles[result] = foundry.utils.duplicate(profiles[activeProfile]);
+        activeProfile = result;
         settings = settings;
+        validateSettings();
 
     }
 
     function loadProfile(){
         for(let [key, setting] of Array.from(settingsMap)){
-            const profileValue = profiles[selectedProfile][key];
+            const profileValue = profiles[activeProfile][key];
             if(profileValue !== undefined){
                 setting.value = profileValue;
             }
         }
         settings = settings;
+        validateSettings();
     }
 
     async function resetDefaultSetting() {
@@ -154,12 +141,22 @@
             return;
         }
 
-        profiles[selectedProfile] = Object.fromEntries(Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
+        profiles[activeProfile] = Object.fromEntries(Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
             return [entry[0], entry[1].default];
         }))
 
         loadProfile();
 
+    }
+
+    function requestSubmit(){
+        form.requestSubmit();
+    }
+
+    async function updateSettings(){
+        await API.updateProfiles(profiles);
+        await API.setActiveProfile(activeProfile);
+        application.close();
     }
 
     let activeTab = "general";
@@ -175,14 +172,14 @@
 
         <div class="preset-select">
             <label>{localize("REST-RECOVERY.Dialogs.ModuleConfig.ModuleProfile")}</label>
-            <select bind:value={selectedProfile} on:change={loadProfile}>
+            <select bind:value={activeProfile} on:change={loadProfile}>
                 {#each Object.keys(profiles) as profile (profile)}
                     <option value="{profile}">{profile}</option>
                 {/each}
             </select>
             <button type="button" on:click={newPreset}><i class="fas fa-plus"></i></button>
-            <button type="button" class:hidden={selectedProfile !== "Default"} on:click={resetDefaultSetting}><i class="fas fa-redo"></i></button>
-            <button type="button" class:hidden={selectedProfile === "Default"} disabled={selectedProfile === "Default"} on:click={deletePreset}><i class="fas fa-trash-alt"></i></button>
+            <button type="button" class:hidden={activeProfile !== "Default"} on:click={resetDefaultSetting}><i class="fas fa-redo"></i></button>
+            <button type="button" class:hidden={activeProfile === "Default"} disabled={activeProfile === "Default"} on:click={deletePreset}><i class="fas fa-trash-alt"></i></button>
         </div>
 
         <Tabs bind:activeTab tabs={[

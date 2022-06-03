@@ -57,7 +57,7 @@
     let healthData = workflow.healthData;
     updateHealthBarText();
 
-    let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
+    let selectedHitDice = Object.entries(healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
     export async function requestSubmit() {
         if (enableRollHitDice && healthData.hitDiceSpent === 0 && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {

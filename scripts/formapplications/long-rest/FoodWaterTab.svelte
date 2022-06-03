@@ -23,7 +23,7 @@
     const actorDaysWithoutFood = getProperty(actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
     const actorExhaustionThreshold = evaluateFormula(
         getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
-        foundry.utils.deepClone(actor.data.data)
+        actor.getRollData()
     )?.total ?? 4;
 
     let {

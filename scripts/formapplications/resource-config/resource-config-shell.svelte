@@ -27,7 +27,7 @@
 
     function requestSubmit(){
         let valid = true;
-        const actorData = foundry.utils.deepClone(actor.data.data);
+        const actorData = actor.getRollData();
         for(let i = 0; i < resources.length; i++){
             const resource = resources[i];
             if(!resource.formula) continue;

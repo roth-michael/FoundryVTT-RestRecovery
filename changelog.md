@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.2.3
+- **BREAKING CHANGES:** Due to major system changes, the 1.2.x version of Rest Recovery only supports DND5e 1.6.x
+- Added API under `game.restrecovery`, read more on the [wiki](https://google.com/)
+- Fixed wizards and circle of the land druids sometimes throwing errors or warnings surrounding class levels
+- Fixed minor issues in the settings UI surrounding loading module profiles 
+
 ## Version 1.2.2
 - Minor updates to French localization
 - Fixed issue with references to old settings

@@ -3,6 +3,7 @@ import registerLibwrappers from "./libwrapper.js";
 import RestWorkflow from "./rest-workflow.js";
 import registerSheetOverrides from "./sheet-overrides.js";
 import SettingsShim from "./formapplications/settings/settings.js";
+import API from "./api.js";
 
 Hooks.once("init", () => {
     registerSettings();
@@ -13,11 +14,12 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
+    window.restrecovery = API;
 
     // game.actors.getName("Zanna").sheet.render(true);
 
     // game.actors.getName("Zanna").items.getName("Waterskin").sheet.render(true);
 
-    // new SettingsShim().render(true);
+    new SettingsShim().render(true);
 
 })
