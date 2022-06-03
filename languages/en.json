@@ -261,9 +261,9 @@
                     "Title": "Enable food and water automation",
                     "Hint": "This enables sub-features relating to food and water automation, as seen below."
                 },
-                "RollConsumableItems": {
+                "DisableRollConsumableItems": {
                     "Title": "Disable rolling consumable items on rest",
-                    "Hint": "This setting will disable the automatic rolling of consumable items when finishing the long rest."
+                    "Hint": "By default, if a character chooses to consume an item during their long rest, it will be rolled as if the character clicked on its roll button. This setting will disable this automatic roll."
                 },
                 "FoodUnitsPerDay": {
                     "Title": "Units of food required per day",

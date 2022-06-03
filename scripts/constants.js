@@ -67,6 +67,7 @@ const CONSTANTS = {
          *          Food and Water Settings          *
          *-------------------------------------------*/
         ENABLE_FOOD_AND_WATER: "enable-food-and-water",
+        DISABLE_ROLL_CONSUMABLE_ITEMS: "disable-roll-consumable-items",
         FOOD_UNITS_PER_DAY: "food-units-per-day",
         WATER_UNITS_PER_DAY: "water-units-per-day",
         EXTERNAL_FOOD_ACCESS: "external-food-access",
@@ -563,6 +564,18 @@ CONSTANTS.DEFAULT_SETTINGS = {
         default: false,
         type: Boolean
     },
+    [CONSTANTS.SETTINGS.DISABLE_ROLL_CONSUMABLE_ITEMS]: {
+        name: "REST-RECOVERY.Settings.FoodAndWater.DisableRollConsumableItems.Title",
+        hint: "REST-RECOVERY.Settings.FoodAndWater.DisableRollConsumableItems.Hint",
+        scope: "world",
+        group: "foodandwater",
+        validate: (settingsMap) => {
+            return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+        },
+        config: false,
+        default: false,
+        type: Boolean
+    },
     [CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY]: {
         name: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Title",
         hint: "REST-RECOVERY.Settings.FoodAndWater.FoodUnitsPerDay.Hint",
@@ -630,7 +643,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
         scope: "world",
         group: "foodandwater",
-        customSettingsDialog: true,
         validate: (settingsMap) => {
             return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
                 || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
