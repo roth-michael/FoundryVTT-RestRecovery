@@ -358,6 +358,7 @@ export default class RestWorkflow {
         if (!roll) return;
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
+        this.healthData.hitDiceSpent++;
 
         if (this.longRest) return true;
 
@@ -459,13 +460,13 @@ export default class RestWorkflow {
 
         let updates = {};
 
-        const maxShortRests = lib.getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+        const maxShortRests = lib.getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS) || 0;
         if (maxShortRests > 0) {
             if (this.longRest) {
-                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = 0;
+                updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = 0;
             } else {
-                const currentShortRests = getProperty(this.actor.data, `${CONSTANTS.FLAGS.BASE}.currentShortRests`) || 0;
-                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = currentShortRests + 1;
+                const currentShortRests = getProperty(this.actor.data, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
+                updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = currentShortRests + 1;
             }
         }
 
@@ -813,7 +814,7 @@ export default class RestWorkflow {
             this.resourcesRegainedMessages.push('</ul>');
         }
 
-        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
+        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
         if (multiplier === 1.0) return { ...updates, ...finishedRestUpdates };
         if (!multiplier) return finishedRestUpdates;
 
@@ -838,7 +839,7 @@ export default class RestWorkflow {
         // Long rest
         if (recoverSpells) {
 
-            const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
+            const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
 
             for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
                 if (!slot.override && !slot.max) continue;
@@ -899,9 +900,13 @@ export default class RestWorkflow {
 
         const { recoverLongRestUses, recoverDailyUses } = args;
 
-        const featsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER);
-        const othersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER);
-        const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER);
+        const longFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER);
+        const longOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER);
+
+        const shortFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER);
+        const shortOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER);
+
+        const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER);
 
         const actorRollData = this.actor.getRollData();
 
@@ -909,10 +914,12 @@ export default class RestWorkflow {
             if (item.data.data.uses) {
                 const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
                 if (recoverLongRestUses && item.data.data.uses.per === "lr") {
-                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier);
+                } else if (!recoverLongRestUses && item.data.data.uses.per === "sr") {
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
                 } else if (recoverDailyUses && item.data.data.uses.per === "day") {
                     updates = this._recoverItemUse(actorRollData, updates, item, dailyMultiplier);
-                } else if (customRecovery) {
+                } else if (customRecovery){
                     updates = this._recoverItemUse(actorRollData, updates, item);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {

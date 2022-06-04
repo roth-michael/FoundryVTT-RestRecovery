@@ -131,7 +131,7 @@
                 "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de {max_short_rests} repos courts par repos long.",
                 "AutoRoll": "Auto"
             },
-            "ShortRestWarning": {
+            "ShortRestHealthWarning": {
                 "Title": "Terminer le repos court ?",
                 "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
             },
@@ -306,6 +306,18 @@
                 "NoHitDice": {
                     "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
                     "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
+                },
+                "ResourcesRecoveryFraction": {
+                    "Title": "Fraction des ressources à récupérer",
+                    "Hint": "La fraction des ressources à récupérer lors d'un repos courts."
+                },
+                "ItemUsesRecoveryFraction": {
+                    "Title": "Item uses recovery fraction",
+                    "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
+                },
+                "FeatUsesRecoveryFraction": {
+                    "Title": "Feat uses recovery fraction",
+                    "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
                 }
             },
             "LongRest": {

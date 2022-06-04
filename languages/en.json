@@ -129,11 +129,16 @@
                 "FullSpells": "You're full on spells, you have no need to regain any spell slots.",
                 "NoMoreRests": "No more short rests",
                 "NoMoreRestsSmall": "You have have no more capacity for a short rest, as your game's rules mandate a maximum of {max_short_rests} per long rest.",
-                "AutoRoll": "Auto Roll"
+                "AutoRoll": "Auto Roll",
+                "MinHitDiceSpend": "You must spend another <strong>{min_spend}</strong> hit dice to finish this short rest."
             },
-            "ShortRestWarning": {
+            "ShortRestHealthWarning": {
                 "Title": "Finish Short Rest?",
                 "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
+            },
+            "ShortRestHitDice": {
+                "Title": "Spend Hit Dice?",
+                "Content": "You need to spend at least {num_dice} hit dice to finish this short rest. Are you sure you want to do this?"
             },
             "LongRest": {
                 "Begin": "Begin Long Rest",
@@ -310,6 +315,18 @@
                 "NoHitDice": {
                     "Title": "Disable hit dice rolls during short rests",
                     "Hint": "This prevents characters from rolling hit dice during short rests."
+                },
+                "ResourcesRecoveryFraction": {
+                    "Title": "Resources recovery fraction",
+                    "Hint": "The fraction of resources to recover on a short rest."
+                },
+                "ItemUsesRecoveryFraction": {
+                    "Title": "Item uses recovery fraction",
+                    "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
+                },
+                "FeatUsesRecoveryFraction": {
+                    "Title": "Feat uses recovery fraction",
+                    "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
                 }
             },
             "LongRest": {

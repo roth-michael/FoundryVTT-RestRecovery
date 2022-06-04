@@ -53,7 +53,7 @@ export default class API {
 
     static updateProfile(inProfileName, inData){
         const profile = this.getProfileData(inProfileName);
-        const profiles = this.getAllProfiles();
+        const profiles = this.getAllProfilesData();
         const newData = {};
         const defaultSettings = CONSTANTS.GET_DEFAULT_SETTINGS();
         for (let key of Object.keys(defaultSettings)) {
@@ -61,6 +61,26 @@ export default class API {
         }
         profiles[inProfileName] = newData;
         return lib.setSetting(CONSTANTS.SETTINGS.MODULE_PROFILES, profiles);
+    }
+
+    static setActorConsumableValues(actor, { food = null, water = null, starvation} = {}){
+        if(!(actor instanceof game.dnd5e.entities.Actor5e)){
+            throw new Error("actor must instance of Actor5e")
+        }
+        const update = {};
+        if(food !== null){
+            if(!(lib.isRealNumber(food) && food >= 0)) throw new Error("food must be of type number greater or equal than 0")
+            update[CONSTANTS.FLAGS.SATED_FOOD] = food;
+        }
+        if(water !== null){
+            if(!(lib.isRealNumber(water) && water >= 0)) throw new Error("water must be of type number greater or equal than 0")
+            update[CONSTANTS.FLAGS.SATED_WATER] = water;
+        }
+        if(starvation !== null){
+            if(!(lib.isRealNumber(starvation) && starvation >= 0)) throw new Error("starvation must be of type number greater or equal than 0")
+            update[CONSTANTS.FLAGS.STARVATION] = starvation;
+        }
+        return actor.update(update);
     }
 
 }

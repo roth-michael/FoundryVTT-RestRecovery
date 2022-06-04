@@ -24,7 +24,7 @@
 
     let settings = {};
 
-    profiles = API.getAllProfiles()
+    profiles = API.getAllProfilesData()
     activeProfile = API.getActiveProfile()
 
     loadSettings()
