@@ -884,9 +884,9 @@ export default class RestWorkflow {
 
     }
 
-    _getRestItemUsesRecovery(updates, args) {
+    async _getRestItemUsesRecovery(updates, args) {
 
-        updates = this._recoverItemsUses(updates, args);
+        updates = await this._recoverItemsUses(updates, args);
 
         if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
             updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
@@ -896,7 +896,7 @@ export default class RestWorkflow {
 
     }
 
-    _recoverItemsUses(updates, args) {
+    async _recoverItemsUses(updates, args) {
 
         const { recoverLongRestUses, recoverDailyUses } = args;
 
@@ -937,7 +937,7 @@ export default class RestWorkflow {
         }
 
         if(recoverLongRestUses) {
-            updates = this._handleFoodAndWaterItems(updates);
+            updates = await this._handleFoodAndWaterItems(updates);
         }
 
         return updates;
@@ -988,7 +988,7 @@ export default class RestWorkflow {
 
     }
 
-    _handleFoodAndWaterItems(updates) {
+    async _handleFoodAndWaterItems(updates) {
 
         if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
 

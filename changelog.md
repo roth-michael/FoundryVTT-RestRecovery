@@ -1,10 +1,12 @@
 # Rest Recovery Changelog
 
 ## Version 1.2.3
-- **BREAKING CHANGES:** Due to major system changes, the 1.2.x version of Rest Recovery only supports DND5e 1.6.x
 - Added API under `game.restrecovery`, read more on the [wiki](https://google.com/)
+- Added optional setting for short rests to only be able to be completed if a certain number of hit dice are rolled
+- Added short rest recovery settings for items, feats, and resources
 - Fixed wizards and circle of the land druids sometimes throwing errors or warnings surrounding class levels
-- Fixed minor issues in the settings UI surrounding loading module profiles 
+- Fixed minor issues in the settings UI surrounding loading module profiles
+- Fixed issues with D&D 5e version 1.5.7
 
 ## Version 1.2.2
 - Minor updates to French localization
