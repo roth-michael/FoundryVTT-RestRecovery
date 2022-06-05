@@ -5,6 +5,7 @@
     "systems": [
         "dnd5e"
     ],
+    "minimumSystemVersion": "1.6.0",
     "version": "1.2.!3",
     "authors": [
         {
