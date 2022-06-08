@@ -225,7 +225,7 @@ export default class RestWorkflow {
                 "data.actionType": "util",
                 "data.formula": `ceil(@classes.${className.toLowerCase()}.levels/2)`
             }]);
-            ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
+            ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedRecovery", {
                 actorName: this.actor.name,
                 recoveryName: this.spellData.feature.name
             }));
@@ -1067,12 +1067,49 @@ export default class RestWorkflow {
         });
     }
 
-    static _patchConsumableItem(item, data){
+    static patchAllConsumableItems(actor) {
+
+        const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Waterskin") && getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
+
+        const updates = items.map(item => {
+            if(item.name.startsWith("Rations")){
+                return {
+                    "_id": item.id,
+                    "data.uses.value": getProperty(item.data, "data.uses.value") ?? 1,
+                    "data.uses.max": getProperty(item.data, "data.uses.max") ?? 1,
+                    "data.uses.per": getProperty(item.data, "data.uses.per") ?? "charges",
+                    [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
+                    [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
+                }
+            }
+
+            return {
+                "_id": item.id,
+                "data.uses.value": 1,
+                "data.uses.max": 1,
+                "data.uses.per": "charges",
+                [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
+                [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER
+            }
+        });
+
+        if(updates.length) {
+            ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
+                itemName: [...new Set(items.map(item => item.name))].join(', ')
+            }));
+        }
+
+        return actor.updateEmbeddedDocuments("Item", updates);
+
+    }
+
+
+    static _patchConsumableItem(item, updates){
         if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-        data["data.uses.value"] = 1;
-        data["data.uses.max"] = 1;
-        data["data.uses.per"] = "charges";
-        ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedConsumable", {
+        updates["data.uses.value"] = 1;
+        updates["data.uses.max"] = 1;
+        updates["data.uses.per"] = "charges";
+        ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
             itemName: item.name
         }));
     }

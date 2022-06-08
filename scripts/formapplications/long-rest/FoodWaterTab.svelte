@@ -10,6 +10,7 @@
         getSetting,
         roundHalf
     } from "../../lib/lib.js";
+    import RestWorkflow from "../../rest-workflow.js";
 
     export let actor;
     export let workflow;
@@ -49,7 +50,9 @@
     let actorConsumableItems = [];
     let selectedItem = "";
 
-    refreshConsumableItems();
+    RestWorkflow.patchAllConsumableItems(actor).then(() => {
+        refreshConsumableItems();
+    });
 
     function toggleAccessToFood(){
         halfFood = hasAccessToFood
