@@ -121,16 +121,12 @@
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
         if (hpUpdate) {
-            actorUpdated();
+            if (!startedLongRest) {
+                workflow.refreshHealthData();
+                healthData = workflow.healthData;
+            }
+            updateHealthBarText();
         }
-    }
-
-    async function actorUpdated() {
-        if (!startedLongRest) {
-            workflow.refreshHealthData();
-            healthData = workflow.healthData;
-        }
-        updateHealthBarText();
     }
 
     function updateHealthBarText() {
@@ -221,7 +217,6 @@
             {/if}
 
         </section>
-
 
         {#if showStartLongRestButton && activeTab !== "foodwater"}
             <div class="form-group" style="margin: 0.5rem 0;">

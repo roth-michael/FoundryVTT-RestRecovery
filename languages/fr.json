@@ -128,7 +128,7 @@
                 "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
                 "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
                 "NoMoreRests": "Aucun repos court restant",
-                "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de {max_short_rests} repos courts par repos long.",
+                "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de <strong>{max_short_rests}</strong> repos courts par repos long.",
                 "AutoRoll": "Auto"
             },
             "ShortRestHealthWarning": {

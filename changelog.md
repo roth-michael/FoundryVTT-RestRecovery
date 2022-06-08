@@ -4,6 +4,8 @@
 - Added API under `game.restrecovery`, read more on the [wiki](https://google.com/)
 - Added optional setting for short rests to only be able to be completed if a certain number of hit dice are rolled
 - Added short rest recovery settings for items, feats, and resources
+- Added patch that turns non-configured Rations and Waterskins into consumable items compatible with Rest Recovery
+- Added text displaying how many more short rests an actor can take before having to take a long rest, if that setting is active 
 - Fixed wizards and circle of the land druids sometimes throwing errors or warnings surrounding class levels
 - Fixed minor issues in the settings UI surrounding loading module profiles
 - Fixed issues with D&D 5e version 1.5.7

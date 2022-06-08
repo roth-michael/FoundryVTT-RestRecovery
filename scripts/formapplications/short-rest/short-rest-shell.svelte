@@ -45,6 +45,26 @@
 
     export async function requestSubmit() {
         if(minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice){
+            if(workflow.totalHitDice <= 0){
+                await TJSDialog.prompt({
+                    title: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
+                    content: {
+                        class: Dialog,
+                        props: {
+                            icon: "fas fa-exclamation-triangle",
+                            header: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
+                            content: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+                        }
+                    },
+                    modal: true,
+                    draggable: false,
+                    options: {
+                        height: "auto",
+                        headerButtonNoClose: true
+                    }
+                })
+                return false;
+            }
             const doContinue = await TJSDialog.confirm({
                 title: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
                 content: {
@@ -52,7 +72,7 @@
                     props: {
                         icon: "fas fa-exclamation-triangle",
                         header: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
-                        content: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Content")
+                        content: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
                     }
                 },
                 modal: true,
@@ -125,16 +145,12 @@
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
         if(hpUpdate){
-            actorUpdated();
+            if(!startedShortRest){
+                workflow.refreshHealthData();
+                healthData = workflow.healthData;
+            }
+            updateHealthBarText();
         }
-    }
-
-    export async function actorUpdated(){
-        if(!startedShortRest){
-            workflow.refreshHealthData();
-            healthData = workflow.healthData;
-        }
-        updateHealthBarText();
     }
 
     function updateHealthBarText(){
@@ -152,6 +168,14 @@
     <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd" class="dialog-content">
 
         {#if enableShortRest}
+
+            {#if maxShortRests > 0 && currentShortRests < maxShortRests}
+                <div class="form-group">
+                    <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimit", { num_short_rests: maxShortRests - currentShortRests })}</p>
+                </div>
+
+                <p class="notes">{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimitSmall", { max_short_rests: maxShortRests })}</p>
+            {/if}
 
             {#if enableRollHitDice}
                 <p>{localize("DND5E.ShortRestHint")}</p>
@@ -232,7 +256,7 @@
         <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
 
         {#if minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice}
-            <p class="notes">{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
+            <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
         {/if}
 
         <footer class="flexrow" style="margin-top:0.5rem;">
