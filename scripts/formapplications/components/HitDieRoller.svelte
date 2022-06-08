@@ -7,6 +7,7 @@
     export let isAtMaxHP = false;
     export let onHitDiceFunction = () => {};
     export let onAutoFunction = () => {};
+
     let autoRollEnabled = getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE);
 </script>
 
@@ -21,11 +22,11 @@
                     <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
                 {/each}
             </select>
-            <button type="button" disabled="{isAtMaxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={(event) => { onHitDiceFunction(event) }}>
+            <button type="button" on:click={(event) => { onHitDiceFunction(event) }}>
                 <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
             </button>
             {#if autoRollEnabled}
-            <button type="button" disabled="{isAtMaxHP || healthData.totalHitDice === 0 || healthData.availableHitDice[selectedHitDice] === 0}" on:click={(event) => { onAutoFunction(event) }}>
+            <button type="button" on:click={(event) => { onAutoFunction(event) }}>
                 <i class="fas fa-redo"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.AutoRoll")}
             </button>
             {/if}

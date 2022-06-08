@@ -57,7 +57,7 @@
     let healthData = workflow.healthData;
     updateHealthBarText();
 
-    let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
+    let selectedHitDice = Object.entries(healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
     export async function requestSubmit() {
         if (enableRollHitDice && healthData.hitDiceSpent === 0 && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
@@ -121,16 +121,12 @@
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
         if (hpUpdate) {
-            actorUpdated();
+            if (!startedLongRest) {
+                workflow.refreshHealthData();
+                healthData = workflow.healthData;
+            }
+            updateHealthBarText();
         }
-    }
-
-    async function actorUpdated() {
-        if (!startedLongRest) {
-            workflow.refreshHealthData();
-            healthData = workflow.healthData;
-        }
-        updateHealthBarText();
     }
 
     function updateHealthBarText() {
@@ -221,7 +217,6 @@
             {/if}
 
         </section>
-
 
         {#if showStartLongRestButton && activeTab !== "foodwater"}
             <div class="form-group" style="margin: 0.5rem 0;">

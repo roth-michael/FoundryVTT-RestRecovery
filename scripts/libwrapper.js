@@ -187,7 +187,7 @@ function patch_rollHitDie() {
             let parts = [`1${denomination}`, "@abilities.con.mod"];
 
             const title = `${game.i18n.localize("DND5E.HitDiceRoll")}: ${this.name}`;
-            const rollData = foundry.utils.deepClone(this.data.data);
+            const rollData = this.getRollData();
 
             const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
                 ? this.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
@@ -335,7 +335,7 @@ function patch_getUsageUpdates(){
             const id = this.data.data;
             const actorUpdates = {};
             const itemUpdates = {};
-            const resourceUpdates = [];
+            const resourceUpdates = isNewerVersion(game.version, "1.5.7") ? {} : [];
 
             // Consume Recharge
             if ( consumeRecharge ) {

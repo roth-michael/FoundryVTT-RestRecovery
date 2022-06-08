@@ -95,15 +95,15 @@ function patch_itemConsumableInputs(app, html, item){
         <div class="form-group">
             <div class="form-fields" style="margin-right:0.5rem;">
                 <label class="checkbox" style="font-size:13px;">
-                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE}.enabled" ${customConsumable.enabled ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable")}
+                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_ENABLED}" ${customConsumable.enabled ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable")}
                 </label>
             </div>
             <div class="form-fields" style="margin-right:0.5rem;">
                 <label style="flex:0 1 auto;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Type")}</label>
-                <select name="${CONSTANTS.FLAGS.CONSUMABLE}.type" ${!customConsumable.enabled ? "disabled" : ""}>
-                    <option ${customConsumable.type === "food" ? "selected" : ""} value="food">${game.i18n.localize("REST-RECOVERY.Misc.Food")}</option>
-                    <option ${customConsumable.type === "water" ? "selected" : ""} value="water">${game.i18n.localize("REST-RECOVERY.Misc.Water")}</option>
-                    <option ${customConsumable.type === "both" ? "selected" : ""} value="both">${game.i18n.localize("REST-RECOVERY.Misc.Both")}</option>
+                <select name="${CONSTANTS.FLAGS.CONSUMABLE_TYPE}" ${!customConsumable.enabled ? "disabled" : ""}>
+                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD}">${game.i18n.localize("REST-RECOVERY.Misc.Food")}</option>
+                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER}">${game.i18n.localize("REST-RECOVERY.Misc.Water")}</option>
+                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH}">${game.i18n.localize("REST-RECOVERY.Misc.Both")}</option>
                 </select>
             </div>
         </div>
@@ -111,7 +111,7 @@ function patch_itemConsumableInputs(app, html, item){
         <div class="form-group">
             <div class="form-fields" style="margin-right:0.5rem;">
                 <label class="checkbox" style="font-size:13px;">
-                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE}.dayWorth" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
                 </label>
             </div>
         </div>
@@ -125,20 +125,20 @@ function patch_itemConsumableInputs(app, html, item){
 
 function patch_itemCustomRecovery(app, html, item){
 
-    const customRecovery = getProperty(item, `${CONSTANTS.FLAGS.RECOVERY}.enabled`) ?? false;
-    const customFormula =  getProperty(item, `${CONSTANTS.FLAGS.RECOVERY}.custom_formula`) ?? "";
+    const customRecovery = getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_ENABLED}`) ?? false;
+    const customFormula =  getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_FORMULA}`) ?? "";
     let targetElem = html.find('.uses-per')?.[0];
     if (!targetElem) return;
     $(`<div class="form-group" title="Module: Rest Recovery for 5e">
         <label>${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.UsesCustomRecovery")} <i class="fas fa-info-circle"></i></label>
         <div class="form-fields">
             <label class="checkbox">
-                <input type="checkbox" name="${CONSTANTS.FLAGS.RECOVERY}.enabled" ${customRecovery ? "checked" : ""}>
+                <input type="checkbox" name="${CONSTANTS.FLAGS.RECOVERY_ENABLED}" ${customRecovery ? "checked" : ""}>
                 ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Enabled")}
             </label>
             <span style="flex: 0 0 auto; margin: 0 0.25rem;">|</span>
             <span class="sep" style="flex: 0 0 auto; margin-right: 0.25rem;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Formula")}</span>
-            <input type="text" name="${CONSTANTS.FLAGS.RECOVERY}.custom_formula" ${!customRecovery ? "disabled" : ""} value="${customRecovery ? customFormula : ""}">
+            <input type="text" name="${CONSTANTS.FLAGS.RECOVERY_FORMULA}" ${!customRecovery ? "disabled" : ""} value="${customRecovery ? customFormula : ""}">
         </div>
     </div>`).insertAfter(targetElem);
 

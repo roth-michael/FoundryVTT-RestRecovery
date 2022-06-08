@@ -10,6 +10,7 @@
         getSetting,
         roundHalf
     } from "../../lib/lib.js";
+    import RestWorkflow from "../../rest-workflow.js";
 
     export let actor;
     export let workflow;
@@ -23,7 +24,7 @@
     const actorDaysWithoutFood = getProperty(actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
     const actorExhaustionThreshold = evaluateFormula(
         getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
-        foundry.utils.deepClone(actor.data.data)
+        actor.getRollData()
     )?.total ?? 4;
 
     let {
@@ -49,7 +50,9 @@
     let actorConsumableItems = [];
     let selectedItem = "";
 
-    refreshConsumableItems();
+    RestWorkflow.patchAllConsumableItems(actor).then(() => {
+        refreshConsumableItems();
+    });
 
     function toggleAccessToFood(){
         halfFood = hasAccessToFood

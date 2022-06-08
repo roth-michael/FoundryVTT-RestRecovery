@@ -170,14 +170,14 @@ export default class RestWorkflow {
             this.spellData.has_feature_use = wizardFeatureUse;
             this.spellData.feature = wizardFeature;
             this.spellData.pointsTotal = wizardFeature
-                ? lib.evaluateFormula(wizardFeature.data.data.formula || "ceil(@classes.wizard.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total
+                ? lib.evaluateFormula(wizardFeature.data.data.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData())?.total
                 : 0;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
         } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
             this.spellData.has_feature_use = druidFeatureUse;
             this.spellData.feature = druidFeature;
             this.spellData.pointsTotal = druidFeature
-                ? lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", foundry.utils.deepClone(this.actor.data.data))?.total
+                ? lib.evaluateFormula(druidFeature.data.data.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData())?.total
                 : 0;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
@@ -223,9 +223,9 @@ export default class RestWorkflow {
                 "data.uses.max": 1,
                 "data.uses.per": "lr",
                 "data.actionType": "util",
-                "data.formula": `ceil(@classes.${className}.levels/2)`
+                "data.formula": `ceil(@classes.${className.toLowerCase()}.levels/2)`
             }]);
-            ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedRecovery", {
+            ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedRecovery", {
                 actorName: this.actor.name,
                 recoveryName: this.spellData.feature.name
             }));
@@ -358,6 +358,7 @@ export default class RestWorkflow {
         if (!roll) return;
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
+        this.healthData.hitDiceSpent++;
 
         if (this.longRest) return true;
 
@@ -459,13 +460,13 @@ export default class RestWorkflow {
 
         let updates = {};
 
-        const maxShortRests = lib.getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
+        const maxShortRests = lib.getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS) || 0;
         if (maxShortRests > 0) {
             if (this.longRest) {
-                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = 0;
+                updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = 0;
             } else {
-                const currentShortRests = getProperty(this.actor.data, `${CONSTANTS.FLAGS.BASE}.currentShortRests`) || 0;
-                updates[`${CONSTANTS.FLAGS.BASE}.currentShortRests`] = currentShortRests + 1;
+                const currentShortRests = getProperty(this.actor.data, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
+                updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = currentShortRests + 1;
             }
         }
 
@@ -505,7 +506,7 @@ export default class RestWorkflow {
 
                 let actorExhaustionThreshold = lib.evaluateFormula(
                     lib.getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
-                    foundry.utils.deepClone(this.actor.data.data)
+                    this.actor.getRollData()
                 )?.total ?? 4;
 
                 if(this.consumableData.hasAccessToFood) {
@@ -698,7 +699,7 @@ export default class RestWorkflow {
 
         if (!recoveredHP) {
             recoveredHP = typeof multiplier === "string"
-                ? Math.floor(lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total)
+                ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
                 : Math.floor(maxHP * multiplier);
         }
 
@@ -765,7 +766,7 @@ export default class RestWorkflow {
 
         if (typeof multiplier === "string") {
 
-            const customRegain = lib.evaluateFormula(multiplier, foundry.utils.deepClone(this.actor.data.data))?.total;
+            const customRegain = lib.evaluateFormula(multiplier, this.actor.getRollData())?.total;
             maxHitDice = Math.clamped(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
 
         } else {
@@ -786,8 +787,6 @@ export default class RestWorkflow {
 
         const finishedRestUpdates = await this._finishedRest(updates);
 
-        const actorCopy = foundry.utils.deepClone(this.actor.data.data);
-
         const customRecoveryResources = Object.entries(this.actor.data.data.resources).filter(entry => {
             return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
         });
@@ -799,7 +798,7 @@ export default class RestWorkflow {
         for (const [key, resource] of customRecoveryResources) {
             if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
                 const customFormula = getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
-                const customRoll = lib.evaluateFormula(customFormula, actorCopy);
+                const customRoll = lib.evaluateFormula(customFormula, this.actor.getRollData());
                 finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
 
                 const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
@@ -815,7 +814,7 @@ export default class RestWorkflow {
             this.resourcesRegainedMessages.push('</ul>');
         }
 
-        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER);
+        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
         if (multiplier === 1.0) return { ...updates, ...finishedRestUpdates };
         if (!multiplier) return finishedRestUpdates;
 
@@ -840,7 +839,7 @@ export default class RestWorkflow {
         // Long rest
         if (recoverSpells) {
 
-            const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SPELLS_MULTIPLIER);
+            const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
 
             for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
                 if (!slot.override && !slot.max) continue;
@@ -885,9 +884,9 @@ export default class RestWorkflow {
 
     }
 
-    _getRestItemUsesRecovery(updates, args) {
+    async _getRestItemUsesRecovery(updates, args) {
 
-        updates = this._recoverItemsUses(updates, args);
+        updates = await this._recoverItemsUses(updates, args);
 
         if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
             updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
@@ -897,25 +896,31 @@ export default class RestWorkflow {
 
     }
 
-    _recoverItemsUses(updates, args) {
+    async _recoverItemsUses(updates, args) {
 
         const { recoverLongRestUses, recoverDailyUses } = args;
 
-        const featsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER);
-        const othersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER);
-        const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER);
+        const longFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER);
+        const longOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER);
 
-        const clonedActor = foundry.utils.deepClone(this.actor.data.data);
+        const shortFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER);
+        const shortOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER);
+
+        const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER);
+
+        const actorRollData = this.actor.getRollData();
 
         for (const item of this.actor.items) {
             if (item.data.data.uses) {
                 const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
                 if (recoverLongRestUses && item.data.data.uses.per === "lr") {
-                    updates = this._recoverItemUse(clonedActor, updates, item, item.type === "feat" ? featsMultiplier : othersMultiplier);
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier);
+                } else if (!recoverLongRestUses && item.data.data.uses.per === "sr") {
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
                 } else if (recoverDailyUses && item.data.data.uses.per === "day") {
-                    updates = this._recoverItemUse(clonedActor, updates, item, dailyMultiplier);
-                } else if (customRecovery) {
-                    updates = this._recoverItemUse(clonedActor, updates, item);
+                    updates = this._recoverItemUse(actorRollData, updates, item, dailyMultiplier);
+                } else if (customRecovery){
+                    updates = this._recoverItemUse(actorRollData, updates, item);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {
                 updates.push({ _id: item.id, "data.recharge.charged": true });
@@ -932,7 +937,7 @@ export default class RestWorkflow {
         }
 
         if(recoverLongRestUses) {
-            updates = this._handleFoodAndWaterItems(updates);
+            updates = await this._handleFoodAndWaterItems(updates);
         }
 
         return updates;
@@ -983,7 +988,7 @@ export default class RestWorkflow {
 
     }
 
-    _handleFoodAndWaterItems(updates) {
+    async _handleFoodAndWaterItems(updates) {
 
         if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
 
@@ -1062,12 +1067,49 @@ export default class RestWorkflow {
         });
     }
 
-    static _patchConsumableItem(item, data){
+    static patchAllConsumableItems(actor) {
+
+        const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Waterskin") && getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
+
+        const updates = items.map(item => {
+            if(item.name.startsWith("Rations")){
+                return {
+                    "_id": item.id,
+                    "data.uses.value": getProperty(item.data, "data.uses.value") ?? 1,
+                    "data.uses.max": getProperty(item.data, "data.uses.max") ?? 1,
+                    "data.uses.per": getProperty(item.data, "data.uses.per") ?? "charges",
+                    [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
+                    [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
+                }
+            }
+
+            return {
+                "_id": item.id,
+                "data.uses.value": 1,
+                "data.uses.max": 1,
+                "data.uses.per": "charges",
+                [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
+                [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER
+            }
+        });
+
+        if(updates.length) {
+            ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
+                itemName: [...new Set(items.map(item => item.name))].join(', ')
+            }));
+        }
+
+        return actor.updateEmbeddedDocuments("Item", updates);
+
+    }
+
+
+    static _patchConsumableItem(item, updates){
         if(!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-        data["data.uses.value"] = 1;
-        data["data.uses.max"] = 1;
-        data["data.uses.per"] = "charges";
-        ui.notifications.info(game.i18n.format("REST-RECOVERY.PatchedConsumable", {
+        updates["data.uses.value"] = 1;
+        updates["data.uses.max"] = 1;
+        updates["data.uses.per"] = "charges";
+        ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
             itemName: item.name
         }));
     }
