@@ -98,11 +98,15 @@ export default class RestWorkflow {
         this.refreshHealthData();
     }
 
-    refreshHealthData() {
+    async refreshHealthData() {
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;
-        if (this.longRest && (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE) || lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL)) {
-            let { hitPointsRecovered } = this.actor._getRestHitPointRecovery();
+
+        const longRestRollHitDice = this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
+        const longRestNotFullHitPoints = longRestRollHitDice && lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
+
+        if(!this.longRest || longRestRollHitDice || longRestNotFullHitPoints) {
+            let { hitPointsRecovered } = await this.actor._getRestHitPointRecovery();
             this.healthData.hitPointsToRegain = hitPointsRecovered;
         }
     }
@@ -300,7 +304,10 @@ export default class RestWorkflow {
 
     async autoSpendHitDice() {
         const avgHitDiceRegain = this.getAverageHitDiceRoll();
-        const threshold = Math.max(Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain) + 5);
+        let threshold = Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain);
+        if((threshold + this.currHP) >= this.maxHP){
+            threshold = this.maxHP - this.currHP;
+        }
         await this.actor.autoSpendHitDice({ threshold });
         this.healthData.availableHitDice = this.getHitDice();
         this.healthData.totalHitDice = this.totalHitDice;

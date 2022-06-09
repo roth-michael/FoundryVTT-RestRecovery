@@ -26,16 +26,13 @@
                 <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
             </button>
             {#if autoRollEnabled}
-            <button type="button" on:click={(event) => { onAutoFunction(event) }}>
+            <button type="button" disabled="{isAtMaxHP}" on:click={(event) => { onAutoFunction(event) }}>
                 <i class="fas fa-redo"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.AutoRoll")}
             </button>
             {/if}
         </div>
         {#if healthData.totalHitDice === 0}
             <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
-        {/if}
-        {#if isAtMaxHP}
-            <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullHealth")}</p>
         {/if}
     </div>
 </div>

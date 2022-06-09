@@ -141,16 +141,21 @@
 
     const doc = new TJSDocument(actor);
 
-    $: {
+    $:
+    {
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
-        if(hpUpdate){
-            if(!startedShortRest){
-                workflow.refreshHealthData();
-                healthData = workflow.healthData;
-            }
-            updateHealthBarText();
+        if (hpUpdate) {
+            updateHealthData();
         }
+    }
+
+    async function updateHealthData(){
+        if (!startedShortRest) {
+            await workflow.refreshHealthData();
+            healthData = workflow.healthData;
+        }
+        updateHealthBarText();
     }
 
     function updateHealthBarText(){

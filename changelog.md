@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.4
+- Actually fixed issues with D&D 5e version 1.5.7 vs 1.6.0
+- Fixed auto-roll hit dice button not working
+
 ## Version 1.2.3
 - Added API under `game.restrecovery`, read more on the [wiki](https://github.com/fantasycalendar/FoundryVTT-RestRecovery/wiki/Rest-Recovery-API)
 - Added optional setting for short rests to only be able to be completed if a certain number of hit dice are rolled

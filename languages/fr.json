@@ -122,7 +122,6 @@
             },
             "ShortRest": {
                 "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
-                "FullHealth": "Vous ne pouvez plus lancer de dés de vie, car vous êtes déjà à votre maximum de points de vie.",
                 "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
                 "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
                 "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",

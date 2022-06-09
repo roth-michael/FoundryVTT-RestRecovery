@@ -109,6 +109,7 @@
     }
 
     async function autoRollHitDie() {
+        debugger;
         await workflow.autoSpendHitDice();
         healthData = workflow.healthData;
         startedLongRest = true;
@@ -121,12 +122,16 @@
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
         if (hpUpdate) {
-            if (!startedLongRest) {
-                workflow.refreshHealthData();
-                healthData = workflow.healthData;
-            }
-            updateHealthBarText();
+            updateHealthData();
         }
+    }
+
+    async function updateHealthData(){
+        if (!startedLongRest) {
+            await workflow.refreshHealthData();
+            healthData = workflow.healthData;
+        }
+        updateHealthBarText();
     }
 
     function updateHealthBarText() {
