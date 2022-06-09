@@ -109,7 +109,6 @@
     }
 
     async function autoRollHitDie() {
-        debugger;
         await workflow.autoSpendHitDice();
         healthData = workflow.healthData;
         startedLongRest = true;
