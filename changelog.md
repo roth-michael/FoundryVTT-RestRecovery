@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.5
+- Updated French localization (thank you DarKDinDoN!)
+- Third time's a charm with the different D&D system versions
+ 
 ## Version 1.2.4
 - Actually fixed issues with D&D 5e version 1.5.7 vs 1.6.0
 - Fixed auto-roll hit dice button not working
