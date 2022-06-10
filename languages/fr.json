@@ -128,11 +128,22 @@
                 "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
                 "NoMoreRests": "Aucun repos court restant",
                 "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de <strong>{max_short_rests}</strong> repos courts par repos long.",
-                "AutoRoll": "Auto"
+                "ShortRestLimit": "Vous pouvez encore faire <strong>{num_short_rests}</strong> repos courts avant de devoir faire un repos long.",
+                "ShortRestLimitSmall": "Les règles de votre partie autorisent un maximum de <strong>{max_short_rests}</strong> par repos long.",
+                "AutoRoll": "Auto",
+                "MinHitDiceSpend": "Vous devez encore lancer <strong>{min_spend}</strong> dés de vie avant de pouvoir terminer votre repos court."
             },
             "ShortRestHealthWarning": {
                 "Title": "Terminer le repos court ?",
                 "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
+            },
+            "ShortRestHitDice": {
+                "Title": "Lancer des dés de vie ?",
+                "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Êtes-vous certain de vouloir continuer ?"
+            },
+            "ShortRestNoHitDice": {
+                "Title": "Aucun dé de vie restant",
+                "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Toutefois vous n'avez plus de dés de vie."
             },
             "LongRest": {
                 "Begin": "Commencer le repos long",
@@ -260,6 +271,10 @@
                     "Title": "Activer l'automatisation de la nourritur et de l'eau",
                     "Hint": "Cela active les fonctionnalités liées à la nourriture et l'eau, ci-dessous."
                 },
+                "DisableRollConsumableItems": {
+                    "Title": "Désactiver l'envoi du consommable dans le chat pendant un repos",
+                    "Hint": "Par défaut, si un personnage consomme un objet pendant un repos long, la carte de l'objet sera affichée dans le chat (comme si on cliquait dessus depuis la feuille de personnage). Ce paramètre désactive ce comportement."
+                },
                 "FoodUnitsPerDay": {
                     "Title": "Nombre d'unités de nourriture requis par jour",
                     "Hint": "Ce paramètre permet de configurer le nombre d'unités de nourriture requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation de nourriture."
@@ -299,8 +314,8 @@
                     "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
                 },
                 "MinHitDieSpend": {
-                    "Title": "Nombre minimum de dés de vie à dépenser",
-                    "Hint": "Ce paramètre oblige les personnages à dépenser un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
+                    "Title": "Nombre minimum de dés de vie à lancer",
+                    "Hint": "Ce paramètre oblige les personnages à lancer un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
                 },
                 "NoHitDice": {
                     "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
@@ -308,15 +323,15 @@
                 },
                 "ResourcesRecoveryFraction": {
                     "Title": "Fraction des ressources à récupérer",
-                    "Hint": "La fraction des ressources à récupérer lors d'un repos courts."
+                    "Hint": "La fraction des ressources à récupérer lors d'un repos court."
                 },
                 "ItemUsesRecoveryFraction": {
-                    "Title": "Item uses recovery fraction",
-                    "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
+                    "Title": "Fraction des charges d'objet à récupérer",
+                    "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos court."
                 },
                 "FeatUsesRecoveryFraction": {
-                    "Title": "Feat uses recovery fraction",
-                    "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
+                    "Title": "Fraction des charges d'aptitudes à récupérer",
+                    "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos court."
                 }
             },
             "LongRest": {
