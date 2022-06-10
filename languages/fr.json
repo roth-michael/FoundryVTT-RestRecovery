@@ -122,16 +122,15 @@
             },
             "ShortRest": {
                 "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
-                "FullHealth": "Vous ne pouvez plus lancer de dés de vie, car vous êtes déjà à votre maximum de points de vie.",
                 "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
                 "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
                 "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
                 "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
                 "NoMoreRests": "Aucun repos court restant",
-                "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de {max_short_rests} repos courts par repos long.",
+                "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de <strong>{max_short_rests}</strong> repos courts par repos long.",
                 "AutoRoll": "Auto"
             },
-            "ShortRestWarning": {
+            "ShortRestHealthWarning": {
                 "Title": "Terminer le repos court ?",
                 "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
             },
@@ -299,9 +298,25 @@
                     "Title": "Nombre maximum de repos courts par repos long",
                     "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
                 },
+                "MinHitDieSpend": {
+                    "Title": "Nombre minimum de dés de vie à dépenser",
+                    "Hint": "Ce paramètre oblige les personnages à dépenser un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
+                },
                 "NoHitDice": {
                     "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
                     "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
+                },
+                "ResourcesRecoveryFraction": {
+                    "Title": "Fraction des ressources à récupérer",
+                    "Hint": "La fraction des ressources à récupérer lors d'un repos courts."
+                },
+                "ItemUsesRecoveryFraction": {
+                    "Title": "Item uses recovery fraction",
+                    "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
+                },
+                "FeatUsesRecoveryFraction": {
+                    "Title": "Feat uses recovery fraction",
+                    "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
                 }
             },
             "LongRest": {

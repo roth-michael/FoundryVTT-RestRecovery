@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
+title: "[Request] ENTER TITLE HERE"
 labels: enhancement
 assignees: Haxxer
 

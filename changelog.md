@@ -1,6 +1,21 @@
 # Rest Recovery Changelog
 
+## Version 1.2.4
+- Actually fixed issues with D&D 5e version 1.5.7 vs 1.6.0
+- Fixed auto-roll hit dice button not working
+
+## Version 1.2.3
+- Added API under `game.restrecovery`, read more on the [wiki](https://github.com/fantasycalendar/FoundryVTT-RestRecovery/wiki/Rest-Recovery-API)
+- Added optional setting for short rests to only be able to be completed if a certain number of hit dice are rolled
+- Added short rest recovery settings for items, feats, and resources
+- Added patch that automatically turns non-configured Rations and Waterskins into consumable items compatible with Rest Recovery
+- Added text displaying how many more short rests an actor can take before having to take a long rest, if that setting is active 
+- Fixed wizards and circle of the land druids sometimes throwing errors or warnings surrounding class levels
+- Fixed minor issues in the settings UI surrounding loading module profiles
+- Fixed issues with D&D 5e version 1.5.7 vs 1.6.0
+
 ## Version 1.2.2
+- Minor updates to French localization
 - Fixed issue with references to old settings
 - Fixed minor issue with the module confusing Druid and Wizard spell slot recovery features
 

@@ -122,18 +122,28 @@
             },
             "ShortRest": {
                 "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
-                "FullHealth": "You're already at full health, so you can't roll any more hit dice.",
                 "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
                 "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
                 "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
                 "FullSpells": "You're full on spells, you have no need to regain any spell slots.",
                 "NoMoreRests": "No more short rests",
-                "NoMoreRestsSmall": "You have have no more capacity for a short rest, as your game's rules mandate a maximum of {max_short_rests} per long rest.",
-                "AutoRoll": "Auto Roll"
+                "NoMoreRestsSmall": "You have have no more capacity for a short rest, as your game's rules mandate a maximum of <strong>{max_short_rests}</strong> per long rest.",
+                "ShortRestLimit": "You have <strong>{num_short_rests}</strong> short rests remaining before you must take a long rest.",
+                "ShortRestLimitSmall": "Your game's rules mandate a maximum of <strong>{max_short_rests}</strong> per long rest.",
+                "AutoRoll": "Auto Roll",
+                "MinHitDiceSpend": "You must spend another <strong>{min_spend}</strong> hit dice to finish this short rest."
             },
-            "ShortRestWarning": {
+            "ShortRestHealthWarning": {
                 "Title": "Finish Short Rest?",
                 "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
+            },
+            "ShortRestHitDice": {
+                "Title": "Spend Hit Dice?",
+                "Content": "You need to spend at least {num_dice} hit dice to finish this short rest. Are you sure you want to do this?"
+            },
+            "ShortRestNoHitDice": {
+                "Title": "No remaining hit dice",
+                "Content": "You need to spend at least {num_dice} hit dice to finish this short rest, but you do not have any left."
             },
             "LongRest": {
                 "Begin": "Begin Long Rest",
@@ -261,6 +271,10 @@
                     "Title": "Enable food and water automation",
                     "Hint": "This enables sub-features relating to food and water automation, as seen below."
                 },
+                "DisableRollConsumableItems": {
+                    "Title": "Disable rolling consumable items on rest",
+                    "Hint": "By default, if a character chooses to consume an item during their long rest, it will be rolled as if the character clicked on its roll button. This setting will disable this automatic roll."
+                },
                 "FoodUnitsPerDay": {
                     "Title": "Units of food required per day",
                     "Hint": "This configures how many units of food characters needs per day. Setting this to 0 disables food requirement altogether."
@@ -299,9 +313,25 @@
                     "Title": "Maximum short rests per long rest",
                     "Hint": "This prevents characters from taking short rests if they reach a number of short rests equal to this number. Taking a long rest resets this counter. Putting zero here disables this setting."
                 },
+                "MinHitDieSpend": {
+                    "Title": "Minimum hit die spend",
+                    "Hint": "This prevents characters from finishing a short rest if they do not spend this number of hit dice. Putting zero here disables this setting."
+                },
                 "NoHitDice": {
                     "Title": "Disable hit dice rolls during short rests",
                     "Hint": "This prevents characters from rolling hit dice during short rests."
+                },
+                "ResourcesRecoveryFraction": {
+                    "Title": "Resources recovery fraction",
+                    "Hint": "The fraction of resources to recover on a short rest."
+                },
+                "ItemUsesRecoveryFraction": {
+                    "Title": "Item uses recovery fraction",
+                    "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
+                },
+                "FeatUsesRecoveryFraction": {
+                    "Title": "Feat uses recovery fraction",
+                    "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
                 }
             },
             "LongRest": {

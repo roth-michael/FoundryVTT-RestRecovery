@@ -26,9 +26,10 @@
     $: application.reactive.headerButtonNoClose = startedShortRest;
 
     const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
-    const enableRollhitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
-    const currentShortRests = actor.getFlag(CONSTANTS.MODULE_NAME, CONSTANTS.FLAG_NAME)?.currentShortRests || 0;
+    const enableRollHitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
+    const currentShortRests = getProperty(actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
     const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
+    const minSpendHitDice = enableRollHitDice ? getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0 : 0;
 
     let newDay = false;
     let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
@@ -43,15 +44,56 @@
     let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
     export async function requestSubmit() {
-        if(workflow.healthPercentage < 0.5 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
+        if(minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice){
+            if(workflow.totalHitDice <= 0){
+                await TJSDialog.prompt({
+                    title: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
+                    content: {
+                        class: Dialog,
+                        props: {
+                            icon: "fas fa-exclamation-triangle",
+                            header: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
+                            content: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+                        }
+                    },
+                    modal: true,
+                    draggable: false,
+                    options: {
+                        height: "auto",
+                        headerButtonNoClose: true
+                    }
+                })
+                return false;
+            }
             const doContinue = await TJSDialog.confirm({
-                title: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
+                title: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
                 content: {
                     class: Dialog,
                     props: {
                         icon: "fas fa-exclamation-triangle",
-                        header: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Title"),
-                        content: localize("REST-RECOVERY.Dialogs.ShortRestWarning.Content")
+                        header: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
+                        content: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+                    }
+                },
+                modal: true,
+                draggable: false,
+                options: {
+                    height: "auto",
+                    headerButtonNoClose: true
+                }
+            })
+            if(!doContinue) return false;
+            await rollHitDice();
+        }
+        if(workflow.healthPercentage <= 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0){
+            const doContinue = await TJSDialog.confirm({
+                title: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Title"),
+                content: {
+                    class: Dialog,
+                    props: {
+                        icon: "fas fa-exclamation-triangle",
+                        header: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Title"),
+                        content: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Content")
                     }
                 },
                 modal: true,
@@ -63,6 +105,7 @@
             })
             if(!doContinue) return false;
         }
+
         form.requestSubmit();
     }
 
@@ -79,7 +122,7 @@
     }
 
     async function rollHitDice(event){
-        const rolled = await workflow.rollHitDice(selectedHitDice, event.ctrlKey === getSetting("quick-hd-roll"));
+        const rolled = await workflow.rollHitDice(selectedHitDice, event?.ctrlKey === getSetting(CONSTANTS.SETTINGS.QUICK_HD_ROLL));
         if(!rolled) return;
         healthData = workflow.healthData;
         startedShortRest = true;
@@ -98,17 +141,18 @@
 
     const doc = new TJSDocument(actor);
 
-    $: {
+    $:
+    {
         $doc;
         const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
-        if(hpUpdate){
-            actorUpdated();
+        if (hpUpdate) {
+            updateHealthData();
         }
     }
 
-    export async function actorUpdated(){
-        if(!startedShortRest){
-            workflow.refreshHealthData();
+    async function updateHealthData(){
+        if (!startedShortRest) {
+            await workflow.refreshHealthData();
             healthData = workflow.healthData;
         }
         updateHealthBarText();
@@ -130,7 +174,15 @@
 
         {#if enableShortRest}
 
-            {#if enableRollhitDice}
+            {#if maxShortRests > 0 && currentShortRests < maxShortRests}
+                <div class="form-group">
+                    <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimit", { num_short_rests: maxShortRests - currentShortRests })}</p>
+                </div>
+
+                <p class="notes">{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimitSmall", { max_short_rests: maxShortRests })}</p>
+            {/if}
+
+            {#if enableRollHitDice}
                 <p>{localize("DND5E.ShortRestHint")}</p>
 
                 <HitDieRoller
@@ -207,6 +259,10 @@
         {/if}
 
         <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
+
+        {#if minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice}
+            <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
+        {/if}
 
         <footer class="flexrow" style="margin-top:0.5rem;">
             {#if enableShortRest}

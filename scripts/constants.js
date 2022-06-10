@@ -12,6 +12,7 @@ const CONSTANTS = {
         /*-------------------------------------------*
          *           General Rest Settings           *
          *-------------------------------------------*/
+        QUICK_HD_ROLL: "quick-hd-roll",
         ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
 
         /*-------------------------------------------*
@@ -19,7 +20,14 @@ const CONSTANTS = {
          *-------------------------------------------*/
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
         MAX_SHORT_RESTS: "max-short-rests-per-long-rest",
+        MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
         DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
+        SHORT_RESOURCES_MULTIPLIER: "short-rest-recovery-resources",
+        SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
+        SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
+        SHORT_RESOURCES_MULTIPLIER_FORMULA: "recovery-resources-formula",
+        SHORT_USES_OTHERS_MULTIPLIER_FORMULA: "recovery-uses-others-formula",
+        SHORT_USES_FEATS_MULTIPLIER_FORMULA: "recovery-uses-feats-formula",
 
         /*-------------------------------------------*
          *             Long Rest Settings            *
@@ -32,19 +40,19 @@ const CONSTANTS = {
         HD_ROUNDING: "recovery-rounding",
         HP_MULTIPLIER: "recovery-hitpoints",
         HD_MULTIPLIER: "recovery-hitdice",
-        RESOURCES_MULTIPLIER: "recovery-resources",
-        SPELLS_MULTIPLIER: "recovery-spells",
-        USES_OTHERS_MULTIPLIER: "recovery-uses-others",
-        USES_FEATS_MULTIPLIER: "recovery-uses-feats",
-        USES_DAILY_MULTIPLIER: "recovery-day",
+        LONG_RESOURCES_MULTIPLIER: "recovery-resources",
+        LONG_SPELLS_MULTIPLIER: "recovery-spells",
+        LONG_USES_OTHERS_MULTIPLIER: "recovery-uses-others",
+        LONG_USES_FEATS_MULTIPLIER: "recovery-uses-feats",
+        LONG_USES_DAILY_MULTIPLIER: "recovery-day",
 
         HP_MULTIPLIER_FORMULA: "recovery-hitpoints-formula",
         HD_MULTIPLIER_FORMULA: "recovery-hitdice-formula",
-        RESOURCES_MULTIPLIER_FORMULA: "recovery-resources-formula",
-        SPELLS_MULTIPLIER_FORMULA: "recovery-spells-formula",
-        USES_OTHERS_MULTIPLIER_FORMULA: "recovery-uses-others-formula",
-        USES_FEATS_MULTIPLIER_FORMULA: "recovery-uses-feats-formula",
-        USES_DAILY_MULTIPLIER_FORMULA: "recovery-day-formula",
+        LONG_RESOURCES_MULTIPLIER_FORMULA: "recovery-resources-formula",
+        LONG_SPELLS_MULTIPLIER_FORMULA: "recovery-spells-formula",
+        LONG_USES_OTHERS_MULTIPLIER_FORMULA: "recovery-uses-others-formula",
+        LONG_USES_FEATS_MULTIPLIER_FORMULA: "recovery-uses-feats-formula",
+        LONG_USES_DAILY_MULTIPLIER_FORMULA: "recovery-day-formula",
 
         /*-------------------------------------------*
          *               Item names                  *
@@ -150,6 +158,94 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         default: false,
         type: Boolean
+    },
+    [CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND]: {
+        name: "REST-RECOVERY.Settings.ShortRest.MinHitDieSpend.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.MinHitDieSpend.Hint",
+        scope: "world",
+        group: "shortrest",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return settingsMap.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
+        },
+        config: false,
+        default: 0,
+        type: Number
+    },
+    [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
+        name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Hint",
+        scope: "world",
+        group: "shortrest",
+        customFormula: CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA,
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+        },
+        default: CONSTANTS.FRACTIONS.FULL,
+    },
+    [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER_FORMULA]: {
+        scope: "world",
+        group: "shortrest",
+        config: false,
+        hidden: true,
+        type: String,
+        default: "@resource.max",
+    },
+    [CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER]: {
+        name: "REST-RECOVERY.Settings.ShortRest.ItemUsesRecoveryFraction.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.ItemUsesRecoveryFraction.Hint",
+        scope: "world",
+        group: "shortrest",
+        customFormula: CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER_FORMULA,
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+        },
+        default: CONSTANTS.FRACTIONS.FULL,
+    },
+    [CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER_FORMULA]: {
+        scope: "world",
+        group: "shortrest",
+        config: false,
+        hidden: true,
+        type: String,
+        default: "@uses.max",
+    },
+    [CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER]: {
+        name: "REST-RECOVERY.Settings.ShortRest.FeatUsesRecoveryFraction.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.FeatUsesRecoveryFraction.Hint",
+        scope: "world",
+        group: "shortrest",
+        customFormula: CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER_FORMULA,
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+        },
+        default: CONSTANTS.FRACTIONS.FULL,
+    },
+    [CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER_FORMULA]: {
+        scope: "world",
+        group: "shortrest",
+        config: false,
+        hidden: true,
+        type: String,
+        default: "@uses.max",
     },
 
     /*-------------------------------------------*
@@ -280,13 +376,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.DOWN,
     },
-    [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER]: {
+    [CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
         hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
         customSettingsDialog: true,
-        customFormula: CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA,
+        customFormula: CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA,
         config: false,
         type: String,
         choices: {
@@ -298,7 +394,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.FULL,
     },
-    [CONSTANTS.SETTINGS.RESOURCES_MULTIPLIER_FORMULA]: {
+    [CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA]: {
         scope: "world",
         group: "longrest",
         config: false,
@@ -306,13 +402,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         type: String,
         default: "@resource.max",
     },
-    [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER]: {
+    [CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Title",
         hint: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
         customSettingsDialog: true,
-        customFormula: CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA,
+        customFormula: CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA,
         config: false,
         type: String,
         choices: {
@@ -324,7 +420,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.FULL,
     },
-    [CONSTANTS.SETTINGS.SPELLS_MULTIPLIER_FORMULA]: {
+    [CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA]: {
         scope: "world",
         group: "longrest",
         config: false,
@@ -332,13 +428,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         type: String,
         default: "@slot.max",
     },
-    [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER]: {
+    [CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Title",
         hint: "REST-RECOVERY.Settings.LongRest.ItemUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
         customSettingsDialog: true,
-        customFormula: CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA,
+        customFormula: CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER_FORMULA,
         config: false,
         type: String,
         choices: {
@@ -350,7 +446,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.FULL,
     },
-    [CONSTANTS.SETTINGS.USES_OTHERS_MULTIPLIER_FORMULA]: {
+    [CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER_FORMULA]: {
         scope: "world",
         group: "longrest",
         config: false,
@@ -358,13 +454,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         type: String,
         default: "@uses.max",
     },
-    [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER]: {
+    [CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Title",
         hint: "REST-RECOVERY.Settings.LongRest.FeatUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
         customSettingsDialog: true,
-        customFormula: CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA,
+        customFormula: CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER_FORMULA,
         config: false,
         type: String,
         choices: {
@@ -376,7 +472,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.FULL,
     },
-    [CONSTANTS.SETTINGS.USES_FEATS_MULTIPLIER_FORMULA]: {
+    [CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER_FORMULA]: {
         scope: "world",
         group: "longrest",
         config: false,
@@ -384,13 +480,13 @@ CONSTANTS.DEFAULT_SETTINGS = {
         type: String,
         default: "@uses.max",
     },
-    [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER]: {
+    [CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Title",
         hint: "REST-RECOVERY.Settings.LongRest.DailyUsesRecoveryFraction.Hint",
         scope: "world",
         group: "longrest",
         customSettingsDialog: true,
-        customFormula: CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA,
+        customFormula: CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER_FORMULA,
         config: false,
         type: String,
         choices: {
@@ -402,7 +498,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
         },
         default: CONSTANTS.FRACTIONS.FULL,
     },
-    [CONSTANTS.SETTINGS.USES_DAILY_MULTIPLIER_FORMULA]: {
+    [CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER_FORMULA]: {
         scope: "world",
         group: "longrest",
         config: false,
@@ -616,7 +712,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
         hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
         scope: "world",
         group: "foodandwater",
-        customSettingsDialog: true,
         validate: (settingsMap) => {
             return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
                 || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
@@ -651,16 +746,29 @@ CONSTANTS.DEFAULT_SETTINGS = {
     }
 };
 
-const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}`
-CONSTANTS.FLAGS = {
-    BASE: baseFlag,
-    RESOURCES: baseFlag + ".resources",
-    RECOVERY: baseFlag + ".recovery",
-    CONSUMABLE: baseFlag + ".consumable",
-    STARVATION: baseFlag + ".starvation",
-    SATED_FOOD: baseFlag + ".sated.food",
-    SATED_WATER: baseFlag + ".sated.water"
-}
+const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.`
+
+CONSTANTS.FLAGS = {}
+CONSTANTS.FLAGS.RESOURCES = baseFlag + "resources";
+
+CONSTANTS.FLAGS.RECOVERY = baseFlag + "recovery";
+CONSTANTS.FLAGS.RECOVERY_ENABLED = CONSTANTS.FLAGS.RECOVERY + ".enabled";
+CONSTANTS.FLAGS.RECOVERY_FORMULA = CONSTANTS.FLAGS.RECOVERY + ".custom_formula";
+
+CONSTANTS.FLAGS.CONSUMABLE = baseFlag + "consumable";
+CONSTANTS.FLAGS.CONSUMABLE_ENABLED = CONSTANTS.FLAGS.CONSUMABLE + ".enabled";
+CONSTANTS.FLAGS.CONSUMABLE_TYPE = CONSTANTS.FLAGS.CONSUMABLE + ".type";
+CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH = CONSTANTS.FLAGS.CONSUMABLE + ".dayWorth";
+CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD = "food";
+CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER = "water";
+CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH = "both";
+
+
+
+CONSTANTS.FLAGS.STARVATION = baseFlag + "starvation";
+CONSTANTS.FLAGS.SATED_FOOD = baseFlag + "sated.food";
+CONSTANTS.FLAGS.SATED_WATER = baseFlag + "sated.water";
+CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS = baseFlag + "currentShortRests";
 
 CONSTANTS.CONSUMABLE = {
     NONE: "none",

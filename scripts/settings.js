@@ -47,7 +47,7 @@ export default function registerSettings() {
         type: Object
     });
 
-    game.settings.register(CONSTANTS.MODULE_NAME, "quick-hd-roll", {
+    game.settings.register(CONSTANTS.MODULE_NAME, CONSTANTS.SETTINGS.QUICK_HD_ROLL, {
         name: "REST-RECOVERY.Settings.QuickHDRoll.Title",
         hint: "REST-RECOVERY.Settings.QuickHDRoll.Hint",
         scope: "client",
