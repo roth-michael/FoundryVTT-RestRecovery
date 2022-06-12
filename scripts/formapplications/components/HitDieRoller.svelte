@@ -2,13 +2,20 @@
     import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
     import { getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
+
     export let healthData;
     export let selectedHitDice;
-    export let isAtMaxHP = false;
     export let onHitDiceFunction = () => {};
     export let onAutoFunction = () => {};
 
     let autoRollEnabled = getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE);
+    let disableAutoButton = true;
+
+    $: {
+        disableAutoButton = !healthData.enableAutoRollHitDice;
+    }
+
+
 </script>
 
 <div class="form-group">
@@ -26,7 +33,7 @@
                 <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
             </button>
             {#if autoRollEnabled}
-            <button type="button" disabled="{isAtMaxHP}" on:click={(event) => { onAutoFunction(event) }}>
+            <button type="button" disabled="{disableAutoButton}" on:click={(event) => { onAutoFunction(event) }}>
                 <i class="fas fa-redo"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.AutoRoll")}
             </button>
             {/if}

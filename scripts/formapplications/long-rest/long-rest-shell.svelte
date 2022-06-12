@@ -137,10 +137,10 @@
         currHP = workflow.currHP;
         maxHP = workflow.maxHP;
         healthPercentage = currHP / maxHP;
-        healthPercentageToGain = (currHP + healthData.hitPointsToRegain) / maxHP;
+        healthPercentageToGain = (currHP + healthData.hitPointsToRegainFromRest) / maxHP;
         healthBarText = `HP: ${currHP} / ${maxHP}`
-        if (healthData.hitPointsToRegain) {
-            healthBarText += ` (+${healthData.hitPointsToRegain})`;
+        if (healthData.hitPointsToRegainFromRest) {
+            healthBarText += ` (+${healthData.hitPointsToRegainFromRest})`;
         }
     }
 
@@ -192,8 +192,7 @@
                     {#if enableRollHitDice}
                         <HitDieRoller
                             bind:selectedHitDice="{selectedHitDice}"
-                            healthData="{healthData}"
-                            isAtMaxHP="{currHP >= maxHP}"
+                            bind:healthData="{healthData}"
                             onHitDiceFunction="{rollHitDice}"
                             onAutoFunction="{autoRollHitDie}"
                         />

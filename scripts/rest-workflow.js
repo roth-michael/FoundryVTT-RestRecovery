@@ -93,21 +93,35 @@ export default class RestWorkflow {
         this.healthData = {
             startingHitDice: this.actor.data.data.attributes.hd,
             startingHealth: this.actor.data.data.attributes.hp.value,
-            hitDiceSpent: 0
+            hitDiceSpent: 0,
+            hitPointsToRegainFromRest: 0,
+            hitPointsToRegain: 0,
+            enableAutoRollHitDice: false
         }
-        this.refreshHealthData();
-    }
-
-    async refreshHealthData() {
-        this.healthData.availableHitDice = this.getHitDice();
-        this.healthData.totalHitDice = this.totalHitDice;
 
         const longRestRollHitDice = this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
         const longRestNotFullHitPoints = longRestRollHitDice && lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
 
         if(!this.longRest || longRestRollHitDice || longRestNotFullHitPoints) {
-            let { hitPointsRecovered } = await this.actor._getRestHitPointRecovery();
-            this.healthData.hitPointsToRegain = hitPointsRecovered;
+            let { hitPointsToRegainFromRest } = this.actor._getRestHitPointRecovery();
+            this.healthData.hitPointsToRegainFromRest = hitPointsToRegainFromRest;
+        }
+
+        this.refreshHealthData();
+    }
+
+    refreshHealthData() {
+        this.healthData.availableHitDice = this.getHitDice();
+        this.healthData.totalHitDice = this.totalHitDice;
+
+        if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE)) {
+            let avgHitDiceRegain = this.getAverageHitDiceRoll();
+            let missingHP = this.maxHP - this.currHP;
+            let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
+
+            this.healthData.enableAutoRollHitDice = (this.currHP + this.healthData.hitPointsToRegainFromRest) < this.maxHP
+                && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0;
+
         }
     }
 
@@ -185,26 +199,6 @@ export default class RestWorkflow {
                 : 0;
             this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
         }
-
-    }
-
-    static async wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
-
-        const workflow = this.get(actor);
-
-        if (!runWrap) {
-            if (workflow && workflow[fnName]) {
-                return wrapped(workflow[fnName](args));
-            }
-            return wrapped(args);
-        }
-
-        let updates = await wrapped(args);
-        if (workflow && workflow[fnName]) {
-            updates = await workflow[fnName](updates, args);
-        }
-
-        return updates;
 
     }
 
@@ -303,14 +297,19 @@ export default class RestWorkflow {
     }
 
     async autoSpendHitDice() {
-        const avgHitDiceRegain = this.getAverageHitDiceRoll();
-        let threshold = Math.max(avgHitDiceRegain, this.healthData.hitPointsToRegain);
-        if((threshold + this.currHP) >= this.maxHP){
-            threshold = this.maxHP - this.currHP;
+        let avgHitDiceRegain = this.getAverageHitDiceRoll();
+        let missingHP = this.maxHP - this.currHP;
+        let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
+
+        // While the character is missing at least 10% of its hp, and we predict we can roll hit dice, and we have some left, roll hit dice
+        while(missingHP && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0) {
+            avgHitDiceRegain = this.getAverageHitDiceRoll();
+            await this.rollHitDice(undefined, false);
+            missingHP = this.maxHP - this.currHP;
+            probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
         }
-        await this.actor.autoSpendHitDice({ threshold });
-        this.healthData.availableHitDice = this.getHitDice();
-        this.healthData.totalHitDice = this.totalHitDice;
+
+        this.refreshHealthData();
     }
 
     getAverageHitDiceRoll() {
@@ -424,6 +423,26 @@ export default class RestWorkflow {
                 this.spellData.slots[level][i].disabled = slot.alwaysDisabled || (Number(level) > pointsLeft && !slot.checked);
             }
         }
+    }
+
+    static async wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+
+        const workflow = this.get(actor);
+
+        if (!runWrap) {
+            if (workflow && workflow[fnName]) {
+                return wrapped(workflow[fnName](args));
+            }
+            return wrapped(args);
+        }
+
+        let updates = await wrapped(args);
+        if (workflow && workflow[fnName]) {
+            updates = await workflow[fnName](updates, args);
+        }
+
+        return updates;
+
     }
 
     async regainHitDice() {
@@ -692,30 +711,23 @@ export default class RestWorkflow {
 
     _getRestHitPointRecovery(result) {
 
+        const maxHP = this.actor.data.data.attributes.hp.max;
+        const currentHP = this.actor.data.data.attributes.hp.value;
+
         if (!this.longRest) {
-            result.hitPointsRecovered = Math.max(0, result.hitPointsRecovered);
+            result.hitPointsRecovered = currentHP - this.healthData.startingHealth;
+            result.hitPointsToRegainFromRest = 0;
             return result;
         }
 
         const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 
-        const maxHP = this.actor.data.data.attributes.hp.max;
-        const currentHP = this.actor.data.data.attributes.hp.value;
+        result.hitPointsToRegainFromRest = typeof multiplier === "string"
+            ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
+            : Math.floor(maxHP * multiplier);
 
-        let recoveredHP = this.finished ? this.healthData.hitPointsToRegain : 0;
-
-        if (!recoveredHP) {
-            recoveredHP = typeof multiplier === "string"
-                ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
-                : Math.floor(maxHP * multiplier);
-        }
-
-        result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + recoveredHP);
-        result.hitPointsRecovered = Math.min(maxHP - currentHP, recoveredHP);
-
-        if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE)) {
-            result.hitPointsRecovered += (currentHP - this.healthData.startingHealth);
-        }
+        result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + result.hitPointsToRegainFromRest);
+        result.hitPointsRecovered = result.updates["data.attributes.hp.value"] - this.healthData.startingHealth;
 
         return result;
 
