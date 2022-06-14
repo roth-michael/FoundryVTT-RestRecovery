@@ -187,8 +187,7 @@
 
                 <HitDieRoller
                     bind:selectedHitDice="{selectedHitDice}"
-                    healthData="{healthData}"
-                    isAtMaxHP="{currHP >= maxHP}"
+                    bind:healthData="{healthData}"
                     onHitDiceFunction="{rollHitDice}"
                     onAutoFunction="{autoRollHitDie}"
                 />
