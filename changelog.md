@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.2.7
+- Fixed issue with items regaining charges during rests when they should not have
+
+## Version 1.2.6
+- Fixed hit dice auto-rolling feature
+
 ## Version 1.2.5
 - Updated French localization (thank you DarKDinDoN!)
 - Third time's a charm with the different D&D system versions

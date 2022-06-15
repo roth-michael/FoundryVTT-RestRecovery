@@ -931,15 +931,12 @@ export default class RestWorkflow {
 
         for (const item of this.actor.items) {
             if (item.data.data.uses) {
-                const customRecovery = item.data.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
-                if (recoverLongRestUses && item.data.data.uses.per === "lr") {
-                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier);
-                } else if (!recoverLongRestUses && item.data.data.uses.per === "sr") {
-                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
-                } else if (recoverDailyUses && item.data.data.uses.per === "day") {
+                if(recoverDailyUses && item.data.data.uses.per === "day") {
                     updates = this._recoverItemUse(actorRollData, updates, item, dailyMultiplier);
-                } else if (customRecovery){
-                    updates = this._recoverItemUse(actorRollData, updates, item);
+                }else if(recoverLongRestUses && item.data.data.uses.per === "lr") {
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier);
+                }else if (!recoverLongRestUses && item.data.data.uses.per === "sr") {
+                    updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
                 }
             } else if (recoverLongRestUses && item.data.data.recharge && item.data.data.recharge.value) {
                 updates.push({ _id: item.id, "data.recharge.charged": true });

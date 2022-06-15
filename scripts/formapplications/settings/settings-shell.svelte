@@ -203,15 +203,25 @@
                     {/if}
                 {/each}
 
-                {#if settings[group].length < 4}
+                {#if group === "general"}
                 <div style="text-align: center; font-size: 1rem; margin-top:3rem;">
                     <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}<p>
-                    <p>
-                        <a
-                            style="color: var(--color-text-hyperlink);"
+                    <p style="margin-bottom:1rem;">
+                        <a class="link-text"
                             href="https://github.com/fantasycalendar/FoundryVTT-RestRecovery/issues/new?assignees=&labels=&template=feature_request.md&title="
                             target="_blank"
                         >{localize("REST-RECOVERY.Dialogs.ModuleConfig.Request")}</a>
+                    </p>
+                    <p>
+                        {localize("REST-RECOVERY.Dialogs.ModuleConfig.Donate")}
+                    </p>
+                    <p>
+                        <a href="https://ko-fi.com/fantasycomputerworks" target="_blank" style="text-decoration: none !important;">
+                            <button class="donate-button" type="button">
+                                <img src="https://storage.ko-fi.com/cdn/cup-border.png">
+                                <span>Donate</span>
+                            </button>
+                        </a>
                     </p>
                 </div>
                 {/if}
@@ -227,6 +237,36 @@
 </ApplicationShell>
 
 <style lang="scss">
+
+  .link-text{
+    color: var(--color-text-hyperlink);
+  }
+
+  .donate-button {
+    border: 0;
+    border-radius: 9999px;
+    background-color:#00bfa5;
+    align-items: center;
+    font-family: nunito,quicksand,sans-serif;
+    font-size: 16px;
+    width: max-content;
+    justify-content: space-between;
+    padding: 5px 15px;
+    font-weight: 700;
+    cursor: pointer;
+    -webkit-border-radius: 100px;
+    display: flex;
+    margin:10px auto;
+
+    img{
+      border: 0;
+      width: 39px;
+    }
+    span{
+      margin-left: 8px;
+      color: white !important;
+    }
+  }
 
   .preset-select{
     display: flex;
