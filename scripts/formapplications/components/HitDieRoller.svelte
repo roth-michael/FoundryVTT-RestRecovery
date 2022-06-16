@@ -3,16 +3,25 @@
     import { getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
 
+    export let workflow;
     export let healthData;
     export let selectedHitDice;
     export let onHitDiceFunction = () => {};
     export let onAutoFunction = () => {};
 
+    export let minSpendHitDice = 0;
+
     let autoRollEnabled = getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE);
     let disableAutoButton = true;
+    let enableRollButton = true;
 
     $: {
         disableAutoButton = !healthData.enableAutoRollHitDice;
+    }
+
+    $: {
+        enableRollButton = healthData.availableHitDice[selectedHitDice] > 0
+            && (workflow.currHP < workflow.maxHP || (minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice));
     }
 
 
@@ -29,7 +38,7 @@
                     <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
                 {/each}
             </select>
-            <button type="button" on:click={(event) => { onHitDiceFunction(event) }}>
+            <button type="button" disabled={!enableRollButton} on:click={(event) => { onHitDiceFunction(event) }}>
                 <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
             </button>
             {#if autoRollEnabled}

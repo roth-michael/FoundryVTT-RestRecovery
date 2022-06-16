@@ -107,8 +107,8 @@ function patch_rest() {
 
             // Recover hit points & hit dice on long rest
             if ( longRest ) {
-                ({ updates: hitPointUpdates, hitPointsRecovered } = await this._getRestHitPointRecovery());
-                ({ updates: hitDiceUpdates, hitDiceRecovered } = await this._getRestHitDiceRecovery());
+                ({ updates: hitPointUpdates, hitPointsRecovered } = this._getRestHitPointRecovery());
+                ({ updates: hitDiceUpdates, hitDiceRecovered } = this._getRestHitDiceRecovery());
             }
 
             // Figure out the rest of the changes
@@ -117,16 +117,22 @@ function patch_rest() {
                 dhp: dhp + hitPointsRecovered,
                 updateData: {
                     ...hitPointUpdates,
-                    ...await this._getRestResourceRecovery({ recoverShortRestResources: !longRest, recoverLongRestResources: longRest }),
-                    ...await this._getRestSpellRecovery({ recoverSpells: longRest })
+                    ...this._getRestResourceRecovery({ recoverShortRestResources: !longRest, recoverLongRestResources: longRest }),
+                    ...this._getRestSpellRecovery({ recoverSpells: longRest })
                 },
                 updateItems: [
                     ...hitDiceUpdates,
-                    ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+                    ...this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
                 ],
                 longRest,
                 newDay
             };
+
+            if(longRest){
+                const workflow = RestWorkflow.get(this);
+                result.updateData = await workflow._handleFoodWaterExhaustion(result.updateData);
+                result.updateItems = await workflow._handleFoodAndWaterItems(result.updateItems);
+            }
 
             // Perform updates
             await this.update(result.updateData);

@@ -29,6 +29,8 @@
     let form;
     let startedLongRest = false;
 
+    const workflow = RestWorkflow.get(actor);
+
     let activeTab = "rest";
 
     $: application.reactive.headerButtonNoClose = startedLongRest;
@@ -51,8 +53,6 @@
         actorFoodSatedValue,
         actorWaterSatedValue
     } = getActorConsumableValues(actor);
-
-    const workflow = RestWorkflow.get(actor);
 
     let healthData = workflow.healthData;
     updateHealthBarText();
@@ -195,6 +195,7 @@
                             bind:healthData="{healthData}"
                             onHitDiceFunction="{rollHitDice}"
                             onAutoFunction="{autoRollHitDie}"
+                            workflow="{workflow}"
                         />
                     {/if}
 

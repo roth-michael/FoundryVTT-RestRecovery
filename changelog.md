@@ -1,5 +1,12 @@
 # Rest Recovery Changelog
 
+## Version 1.2.9
+- Fixed automated hit dice button being disabled in short rest UI
+- General quality of life improvements in the code
+
+## Version 1.2.8
+- Slight changes to settings UI
+
 ## Version 1.2.7
 - Fixed issue with items regaining charges during rests when they should not have
 
