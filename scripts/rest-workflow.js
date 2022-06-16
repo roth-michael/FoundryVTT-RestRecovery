@@ -120,7 +120,7 @@ export default class RestWorkflow {
             let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
 
             this.healthData.enableAutoRollHitDice = (this.currHP + this.healthData.hitPointsToRegainFromRest) < this.maxHP
-                && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0;
+                && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0;
 
         }
     }
@@ -425,7 +425,7 @@ export default class RestWorkflow {
         }
     }
 
-    static async wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+    static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
 
         const workflow = this.get(actor);
 
@@ -436,9 +436,9 @@ export default class RestWorkflow {
             return wrapped(args);
         }
 
-        let updates = await wrapped(args);
+        let updates = wrapped(args);
         if (workflow && workflow[fnName]) {
-            updates = await workflow[fnName](updates, args);
+            updates = workflow[fnName](updates, args);
         }
 
         return updates;
@@ -451,7 +451,7 @@ export default class RestWorkflow {
 
         let { maxHitDice } = this._getMaxHitDiceRecovery();
 
-        let { updates, hitDiceRecovered } = await this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
+        let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
 
         let hitDiceLeftToRecover = maxHitDice - hitDiceRecovered;
 
@@ -482,7 +482,7 @@ export default class RestWorkflow {
 
     }
 
-    async _finishedRest() {
+    _finishedRest() {
 
         let updates = {};
 
@@ -494,10 +494,6 @@ export default class RestWorkflow {
                 const currentShortRests = getProperty(this.actor.data, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
                 updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = currentShortRests + 1;
             }
-        }
-
-        if(this.longRest){
-            updates = await this._handleFoodWaterExhaustion(updates);
         }
 
         return updates;
@@ -802,9 +798,9 @@ export default class RestWorkflow {
 
     }
 
-    async _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
+    _getRestResourceRecovery(updates, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
 
-        const finishedRestUpdates = await this._finishedRest(updates);
+        const finishedRestUpdates = this._finishedRest(updates);
 
         const customRecoveryResources = Object.entries(this.actor.data.data.resources).filter(entry => {
             return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor.data, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
@@ -903,9 +899,9 @@ export default class RestWorkflow {
 
     }
 
-    async _getRestItemUsesRecovery(updates, args) {
+    _getRestItemUsesRecovery(updates, args) {
 
-        updates = await this._recoverItemsUses(updates, args);
+        updates = this._recoverItemsUses(updates, args);
 
         if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
             updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
@@ -915,7 +911,7 @@ export default class RestWorkflow {
 
     }
 
-    async _recoverItemsUses(updates, args) {
+    _recoverItemsUses(updates, args) {
 
         const { recoverLongRestUses, recoverDailyUses } = args;
 
@@ -950,10 +946,6 @@ export default class RestWorkflow {
             this.itemsRegainedMessages = this.itemsRegainedMessages.map(line => line[1]);
             this.itemsRegainedMessages.unshift(`<ul>`)
             this.itemsRegainedMessages.push('</ul>');
-        }
-
-        if(recoverLongRestUses) {
-            updates = await this._handleFoodAndWaterItems(updates);
         }
 
         return updates;
@@ -1047,7 +1039,7 @@ export default class RestWorkflow {
             }
         }
 
-        this.actor.deleteEmbeddedDocuments("Item", itemsToDelete);
+        await this.actor.deleteEmbeddedDocuments("Item", itemsToDelete);
 
         return updates;
     }

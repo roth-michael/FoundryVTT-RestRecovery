@@ -190,6 +190,8 @@
                     bind:healthData="{healthData}"
                     onHitDiceFunction="{rollHitDice}"
                     onAutoFunction="{autoRollHitDie}"
+                    workflow="{workflow}"
+                    minSpendHitDice="{minSpendHitDice}"
                 />
             {:else}
                 <p>{localize("REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest")}</p>
