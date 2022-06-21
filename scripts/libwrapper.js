@@ -341,7 +341,7 @@ function patch_getUsageUpdates(){
             const id = this.data.data;
             const actorUpdates = {};
             const itemUpdates = {};
-            const resourceUpdates = isNewerVersion("1.5.7", game.system.data.version) ? {} : [];
+            const resourceUpdates = isNewerVersion(game.system.data.version, "1.5.7") ? [] : {};
 
             // Consume Recharge
             if ( consumeRecharge ) {
