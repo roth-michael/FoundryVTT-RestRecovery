@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.10
+- Fixes to 1.5.x D&D version (thank you Varriount!)
+- Minor fixes to French localization (thank you DarKDinDoN!)
+
 ## Version 1.2.9
 - Fixed automated hit dice button being disabled in short rest UI
 - General quality of life improvements in the code
