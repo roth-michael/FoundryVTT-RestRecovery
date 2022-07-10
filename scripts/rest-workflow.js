@@ -793,6 +793,14 @@ export default class RestWorkflow {
             );
 
         }
+        
+        if(!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)){
+          const maximumHitDiceToRecover = Number(Object.values(this.actor.classes).reduce((acc, cls) => {
+            acc += cls.data.data?.hitDiceUsed ?? 0;
+            return acc;
+          }, 0));
+          maxHitDice = Math.min(maximumHitDiceToRecover, maxHitDice);
+        }
 
         return { maxHitDice };
 
