@@ -1,6 +1,7 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
 import plugins from "./plugins.js";
+import { getSetting } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -300,9 +301,17 @@ export default class RestWorkflow {
         let avgHitDiceRegain = this.getAverageHitDiceRoll();
         let missingHP = this.maxHP - this.currHP;
         let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
+    
+        const minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
+        const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
+        let maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+            ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
+            : Math.floor(this.actor.data.data.details.level * maxHitDiceSpendMultiplier);
+        maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
 
         // While the character is missing at least 10% of its hp, and we predict we can roll hit dice, and we have some left, roll hit dice
         while(missingHP && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0) {
+            if(this.healthData.hitDiceSpent >= maxSpendHitDice) break;
             avgHitDiceRegain = this.getAverageHitDiceRoll();
             await this.rollHitDice(undefined, false);
             missingHP = this.maxHP - this.currHP;
@@ -716,7 +725,7 @@ export default class RestWorkflow {
             return result;
         }
 
-        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+        const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 
         result.hitPointsToRegainFromRest = typeof multiplier === "string"
             ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
@@ -775,7 +784,7 @@ export default class RestWorkflow {
 
     _getMaxHitDiceRecovery({ maxHitDice = undefined } = {}) {
 
-        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
+        const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
         const roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
         const actorLevel = this.actor.data.data.details.level;
 
@@ -837,7 +846,7 @@ export default class RestWorkflow {
             this.resourcesRegainedMessages.push('</ul>');
         }
 
-        const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
+        const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
         if (multiplier === 1.0) return { ...updates, ...finishedRestUpdates };
         if (!multiplier) return finishedRestUpdates;
 
@@ -862,7 +871,7 @@ export default class RestWorkflow {
         // Long rest
         if (recoverSpells) {
 
-            const multiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
+            const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
 
             for (let [level, slot] of Object.entries(this.actor.data.data.spells)) {
                 if (!slot.override && !slot.max) continue;
@@ -923,13 +932,13 @@ export default class RestWorkflow {
 
         const { recoverLongRestUses, recoverDailyUses } = args;
 
-        const longFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER);
-        const longOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER);
+        const longFeatsMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER);
+        const longOthersMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER);
 
-        const shortFeatsMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER);
-        const shortOthersMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER);
+        const shortFeatsMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_USES_FEATS_MULTIPLIER);
+        const shortOthersMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER);
 
-        const dailyMultiplier = lib.determineLongRestMultiplier(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER);
+        const dailyMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER);
 
         const actorRollData = this.actor.getRollData();
 

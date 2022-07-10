@@ -10,6 +10,7 @@
     export let onAutoFunction = () => {};
 
     export let minSpendHitDice = 0;
+    export let maxSpendHitDice = 0;
 
     let autoRollEnabled = getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE);
     let disableAutoButton = true;
@@ -21,7 +22,8 @@
 
     $: {
         enableRollButton = healthData.availableHitDice[selectedHitDice] > 0
-            && (workflow.currHP < workflow.maxHP || (minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice));
+            && (workflow.currHP < workflow.maxHP || (minSpendHitDice > 0 && minSpendHitDice > healthData.hitDiceSpent))
+            && (maxSpendHitDice > 0 && healthData.hitDiceSpent < maxSpendHitDice);
     }
 
 
@@ -42,7 +44,7 @@
                 <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
             </button>
             {#if autoRollEnabled}
-            <button type="button" disabled="{disableAutoButton}" on:click={(event) => { onAutoFunction(event) }}>
+            <button type="button" disabled="{disableAutoButton || !enableRollButton}" on:click={(event) => { onAutoFunction(event) }}>
                 <i class="fas fa-redo"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.AutoRoll")}
             </button>
             {/if}

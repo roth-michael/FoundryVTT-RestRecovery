@@ -131,7 +131,8 @@
                 "ShortRestLimit": "You have <strong>{num_short_rests}</strong> short rests remaining before you must take a long rest.",
                 "ShortRestLimitSmall": "Your game's rules mandate a maximum of <strong>{max_short_rests}</strong> per long rest.",
                 "AutoRoll": "Auto Roll",
-                "MinHitDiceSpend": "You must spend another <strong>{min_spend}</strong> hit dice to finish this short rest."
+                "MinHitDiceSpend": "You must spend <strong>{min_spend}</strong> hit dice to finish this short rest.",
+                "MaxHitDiceSpend": "You can only spend <strong>{max_spend}</strong> hit dice during this short rest (<strong>{current}</strong> left)."
             },
             "ShortRestHealthWarning": {
                 "Title": "Finish Short Rest?",
@@ -317,6 +318,10 @@
                 "MinHitDieSpend": {
                     "Title": "Minimum hit die spend",
                     "Hint": "This prevents characters from finishing a short rest if they do not spend this number of hit dice. Putting zero here disables this setting."
+                },
+                "MaxHitDieSpend": {
+                    "Title": "Maximum hit die spend",
+                    "Hint": "This prevents characters from rolling hit dice once they have rolled hit dice equal to this setting. This can never be less than the \"Minimum hit die spend\" setting."
                 },
                 "NoHitDice": {
                     "Title": "Disable hit dice rolls during short rests",

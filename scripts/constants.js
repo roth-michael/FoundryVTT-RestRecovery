@@ -21,10 +21,13 @@ const CONSTANTS = {
         IGNORE_INACTIVE_PLAYERS: "ignore-inactive-players",
         MAX_SHORT_RESTS: "max-short-rests-per-long-rest",
         MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
+        MAX_HIT_DICE_SPEND: "maximum-hit-die-spend",
         DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
         SHORT_RESOURCES_MULTIPLIER: "short-rest-recovery-resources",
         SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
         SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
+    
+        MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
         SHORT_RESOURCES_MULTIPLIER_FORMULA: "recovery-resources-formula",
         SHORT_USES_OTHERS_MULTIPLIER_FORMULA: "recovery-uses-others-formula",
         SHORT_USES_FEATS_MULTIPLIER_FORMULA: "recovery-uses-feats-formula",
@@ -171,6 +174,27 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         default: 0,
         type: Number
+    },
+    [CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND]: {
+        name: "REST-RECOVERY.Settings.ShortRest.MaxHitDieSpend.Title",
+        hint: "REST-RECOVERY.Settings.ShortRest.MaxHitDieSpend.Hint",
+        scope: "world",
+        group: "shortrest",
+        customSettingsDialog: true,
+        validate: (settingsMap) => {
+            return settingsMap.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
+        },
+        customFormula: CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND_FORMULA,
+        config: false,
+        type: String,
+        choices: {
+            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+            [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+            [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+            [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+            [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+        },
+        default: CONSTANTS.FRACTIONS.FULL,
     },
     [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
         name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",

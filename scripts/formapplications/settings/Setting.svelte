@@ -44,7 +44,7 @@
 
         {:else if setting.type === Number}
 
-            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0} disabled={setting.disabled}>
+            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0} disabled={setting.disabled} on:change={() => { if(setting.callback) setting.callback(settingsMap); }}>
 
         {:else}
 

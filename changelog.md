@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.11
+- Added setting to limit how many hit dice a character can roll per short rest
+- Fixed hit dice exceeding maximum with "Enable hit dice max buffer" disabled
+
 ## Version 1.2.10
 - Fixes to 1.5.x D&D version (thank you Varriount!)
 - Minor fixes to French localization (thank you DarKDinDoN!)

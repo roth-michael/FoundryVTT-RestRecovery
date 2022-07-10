@@ -13,7 +13,7 @@ export function ordinalSuffixOf(i) {
     return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'th'}`);
 }
 
-export function determineLongRestMultiplier(settingKey) {
+export function determineMultiplier(settingKey) {
     const multiplierSetting = getSetting(settingKey);
     switch (multiplierSetting) {
         case CONSTANTS.FRACTIONS.NONE:
@@ -55,6 +55,11 @@ export function setSetting(key, value) {
     return game.settings.set(CONSTANTS.MODULE_NAME, key, value);
 }
 
+/**
+ * @param formula
+ * @param data
+ * @returns {Roll}
+ */
 export function evaluateFormula(formula, data){
     const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
     return new Roll(rollFormula).evaluate({ async: false });

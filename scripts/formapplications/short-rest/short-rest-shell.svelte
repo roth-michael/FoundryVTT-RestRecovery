@@ -12,6 +12,7 @@
     import RestWorkflow from "../../rest-workflow.js";
     import { getSetting } from "../../lib/lib.js";
     import CONSTANTS from "../../constants.js";
+    import * as lib from "../../lib/lib.js";
 
     const { application } = getContext('external');
 
@@ -29,7 +30,14 @@
     const enableRollHitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
     const currentShortRests = getProperty(actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
     const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
+
     const minSpendHitDice = enableRollHitDice ? getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0 : 0;
+    const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
+    let maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+        ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
+        : Math.floor(actor.data.data.details.level * maxHitDiceSpendMultiplier);
+    maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
+
 
     let newDay = false;
     let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
@@ -192,6 +200,7 @@
                     onAutoFunction="{autoRollHitDie}"
                     workflow="{workflow}"
                     minSpendHitDice="{minSpendHitDice}"
+                    maxSpendHitDice="{maxSpendHitDice}"
                 />
             {:else}
                 <p>{localize("REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest")}</p>
@@ -263,6 +272,10 @@
 
         {#if minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice}
             <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
+        {/if}
+
+        {#if maxSpendHitDice > 0}
+            <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MaxHitDiceSpend", { max_spend: maxSpendHitDice, current: maxSpendHitDice - healthData.hitDiceSpent })}</p>
         {/if}
 
         <footer class="flexrow" style="margin-top:0.5rem;">
