@@ -13,8 +13,8 @@
     export let maxSpendHitDice = 0;
 
     let autoRollEnabled = getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE);
-    let disableAutoButton = true;
-    let enableRollButton = true;
+    let disableAutoButton;
+    let enableRollButton;
 
     $: {
         disableAutoButton = !healthData.enableAutoRollHitDice;
@@ -22,8 +22,9 @@
 
     $: {
         enableRollButton = healthData.availableHitDice[selectedHitDice] > 0
-            && (workflow.currHP < workflow.maxHP || (minSpendHitDice > 0 && minSpendHitDice > healthData.hitDiceSpent))
-            && (maxSpendHitDice > 0 && healthData.hitDiceSpent < maxSpendHitDice);
+            && workflow.currHP < workflow.maxHP
+            && (minSpendHitDice === 0 || (minSpendHitDice > healthData.hitDiceSpent || (maxSpendHitDice === 0 || healthData.hitDiceSpent < maxSpendHitDice)))
+            && (maxSpendHitDice === 0 || healthData.hitDiceSpent < maxSpendHitDice);
     }
 
 

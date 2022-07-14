@@ -92,6 +92,7 @@ export default class RestWorkflow {
 
     fetchHealthData() {
         this.healthData = {
+            level: this.actor.data.data.details.level,
             startingHitDice: this.actor.data.data.attributes.hd,
             startingHealth: this.actor.data.data.attributes.hp.value,
             hitDiceSpent: 0,

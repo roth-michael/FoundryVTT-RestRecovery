@@ -274,7 +274,7 @@
             <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
         {/if}
 
-        {#if maxSpendHitDice > 0}
+        {#if maxSpendHitDice > 0 && maxSpendHitDice !== healthData.level}
             <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MaxHitDiceSpend", { max_spend: maxSpendHitDice, current: maxSpendHitDice - healthData.hitDiceSpent })}</p>
         {/if}
 

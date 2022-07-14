@@ -188,7 +188,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
         config: false,
         type: String,
         choices: {
-            [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
             [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
             [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
             [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",

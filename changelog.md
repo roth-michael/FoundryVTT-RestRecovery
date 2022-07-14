@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.2.12
+- Fixed being unable to roll hit dice on long rests
+- Fixed max hit die spend being visible even when the setting was set to "Full"
+
 ## Version 1.2.11
 - Added setting to limit how many hit dice a character can roll per short rest
 - Fixed hit dice exceeding maximum with "Enable hit dice max buffer" disabled
