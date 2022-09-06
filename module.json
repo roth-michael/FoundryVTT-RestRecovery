@@ -14,10 +14,10 @@
         }
     ],
     "esmodules": [
-        "./dist/module.js"
+        "./module.js"
     ],
     "styles": [
-        "./dist/module.css"
+        "./style.css"
     ],
     "languages": [
         {
@@ -33,7 +33,8 @@
     ],
     "dependencies": [
         {
-            "name": "lib-wrapper"
+            "name": "lib-wrapper",
+            "type": "module"
         }
     ],
     "minimumCoreVersion": "10",
