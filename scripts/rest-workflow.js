@@ -87,6 +87,7 @@ export default class RestWorkflow {
         : false;
       let hasBlackBlood = blackBlood && blackBlood?.data?.type === "feat";
       
+      
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
       
@@ -102,6 +103,8 @@ export default class RestWorkflow {
         parts[0] = "(" + parts[0] + "*2)";
       } else if (isDurable) {
         parts = [`{1${denomination}+${conMod},${durableMod}}kh`]
+      }else{
+        parts = [denomination, conMod];
       }
       
       config.parts = parts;
