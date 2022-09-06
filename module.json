@@ -14,10 +14,10 @@
         }
     ],
     "esmodules": [
-        "./dist/module.js"
+        "./module.js"
     ],
     "styles": [
-        "./dist/module.css"
+        "./style.css"
     ],
     "languages": [
         {
@@ -33,11 +33,12 @@
     ],
     "dependencies": [
         {
-            "name": "lib-wrapper"
+            "name": "lib-wrapper",
+            "type": "module"
         }
     ],
-    "minimumCoreVersion": "9",
-    "compatibleCoreVersion": "9",
+    "minimumCoreVersion": "10",
+    "compatibleCoreVersion": "10",
     "url": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery",
     "manifest": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/latest/download/module.json",
     "download": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/latest/download/module.zip"

@@ -35,7 +35,7 @@
     const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
     let maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
         ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
-        : Math.floor(actor.data.data.details.level * maxHitDiceSpendMultiplier);
+        : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
     maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
 
 
@@ -152,7 +152,7 @@
     $:
     {
         $doc;
-        const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
+        const hpUpdate = getProperty(doc.updateOptions, "data.attributes.hp");
         if (hpUpdate) {
             updateHealthData();
         }

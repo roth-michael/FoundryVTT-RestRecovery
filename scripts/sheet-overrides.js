@@ -148,9 +148,9 @@ function patch_AbilityUseDialog(app, html){
 
     if(!app.item) return;
 
-    const customConsumable = getProperty(app.item.data, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+    const customConsumable = getProperty(app.item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
 
-    if(!customConsumable.enabled || !app.item.data.data.uses.max) return;
+    if(!customConsumable.enabled || !app.item.system.uses.max) return;
 
     let {
         actorRequiredFood,
@@ -164,7 +164,7 @@ function patch_AbilityUseDialog(app, html){
     let content = html.find(".dialog-content");
     let targetElem = content.children().first();
 
-    const fullUseAvailable = app.item.data.data.uses.value >= 1.0;
+    const fullUseAvailable = app.item.system.uses.value >= 1.0;
 
     let additionalHtml;
 

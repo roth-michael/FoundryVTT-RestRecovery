@@ -13,14 +13,14 @@
     export let actor;
     let form;
 
-    const count = actor.data.data.resources['count']?.value ?? 3;
+    const count = actor.system.resources['count']?.value ?? 3;
 
-    const resources = Object.entries(actor.data.data.resources)
+    const resources = Object.entries(actor.system.resources)
         .map(entry => {
             let resource = entry[1];
-            resource.path = `data.resources.${entry[0]}`;
+            resource.path = `system.resources.${entry[0]}`;
             resource.flagPath = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${entry[0]}.formula`;
-            resource.formula = getProperty(actor.data, `${resource.flagPath}`) ?? "";
+            resource.formula = getProperty(actor, `${resource.flagPath}`) ?? "";
             return resource;
         })
         .filter((resource, index) => resource.path !== "count" && index < count);

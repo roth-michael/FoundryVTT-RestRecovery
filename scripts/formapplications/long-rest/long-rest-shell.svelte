@@ -44,7 +44,7 @@
     let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
     let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
-    const actorNeedsNoFoodWater = getProperty(actor.data, `flags.dnd5e.noFoodWater`);
+    const actorNeedsNoFoodWater = getProperty(actor, `flags.dnd5e.noFoodWater`);
     const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && !actorNeedsNoFoodWater;
 
     let {
@@ -119,7 +119,7 @@
     $:
     {
         $doc;
-        const hpUpdate = getProperty(doc.updateOptions, "data.data.attributes.hp");
+        const hpUpdate = getProperty(doc.updateOptions, "data.attributes.hp");
         if (hpUpdate) {
             updateHealthData();
         }

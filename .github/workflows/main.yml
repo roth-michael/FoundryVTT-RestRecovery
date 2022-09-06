@@ -49,7 +49,7 @@ jobs:
       - run: npm run build
 
       # Create a zip file with all files required by the module to add to the release
-      - run: zip -r ./module.zip module.json LICENSE dist/ languages/
+      - run: zip -r ./module.zip module.json module.js style.css LICENSE languages/
 
       # Create a release for this specific version
       - name: Update Release with Files

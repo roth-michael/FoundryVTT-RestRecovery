@@ -20,8 +20,8 @@
 
     const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
 
-    const actorExhaustion = getProperty(actor.data, "data.attributes.exhaustion") ?? 0;
-    const actorDaysWithoutFood = getProperty(actor.data, CONSTANTS.FLAGS.STARVATION) ?? 0;
+    const actorExhaustion = getProperty(actor, "system.attributes.exhaustion") ?? 0;
+    const actorDaysWithoutFood = getProperty(actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
     const actorExhaustionThreshold = evaluateFormula(
         getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
         actor.getRollData()
@@ -122,12 +122,12 @@
             return;
         }
 
-        const consumable = getProperty(item.data, CONSTANTS.FLAGS.CONSUMABLE);
+        const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
 
         if(!consumable?.enabled) return;
 
-        const usesLeft = getProperty(item.data, "data.uses.value");
-        const maxUses = getProperty(item.data, "data.uses.max");
+        const usesLeft = getProperty(item, "system.uses.value");
+        const maxUses = getProperty(item, "system.uses.max");
 
         if(usesLeft < 0.5){
             // Todo: Notify item has no uses
