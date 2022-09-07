@@ -6,10 +6,10 @@
 ## Version 1.3.0
 - Foundry V10 Support
 - Fixed Black Blood Healing not working
-- 
+
 ## Version 1.2.13
 - Fixed max short rests not working
-- 
+
 ## Version 1.2.12
 - Fixed being unable to roll hit dice on long rests
 - Fixed max hit die spend being visible even when the setting was set to "Full"
