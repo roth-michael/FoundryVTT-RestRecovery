@@ -28,7 +28,7 @@
 
     const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
     const enableRollHitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
-    const currentShortRests = getProperty(actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
+    const currentShortRests = getProperty(actor.data, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
     const enableShortRest = maxShortRests === 0 || currentShortRests < maxShortRests;
 
     const minSpendHitDice = enableRollHitDice ? getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0 : 0;
