@@ -87,15 +87,16 @@ export default class RestWorkflow {
         : false;
       let hasBlackBlood = blackBlood && blackBlood?.data?.type === "feat";
       
-      
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
+      
+      let parts = config.parts;
       
       if (hasBlackBlood) {
         denomination += "r<3";
       }
       
-      let parts = config.parts;
+      parts[0] = denomination;
       
       if (woundClosure && isDurable) {
         parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`]
@@ -103,8 +104,6 @@ export default class RestWorkflow {
         parts[0] = "(" + parts[0] + "*2)";
       } else if (isDurable) {
         parts = [`{1${denomination}+${conMod},${durableMod}}kh`]
-      }else{
-        parts = [denomination, conMod];
       }
       
       config.parts = parts;

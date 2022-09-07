@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.3.1
+- Fixed spells not working with Rest Recovery enabled
+- 
+
 ## Version 1.3.0
 - Foundry V10 Support
 - Fixed Black Blood Healing not working
