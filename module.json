@@ -29,6 +29,11 @@
             "lang": "fr",
             "name": "Français",
             "path": "/languages/fr.json"
+        },
+        {
+            "lang": "pt-BR",
+            "name": "Português (Brasil)",
+            "path": "/languages/pt-BR.json"
         }
     ],
     "dependencies": [
