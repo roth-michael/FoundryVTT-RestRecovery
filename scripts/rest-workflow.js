@@ -15,6 +15,7 @@ export default class RestWorkflow {
     this.finished = false;
     
     this.spellSlotsRegainedMessage = "";
+    this.hitDiceMessage = "";
     this.itemsRegainedMessages = [];
     this.resourcesRegainedMessages = [];
     this.foodAndWaterMessage = [];
@@ -58,7 +59,7 @@ export default class RestWorkflow {
     
     Hooks.on("preUpdateActor", (actor, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
-      const exhaustion = getProperty(data, "data.attributes.exhaustion");
+      const exhaustion = getProperty(data, "system.attributes.exhaustion");
       if (exhaustion === undefined || !rests.get(actor.uuid)) return;
       const integration = lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
       return plugins.handleIntegration(integration + "-exhaustion", actor, data);
@@ -137,6 +138,9 @@ export default class RestWorkflow {
   }
   
   fetchHealthData() {
+    
+    const actorHasHeavyArmor = !!this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped)
+    
     this.healthData = {
       level: this.actor.system.details.level,
       startingHitDice: this.actor.system.attributes.hd,
@@ -144,7 +148,9 @@ export default class RestWorkflow {
       hitDiceSpent: 0,
       hitPointsToRegainFromRest: 0,
       hitPointsToRegain: 0,
-      enableAutoRollHitDice: false
+      enableAutoRollHitDice: false,
+      hasHeavyArmor: actorHasHeavyArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION),
+      removeHeavyArmor: !(actorHasHeavyArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION))
     }
     
     const longRestRollHitDice = this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
@@ -312,7 +318,7 @@ export default class RestWorkflow {
       if (bardClass) {
         const songOfRest = actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true));
         if (songOfRest) {
-          const level = bardClass.data.levels;
+          const level = bardClass.system.levels;
           this.features.bard = bardLevel > level ? this.features.bard : actor;
           bardLevel = bardLevel > level ? bardLevel : level;
           this.features.bardFeature = songOfRest;
@@ -463,7 +469,7 @@ export default class RestWorkflow {
     if (hpRegained > 0) {
       const curHP = this.actor.system.attributes.hp.value;
       const maxHP = this.actor.system.attributes.hp.max + ((this.actor.system.attributes.hp.tempmax ?? 0) ?? 0);
-      await this.actor.update({ "data.attributes.hp.value": Math.min(maxHP, curHP + hpRegained) })
+      await this.actor.update({ "system.attributes.hp.value": Math.min(maxHP, curHP + hpRegained) })
     }
     
     return true;
@@ -501,6 +507,26 @@ export default class RestWorkflow {
     
   }
   
+  static async asyncWrappedFn(actor, wrapped, args, fnName, runWrap = true){
+    
+    const workflow = this.get(actor);
+  
+    if (!runWrap) {
+      if (workflow && workflow[fnName]) {
+        return wrapped(workflow[fnName](args));
+      }
+      return wrapped(args);
+    }
+  
+    let updates = await wrapped(args);
+    if (workflow && workflow[fnName]) {
+      updates = workflow[fnName](updates, args);
+    }
+  
+    return updates;
+    
+  }
+  
   async regainHitDice() {
     
     if (!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return;
@@ -513,20 +539,20 @@ export default class RestWorkflow {
     
     if (hitDiceLeftToRecover > 0) {
       const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
-        return (parseInt(b.data.hitDice.slice(1)) || 0) - (parseInt(a.data.hitDice.slice(1)) || 0);
+        return (parseInt(b.system.hitDice.slice(1)) || 0) - (parseInt(a.system.hitDice.slice(1)) || 0);
       });
       
       const biggestClass = sortedClasses[0];
       
       const update = updates.find(update => update._id === biggestClass.id);
       if (update) {
-        if (updates[updates.indexOf(update)]["data.hitDiceUsed"] >= 0) {
-          updates[updates.indexOf(update)]["data.hitDiceUsed"] -= hitDiceLeftToRecover;
+        if (updates[updates.indexOf(update)]["system.hitDiceUsed"] >= 0) {
+          updates[updates.indexOf(update)]["system.hitDiceUsed"] -= hitDiceLeftToRecover;
         }
       } else {
         updates.push({
           _id: biggestClass.id,
-          "data.hitDiceUsed": hitDiceLeftToRecover * -1
+          "system.hitDiceUsed": hitDiceLeftToRecover * -1
         })
       }
     }
@@ -551,11 +577,29 @@ export default class RestWorkflow {
         updates[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = currentShortRests + 1;
       }
     }
+  
+    let { maxHitDice } = this._getMaxHitDiceRecovery();
+    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
+    
+    if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
+      const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
+      if (armor) {
+        if(!this.healthData.removeHeavyArmor) {
+          if(maxHitDice === 0) {
+            this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.NoHitDiceArmor");
+          }else if(hitDiceRecovered){
+            this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceArmor");
+          }
+        }else{
+          this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceNoArmor");
+        }
+      }
+    }
     
     return updates;
   }
   
-  async _handleFoodWaterExhaustion(updates) {
+  async _handleExhaustion(updates) {
     
     let actorInitialExhaustion = getProperty(this.actor, "system.attributes.exhaustion") ?? 0;
     let actorExhaustion = actorInitialExhaustion;
@@ -580,7 +624,7 @@ export default class RestWorkflow {
       
       if (actorRequiredFood) {
         
-        let localize = "REST-RECOVERY.Chat.FoodAndWater.Food"
+        let localize = "REST-RECOVERY.Chat.Food"
         
         let actorExhaustionThreshold = lib.evaluateFormula(
           lib.getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
@@ -643,7 +687,7 @@ export default class RestWorkflow {
       
       if (actorRequiredWater) {
         
-        let localize = "REST-RECOVERY.Chat.FoodAndWater.Water"
+        let localize = "REST-RECOVERY.Chat.Water"
         
         if (this.consumableData.hasAccessToWater) {
           
@@ -709,25 +753,32 @@ export default class RestWorkflow {
         }
       }
       
-      if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION)) {
-        if (exhaustionGain) {
-          this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.Exhaustion", {
-            exhaustion: actorExhaustion - actorInitialExhaustion
-          }));
-        } else if (exhaustionSave) {
-          this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.NoExhaustion"));
-        }
-      }
-      
       updates[CONSTANTS.FLAGS.SATED_FOOD] = 0;
       updates[CONSTANTS.FLAGS.SATED_WATER] = 0;
       
     }
     
     if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
-      updates['data.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6));
-      if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION) && updates['data.attributes.exhaustion'] === 6) {
-        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.ExhaustionDeath", { actorName: this.actor.name }));
+      
+      if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION) && actorExhaustion > 0) {
+        const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
+        if (armor && !this.healthData.removeHeavyArmor) {
+          exhaustionToRemove = 0;
+          this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.ExhaustionArmor"));
+        }
+      }
+      
+      updates['system.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6));
+      if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION) && updates['system.attributes.exhaustion'] === 6) {
+        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.ExhaustionDeath", { actorName: this.actor.name }));
+      }
+      
+      if (exhaustionGain) {
+        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.Exhaustion", {
+          exhaustion: actorExhaustion - actorInitialExhaustion
+        }));
+      } else if (exhaustionSave) {
+        this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.NoExhaustion"));
       }
     }
     
@@ -753,7 +804,7 @@ export default class RestWorkflow {
     }
     
     chatMessage.update({
-      content: `<p>${chatMessage.data.content}</p>` + extra
+      content: `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra
     }).then(() => {
       ui.chat.scrollBottom();
     });
@@ -778,8 +829,8 @@ export default class RestWorkflow {
       ? Math.floor(lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
       : Math.floor(maxHP * multiplier);
     
-    result.updates["data.attributes.hp.value"] = Math.min(maxHP, currentHP + result.hitPointsToRegainFromRest);
-    result.hitPointsRecovered = result.updates["data.attributes.hp.value"] - this.healthData.startingHealth;
+    result.updates["system.attributes.hp.value"] = Math.min(maxHP, currentHP + result.hitPointsToRegainFromRest);
+    result.hitPointsRecovered = result.updates["system.attributes.hp.value"] - this.healthData.startingHealth;
     
     return result;
     
@@ -800,18 +851,18 @@ export default class RestWorkflow {
     }
     
     const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
-      return (parseInt(b.data.hitDice.slice(1)) || 0) - (parseInt(a.data.hitDice.slice(1)) || 0);
+      return (parseInt(b.system.hitDice.slice(1)) || 0) - (parseInt(a.system.hitDice.slice(1)) || 0);
     });
     
     for (const item of sortedClasses) {
       if (item.system.hitDiceUsed < 0) {
         const update = results.updates.find(update => update._id === item.id);
         if (update) {
-          results.updates[results.updates.indexOf(update)]["data.hitDiceUsed"] = 0;
+          results.updates[results.updates.indexOf(update)]["system.hitDiceUsed"] = 0;
         } else {
           results.updates.push({
             _id: item.id,
-            "data.hitDiceUsed": 0
+            "system.hitDiceUsed": 0
           })
         }
         
@@ -831,9 +882,17 @@ export default class RestWorkflow {
   
   _getMaxHitDiceRecovery({ maxHitDice = undefined } = {}) {
     
-    const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
-    const roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
+    let multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
+    let roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
     const actorLevel = this.actor.system.details.level;
+    
+    if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
+      const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
+      if (armor && !this.healthData.removeHeavyArmor) {
+        multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE);
+        roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
+      }
+    }
     
     if (typeof multiplier === "string") {
       
@@ -852,7 +911,7 @@ export default class RestWorkflow {
     
     if (!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
       const maximumHitDiceToRecover = Number(Object.values(this.actor.classes).reduce((acc, cls) => {
-        acc += cls.data?.hitDiceUsed ?? 0;
+        acc += cls.system?.hitDiceUsed ?? 0;
         return acc;
       }, 0));
       maxHitDice = Math.min(maximumHitDiceToRecover, maxHitDice);
@@ -878,7 +937,7 @@ export default class RestWorkflow {
       if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
         const customFormula = getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
         const customRoll = lib.evaluateFormula(customFormula, this.actor.getRollData());
-        finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
+        finishedRestUpdates[`system.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
         
         const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
         this.resourcesRegainedMessages.push(`<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
@@ -899,13 +958,13 @@ export default class RestWorkflow {
     
     for (const [key, resource] of regularResources) {
       if (recoverShortRestResources && resource.sr) {
-        finishedRestUpdates[`data.resources.${key}.value`] = Number(resource.max);
+        finishedRestUpdates[`system.resources.${key}.value`] = Number(resource.max);
       } else if (recoverLongRestResources && resource.lr) {
         const recoverResources = typeof multiplier === "string"
           ? lib.evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) })?.total
           : Math.max(Math.floor(resource.max * multiplier), 1);
         
-        finishedRestUpdates[`data.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
+        finishedRestUpdates[`system.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
       }
     }
     
@@ -918,19 +977,32 @@ export default class RestWorkflow {
     // Long rest
     if (recoverSpells) {
       
-      const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
+      const spellMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
+      const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_PACT_SPELLS_MULTIPLIER);
       
       for (let [level, slot] of Object.entries(this.actor.system.spells)) {
         if (!slot.override && !slot.max) continue;
+        let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof multiplier === "string"
           ? Math.max(lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
           : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
-        updates[`data.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
+        updates[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }
       
       // Short rest
     } else {
+  
+      const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_PACT_SPELLS_MULTIPLIER);
+  
+      for (let [level, slot] of Object.entries(this.actor.system.spells)) {
+        if (!slot.override && !slot.max || level !== "pact") continue;
+        let spellMax = slot.override || slot.max;
+        let recoverSpells = typeof pactMultiplier === "string"
+          ? Math.max(lib.evaluateFormula(pactMultiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
+          : Math.max(Math.floor(spellMax * pactMultiplier), pactMultiplier ? 1 : pactMultiplier);
+        updates[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
+      }
       
       if (this.spellData.feature) {
         
@@ -968,7 +1040,7 @@ export default class RestWorkflow {
     updates = this._recoverItemsUses(updates, args);
     
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
-      updates.push({ _id: this.spellData.feature.id, "data.uses.value": 0 });
+      updates.push({ _id: this.spellData.feature.id, "system.uses.value": 0 });
     }
     
     return updates;
@@ -999,7 +1071,7 @@ export default class RestWorkflow {
           updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
         }
       } else if (recoverLongRestUses && item.system.recharge && item.system.recharge.value) {
-        updates.push({ _id: item.id, "data.recharge.charged": true });
+        updates.push({ _id: item.id, "system.recharge.charged": true });
       }
     }
     
@@ -1048,11 +1120,11 @@ export default class RestWorkflow {
     const update = updates.find(update => update._id === item.id);
     
     if (update) {
-      update["data.uses.value"] = recoverValue;
+      update["system.uses.value"] = recoverValue;
     } else {
       updates.push({
         _id: item.id,
-        "data.uses.value": recoverValue
+        "system.uses.value": recoverValue
       });
     }
     
@@ -1082,22 +1154,22 @@ export default class RestWorkflow {
         _id: item.id
       };
       
-      const newUses = getProperty(update, "data.uses.value") ?? item.usesLeft - item.amount;
-      update["data.uses.value"] = newUses;
+      const newUses = getProperty(update, "system.uses.value") ?? item.usesLeft - item.amount;
+      update["system.uses.value"] = newUses;
       
       if (updateIndex > -1) {
         updates.splice(updateIndex, 1);
       }
       
-      const consumeQuantity = getProperty(itemD.data, 'data.uses.autoDestroy') ?? false;
-      const quantity = getProperty(itemD.data, "data.quantity");
+      const consumeQuantity = getProperty(itemD.data, 'system.uses.autoDestroy') ?? false;
+      const quantity = getProperty(itemD.data, "system.quantity");
       
       if (consumeQuantity && quantity <= 1 && newUses === 0) {
         itemsToDelete.push(itemD.id);
       } else {
         if (consumeQuantity && newUses === 0) {
-          update["data.uses.value"] = getProperty(itemD.data, "data.uses.max") ?? 1;
-          update["data.quantity"] = quantity - 1;
+          update["system.uses.value"] = getProperty(itemD.data, "system.uses.max") ?? 1;
+          update["system.quantity"] = quantity - 1;
         }
         updates.push(update);
       }
@@ -1178,9 +1250,9 @@ export default class RestWorkflow {
   
   static _patchConsumableItem(item, updates) {
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-    updates["data.uses.value"] = 1;
-    updates["data.uses.max"] = 1;
-    updates["data.uses.per"] = "charges";
+    updates["system.uses.value"] = 1;
+    updates["system.uses.max"] = 1;
+    updates["system.uses.per"] = "charges";
     ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
       itemName: item.name
     }));
@@ -1212,7 +1284,7 @@ export default class RestWorkflow {
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
       
-      const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: item.parent.name,
         itemName: item.name,
@@ -1221,18 +1293,18 @@ export default class RestWorkflow {
       
       if (!consumable.dayWorth) {
         message += actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] >= actorRequiredFood
-          ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedFood") + "</p>"
-          : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
+          ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedFood") + "</p>"
+          : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
         message += actorUpdates[CONSTANTS.FLAGS.SATED_WATER] >= actorRequiredWater
-          ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedWater") + "</p>"
-          : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
+          ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedWater") + "</p>"
+          : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
       }
       
     } else if (consumable.type === "food") {
       
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
       
-      const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: item.parent.name,
         itemName: item.name,
@@ -1240,14 +1312,14 @@ export default class RestWorkflow {
       }) + "</p>";
       
       message += actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] >= actorRequiredFood
-        ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedFood") + "</p>"
-        : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
+        ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedFood") + "</p>"
+        : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
       
     } else if (consumable.type === "water") {
       
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
       
-      const localize = "REST-RECOVERY.Chat.FoodAndWater.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: item.parent.name,
         itemName: item.name,
@@ -1255,8 +1327,8 @@ export default class RestWorkflow {
       }) + "</p>";
       
       message += actorUpdates[CONSTANTS.FLAGS.SATED_WATER] >= actorRequiredWater
-        ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.FoodAndWater.SatedWater") + "</p>"
-        : "<p>" + game.i18n.format("REST-RECOVERY.Chat.FoodAndWater.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
+        ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedWater") + "</p>"
+        : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
     }
     
     if (!foundry.utils.isObjectEmpty(actorUpdates)) {

@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.3.2
+- **BREAKING** - Fixed some settings that were duplicated, please double-check your long and short rest settings
+- Added support for Xanathar's alternative heavy armor resting rule
+  - When enabled, wearing heavy armor during a long rest can reduce the number of hit dice you recover on a long rest, and (optionally) prevent exhaustion recovery
+- Added setting to configure the number of Warlock pact spell slots recovered on short and long rests
+- Fixed Rest Recovery not working in DnD5e 2.0.3
+- Updated manifest to be more compatible with V10
+
 ## Version 1.3.1
 - Fixed spells not working with Rest Recovery enabled
 

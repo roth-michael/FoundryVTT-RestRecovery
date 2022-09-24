@@ -13,6 +13,10 @@ export function ordinalSuffixOf(i) {
     return game.i18n.localize(`REST-RECOVERY.NumberToText.${i + 'th'}`);
 }
 
+/**
+ * @param {string} settingKey
+ * @returns {number}
+ */
 export function determineMultiplier(settingKey) {
     const multiplierSetting = getSetting(settingKey);
     switch (multiplierSetting) {
@@ -56,8 +60,8 @@ export function setSetting(key, value) {
 }
 
 /**
- * @param formula
- * @param data
+ * @param {String/Number} formula
+ * @param {Object} data
  * @returns {Roll}
  */
 export function evaluateFormula(formula, data){

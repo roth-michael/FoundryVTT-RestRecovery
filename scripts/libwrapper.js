@@ -136,7 +136,7 @@ function patch_rest() {
         },
         updateItems: [
           ...hitDiceUpdates,
-          ...this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+          ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
         ],
         longRest,
         newDay
@@ -154,7 +154,7 @@ function patch_rest() {
       
       if (longRest) {
         const workflow = RestWorkflow.get(this);
-        result.updateData = await workflow._handleFoodWaterExhaustion(result.updateData);
+        result.updateData = await workflow._handleExhaustion(result.updateData);
         result.updateItems = await workflow._handleFoodAndWaterItems(result.updateItems);
       }
       
@@ -252,7 +252,7 @@ function patch_getRestItemUsesRecovery() {
     CONSTANTS.MODULE_NAME,
     "CONFIG.Actor.documentClass.prototype._getRestItemUsesRecovery",
     function (wrapped, args) {
-      return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestItemUsesRecovery")
+      return RestWorkflow.asyncWrappedFn(this, wrapped, args, "_getRestItemUsesRecovery")
     }
   )
 }
