@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.3.4
+- Fixed misnamed Portuguese language file in module.json
+
 ## Version 1.3.3
 - Added Portuguese localization (thank you eduardopato41!) 
 - Fixed health bar not updating in the short and long rest interface
