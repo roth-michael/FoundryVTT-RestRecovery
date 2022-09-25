@@ -120,7 +120,8 @@
           "ShortRestLimitSmall": "As regras do seu jogo exigem um máximo de <strong>{max_short_rests}</strong> por descanso longo.",
           "AutoRoll": "Automático",
           "MinHitDiceSpend": "Você deve gastar <strong>{min_spend}</strong> dados de vida para terminar este descanso curto.",
-          "MaxHitDiceSpend": "Você só pode gastar <strong>{max_spend}</strong> dados de vida durante este descanso curto (<strong>{current}</strong> restante)."
+          "MaxHitDiceSpend": "Você só pode gastar <strong>{max_spend}</strong> dados de vida durante este descanso curto (<strong>{current}</strong> restante).",
+          "FinishRest": "Terminar Descanso Curto"
         },
         "ShortRestHealthWarning": {
           "Title": "Terminar Descanso Curto?",
@@ -159,7 +160,8 @@
           "ExternalWaterHalf": "Beber metade da quantidade necessária",
           "AmountToConsume": "Quantidade para Consumir",
           "HeavyArmorRecovery": "Remover armadura pesada durante Descanso Longo?",
-          "HeavyArmorRecoveryHint": "Como você tem uma armadura pesada equipada, você sofrerá penalidades. Clique no texto das regras personalizadas (em laranja) para ver como isso afetará você."
+          "HeavyArmorRecoveryHint": "Como você tem uma armadura pesada equipada, você sofrerá penalidades. Clique no texto das regras personalizadas (em laranja) para ver como isso afetará você.",
+          "FinishRest": "Terminar Descanso Longo"
         },
         "LongRestWarning": {
           "Title": "Terminar Descanso Longo?",
