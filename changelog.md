@@ -2,6 +2,7 @@
 
 ## Version 1.3.3
 - Fixed health bar not updating in the short and long rest interface
+- Fixed error caused by rolling hit dice
 - Fixed migration issue that only appeared on fresh worlds with Rest Recovery
 - Fixed armor rest penalty text showing up on short rests
 - Improved "Check out the custom rules" dialog in the long rest interface
