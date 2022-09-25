@@ -33,7 +33,7 @@
     {
         "lang": "pt-BR",
         "name": "Português (Brasil)",
-        "path": "/languages/pt-BR.json"
+        "path": "/languages/pt_BR.json"
     }
   ],
   "dependencies": [
