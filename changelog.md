@@ -1,6 +1,7 @@
 # Rest Recovery Changelog
 
 ## Version 1.3.3
+- Added Portuguese localization (thank you eduardopato41!) 
 - Fixed health bar not updating in the short and long rest interface
 - Fixed error caused by rolling hit dice
 - Fixed migration issue that only appeared on fresh worlds with Rest Recovery
