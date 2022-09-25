@@ -152,7 +152,8 @@
     $:
     {
         $doc;
-        const hpUpdate = getProperty(doc.updateOptions, "data.attributes.hp");
+        const hpUpdate = getProperty(doc.updateOptions, "data.system.attributes.hp");
+        console.log(doc.updateOptions);
         if (hpUpdate) {
             updateHealthData();
         }
@@ -280,7 +281,7 @@
 
         <footer class="flexrow" style="margin-top:0.5rem;">
             {#if enableShortRest}
-                <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
+                <button type="button" class="dialog-button" on:click={requestSubmit}><i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.FinishRest")}</button>
                 {#if !startedShortRest}
                     <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}</button>
                 {/if}

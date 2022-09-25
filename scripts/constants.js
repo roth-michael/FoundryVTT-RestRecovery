@@ -610,6 +610,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "longrest",
     customSettingsDialog: true,
+    nonDefaultSetting: true,
     config: false,
     default: false,
     type: Boolean
@@ -623,6 +624,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "longrest",
     customSettingsDialog: true,
+    nonDefaultSetting: true,
     customFormula: CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE_FORMULA,
     config: false,
     type: String,
@@ -653,6 +655,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "longrest",
     customSettingsDialog: true,
+    nonDefaultSetting: true,
     config: false,
     default: false,
     type: Boolean

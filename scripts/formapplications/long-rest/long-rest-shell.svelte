@@ -121,7 +121,7 @@
   $:
   {
     $doc;
-    const hpUpdate = getProperty(doc.updateOptions, "data.attributes.hp");
+    const hpUpdate = getProperty(doc.updateOptions, "data.system.attributes.hp");
     if (hpUpdate) {
       updateHealthData();
     }
@@ -244,7 +244,7 @@
     <footer class="flexrow" style="margin-top:0.5rem;">
       {#if !showStartLongRestButton}
         <button type="button" class="dialog-button" on:click={requestSubmit}><i
-          class="fas fa-bed"></i> {localize("DND5E.Rest")}</button>
+          class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.FinishRest")}</button>
       {:else}
         <button type="button" class="dialog-button" on:click={startLongRest}>
           <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.Begin")}

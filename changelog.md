@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.3.3
+- Fixed health bar not updating in the short and long rest interface
+- Fixed migration issue that only appeared on fresh worlds with Rest Recovery
+- Fixed armor rest penalty text showing up on short rests
+- Improved "Check out the custom rules" dialog in the long rest interface
+
 ## Version 1.3.2
 - **BREAKING** - Fixed some settings that were duplicated, please double-check your long and short rest settings
 - Added support for Xanathar's alternative heavy armor resting rule

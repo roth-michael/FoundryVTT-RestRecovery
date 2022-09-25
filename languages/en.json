@@ -120,7 +120,8 @@
         "ShortRestLimitSmall": "Your game's rules mandate a maximum of <strong>{max_short_rests}</strong> per long rest.",
         "AutoRoll": "Auto Roll",
         "MinHitDiceSpend": "You must spend <strong>{min_spend}</strong> hit dice to finish this short rest.",
-        "MaxHitDiceSpend": "You can only spend <strong>{max_spend}</strong> hit dice during this short rest (<strong>{current}</strong> left)."
+        "MaxHitDiceSpend": "You can only spend <strong>{max_spend}</strong> hit dice during this short rest (<strong>{current}</strong> left).",
+        "FinishRest": "Finish Short Rest"
       },
       "ShortRestHealthWarning": {
         "Title": "Finish Short Rest?",
@@ -159,7 +160,8 @@
         "ExternalWaterHalf": "Drink half amount needed",
         "AmountToConsume": "Amount To Consume",
         "HeavyArmorRecovery": "Remove Heavy Armor During Long Rest?",
-        "HeavyArmorRecoveryHint": "Since you have heavy armor equipped, you will suffer penalties. Click on the orange custom rules text to see how it impacts you."
+        "HeavyArmorRecoveryHint": "Since you have heavy armor equipped, you will suffer penalties. Click on the orange custom rules text to see how it impacts you.",
+        "FinishRest": "Finish Long Rest"
       },
       "LongRestWarning": {
         "Title": "Finish Long Rest?",

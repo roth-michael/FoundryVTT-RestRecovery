@@ -91,23 +91,21 @@ export default class RestWorkflow {
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
       
-      let parts = config.parts;
+      let formula = config.formula;
       
       if (hasBlackBlood) {
         denomination += "r<3";
       }
       
-      parts[0] = denomination;
-      
       if (woundClosure && isDurable) {
-        parts = [`{1${denomination}*2+${conMod},${durableMod}}kh`]
+        formula = `max(0, {(1${denomination}*2)+@abilities.con.mod,${durableMod}}kh)`;
       } else if (woundClosure) {
-        parts[0] = "(" + parts[0] + "*2)";
+        formula = `max(0, (1${denomination}*2)+@abilities.con.mod)`;
       } else if (isDurable) {
-        parts = [`{1${denomination}+${conMod},${durableMod}}kh`]
+        formula = `max(0, {1${denomination}+@abilities.con.mod,${durableMod}}kh)`;
       }
       
-      config.parts = parts;
+      config.formula = formula;
       
     });
     
@@ -581,7 +579,7 @@ export default class RestWorkflow {
     let { maxHitDice } = this._getMaxHitDiceRecovery();
     let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
     
-    if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
+    if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
       const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
       if (armor) {
         if(!this.healthData.removeHeavyArmor) {

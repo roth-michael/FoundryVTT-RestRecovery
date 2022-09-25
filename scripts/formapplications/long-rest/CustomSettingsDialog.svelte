@@ -11,12 +11,15 @@
     .map(entry => {
       let [key, setting] = entry;
       setting.name = localize(setting.name)
+      setting.hint = localize(setting.hint)
       setting.value = getSetting(key);
       if(setting.customSettingsDialog) {
         if (typeof setting.value === "boolean") {
           setting.settingText = setting.value ? "Yes" : "No";
         } else if (typeof setting.value === "string") {
           setting.settingText = localize(setting.choices[setting.value])
+        } else {
+          setting.settingText = setting.value;
         }
       }
       settingsMap.set(key, setting);
@@ -26,7 +29,7 @@
 
       setting.visible = setting.customSettingsDialog
         && (setting.validate ? !setting.validate(settingsMap) : true)
-        && !!setting?.settingText && !!setting.value && setting.default !== setting.value;
+        && !!setting?.settingText && !!setting.value && (setting.default !== setting.value || setting.nonDefaultSetting);
 
       return setting;
     });
@@ -46,7 +49,7 @@
     </tr>
     {#each settings.filter(s => s.visible) as setting, index (index)}
       <tr>
-        <td>{setting.name}</td>
+        <td title={setting.hint}><i class="fas fa-info-circle"></i> {setting.name}</td>
         <td>{setting.settingText}</td>
       </tr>
     {/each}
@@ -60,6 +63,14 @@
 
     th:first-child {
       width: 300px;
+    }
+
+    .fa-info-circle{
+      opacity: 0.25;
+    }
+
+    td:hover .fa-info-circle{
+      opacity: 0.75;
     }
   }
 
