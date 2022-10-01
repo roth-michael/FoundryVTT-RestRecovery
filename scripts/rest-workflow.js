@@ -1,7 +1,7 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
 import plugins from "./plugins.js";
-import { getSetting } from "./lib/lib.js";
+import { evaluateFormula, getSetting } from "./lib/lib.js";
 
 const rests = new Map();
 
@@ -76,33 +76,40 @@ export default class RestWorkflow {
       const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
         : false;
-      const woundClosure = (periapt && periapt?.data?.attunement === 2) || (blessing && blessing?.data?.type === "feat");
+      const hasWoundClosure = (periapt && periapt?.system?.attunement === 2) || (blessing && blessing?.type === "feat");
       
       const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
         : false;
-      const isDurable = durable && durable?.data?.type === "feat";
+      const isDurable = durable && durable?.type === "feat";
       
       const blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
         : false;
-      let hasBlackBlood = blackBlood && blackBlood?.data?.type === "feat";
+      let hasBlackBlood = blackBlood && blackBlood?.type === "feat";
       
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
       
       let formula = config.formula;
-      
+
+      let customDenomination = "1" + denomination;
+
       if (hasBlackBlood) {
-        denomination += "r<3";
+        customDenomination += "r<3";
       }
-      
-      if (woundClosure && isDurable) {
-        formula = `max(0, {(1${denomination}*2)+@abilities.con.mod,${durableMod}}kh)`;
-      } else if (woundClosure) {
-        formula = `max(0, (1${denomination}*2)+@abilities.con.mod)`;
-      } else if (isDurable) {
-        formula = `max(0, {1${denomination}+@abilities.con.mod,${durableMod}}kh)`;
+
+      if(hasWoundClosure){
+        customDenomination = "(" + customDenomination + "*2)";
+      }
+
+      const hitDiceBonus = getProperty(actor, `flags.dnd5e.hitDieBonus`) ?? 0;
+      if(hitDiceBonus){
+        customDenomination += `+${hitDiceBonus}`;
+      }
+
+      if(isDurable){
+        formula = `max(0, {${customDenomination}+@abilities.con.mod,${durableMod}}kh)`;
       }
       
       config.formula = formula;
@@ -299,7 +306,7 @@ export default class RestWorkflow {
     const ignoreInactivePlayers = lib.getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
     
     let bardLevel = false;
-    let characters = game.actors.filter(actor => actor.system.type === "character" && actor.hasPlayerOwner);
+    let characters = game.actors.filter(actor => actor.type === "character" && actor.hasPlayerOwner);
     for (let actor of characters) {
       
       // Only consider the actor if it has more than 0 hp, as features cannot be used if they are unconscious
@@ -314,7 +321,7 @@ export default class RestWorkflow {
       
       const bardClass = actor.items.find(item => item.type === "class" && item.name === lib.getSetting(CONSTANTS.SETTINGS.BARD_CLASS, true));
       if (bardClass) {
-        const songOfRest = actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true));
+        const songOfRest = actor.items.find(item => item.name.startsWith(lib.getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true)));
         if (songOfRest) {
           const level = bardClass.system.levels;
           this.features.bard = bardLevel > level ? this.features.bard : actor;
@@ -322,28 +329,16 @@ export default class RestWorkflow {
           this.features.bardFeature = songOfRest;
         }
       }
-      
-      const chefFeat = actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.CHEF_FEAT, true));
-      const chefTools = lib.getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true) !== "" ? actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true)) : true;
+
+      const chefFeat = actor.items.find(item => item.name.startsWith(lib.getSetting(CONSTANTS.SETTINGS.CHEF_FEAT, true)));
+      const chefTools = lib.getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true) !== "" ? actor.items.find(item => item.name.startsWith(lib.getSetting(CONSTANTS.SETTINGS.CHEF_TOOLS, true))) : true;
       if (chefFeat && chefTools) {
         if (!this.features.chef) {
           this.features.chef = [];
         }
         this.features.chef.push(actor);
       }
-      
-    }
-    
-    if (this.features.bardFeature) {
-      if (bardLevel >= 17) {
-        this.features.songOfRest = "1d12";
-      } else if (bardLevel >= 13) {
-        this.features.songOfRest = "1d10";
-      } else if (bardLevel >= 9) {
-        this.features.songOfRest = "1d8";
-      } else if (bardLevel >= 2) {
-        this.features.songOfRest = "1d6";
-      }
+
     }
     
   }
@@ -384,17 +379,17 @@ export default class RestWorkflow {
     const blessing = lib.getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
       ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
       : false;
-    const periapt_mod = (periapt && periapt?.data?.attunement === 2) || (blessing && blessing?.data?.type === "feat") ? 3 : 1
+    const periapt_mod = (periapt && periapt?.system?.attunement === 2) || (blessing && blessing?.type === "feat") ? 3 : 1
     
     let durable = lib.getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
       ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
       : false;
-    durable = durable && durable?.data?.type === "feat";
+    durable = durable && durable?.type === "feat";
     
     let blackBlood = lib.getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
       ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
       : false;
-    blackBlood = blackBlood && blackBlood?.data?.type === "feat";
+    blackBlood = blackBlood && blackBlood?.type === "feat";
     
     const conMod = this.actor.system.abilities.con.mod;
     const totalHitDice = availableHitDice.reduce((acc, entry) => acc + entry[1], 0);
@@ -430,8 +425,9 @@ export default class RestWorkflow {
     
     let hpRegained = 0;
     
-    if (this.features.songOfRest && !this.features.usedSongOfRest) {
-      const roll = new Roll(this.features.songOfRest).evaluate({ async: false });
+    if (!this.features.usedSongOfRest) {
+      const formula = getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
+      const roll = lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
       
       const isOwnBard = this.features.bard === this.actor;
@@ -1143,30 +1139,30 @@ export default class RestWorkflow {
     
     let itemsToDelete = [];
     
-    for (const item of this.consumableData.items) {
+    for (const consumableData of this.consumableData.items) {
+
+      const item = consumableData.item;
       
-      const itemD = item.system;
-      
-      let updateIndex = updates.findIndex(update => update._id === itemD.id);
+      let updateIndex = updates.findIndex(update => update._id === item.id);
       let update = updates[updateIndex] ?? {
         _id: item.id
       };
       
-      const newUses = getProperty(update, "system.uses.value") ?? item.usesLeft - item.amount;
+      const newUses = getProperty(update, "system.uses.value") ?? consumableData.usesLeft - consumableData.amount;
       update["system.uses.value"] = newUses;
       
       if (updateIndex > -1) {
         updates.splice(updateIndex, 1);
       }
       
-      const consumeQuantity = getProperty(itemD.data, 'system.uses.autoDestroy') ?? false;
-      const quantity = getProperty(itemD.data, "system.quantity");
+      const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
+      const quantity = getProperty(item, "system.quantity");
       
       if (consumeQuantity && quantity <= 1 && newUses === 0) {
-        itemsToDelete.push(itemD.id);
+        itemsToDelete.push(consumableData.id);
       } else {
         if (consumeQuantity && newUses === 0) {
-          update["system.uses.value"] = getProperty(itemD.data, "system.uses.max") ?? 1;
+          update["system.uses.value"] = getProperty(item, "system.uses.max") ?? 1;
           update["system.quantity"] = quantity - 1;
         }
         updates.push(update);

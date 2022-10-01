@@ -18,4 +18,5 @@ Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
   //new SettingsShim().render(true);
+  //game.actors.getName("Krusk (Half-Orc Paladin)").longRest()
 })

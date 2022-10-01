@@ -146,7 +146,7 @@
 
         const consumableItem = {
             id: item.id,
-            data: item,
+            item: item,
             index: typeIndex[consumable.type],
             fullName: `${item.name} (${localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumable.type))}) - ${usesLeft} / ${maxUses}`,
             baseAmount: 0,

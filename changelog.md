@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.3.5
+- Fixed food & water consumption not working
+- Fixed Hit Die bonus, Song of Rest, Chef feat, and Black Blood Healing not working when rolling hit dice
+- Made Song of Rest use the feature's formula (falling back on the bard's die scaling) as a basis as to what to dice roll 
+- Improved handling of hit die rolls
+
 ## Version 1.3.4
 - Fixed misnamed Portuguese language file in module.json
 
