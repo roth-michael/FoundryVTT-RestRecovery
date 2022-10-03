@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.3.6
+- Actually fixed Hit Die bonus
+- Tweaked sleeping in medium armor have the same impact as heavy armor (as per rules)
+
 ## Version 1.3.5
 - Fixed food & water consumption not working
 - Fixed Hit Die bonus, Song of Rest, Chef feat, and Black Blood Healing not working when rolling hit dice

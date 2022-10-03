@@ -84,10 +84,10 @@
         "NoExhaustion": "Mas ele(a) conseguiu evitar exaustão.",
         "Exhaustion": "Assim, sofreu {exhaustion} nível(is) de exaustão.",
         "ExhaustionDeath": "Infelizmente, {actorName} atingiu 6 níveis de exaustão e pereceu.",
-        "ExhaustionArmor": "Ele(a) decidiu manter sua armadura pesada vestida, e não recuperou nenhum dos seus pontos de exaustão.",
-        "HitDiceArmor": "Ele(a) recuperou menos dados de vida que o normal porque descansou com sua armadura pesada vestida.",
-        "NoHitDiceArmor": "Ele(a) não recuperou nenhum dado de vida porque descansou com sua armadura pesada vestida.",
-        "HitDiceNoArmor": "Ele(a) decidiu não vestir a sua armadura pesada enquanto descansa, e recuperou a quantidade normal de dados de vida."
+        "ExhaustionArmor": "Ele(a) decidiu continuar vestindo sua armadura, e não recuperou nenhum dos seus pontos de exaustão.",
+        "HitDiceArmor": "Ele(a) recuperou menos dados de vida que o normal porque descansou vestindo sua armadura.",
+        "NoHitDiceArmor": "Ele(a) não recuperou nenhum dado de vida porque descansou vestindo sua armadura.",
+        "HitDiceNoArmor": "Ele(a) decidiu não vestir a sua armadura enquanto descansa e recuperou a quantidade normal de dados de vida."
       },
       "Dialogs": {
         "SaveProfile": {
@@ -159,8 +159,8 @@
           "ExternalWaterFull": "Beber até saciado",
           "ExternalWaterHalf": "Beber metade da quantidade necessária",
           "AmountToConsume": "Quantidade para Consumir",
-          "HeavyArmorRecovery": "Remover armadura pesada durante Descanso Longo?",
-          "HeavyArmorRecoveryHint": "Como você tem uma armadura pesada equipada, você sofrerá penalidades. Clique no texto das regras personalizadas (em laranja) para ver como isso afetará você.",
+          "ArmorRecovery": "Remover armadura durante Descanso Longo?",
+          "ArmorRecoveryHint": "Como você tem uma armadura equipada, você sofrerá penalidades. Clique no texto das regras personalizadas (em laranja) para ver como isso afetará você.",
           "FinishRest": "Terminar Descanso Longo"
         },
         "LongRestWarning": {
@@ -392,16 +392,16 @@
             "Hint": "A fração de usos diários para se recuperar em um descanso longo (itens com a configuração de recuperação \"Dia\")."
           },
           "AutomateArmor": {
-            "Title": "Automação de descanso longo com armadura pesada",
-            "Hint": "Com isso ativado, armaduras pesadas impedem descansos longos. Configure abaixo como isso afeta o descanso longo."
+            "Title": "Automação de descanso longo com armadura",
+            "Hint": "Com esta opção habilitada, armaduras que não sejam leve dificultam descansos longos. Configure abaixo como isso afeta o descanso longo."
           },
           "ArmorHitDiceRecoveryFraction": {
-            "Title": "Fração de recuperação de dados de vida com armadura pesada",
-            "Hint": "Se o personagem estiver usando armadura pesada durante um descanso longo, esta é a fração dos dados de vida que ele recupera em um descanso longo."
+            "Title": "Fração de recuperação de dados de vida com armadura",
+            "Hint": "Se o personagem estiver usando uma armadura que não seja leve durante um descanso longo, esta é a fração dos dados de vida que ele recupera em um descanso longo."
           },
           "AutomateArmorExhaustion": {
-            "Title": "Armadura pesada impede recuperação de exaustão",
-            "Hint": "Quando ativado e o personagem estiver usando uma armadura pesada durante um descanso longo, ele não recupera nenhum ponto de exaustão. Requer que a automação de exaustão esteja habilitada."
+            "Title": "Armadura impede recuperação de exaustão",
+            "Hint": "Quando habilitada e o personagem estiver usando uma armadura que não seja leve durante um descanso longo, ele não recupera nenhum ponto de exaustão. Requer que a automação de exaustão esteja habilitada."
           }
         },
         "ItemNames": {

@@ -47,7 +47,7 @@
   const actorNeedsNoFoodWater = getProperty(actor, `flags.dnd5e.noFoodWater`);
   const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && !actorNeedsNoFoodWater;
 
-  const showArmorCheckbox = getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && workflow.healthData.hasHeavyArmor;
+  const showArmorCheckbox = getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && workflow.healthData.hasNonLightArmor;
 
   let {
     actorRequiredFood,
@@ -118,10 +118,10 @@
 
   const doc = new TJSDocument(actor);
 
-  $:
-  {
+  $: {
     $doc;
-    const hpUpdate = getProperty(doc.updateOptions, "data.system.attributes.hp");
+    const { data } = doc.updateOptions;
+    const hpUpdate = getProperty(data, "system.attributes.hp");
     if (hpUpdate) {
       updateHealthData();
     }
@@ -230,9 +230,9 @@
 
     {#if showArmorCheckbox}
       <div class="form-group">
-        <label>{localize("REST-RECOVERY.Dialogs.LongRest.HeavyArmorRecovery")}</label>
-        <input type="checkbox" bind:checked={healthData.removeHeavyArmor}/>
-        <p class="hint">{localize("REST-RECOVERY.Dialogs.LongRest.HeavyArmorRecoveryHint")}</p>
+        <label>{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecovery")}</label>
+        <input type="checkbox" bind:checked={healthData.removeNonLightArmor}/>
+        <p class="hint">{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecoveryHint")}</p>
       </div>
     {/if}
 

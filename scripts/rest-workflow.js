@@ -86,33 +86,33 @@ export default class RestWorkflow {
       const blackBlood = getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.BLACK_BLOOD_FEATURE, true))
         : false;
-      let hasBlackBlood = blackBlood && blackBlood?.type === "feat";
+      const hasBlackBlood = blackBlood && blackBlood?.type === "feat";
       
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
-      
-      let formula = config.formula;
 
-      let customDenomination = "1" + denomination;
+      let formula = "1" + denomination;
 
       if (hasBlackBlood) {
-        customDenomination += "r<3";
+        formula += "r<3";
       }
 
       if(hasWoundClosure){
-        customDenomination = "(" + customDenomination + "*2)";
+        formula = "(" + formula + "*2)";
       }
 
-      const hitDiceBonus = getProperty(actor, `flags.dnd5e.hitDieBonus`) ?? 0;
+      formula += "+@abilities.con.mod";
+
+      const hitDiceBonus = actor.getFlag("dnd5e", "hitDieBonus") ?? 0;
       if(hitDiceBonus){
-        customDenomination += `+${hitDiceBonus}`;
+        formula += `+${hitDiceBonus}`;
       }
 
       if(isDurable){
-        formula = `max(0, {${customDenomination}+@abilities.con.mod,${durableMod}}kh)`;
+        formula = `{${formula},${durableMod}}kh`
       }
       
-      config.formula = formula;
+      config.formula = `max(0, ${formula})`;
       
     });
     
@@ -144,7 +144,7 @@ export default class RestWorkflow {
   
   fetchHealthData() {
     
-    const actorHasHeavyArmor = !!this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped)
+    const actorHasNonLightArmor = !!this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped)
     
     this.healthData = {
       level: this.actor.system.details.level,
@@ -154,8 +154,8 @@ export default class RestWorkflow {
       hitPointsToRegainFromRest: 0,
       hitPointsToRegain: 0,
       enableAutoRollHitDice: false,
-      hasHeavyArmor: actorHasHeavyArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION),
-      removeHeavyArmor: !(actorHasHeavyArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION))
+      hasNonLightArmor: actorHasNonLightArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION),
+      removeNonLightArmor: !(actorHasNonLightArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION))
     }
     
     const longRestRollHitDice = this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
@@ -576,9 +576,9 @@ export default class RestWorkflow {
     let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
     
     if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
-      const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
+      const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
       if (armor) {
-        if(!this.healthData.removeHeavyArmor) {
+        if(!this.healthData.removeNonLightArmor) {
           if(maxHitDice === 0) {
             this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.NoHitDiceArmor");
           }else if(hitDiceRecovered){
@@ -755,8 +755,8 @@ export default class RestWorkflow {
     if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
       
       if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION) && actorExhaustion > 0) {
-        const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
-        if (armor && !this.healthData.removeHeavyArmor) {
+        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
+        if (armor && !this.healthData.removeNonLightArmor) {
           exhaustionToRemove = 0;
           this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.ExhaustionArmor"));
         }
@@ -882,7 +882,7 @@ export default class RestWorkflow {
     
     if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
       const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
-      if (armor && !this.healthData.removeHeavyArmor) {
+      if (armor && !this.healthData.removeNonLightArmor) {
         multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE);
         roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
       }

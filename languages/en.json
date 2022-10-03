@@ -84,10 +84,10 @@
       "NoExhaustion": "But they managed to avoid exhaustion.",
       "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion.",
       "ExhaustionDeath": "Regrettably, {actorName} reached 6 levels of exhaustion and perished.",
-      "ExhaustionArmor": "They chose to keep their heavy armor on, and recovered none of their exhaustion.",
-      "HitDiceArmor": "They recovered less hit dice than normal because they rested in heavy armor.",
-      "NoHitDiceArmor": "They recovered none of their hit dice because they rested in heavy armor.",
-      "HitDiceNoArmor": "They chose to not rest in heavy armor, and regained the normal amount of hit dice."
+      "ExhaustionArmor": "They chose to keep their armor on, and recovered none of their exhaustion.",
+      "HitDiceArmor": "They recovered less hit dice than normal because they rested in their armor.",
+      "NoHitDiceArmor": "They recovered none of their hit dice because they rested in their armor.",
+      "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -159,8 +159,8 @@
         "ExternalWaterFull": "Drink until sated",
         "ExternalWaterHalf": "Drink half amount needed",
         "AmountToConsume": "Amount To Consume",
-        "HeavyArmorRecovery": "Remove Heavy Armor During Long Rest?",
-        "HeavyArmorRecoveryHint": "Since you have heavy armor equipped, you will suffer penalties. Click on the orange custom rules text to see how it impacts you.",
+        "ArmorRecovery": "Remove Armor During Long Rest?",
+        "ArmorRecoveryHint": "Since you have non-light armor equipped, you will suffer penalties. Click on the orange custom rules text to see how it impacts you.",
         "FinishRest": "Finish Long Rest"
       },
       "LongRestWarning": {
@@ -392,16 +392,16 @@
           "Hint": "The fraction of daily uses to recover on a long rest (items with the \"Day\" recovery setting)."
         },
         "AutomateArmor": {
-          "Title": "Heavy armor long rest automation",
-          "Hint": "With this enabled, heavy armor impedes long rests. Configure below how it impacts the long rest."
+          "Title": "Armor long rest automation",
+          "Hint": "With this enabled, non-light armor impedes long rests. Configure below how it impacts the long rest."
         },
         "ArmorHitDiceRecoveryFraction": {
-          "Title": "Heavy armor hit dice recovery fraction",
-          "Hint": "If the character is wearing heavy armor during the long rest, this is fraction of hit dice they recover on a long rest."
+          "Title": "Armor hit dice recovery fraction",
+          "Hint": "If the character is wearing non-light armor during the long rest, this is fraction of hit dice they recover on a long rest."
         },
         "AutomateArmorExhaustion": {
-          "Title": "Heavy armor prevents exhaustion recovery",
-          "Hint": "When enabled and the character is wearing heavy armor during the long rest, they do not recover from exhaustion. Requires exhaustion automation to be enabled."
+          "Title": "Armor prevents exhaustion recovery",
+          "Hint": "When enabled and the character is wearing non-light armor during the long rest, they do not recover from exhaustion. Requires exhaustion automation to be enabled."
         }
       },
       "ItemNames": {
