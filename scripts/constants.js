@@ -295,7 +295,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     name: "REST-RECOVERY.Settings.ShortRest.PactSpellSlotsLongRecoveryFraction.Title",
     hint: "REST-RECOVERY.Settings.ShortRest.PactSpellSlotsLongRecoveryFraction.Hint",
     scope: "world",
-    group: "longrest",
+    group: "shortrest",
     customSettingsDialog: true,
     customFormula: CONSTANTS.SETTINGS.SHORT_PACT_SPELLS_MULTIPLIER_FORMULA,
     config: false,
@@ -311,7 +311,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
   },
   [CONSTANTS.SETTINGS.SHORT_PACT_SPELLS_MULTIPLIER_FORMULA]: {
     scope: "world",
-    group: "longrest",
+    group: "shortrest",
     config: false,
     hidden: true,
     type: String,
