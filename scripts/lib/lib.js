@@ -135,3 +135,7 @@ export function capitalizeFirstLetter(str){
 export function roundHalf(num) {
     return Math.round(num*2)/2;
 }
+
+export function wait(ms){
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

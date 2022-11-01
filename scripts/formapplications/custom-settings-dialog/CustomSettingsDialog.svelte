@@ -3,16 +3,16 @@
   import { getSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
 
+  export let settings = {};
+
   const settingsMap = new Map();
 
-  console.log('---------------------------')
-
-  const settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
+  const shownSettings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
     .map(entry => {
       let [key, setting] = entry;
       setting.name = localize(setting.name)
       setting.hint = localize(setting.hint)
-      setting.value = getSetting(key);
+      setting.value = settings[key] ?? getSetting(key);
       if(setting.customSettingsDialog) {
         if (typeof setting.value === "boolean") {
           setting.settingText = setting.value ? "Yes" : "No";
@@ -47,7 +47,7 @@
       <th>Setting</th>
       <th>Value</th>
     </tr>
-    {#each settings.filter(s => s.visible) as setting, index (index)}
+    {#each shownSettings.filter(s => s.visible) as setting, index (index)}
       <tr>
         <td title={setting.hint}><i class="fas fa-info-circle"></i> {setting.name}</td>
         <td>{setting.settingText}</td>

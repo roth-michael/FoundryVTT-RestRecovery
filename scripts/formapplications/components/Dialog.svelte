@@ -3,6 +3,7 @@
     export let icon;
     export let header;
     export let content;
+    export let extraContent = "";
 
 </script>
 
@@ -13,7 +14,10 @@
     <p class="header-icon"><i class="{icon}"></i></p>
     {/if}
     <p class="header"><strong>{header}</strong></p>
-    <p>{content}</p>
+    <p>{@html content}</p>
+    {#if extraContent}
+      <div>{@html extraContent}</div>
+    {/if}
 
 </div>
 

@@ -1,12 +1,17 @@
+import "../styles/style.scss";
+
 import registerSettings from "./settings.js";
+import SocketHandler from "./sockets.js";
 import registerLibwrappers from "./libwrapper.js";
 import RestWorkflow from "./rest-workflow.js";
 import registerSheetOverrides from "./sheet-overrides.js";
 import SettingsShim from "./formapplications/settings/settings.js";
 import API from "./api.js";
 import migrate from "./migrations.js";
+import RequestRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
 
 Hooks.once("init", () => {
+  SocketHandler.initialize();
   registerSettings();
   registerLibwrappers();
   registerSheetOverrides();

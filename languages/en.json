@@ -123,6 +123,14 @@
         "MaxHitDiceSpend": "You can only spend <strong>{max_spend}</strong> hit dice during this short rest (<strong>{current}</strong> left).",
         "FinishRest": "Finish Short Rest"
       },
+      "PromptRest": {
+        "Title": "Prompt Rest For Players",
+        "ConfigureProfiles": "Configure Profiles",
+        "Short": "Short Rest",
+        "Long": "Long Rest",
+        "Submit": "Submit",
+        "PlayerListShort": "Rest"
+      },
       "ShortRestHealthWarning": {
         "Title": "Finish Short Rest?",
         "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your short rest?"
@@ -170,6 +178,10 @@
       "LongRestSettingsDialog": {
         "Title": "Long Rest Settings",
         "Content": "These are the settings your GM configured for long rests in this game."
+      },
+      "CharacterOwnersOffline": {
+        "Title": "Character Owners Offline",
+        "Content": "The owners of the following characters you prompted to rest are offline, would you like to finish their rest for them?"
       },
       "Resources": {
         "Configure": "Configure Resource Recovery",
@@ -247,6 +259,10 @@
       "QuickHDRoll": {
         "Title": "Quick-roll Hit Dice (skip dialog)",
         "Hint": "Skip the dialog for rolling hit dice and roll them quickly."
+      },
+      "ShowPlayerListRestButton": {
+        "Title": "Show prompt rest button",
+        "Hint": "Configures whether the prompt rest button is shown below the players in the bottom-left player list (requires refresh)"
       },
       "Debug": {
         "Title": "Enable debugging",

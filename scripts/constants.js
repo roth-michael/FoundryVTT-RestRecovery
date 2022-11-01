@@ -10,11 +10,13 @@ const CONSTANTS = {
      *-------------------------------------------*/
     MODULE_PROFILES: "module-profiles",
     ACTIVE_MODULE_PROFILE: "active-module-profile",
+    PROMPT_REST_CONFIG: "prompt-rest-config",
     
     /*-------------------------------------------*
      *           General Rest Settings           *
      *-------------------------------------------*/
     QUICK_HD_ROLL: "quick-hd-roll",
+    SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     
     /*-------------------------------------------*
@@ -137,6 +139,12 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     default: "0.0.0",
     type: String
+  },
+  [CONSTANTS.SETTINGS.PROMPT_REST_CONFIG]: {
+    scope: "client",
+    config: false,
+    default: [],
+    type: Array
   },
   
   /*-------------------------------------------*

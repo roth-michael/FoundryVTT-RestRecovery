@@ -8,7 +8,7 @@
 
   import HealthBar from "../components/HealthBar.svelte";
   import Dialog from "../components/Dialog.svelte";
-  import CustomSettings from "./CustomSettingsDialog.svelte";
+  import CustomSettings from "../custom-settings-dialog/CustomSettingsDialog.svelte";
   import HitDieRoller from "../components/HitDieRoller.svelte";
   import Tabs from "../components/Tabs.svelte";
 

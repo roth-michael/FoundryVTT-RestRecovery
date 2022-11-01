@@ -38,18 +38,18 @@
                 </select>
 
                 {#if customFormulaSetting && setting.value === CONSTANTS.FRACTIONS.CUSTOM}
-                    <input name="{setting.customFormula}" type="text" required bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''} disabled={setting.disabled}>
+                    <input name="{setting.customFormula}" type="text" bind:value={customFormulaSetting.value} class:invalid={customFormulaSetting.value === ''} disabled={setting.disabled}>
                 {/if}
             </div>
 
         {:else if setting.type === Number}
 
-            <input type="number" required bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0} disabled={setting.disabled} on:change={() => { if(setting.callback) setting.callback(settingsMap); }}>
+            <input type="number" bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0} disabled={setting.disabled} on:change={() => { if(setting.callback) setting.callback(settingsMap); }}>
 
         {:else}
 
             <div class="setting-container">
-                <input type="text" required bind:value={setting.value} disabled={setting.disabled}>
+                <input type="text" bind:value={setting.value} disabled={setting.disabled}>
                 {#if setting.localize}
                     <input type="text" disabled value={localize(setting.value)}>
                 {/if}

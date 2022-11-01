@@ -16,16 +16,15 @@
     const { application } = getContext('external');
 
     export let elementRoot;
-    export let profiles;
-    export let activeProfile;
+
     let form;
 
     let settingsMap = new Map();
 
     let settings = {};
 
-    profiles = API.getAllProfilesData()
-    activeProfile = API.getActiveProfile()
+    let profiles = API.getAllProfilesData();
+    let activeProfile = API.getActiveProfile();
 
     loadSettings()
     validateSettings();
@@ -64,7 +63,7 @@
         validateSettings();
     }
 
-    async function deletePreset(){
+    async function deleteProfile(){
 
         const result = await TJSDialog.confirm({
             title: localize("REST-RECOVERY.Dialogs.DeleteProfile.Title"),
@@ -86,7 +85,7 @@
 
     }
 
-    async function newPreset(){
+    async function newProfile(){
 
         const result = await new Promise(resolve => {
             let options = { resolve };
@@ -154,8 +153,8 @@
     }
 
     async function updateSettings(){
-        await API.updateProfiles(profiles);
         await API.setActiveProfile(activeProfile);
+        await API.updateProfiles(profiles);
         application.close();
     }
 
@@ -177,9 +176,9 @@
                     <option value="{profile}">{profile}</option>
                 {/each}
             </select>
-            <button type="button" on:click={newPreset}><i class="fas fa-plus"></i></button>
+            <button type="button" on:click={newProfile}><i class="fas fa-plus"></i></button>
             <button type="button" class:hidden={activeProfile !== "Default"} on:click={resetDefaultSetting}><i class="fas fa-redo"></i></button>
-            <button type="button" class:hidden={activeProfile === "Default"} disabled={activeProfile === "Default"} on:click={deletePreset}><i class="fas fa-trash-alt"></i></button>
+            <button type="button" class:hidden={activeProfile === "Default"} disabled={activeProfile === "Default"} on:click={deleteProfile}><i class="fas fa-trash-alt"></i></button>
         </div>
 
         <Tabs bind:activeTab tabs={[

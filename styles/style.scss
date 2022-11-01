@@ -1,0 +1,57 @@
+.rest-recovery {
+
+  &-divider{
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.25rem;
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+  }
+
+  &-clickable {
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &-link:hover{
+      cursor: pointer;
+      color: var(--primary-accent);
+    }
+
+    &-link-red{
+      color: rgb(185 28 28);
+      &:hover{
+        color: rgb(239 68 68);
+        cursor: pointer;
+      }
+    }
+  }
+
+  &-disabled{
+    opacity: 0.5;
+  }
+
+  &-button-parent{
+    display:flex;
+
+    button:first-child{
+      margin-right: 0;
+    }
+  }
+
+  &-prompt-rest-button{
+    flex:1;
+    max-width: calc(100% - 8px);
+    line-height: inherit;
+    font-size: 0.85rem;
+    margin: 0.25rem;
+
+    &.minimal-ui-button{
+      padding: 2px 0 0 0;
+      text-align: center;
+
+      i {
+        width:100%;
+      }
+    }
+  }
+}

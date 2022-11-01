@@ -31,7 +31,7 @@ function patch_shortRest() {
   libWrapper.register(
     CONSTANTS.MODULE_NAME,
     "CONFIG.Actor.documentClass.prototype.shortRest",
-    async function (config) {
+    async function (config, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
         dialog: true, chat: true, newDay: false, autoHD: false, autoHDThreshold: 3
       }, config);
@@ -54,7 +54,7 @@ function patch_shortRest() {
   
       // Display a Dialog for rolling hit dice
       if ( config.dialog ) {
-        try { config.newDay = await ShortRestDialog.show({ actor: this });
+        try { config.newDay = await ShortRestDialog.show({ actor: this }, dialogOptions);
         } catch(err) { return; }
       }
   
@@ -78,7 +78,7 @@ function patch_longRest() {
   libWrapper.register(
     CONSTANTS.MODULE_NAME,
     "CONFIG.Actor.documentClass.prototype.longRest",
-    async function (config={}) {
+    async function (config={}, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
         dialog: true, chat: true, newDay: true
       }, config);
@@ -96,7 +96,7 @@ function patch_longRest() {
       RestWorkflow.make(this, true);
   
       if ( config.dialog ) {
-        try { config.newDay = await LongRestDialog.show({ actor: this }); }
+        try { config.newDay = await LongRestDialog.show({ actor: this }, dialogOptions); }
         catch(err) { return; }
       }
   
