@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.3.9
+- Actually fixed module profiles
+
 ## Version 1.3.8
 - Added UI to prompt rests for individual players, button can be found in the bottom left corner, which can be hidden in the module settings
 - Added `game.restrecovery.renderPromptRestInterface`, which can render the UI mentioned above through code

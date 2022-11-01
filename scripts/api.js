@@ -36,15 +36,10 @@ export default class API {
    * Returns a given module profile's data if it exists
    *
    * @param {string} inProfileName
-   * @returns {object}
+   * @returns {object/boolean}
    */
   static getProfileData(inProfileName) {
-    const profile = this.getAllProfilesData()[inProfileName];
-    if (!profile) {
-      ui.notifications.error(`Rest Recovery | Profile "${inProfileName}" does not exist`);
-      throw new Error(`Rest Recovery | Profile "${inProfileName}" does not exist`);
-    }
-    return profile;
+    return this.getAllProfilesData()[inProfileName] ?? false;
   }
 
   /**
@@ -92,7 +87,7 @@ export default class API {
     const defaultSettings = CONSTANTS.GET_DEFAULT_SETTINGS();
     for (let profileName of Object.keys(inProfiles)) {
       const profileData = {};
-      const originalProfileData = this.getProfileData(profileName);
+      const originalProfileData = this.getProfileData(profileName) || {};
       for (let key of Object.keys(defaultSettings)) {
         profileData[key] = inProfiles[profileName][key] ?? originalProfileData[key] ?? defaultSettings[key].default;
       }
