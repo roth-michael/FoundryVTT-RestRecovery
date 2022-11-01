@@ -49,7 +49,6 @@ export default class SocketHandler {
     const indexOffset = actorsToRest.length > 1 ? (actorsToRest.length/2) * -1 : 0;
 
     actorsToRest.forEach((actor, index) => {
-      console.log(indexOffset, midPoint, width, )
       actor[data.restType]({}, indexOffset ? { left: midPoint + (indexOffset+index) * width } : {});
     })
 
