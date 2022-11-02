@@ -2,7 +2,7 @@
 
 ## Version 1.3.9
 - Made prompt rest UI remember the character and user selections
-- 
+
 ## Version 1.3.8
 - Actually fixed module profiles
 
