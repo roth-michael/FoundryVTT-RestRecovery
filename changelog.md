@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.3.10
+- Made prompt rest UI remember the character and user selections
+
 ## Version 1.3.9
 - Actually fixed module profiles
 

@@ -16,17 +16,17 @@
 
   let form;
 
-  const validActors = Object.entries(Array.from(game.actors).reduce((acc, actor) => {
+  const validActors = Array.from(game.actors).reduce((acc, actor) => {
     for(const [userId, permissions] of Object.entries(actor.ownership)){
       if(userId === "default") continue;
       const user = game.users.get(userId);
       if(!user) continue;
       const combinedID = user.id + "-" + actor.id;
       if(user.isGM || permissions < 3) continue;
-      acc[combinedID] = `${actor.name} (${user.name})`;
+      acc.push([combinedID, `${actor.name} (${user.name})`]);
     }
     return acc;
-  }, {})).sort((a, b) => (a[0] > b[0] ? -1 : 1));
+  }, []);
 
   let configuration = new Set();
   let validRemainingIds = [];
@@ -37,12 +37,7 @@
     validRemainingIds = validActors.filter(entry => {
       return !configuration.has(entry[0]);
     }).map(entry => entry[0]);
-    foundry.utils.debounce(debounceSave, 150);
   })
-
-  function debounceSave(){
-    lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
-  }
 
   cleanConfig.update(() => {
     return Array.from(lib.getSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG)).filter(entry => {
@@ -50,12 +45,17 @@
     });
   })
 
+  function updateRestConfig(){
+    lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
+  }
+
   function addPlayer(){
     if(!validRemainingIds.length) return;
     cleanConfig.update((values) => {
       values.push(validRemainingIds[0]);
       return values;
     });
+    updateRestConfig();
   }
 
   function removePlayer(index){
@@ -63,6 +63,7 @@
       values.splice(index, 1);
       return values;
     });
+    updateRestConfig();
   }
 
   async function requestSubmit() {
@@ -118,7 +119,7 @@
         <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;" on:click={() => { addPlayer() }}></i>
       </div>
       {#each $cleanConfig as comboId, index}
-        <select bind:value={comboId}>
+        <select bind:value={comboId} on:change={() => { updateRestConfig() }}>
           {#each validActors.filter(actorEntry => {
             return !configuration.has(actorEntry[0]) || actorEntry[0] === comboId;
           }) as [id, text] (id)}
