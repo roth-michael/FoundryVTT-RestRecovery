@@ -44,6 +44,9 @@
     line-height: inherit;
     font-size: 0.85rem;
     margin: 0.25rem;
+    background: rgba(60, 60, 60, 0.6);
+    border: 1px solid var(--color-border-dark-primary);
+    color: var(--color-text-light-highlight);
 
     &.minimal-ui-button{
       padding: 2px 0 0 0;
