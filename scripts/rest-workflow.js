@@ -517,6 +517,14 @@ export default class RestWorkflow {
       updates = workflow[fnName](updates, args);
     }
   
+    if (game.modules.get("foundryvtt-simple-calendar")?.active) 
+    {
+      let anhour = SimpleCalendar.api.getTimeConfiguration().minutesInHour * SimpleCalendar.api.getTimeConfiguration().secondsInMinute;
+      let resttime = anhour;
+      if (workflow.longRest) resttime = anhour * 8;
+      game.time.advance(resttime)
+    }
+    
     return updates;
     
   }
