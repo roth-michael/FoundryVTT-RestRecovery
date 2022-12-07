@@ -44,7 +44,7 @@
 
   if (game.modules.get("foundryvtt-simple-calendar")?.active) {
     let hour = SimpleCalendar.api.currentDateTime().hour;
-	  let hoursInDay = SimpleCalendar.api.getTimeConfiguration().hoursInDay;
+    let hoursInDay = SimpleCalendar.api.getTimeConfiguration().hoursInDay;
     promptNewDay = false;
     if (hour + 1 >= hoursInDay) newDay = true;
   }
