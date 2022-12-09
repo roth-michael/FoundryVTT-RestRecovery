@@ -38,13 +38,6 @@
   let variant = game.settings.get("dnd5e", "restVariant");
   let promptNewDay = variant !== "gritty";
   let newDay = variant === "normal";
-  
-  if (game.modules.get("foundryvtt-simple-calendar")?.active) {
-    let hour = SimpleCalendar.api.currentDateTime().hour;
-    let hoursInDay = SimpleCalendar.api.getTimeConfiguration().hoursInDay;
-    promptNewDay = false;
-    if (hour + 8 >= hoursInDay) newDay = true;
-  }
 
   let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
   let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
