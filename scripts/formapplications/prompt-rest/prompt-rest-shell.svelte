@@ -100,6 +100,29 @@
       }
     })
   }
+  
+  function adjustGameTime() {
+    if (game.modules.get("foundryvtt-simple-calendar")?.active) {
+        let API = SimpleCalendar.api;
+        let anHour = API.getTimeConfiguration().minutesInHour * API.getTimeConfiguration().secondsInMinute;
+        let restTime;
+        switch (game.settings.get("dnd5e", "restVariant")) {
+            case "epic":
+                if (workflow.longRest) restTime = anHour
+                else restTime = API.getTimeConfiguration().minutesInHour * 5;
+                break;
+            case "gritty":
+                if (workflow.longRest) restTime = API.getTimeConfiguration().hoursInDay * anHour * 7
+                else restTime = anHour * 8;
+                break;
+            default:
+                if (workflow.longRest) restTime = anHour * 8
+                else restTime = anHour;
+        }
+        game.time.advance(restTime)
+    }
+  }
+
 
   const profiles = game.restrecovery.getAllProfiles();
   let activeProfile = game.restrecovery.getActiveProfile();
@@ -159,12 +182,14 @@
     <footer class="flexrow" style="margin-top:0.5rem;">
       <button type="button" class="dialog-button" on:click={(e) => {
         restType = 'longRest';
+        adjustGameTime();
         requestSubmit(e);
       }}>
         <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.PromptRest.Long")}
       </button>
       <button type="button" class="dialog-button" on:click={(e) => {
         restType = 'shortRest';
+        adjustGameTime();
         requestSubmit(e);
       }}>
         <i class="fa-solid fa-hourglass-half"></i> {localize("REST-RECOVERY.Dialogs.PromptRest.Short")}
