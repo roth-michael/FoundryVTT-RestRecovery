@@ -108,15 +108,15 @@
         let restTime;
         switch (game.settings.get("dnd5e", "restVariant")) {
             case "epic":
-                if (workflow.longRest) restTime = anHour
+                if (restType == "longRest") restTime = anHour
                 else restTime = API.getTimeConfiguration().minutesInHour * 5;
                 break;
             case "gritty":
-                if (workflow.longRest) restTime = API.getTimeConfiguration().hoursInDay * anHour * 7
+                if (restType == "longRest") restTime = API.getTimeConfiguration().hoursInDay * anHour * 7
                 else restTime = anHour * 8;
                 break;
             default:
-                if (workflow.longRest) restTime = anHour * 8
+                if (restType == "longRest") restTime = anHour * 8
                 else restTime = anHour;
         }
         game.time.advance(restTime)
