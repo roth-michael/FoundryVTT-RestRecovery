@@ -41,6 +41,23 @@
 
   let newDay = false;
   let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
+  
+  if (game.modules.get("foundryvtt-simple-calendar")?.active) {
+    promptNewDay = false;
+    let API = SimpleCalendar.api;
+    let currentHour = API.currentDateTime().hour;
+    let currentMinute =  API.currentDateTime().minute;
+    switch (game.settings.get("dnd5e", "restVariant")) {
+        case "epic":
+	    if ((currentHour == 0)  &&  (currentMinute == 0)) newDay = true;
+            break;
+        case "gritty":
+            newDay = true;
+            break;
+        default:
+            if (currentHour == 0) newDay = true;
+    }
+  }
 
   const workflow = RestWorkflow.get(actor);
 
