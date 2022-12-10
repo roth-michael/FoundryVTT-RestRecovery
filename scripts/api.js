@@ -9,8 +9,8 @@ export default class API {
    *
    * @returns {Promise<SvelteApplication>/boolean}
    */
-  static renderPromptRestInterface(){
-    if(!game.user.isGM) return false;
+  static renderPromptRestInterface() {
+    if (!game.user.isGM) return false;
     return PromptRestDialog.show();
   }
 

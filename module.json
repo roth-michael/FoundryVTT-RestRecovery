@@ -1,10 +1,7 @@
 {
-  "name": "rest-recovery",
+  "id": "rest-recovery",
   "title": "Rest Recovery for 5E",
   "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
-  "systems": [
-    "dnd5e"
-  ],
   "version": "10.0.0",
   "authors": [
     {
@@ -36,16 +33,23 @@
         "path": "/languages/pt_BR.json"
     }
   ],
-  "dependencies": [
-    {
-      "name": "lib-wrapper",
-      "type": "module"
-    }
-  ],
+  "relationships": {
+    "requires": [
+      {
+        "id": "dnd5e",
+        "type": "system"
+      },
+      {
+        "id": "lib-wrapper",
+        "type": "module"
+      }
+    ]
+  },
   "minimumCoreVersion": "10",
   "compatibility": {
     "minimum": "10",
-    "verified": "10"
+    "verified": "10",
+    "maximum": "10"
   },
   "socket": true,
   "url": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery",

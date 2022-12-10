@@ -17,12 +17,12 @@
   let form;
 
   const validActors = Array.from(game.actors).reduce((acc, actor) => {
-    for(const [userId, permissions] of Object.entries(actor.ownership)){
-      if(userId === "default") continue;
+    for (const [userId, permissions] of Object.entries(actor.ownership)) {
+      if (userId === "default") continue;
       const user = game.users.get(userId);
-      if(!user) continue;
+      if (!user) continue;
       const combinedID = user.id + "-" + actor.id;
-      if(user.isGM || permissions < 3) continue;
+      if (user.isGM || permissions < 3) continue;
       acc.push([combinedID, `${actor.name} (${user.name})`]);
     }
     return acc;
@@ -30,7 +30,18 @@
 
   let configuration = new Set();
   let validRemainingIds = [];
+  let forceNewDay = false;
+
   const cleanConfig = writable([]);
+
+  const restVariant = game.settings.get("dnd5e", "restVariant");
+  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const longRestWouldBeNewDay = lib.getTimeChanges(true).isNewDay;
+  const shortRestWouldBeNewDay = lib.getTimeChanges(false).isNewDay;
+
+  const profiles = game.restrecovery.getAllProfiles();
+  let activeProfile = game.restrecovery.getActiveProfile();
+  let restType = "longRest";
 
   cleanConfig.subscribe(values => {
     configuration = new Set(values);
@@ -45,12 +56,12 @@
     });
   })
 
-  function updateRestConfig(){
+  function updateRestConfig() {
     lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
   }
 
-  function addPlayer(){
-    if(!validRemainingIds.length) return;
+  function addPlayer() {
+    if (!validRemainingIds.length) return;
     cleanConfig.update((values) => {
       values.push(validRemainingIds[0]);
       return values;
@@ -58,7 +69,7 @@
     updateRestConfig();
   }
 
-  function removePlayer(index){
+  function removePlayer(index) {
     cleanConfig.update((values) => {
       values.splice(index, 1);
       return values;
@@ -73,11 +84,14 @@
   async function submitPrompt() {
     await game.restrecovery.setActiveProfile(activeProfile);
     await lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
-    application.options.resolve();
+    const timeChanges = lib.getTimeChanges(restType === "longRest");
+    await game.time.advance(timeChanges.restTime);
+
     SocketHandler.emit(SocketHandler.PROMPT_REST, {
       userActors: [...configuration],
       restType
     })
+    application.options.resolve();
     application.close();
   }
 
@@ -100,33 +114,6 @@
       }
     })
   }
-  
-  function adjustGameTime() {
-    if (game.modules.get("foundryvtt-simple-calendar")?.active) {
-        let API = SimpleCalendar.api;
-        let anHour = API.getTimeConfiguration().minutesInHour * API.getTimeConfiguration().secondsInMinute;
-        let restTime;
-        switch (game.settings.get("dnd5e", "restVariant")) {
-            case "epic":
-                if (workflow.longRest) restTime = anHour
-                else restTime = API.getTimeConfiguration().minutesInHour * 5;
-                break;
-            case "gritty":
-                if (workflow.longRest) restTime = API.getTimeConfiguration().hoursInDay * anHour * 7
-                else restTime = anHour * 8;
-                break;
-            default:
-                if (workflow.longRest) restTime = anHour * 8
-                else restTime = anHour;
-        }
-        game.time.advance(restTime)
-    }
-  }
-
-
-  const profiles = game.restrecovery.getAllProfiles();
-  let activeProfile = game.restrecovery.getActiveProfile();
-  let restType = "longRest";
 
 </script>
 
@@ -139,7 +126,8 @@
     <div class="grid-table">
       <div style="font-size:1rem; margin-bottom:0.25rem;">Player characters to prompt rests for</div>
       <div style="text-align: center;">
-        <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;" on:click={() => { addPlayer() }}></i>
+        <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;"
+           on:click={() => { addPlayer() }}></i>
       </div>
       {#each $cleanConfig as comboId, index}
         <select bind:value={comboId} on:change={() => { updateRestConfig() }}>
@@ -154,8 +142,8 @@
         </div>
       {/each}
 
-    <div style="font-size: 1rem; margin-top:0.5rem; margin-bottom:0.25rem;">Rest Profile</div>
-    <div></div>
+      <div style="font-size: 1rem; margin-top:0.25rem; margin-bottom:0.25rem;">Rest Profile</div>
+      <div></div>
 
       <select bind:value={activeProfile}>
         {#each profiles as profile}
@@ -177,25 +165,46 @@
         }}></i>
       </div>
 
+
+      {#if !simpleCalendarActive || longRestWouldBeNewDay || shortRestWouldBeNewDay}
+        <div style="margin-top:0.25rem; grid-column: {simpleCalendarActive ? '1 / 3' : '1'};">
+          <span style="font-size: 1rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.NewDayTitle")}</span>
+          <p style="font-size: 0.75rem; color: #4b4a44;">
+            {#if !simpleCalendarActive}
+              {localize("REST-RECOVERY.Dialogs.PromptRest.NewDayHint")}
+            {:else}
+              {@html localize("REST-RECOVERY.Dialogs.PromptRest.NewDaySimpleCalendarHint")}
+            {/if}
+          </p>
+        </div>
+
+        {#if !simpleCalendarActive}
+          <input type="checkbox" bind:checked={forceNewDay}/>
+        {/if}
+      {/if}
+
     </div>
 
-    <footer class="flexrow" style="margin-top:0.5rem;">
+    <footer class="flexrow" style="margin-top:0.25rem;">
       <button type="button" class="dialog-button" on:click={(e) => {
         restType = 'longRest';
-        adjustGameTime();
         requestSubmit(e);
       }}>
-        <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.PromptRest.Long")}
+        <i class="fas fa-bed"></i>
+        {localize("REST-RECOVERY.Dialogs.PromptRest.Long")}
+        {#if simpleCalendarActive && longRestWouldBeNewDay}
+          {localize("REST-RECOVERY.Dialogs.PromptRest.NewDay")}
+        {/if}
       </button>
       <button type="button" class="dialog-button" on:click={(e) => {
         restType = 'shortRest';
-        adjustGameTime();
         requestSubmit(e);
       }}>
-        <i class="fa-solid fa-hourglass-half"></i> {localize("REST-RECOVERY.Dialogs.PromptRest.Short")}
-      </button>
-      <button type="button" class="dialog-button" on:click={() => { application.close() }}>
-        <i class="fas fa-times"></i> {localize("Cancel")}
+        <i class="fa-solid fa-hourglass-half"></i>
+        {localize("REST-RECOVERY.Dialogs.PromptRest.Short")}
+        {#if simpleCalendarActive && shortRestWouldBeNewDay}
+          {localize("REST-RECOVERY.Dialogs.PromptRest.NewDay")}
+        {/if}
       </button>
     </footer>
 
@@ -204,8 +213,8 @@
 
 <style lang="scss">
 
-  .grid-table{
-    display:grid;
+  .grid-table {
+    display: grid;
     align-items: center;
     grid-template-columns: 1fr auto;
     column-gap: 0.5rem;
@@ -221,4 +230,14 @@
 
   }
 
+  .form-group p {
+    font-weight: normal;
+    line-height: 14px;
+    font-size: var(--font-size-12);
+    color: var(--color-text-dark-secondary);
+    padding-right: 1rem;
+    margin-top: 0;
+    overflow-y: hidden;
+    margin-bottom: 0.25rem;
+  }
 </style>

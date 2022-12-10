@@ -54,7 +54,7 @@ function patch_shortRest() {
   
       // Display a Dialog for rolling hit dice
       if ( config.dialog ) {
-        try { config.newDay = await ShortRestDialog.show({ actor: this }, dialogOptions);
+        try { config.newDay = await ShortRestDialog.show({ ...config, actor: this }, dialogOptions);
         } catch(err) { return; }
       }
   
@@ -96,7 +96,7 @@ function patch_longRest() {
       RestWorkflow.make(this, true);
   
       if ( config.dialog ) {
-        try { config.newDay = await LongRestDialog.show({ actor: this }, dialogOptions); }
+        try { config.newDay = await LongRestDialog.show({ ...config, actor: this }, dialogOptions); }
         catch(err) { return; }
       }
   

@@ -109,6 +109,8 @@
         "Content": "Are you sure you want to delete the \"{profile}\" module profile?"
       },
       "ShortRest": {
+        "ForcedNewDayTitle": "New Day",
+        "ForcedNewDayHint": "A new day dawns, so this short rest will recover abilities that recharge on a \"per day\" basis.",
         "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
         "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
         "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
@@ -128,6 +130,10 @@
         "ConfigureProfiles": "Configure Profiles",
         "Short": "Short Rest",
         "Long": "Long Rest",
+        "NewDayTitle": "New Day",
+        "NewDayHint": "This causes characters who finish the rest to recover abilities that recharge on a \"per day\" basis.",
+        "NewDaySimpleCalendarHint": "Based on the type selected below, characters who finish the rest to recover abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
+        "NewDay": "(new day)",
         "Submit": "Submit",
         "PlayerListShort": "Rest"
       },
@@ -144,6 +150,8 @@
         "Content": "You need to spend at least {num_dice} hit dice to finish this short rest, but you do not have any left."
       },
       "LongRest": {
+        "ForcedNewDayTitle": "New Day",
+        "ForcedNewDayHint": "A new day dawns, so this long rest will recover abilities that recharge on a \"per day\" basis.",
         "Begin": "Begin Long Rest",
         "BeginExplanation": "By beginning your long rest, you will regain some of your hit dice so that you can roll them to regain hit points.",
         "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots differently.",

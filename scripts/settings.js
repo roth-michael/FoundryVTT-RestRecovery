@@ -68,7 +68,7 @@ export default function registerSettings() {
 
   Hooks.on("renderPlayerList", (app, html) => {
 
-    if(!game.user.isGM || !getSetting(CONSTANTS.SETTINGS.SHOW_PLAYER_LIST_REST_BUTTON)) return;
+    if (!game.user.isGM || !getSetting(CONSTANTS.SETTINGS.SHOW_PLAYER_LIST_REST_BUTTON)) return;
 
     const minimalUI = game.modules.get('minimal-ui')?.active;
     const itemPiles = game.modules.get('item-piles')?.active;
@@ -77,7 +77,7 @@ export default function registerSettings() {
 
     let parent = html;
     const tradeButton = html.find(".item-piles-player-list-trade-button");
-    if(itemPiles && tradeButton.length && !minimalUI){
+    if (itemPiles && tradeButton.length && !minimalUI) {
       tradeButton.html(`<i class="fas fa-handshake"></i> Trade`);
       tradeButton.addClass(classes);
       parent = $(`<div class="rest-recovery-button-parent"></div>`);

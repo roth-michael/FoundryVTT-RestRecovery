@@ -18,6 +18,7 @@ const CONSTANTS = {
     QUICK_HD_ROLL: "quick-hd-roll",
     SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
+    ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
     
     /*-------------------------------------------*
      *            Short Rest Settings            *

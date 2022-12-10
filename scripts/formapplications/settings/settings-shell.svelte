@@ -6,7 +6,7 @@
   import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
   import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
 
-  import { setSetting, getSetting } from "../../lib/lib.js";
+  import { getSetting } from "../../lib/lib.js";
 
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
@@ -26,7 +26,7 @@
   let profiles = API.getAllProfilesData();
   let activeProfile = API.getActiveProfile();
 
-  if(profiles[activeProfile] === undefined){
+  if (profiles[activeProfile] === undefined) {
     activeProfile = "Default";
   }
 

@@ -10,14 +10,14 @@
   import HitDieRoller from "../components/HitDieRoller.svelte";
 
   import RestWorkflow from "../../rest-workflow.js";
+  import * as lib from "../../lib/lib.js";
   import { getSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
-  import * as lib from "../../lib/lib.js";
 
   const { application } = getContext('external');
 
   export let elementRoot;
-  export let actor;
+  const actor = application.options.actor;
   let currHP;
   let maxHP;
   let healthPercentage;
@@ -38,26 +38,10 @@
     : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
   maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
 
-
-  let newDay = false;
-  let promptNewDay = game.settings.get("dnd5e", "restVariant") !== "epic";
-  
-  if (game.modules.get("foundryvtt-simple-calendar")?.active) {
-    promptNewDay = false;
-    let API = SimpleCalendar.api;
-    let currentHour = API.currentDateTime().hour;
-    let currentMinute =  API.currentDateTime().minute;
-    switch (game.settings.get("dnd5e", "restVariant")) {
-        case "epic":
-	    if ((currentHour == 0)  &&  (currentMinute == 0)) newDay = true;
-            break;
-        case "gritty":
-            newDay = true;
-            break;
-        default:
-            if (currentHour == 0) newDay = true;
-    }
-  }
+  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const timeChanges = lib.getTimeChanges(false);
+  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
+  let promptNewDay = !simpleCalendarActive && game.settings.get("dnd5e", "restVariant") !== "epic";
 
   const workflow = RestWorkflow.get(actor);
 
@@ -269,11 +253,17 @@
 
       {/if}
 
-      {#if promptNewDay}
+      {#if promptNewDay || newDay}
         <div class="form-group">
-          <label>{localize("DND5E.NewDay")}</label>
-          <input type="checkbox" name="newDay" bind:checked={newDay}/>
-          <p class="hint">{localize("DND5E.NewDayHint")}</p>
+          <label>
+            {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" : "DND5E.NewDay")}
+          </label>
+          {#if promptNewDay}
+            <input type="checkbox" bind:checked={newDay}/>
+          {/if}
+          <p class="hint">
+            {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
+          </p>
         </div>
       {/if}
 
@@ -283,8 +273,9 @@
         <label>{localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRests")}</label>
       </div>
 
-      <p
-        class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", { max_short_rests: maxShortRests })}</p>
+      <p class="notes">
+        {localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", { max_short_rests: maxShortRests })}
+      </p>
 
     {/if}
 
