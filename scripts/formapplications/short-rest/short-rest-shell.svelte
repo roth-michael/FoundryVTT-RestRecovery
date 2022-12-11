@@ -13,6 +13,7 @@
   import * as lib from "../../lib/lib.js";
   import { getSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
+  import Steps from "../rest-steps/Steps.svelte";
 
   const { application } = getContext('external');
 
@@ -41,14 +42,13 @@
   const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
   const timeChanges = lib.getTimeChanges(false);
   let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
-  let promptNewDay = !simpleCalendarActive && game.settings.get("dnd5e", "restVariant") !== "epic";
+  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "epic";
 
   const workflow = RestWorkflow.get(actor);
 
   updateHealthBarText();
 
   let healthData = workflow.healthData;
-  let spellData = workflow.spellData;
 
   let selectedHitDice = Object.entries(workflow.healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
@@ -130,6 +130,14 @@
     application.close();
   }
 
+  async function nextStep() {
+    activeStep = Math.min(workflow.steps.length, activeStep + 1);
+  }
+
+  async function prevStep() {
+    activeStep = Math.max(0, activeStep - 1);
+  }
+
   async function rollHitDice(event) {
     const rolled = await workflow.rollHitDice(selectedHitDice, event?.ctrlKey === getSetting(CONSTANTS.SETTINGS.QUICK_HD_ROLL));
     if (!rolled) return;
@@ -141,11 +149,6 @@
     await workflow.autoSpendHitDice();
     healthData = workflow.healthData;
     startedShortRest = true;
-  }
-
-  function spendSpellPoint(event, level) {
-    workflow.spendSpellPoint(level, event.target.checked);
-    spellData = workflow.spellData;
   }
 
   const doc = new TJSDocument(actor);
@@ -173,8 +176,9 @@
     healthPercentage = currHP / maxHP;
   }
 
-</script>
+  let activeStep = 0;
 
+</script>
 
 <svelte:options accessors={true}/>
 
@@ -182,89 +186,71 @@
   <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd"
         class="dialog-content">
 
+    {#if workflow.steps.length > 1}
+      <Steps steps={workflow.steps} bind:activeStep={activeStep}/>
+    {/if}
+
     {#if enableShortRest}
 
-      {#if maxShortRests > 0 && currentShortRests < maxShortRests}
-        <div class="form-group">
-          <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimit", { num_short_rests: maxShortRests - currentShortRests })}</p>
-        </div>
+      {#if activeStep === 0}
 
-        <p
-          class="notes">{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimitSmall", { max_short_rests: maxShortRests })}</p>
-      {/if}
+        {#if maxShortRests > 0 && currentShortRests < maxShortRests}
+          <div class="form-group">
+            <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimit", { num_short_rests: maxShortRests - currentShortRests })}</p>
+          </div>
 
-      {#if enableRollHitDice}
-        <p>{localize("DND5E.ShortRestHint")}</p>
-
-        <HitDieRoller
-          bind:selectedHitDice="{selectedHitDice}"
-          bind:healthData="{healthData}"
-          onHitDiceFunction="{rollHitDice}"
-          onAutoFunction="{autoRollHitDie}"
-          workflow="{workflow}"
-          minSpendHitDice="{minSpendHitDice}"
-          maxSpendHitDice="{maxSpendHitDice}"
-        />
-      {:else}
-        <p>{localize("REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest")}</p>
-      {/if}
-
-      {#if spellData.feature}
-
-        <div class="form-group">
-          <label>{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotRecovery", { featureName: spellData.feature.name })}</label>
-        </div>
-
-        {#if spellData.missingSlots && !spellData.has_feature_use}
-
-          <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.NoFeatureUse", {
-            featureName: spellData.feature.name
-          })}</p>
-
-        {:else if spellData.missingSlots}
-
-          {#each Object.entries(spellData.slots) as [level, slots], levelIndex (levelIndex)}
-            <div class="form-group">
-              <div class="form-fields" style="justify-content: flex-start;">
-                <div style="margin-right:5px; flex:0 1 auto;">Level {level}:</div>
-                <div style="flex:0 1 auto;">
-                  {#each slots as slot, slotIndex (slotIndex)}
-                    <input
-                      type='checkbox'
-                      disabled="{slot.disabled || slot.alwaysDisabled}"
-                      bind:checked="{slot.checked}"
-                      on:change="{(event) => { spendSpellPoint(event, level, slotIndex) }}"
-                    >
-                  {/each}
-                </div>
-              </div>
-            </div>
-          {/each}
-
-          <p style="font-style: italic;">{localize("REST-RECOVERY.Dialogs.ShortRest.SpellSlotsLeft", {
-            spellSlotsLeft: spellData.pointsTotal - spellData.pointsSpent,
-          })}</p>
-
-        {:else}
-
-          <p class="notes">{localize("REST-RECOVERY.Dialogs.ShortRest.FullSpells")}</p>
-
+          <p
+            class="notes">{@html localize("REST-RECOVERY.Dialogs.ShortRest.ShortRestLimitSmall", { max_short_rests: maxShortRests })}</p>
         {/if}
 
-      {/if}
+        {#if enableRollHitDice}
+          <p>{localize("DND5E.ShortRestHint")}</p>
 
-      {#if promptNewDay || newDay}
-        <div class="form-group">
-          <label>
-            {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" : "DND5E.NewDay")}
-          </label>
-          {#if promptNewDay}
-            <input type="checkbox" bind:checked={newDay}/>
-          {/if}
-          <p class="hint">
-            {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
-          </p>
-        </div>
+          <HitDieRoller
+            bind:selectedHitDice="{selectedHitDice}"
+            bind:healthData="{healthData}"
+            onHitDiceFunction="{rollHitDice}"
+            onAutoFunction="{autoRollHitDie}"
+            workflow="{workflow}"
+            minSpendHitDice="{minSpendHitDice}"
+            maxSpendHitDice="{maxSpendHitDice}"
+          />
+        {:else}
+          <p>{localize("REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest")}</p>
+        {/if}
+
+        {#if promptNewDay || newDay}
+          <div class="form-group">
+            <label>
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" : "DND5E.NewDay")}
+            </label>
+            {#if promptNewDay}
+              <input type="checkbox" bind:checked={newDay}/>
+            {/if}
+            <p class="hint">
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
+            </p>
+          </div>
+        {/if}
+
+        <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
+
+        {#if minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice}
+          <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
+        {/if}
+
+        {#if maxSpendHitDice > 0 && maxSpendHitDice !== healthData.level}
+          <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MaxHitDiceSpend", {
+            max_spend: maxSpendHitDice,
+            current: maxSpendHitDice - healthData.hitDiceSpent
+          })}</p>
+        {/if}
+
+
+      {:else}
+
+        <svelte:component this={workflow.steps[activeStep].component} {workflow}/>
+
       {/if}
 
     {:else}
@@ -279,31 +265,24 @@
 
     {/if}
 
-    <HealthBar text="HP: {currHP} / {maxHP}" progress="{healthPercentage}"/>
-
-    {#if minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice}
-      <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend", { min_spend: minSpendHitDice - healthData.hitDiceSpent })}</p>
-    {/if}
-
-    {#if maxSpendHitDice > 0 && maxSpendHitDice !== healthData.level}
-      <p>{@html localize("REST-RECOVERY.Dialogs.ShortRest.MaxHitDiceSpend", {
-        max_spend: maxSpendHitDice,
-        current: maxSpendHitDice - healthData.hitDiceSpent
-      })}</p>
-    {/if}
-
     <footer class="flexrow" style="margin-top:0.5rem;">
-      {#if enableShortRest}
-        <button type="button" class="dialog-button" on:click={requestSubmit}><i
-          class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.FinishRest")}</button>
-        {#if !startedShortRest}
-          <button type="button" class="dialog-button" on:click={cancel}><i
-            class="fas fa-times"></i> {localize("Cancel")}</button>
-        {/if}
-      {:else}
-        <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-check"></i> {localize("Okay")}
+
+      {#if workflow.steps.length > 1}
+        <button type="button" class="dialog-button" disabled={activeStep === 0} on:click={() => { prevStep(); }}>
+          <i class="fas fa-chevron-left"></i> {localize("REST-RECOVERY.Dialogs.RestSteps.Prev")}
         </button>
       {/if}
+
+      {#if activeStep === workflow.steps.length - 1}
+        <button type="button" class="dialog-button" on:click={requestSubmit}>
+          <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.FinishRest")}
+        </button>
+      {:else}
+        <button type="button" class="dialog-button" on:click={() => { nextStep(); }}>
+          {localize("REST-RECOVERY.Dialogs.RestSteps.Next")} <i class="fas fa-chevron-right"></i>
+        </button>
+      {/if}
+
     </footer>
 
   </form>

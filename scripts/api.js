@@ -1,6 +1,7 @@
 import * as lib from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
 import PromptRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
+import { gameSettings } from "./settings.js";
 
 export default class API {
 
@@ -29,7 +30,7 @@ export default class API {
    * @returns {object}
    */
   static getAllProfilesData() {
-    return foundry.utils.duplicate(lib.getSetting(CONSTANTS.SETTINGS.MODULE_PROFILES));
+    return foundry.utils.deepClone(gameSettings.profiles);
   }
 
   /**
@@ -39,7 +40,7 @@ export default class API {
    * @returns {object/boolean}
    */
   static getProfileData(inProfileName) {
-    return this.getAllProfilesData()[inProfileName] ?? false;
+    return gameSettings.activeProfileData ?? false;
   }
 
   /**
@@ -48,7 +49,7 @@ export default class API {
    * @returns {string}
    */
   static getActiveProfile() {
-    return lib.getSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE)
+    return gameSettings.activeProfile;
   }
 
   /**
@@ -67,14 +68,7 @@ export default class API {
    * @returns {Promise<object>}
    */
   static async setActiveProfile(inProfileName) {
-    await lib.setSetting(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE, inProfileName);
-    const profile = this.getProfileData(inProfileName);
-    const defaultSettings = CONSTANTS.GET_DEFAULT_SETTINGS();
-    for (let key of Object.keys(defaultSettings)) {
-      const value = profile[key] ?? defaultSettings[key].default;
-      await lib.setSetting(key, value);
-    }
-    return profile;
+    return gameSettings.setActiveProfile(inProfileName, true);
   }
 
   /**
@@ -93,7 +87,7 @@ export default class API {
       }
       inProfiles[profileName] = profileData;
     }
-    return lib.setSetting(CONSTANTS.SETTINGS.MODULE_PROFILES, inProfiles);
+    return gameSettings.updateProfiles(inProfiles, true);
   }
 
   /**
@@ -112,7 +106,7 @@ export default class API {
       newData[key] = inData[key] ?? profile[key] ?? defaultSettings[key].default;
     }
     profiles[inProfileName] = newData;
-    return lib.setSetting(CONSTANTS.SETTINGS.MODULE_PROFILES, profiles);
+    return gameSettings.updateProfiles(profiles, true);
   }
 
   /**

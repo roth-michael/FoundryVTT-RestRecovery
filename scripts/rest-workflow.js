@@ -2,6 +2,8 @@ import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
 import { getSetting } from "./lib/lib.js";
 import plugins from "./plugins.js";
+import FoodWater from "./formapplications/rest-steps/FoodWater.svelte";
+import SpellRecovery from "./formapplications/rest-steps/SpellRecovery.svelte";
 
 const rests = new Map();
 
@@ -13,12 +15,14 @@ export default class RestWorkflow {
     this.actor = actor;
     this.longRest = longRest;
     this.finished = false;
+    this.restVariant = game.settings.get("dnd5e", "restVariant");
 
     this.spellSlotsRegainedMessage = "";
     this.hitDiceMessage = "";
     this.itemsRegainedMessages = [];
     this.resourcesRegainedMessages = [];
     this.foodAndWaterMessage = [];
+    this.steps = [];
 
     this.consumableData = { items: [] };
   }
@@ -139,7 +143,33 @@ export default class RestWorkflow {
     this.fetchHealthData();
     this.fetchFeatures();
     this.fetchSpellData();
+    this.determineSteps();
     return this;
+  }
+
+  determineSteps() {
+    const hasSpells = Object.values(this.actor.classes).some(cls => !['none', 'pact'].includes(cls.system.spellcasting.progression));
+    this.steps = [
+      {
+        title: "REST-RECOVERY.Dialogs.RestSteps.Rest.Title",
+        required: true,
+      },
+      {
+        title: "REST-RECOVERY.Dialogs.RestSteps.FoodWater.Title",
+        required: lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && (this.longRest || this.restVariant === "gritty"),
+        component: FoodWater
+      },
+      {
+        title: "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.Title",
+        required: hasSpells && this.spellData.missingSlots
+          && (
+            (!this.longRest && this.spellData.feature)
+            ||
+            (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY))
+          ),
+        component: SpellRecovery
+      }
+    ].filter(step => step.required);
   }
 
   fetchHealthData() {
@@ -165,6 +195,8 @@ export default class RestWorkflow {
       let { hitPointsToRegainFromRest } = this.actor._getRestHitPointRecovery();
       this.healthData.hitPointsToRegainFromRest = hitPointsToRegainFromRest;
     }
+
+    this.foodWaterRequirement = lib.getActorConsumableValues(this.actor);
 
     this.refreshHealthData();
   }
@@ -207,25 +239,12 @@ export default class RestWorkflow {
       className: ""
     };
 
-    const wizardLevel = this.actor.items.find(item => {
-      return item.type === "class"
-        && (item.name === lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true));
-    })?.system?.levels || 0;
-    const wizardFeature = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
-
-    const druidLevel = this.actor.items.find(item => {
-      return item.type === "class"
-        && item.system.levels >= 2
-        && (item.name === lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true));
-    })?.system?.levels || 0;
-    const druidFeature = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY, true)) ?? false;
-
     for (let [level, slot] of Object.entries(this.actor.system.spells)) {
       if ((!slot.max && !slot.override) || level === "pact") {
         continue;
       }
       let levelNum = Number(level.substr(5))
-      if (Number(levelNum) > 5) {
+      if (!this.longRest && Number(levelNum) > 5) {
         break;
       }
       this.spellData.slots[levelNum] = [];
@@ -239,6 +258,31 @@ export default class RestWorkflow {
         this.spellData.missingSlots = this.spellData.missingSlots || i >= slot.value;
       }
     }
+
+    if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY)) {
+      const actorSpecificFormula = this.actor.getFlag("dnd5e", "longRestSpellPointsFormula") || false;
+      const formula = actorSpecificFormula || lib.getSetting(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA);
+      this.spellData.pointsTotal = lib.evaluateFormula(
+        formula || "ceil(min(17, @details.level+1)/2)*2",
+        this.actor.getRollData(),
+        false
+      )?.total + (this.actor.getFlag("dnd5e", "longRestSpellPointsBonus") ?? 0);
+      return;
+    }
+
+    const wizardLevel = this.actor.items.find(item => {
+      return item.type === "class"
+        && (item.name === lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true));
+    })?.system?.levels || 0;
+    const wizardFeature = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
+
+    const druidLevel = this.actor.items.find(item => {
+      return item.type === "class"
+        && item.system.levels >= 2
+        && (item.name === lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true));
+    })?.system?.levels || 0;
+    const druidFeature = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY, true)) ?? false;
+
 
     const wizardFeatureUse = wizardLevel && wizardFeature && this.patchSpellFeature(wizardFeature, "wizard");
     const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature, "druid");
@@ -595,6 +639,8 @@ export default class RestWorkflow {
 
   async _handleExhaustion(updates) {
 
+    if (!(this.longRest || this.restVariant === "gritty")) return updates;
+
     let actorInitialExhaustion = getProperty(this.actor, "system.attributes.exhaustion") ?? 0;
     let actorExhaustion = actorInitialExhaustion;
     let exhaustionGain = false;
@@ -752,7 +798,7 @@ export default class RestWorkflow {
 
     }
 
-    if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+    if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
 
       if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION) && actorExhaustion > 0) {
         const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
@@ -968,6 +1014,8 @@ export default class RestWorkflow {
 
   _getRestSpellRecovery(updates, { recoverSpells = true } = {}) {
 
+    const customSpellRecovery = lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY);
+
     // Long rest
     if (recoverSpells) {
 
@@ -977,6 +1025,7 @@ export default class RestWorkflow {
       for (let [level, slot] of Object.entries(this.actor.system.spells)) {
         if (!slot.override && !slot.max) continue;
         let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
+        if (level !== "pact" && customSpellRecovery) continue;
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof multiplier === "string"
           ? Math.max(lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
@@ -998,28 +1047,28 @@ export default class RestWorkflow {
         updates[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }
 
-      if (this.spellData.feature) {
+    }
 
-        if (!foundry.utils.isObjectEmpty(this.recoveredSlots)) {
+    if ((!this.longRest && this.spellData.feature) || (this.longRest && customSpellRecovery)) {
 
-          for (const [slot, num] of Object.entries(this.recoveredSlots)) {
-            const prop = `system.spells.spell${slot}.value`;
-            updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor, prop) || 0) + num;
-          }
+      if (!foundry.utils.isEmpty(this.recoveredSlots)) {
 
-          this.spellSlotsRegainedMessage = "<ul>";
-          for (const [level, num] of Object.entries(this.recoveredSlots)) {
-            const numText = game.i18n.localize("REST-RECOVERY.NumberToText." + num);
-            const levelText = lib.ordinalSuffixOf(level);
-            const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
-            this.spellSlotsRegainedMessage += `<li>${game.i18n.format(localization, {
-              number: numText,
-              level: levelText
-            })}</li>`
-          }
-          this.spellSlotsRegainedMessage += "</ul>";
-
+        for (const [slot, num] of Object.entries(this.recoveredSlots)) {
+          const prop = `system.spells.spell${slot}.value`;
+          updates[prop] = (updates[prop] || foundry.utils.getProperty(this.actor, prop) || 0) + num;
         }
+
+        this.spellSlotsRegainedMessage = "<ul>";
+        for (const [level, num] of Object.entries(this.recoveredSlots)) {
+          const numText = game.i18n.localize("REST-RECOVERY.NumberToText." + num);
+          const levelText = lib.ordinalSuffixOf(level);
+          const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
+          this.spellSlotsRegainedMessage += `<li>${game.i18n.format(localization, {
+            number: numText,
+            level: levelText
+          })}</li>`
+        }
+        this.spellSlotsRegainedMessage += "</ul>";
 
       }
 
@@ -1129,6 +1178,8 @@ export default class RestWorkflow {
   async _handleFoodAndWaterItems(updates) {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return updates;
+
+    if (!(this.longRest || this.restVariant === "gritty")) return updates;
 
     const {
       actorRequiredFood,
@@ -1325,7 +1376,7 @@ export default class RestWorkflow {
         : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
     }
 
-    if (!foundry.utils.isObjectEmpty(actorUpdates)) {
+    if (!foundry.utils.isEmpty(actorUpdates)) {
       item.parent.update(actorUpdates);
     }
 

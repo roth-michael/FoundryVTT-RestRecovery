@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.4.0
+- Added Simple Calendar support, prompting rests now automatically advances the current date & time
+- Added support for spell slot point-like recovery for all classes (similar to Wizards' Arcane Recovery) on long rests
+- Added further support for heroic and gritty rest variants - food can be consumed during short rests if you're playing with the gritty variant
+- Improved the long/short rest UI; removed tabs and introduced steps to better let users know of things they might want to do
+
 ## Version 1.3.10
 - Made prompt rest button darker
 

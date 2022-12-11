@@ -5,18 +5,24 @@
   import {
     capitalizeFirstLetter,
     evaluateFormula,
-    getActorConsumableValues,
     getConsumableItemsFromActor,
     getSetting,
     roundHalf
   } from "../../lib/lib.js";
   import RestWorkflow from "../../rest-workflow.js";
 
-  export let actor;
   export let workflow;
+  const actor = workflow.actor;
 
   const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)
     && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
+
+  const {
+    actorRequiredFood,
+    actorRequiredWater,
+    actorFoodSatedValue,
+    actorWaterSatedValue
+  } = workflow.foodWaterRequirement;
 
   const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
 
@@ -26,13 +32,6 @@
     getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
     actor.getRollData()
   )?.total ?? 4;
-
-  let {
-    actorRequiredFood,
-    actorRequiredWater,
-    actorFoodSatedValue,
-    actorWaterSatedValue
-  } = getActorConsumableValues(actor);
 
   let hasAccessToFood = false;
   let halfFood = false;
@@ -241,87 +240,88 @@
 
   {#if actorRequiredFood}
     {#if (actorRequiredFood - actorFoodSatedValue) > 0}
-      <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodRequirement", {
+      <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodRequirement", {
         food: Math.max(0, actorRequiredFood - newFoodSatedValue)
       })}</p>
 
       {#if externalFoodSourceAccess === "half" || externalFoodSourceAccess === "full"}
         <label class="checkbox">
-          <input type="checkbox" bind:checked={hasAccessToFood}
-                 on:change={toggleAccessToFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFood")}
+          <input type="checkbox" bind:checked={hasAccessToFood} on:change={toggleAccessToFood}/>
+          {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFood")}
         </label>
 
         {#if hasAccessToFood}
           <p>
             <label class="checkbox">
               <input type="radio" value="full" bind:group={halfFood} disabled={externalFoodSourceAccess === "half"}
-                     on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodFull")}
+                     on:change={toggleAmountOfFood}/>
+              {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodFull")}
             </label>
             <label class="checkbox">
-              <input type="radio" value="half" bind:group={halfFood}
-                     on:change={toggleAmountOfFood}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalFoodHalf")}
+              <input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}/>
+              {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodHalf")}
             </label>
           </p>
         {/if}
       {/if}
     {:else}
-      <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodSated")}</p>
+      <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodSated")}</p>
     {/if}
   {/if}
 
   {#if actorRequiredWater}
     {#if (actorRequiredWater - actorWaterSatedValue) > 0}
-      <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.WaterRequirement", {
+      <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.WaterRequirement", {
         water: Math.max(0, actorRequiredWater - newWaterSatedValue)
       })}</p>
 
       {#if externalWaterSourceAccess === "half" || externalWaterSourceAccess === "full"}
         <label class="checkbox">
-          <input type="checkbox" class="red" bind:checked={hasAccessToWater}
-                 on:change={toggleAccessToWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWater")}
+          <input type="checkbox" class="red" bind:checked={hasAccessToWater} on:change={toggleAccessToWater}/>
+          {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWater")}
         </label>
 
         {#if hasAccessToWater}
           <p>
             <label class="checkbox">
               <input type="radio" value="full" bind:group={halfWater} disabled={externalWaterSourceAccess === "half"}
-                     on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterFull")}
+                     on:change={toggleAmountOfWater}/>
+              {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterFull")}
             </label>
             <label class="checkbox">
-              <input type="radio" value="half" bind:group={halfWater}
-                     on:change={toggleAmountOfWater}> {localize("REST-RECOVERY.Dialogs.LongRest.ExternalWaterHalf")}
+              <input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}/>
+              {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterHalf")}
             </label>
           </p>
         {/if}
       {/if}
     {:else}
-      <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.WaterSated")}</p>
+      <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.WaterSated")}</p>
     {/if}
   {/if}
 
   {#if (!hasAccessToFood || !hasAccessToWater) && consumableItems.length}
     <div class="items-container">
-      {#each consumableItems.filter(item => {
-        return (item.consumable.type === "food" && !hasAccessToFood)
-          || (item.consumable.type === "water" && !hasAccessToWater)
-          || (item.consumable.type === "both" && (!hasAccessToFood || !hasAccessToWater))
-      }) as item, index (item.id)}
+      {#each consumableItems as item, index (item.id)}
         <div class="item-container">
           <div class="flexcol">
             <span class="item-name">{item.fullName}</span>
-            {#if !item.consumable.dayWorth}
-              <label>
+            <label>
+              {#if !item.consumable.dayWorth}
                 <input type="number" bind:value={item.amount} on:change={() => {
                             item.amount = Math.max(0.5, Math.min(item.usesLeft, roundHalf(item.amount)));
                             calculateAmountOfItems();
-                        }}> {localize("REST-RECOVERY.Dialogs.LongRest.AmountToConsume")}
-              </label>
-            {:else}
-              <label>{localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.consumable.type))}</label>
-            {/if}
+                        }}/>
+                {localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.AmountToConsume")}
+              {:else}
+                {localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.consumable.type))}
+              {/if}
+            </label>
           </div>
 
-          <button type="button" on:click={() => { removeConsumableItem(index) }}><i class="fas fa-times"></i></button>
+          <button type="button" on:click={() => { removeConsumableItem(index) }}>
+            <i class="fas fa-times"></i>
+          </button>
         </div>
       {/each}
     </div>
@@ -330,7 +330,7 @@
   {#if actorConsumableItems.length && ((actorRequiredFood && actorFoodSatedValue < actorRequiredFood && !hasAccessToFood) || (actorRequiredWater && actorWaterSatedValue < actorRequiredWater && !hasAccessToWater))}
     <div class="dragDropBox" on:dragstart={preventDefault} on:drop={dropData} on:dragover={preventDefault}>
       <div class="form-fields">
-        <p>{localize("REST-RECOVERY.Dialogs.LongRest.DragDrop")}</p>
+        <p>{localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.DragDrop")}</p>
         <div class="flexrow">
           <select bind:value={selectedItem}>
             {#each actorConsumableItems as item, index (item.id)}
@@ -347,22 +347,22 @@
   {#if enableAutomatedExhaustion}
     {#if actorRequiredFood && newFoodSatedValue < actorRequiredFood}
       {#if actorDaysWithoutFood < actorExhaustionThreshold}
-        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodAlmostExhaustion", {
+        <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodAlmostExhaustion", {
           days: (actorExhaustionThreshold - actorDaysWithoutFood) * (newFoodSatedValue > 0 && newFoodSatedValue <= (actorRequiredFood / 2) ? 2 : 1)
         })}</p>
       {:else}
-        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.FoodExhaustion")}</p>
+        <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodExhaustion")}</p>
       {/if}
     {/if}
 
     {#if actorRequiredWater}
       {#if newWaterSatedValue > 0 && newWaterSatedValue <= (actorRequiredWater / 2)}
-        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.HalfWater", {
+        <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.HalfWater", {
           dc: halfWaterSaveDC,
           exhaustion: actorExhaustion > 0 ? 2 : 1
         })}</p>
       {:else if newWaterSatedValue === 0}
-        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.NoWater", { exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
+        <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.NoWater", { exhaustion: actorExhaustion > 0 ? 2 : 1 })}</p>
       {/if}
     {/if}
   {/if}

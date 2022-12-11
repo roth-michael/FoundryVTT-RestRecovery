@@ -62,10 +62,11 @@ export function setSetting(key, value) {
 /**
  * @param {String/Number} formula
  * @param {Object} data
+ * @param {boolean} warn
  * @returns {Roll}
  */
-export function evaluateFormula(formula, data) {
-  const rollFormula = Roll.replaceFormulaData(formula, data, { warn: true });
+export function evaluateFormula(formula, data, warn = true) {
+  const rollFormula = Roll.replaceFormulaData(formula, data, { warn });
   return new Roll(rollFormula).evaluate({ async: false });
 }
 
@@ -135,7 +136,6 @@ export function capitalizeFirstLetter(str) {
 export function roundHalf(num) {
   return Math.round(num * 2) / 2;
 }
-
 
 export function getTimeChanges(isLongRest) {
 

@@ -2,14 +2,19 @@
 
   import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
   import CONSTANTS from "../../constants.js";
+  import { gameSettings } from "../../settings.js";
+  import { writable } from "svelte/store";
 
-  export let settingsMap
-  export let setting;
-  export let group;
-  export let setting_index;
-  export let resetSetting;
+  export let key;
+  const setting = gameSettings.settings.get(key);
+  const customFormulaStore = setting.customFormula ? setting.customFormulaSetting.store : writable('');
+  const store = setting.store;
+  const disabled = setting.disabled;
 
-  let customFormulaSetting = settingsMap.get(setting.customFormula);
+  function callback(){
+    if(!setting.callback) return;
+    setting.callback(gameSettings.settings);
+  }
 
 </script>
 
@@ -17,8 +22,11 @@
 <div class="form-group flexrow">
 
   <div class="label-side">
-    <label>{localize(setting.name)} <a><i title="Reset setting" class="fas fa-undo reset-setting"
-                                          on:click={() => { resetSetting(group, setting_index)}}></i></a></label>
+    <label>{localize(setting.name)}
+      <a>
+        <i title="Reset setting" class="fas fa-undo reset-setting" on:click={() => { gameSettings.reset(key)}}></i>
+      </a>
+    </label>
     <p class="notes">{localize(setting.hint)}</p>
   </div>
 
@@ -26,34 +34,34 @@
 
     {#if setting.type === Boolean}
 
-      <input type="checkbox" bind:checked={setting.value} disabled={setting.disabled}>
+      <input type="checkbox" bind:checked={$store} disabled={$disabled} on:change={callback}>
 
     {:else if setting.choices}
 
       <div class="choice-container">
-        <select name={setting.key} bind:value={setting.value} disabled={setting.disabled}>
+        <select name={setting.key} bind:value={$store} disabled={$disabled} on:change={callback}>
           {#each Object.entries(setting.choices) as [key, choice], index (index)}
             <option value="{key}">{localize(choice)}</option>
           {/each}
         </select>
 
-        {#if customFormulaSetting && setting.value === CONSTANTS.FRACTIONS.CUSTOM}
-          <input name="{setting.customFormula}" type="text" bind:value={customFormulaSetting.value}
-                 class:invalid={customFormulaSetting.value === ''} disabled={setting.disabled}>
+        {#if setting.customFormulaSetting && $store === CONSTANTS.FRACTIONS.CUSTOM}
+          <input name="{setting.customFormula}" type="text" bind:value={$customFormulaStore}
+                 class:invalid={$customFormulaStore === ''} disabled={$disabled}>
         {/if}
       </div>
 
     {:else if setting.type === Number}
 
-      <input type="number" bind:value={setting.value} class:invalid={!setting.value && setting.value !== 0}
-             disabled={setting.disabled} on:change={() => { if(setting.callback) setting.callback(settingsMap); }}>
+      <input type="number" bind:value={$store} class:invalid={!$store && $store !== 0}
+             disabled={$disabled} on:change={callback}>
 
     {:else}
 
       <div class="setting-container">
-        <input type="text" bind:value={setting.value} disabled={setting.disabled}>
+        <input type="text" bind:value={$store} disabled={$disabled} on:change={callback}>
         {#if setting.localize}
-          <input type="text" disabled value={localize(setting.value)}>
+          <input type="text" disabled value={localize($store)}>
         {/if}
       </div>
 

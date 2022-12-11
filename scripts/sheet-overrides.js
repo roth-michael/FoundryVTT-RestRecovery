@@ -20,6 +20,24 @@ function registerTraits() {
     placeholder: "0"
   };
 
+  if (getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY)) {
+    CONFIG.DND5E.characterFlags.longRestSpellPointsBonus = {
+      section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+      name: game.i18n.localize("REST-RECOVERY.Traits.LongRestSpellPointsBonus.Title"),
+      hint: game.i18n.localize("REST-RECOVERY.Traits.LongRestSpellPointsBonus.Hint"),
+      type: String,
+      placeholder: "0"
+    };
+
+    CONFIG.DND5E.characterFlags.longRestSpellPointsFormula = {
+      section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+      name: game.i18n.localize("REST-RECOVERY.Traits.LongRestSpellPointsFormula.Title"),
+      hint: game.i18n.localize("REST-RECOVERY.Traits.LongRestSpellPointsFormula.Hint"),
+      type: String,
+      placeholder: getSetting(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA)
+    };
+  }
+
   if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
 
     CONFIG.DND5E.characterFlags.foodUnits = {
