@@ -67,23 +67,23 @@
       "ConsumedWater": "{actorName} drank {itemName} for {charges} units of water.",
       "RequiredSatedFood": "They require {units} units of food to be sated for the day.",
       "RequiredSatedWater": "They require {units} units of water to be sated for the day.",
-      "SatedFood": "They don't require any more food today.",
-      "SatedWater": "They don't require any more water today.",
-      "FoodFullNone": "They ate enough of their own food to be sated today.",
-      "FoodHalfNone": "They ate of their own food, but only half of the amount that they needed today.",
-      "FoodHalfHalf": "They ate from an external source and of their own food to be sated today.",
-      "FoodNoneFull": "They ate enough food from an external source to be sated today.",
-      "FoodNoneHalf": "They ate from an external source, but only half of the amount that they needed today.",
-      "FoodNoneNone": "They didn't eat anything today.",
-      "WaterFullNone": "They drank enough of their own water to be sated today.",
-      "WaterHalfNone": "They drank of their own water, but only half of the amount that they needed today.",
-      "WaterHalfHalf": "They drank from an external source and of their own water to be sated today.",
-      "WaterNoneFull": "They drank enough water from an external source to be sated today.",
-      "WaterNoneHalf": "They drank from an external source, but only half of the amount that they needed today.",
-      "WaterNoneNone": "They didn't drink anything today.",
+      "SatedFood": "They don't require any more food.",
+      "SatedWater": "They don't require any more water.",
+      "FoodFullNone": "They ate enough of their own food to be sated.",
+      "FoodHalfNone": "They ate of their own food, but only half of the amount that they needed.",
+      "FoodHalfHalf": "They ate from an external source and of their own food to be sated.",
+      "FoodNoneFull": "They ate enough food from an external source to be sated.",
+      "FoodNoneHalf": "They ate from an external source, but only half of the amount that they needed.",
+      "FoodNoneNone": "They didn't eat anything.",
+      "WaterFullNone": "They drank enough of their own water to be sated.",
+      "WaterHalfNone": "They drank of their own water, but only half of the amount that they needed.",
+      "WaterHalfHalf": "They drank from an external source and of their own water to be sated.",
+      "WaterNoneFull": "They drank enough water from an external source to be sated.",
+      "WaterNoneHalf": "They drank from an external source, but only half of the amount that they needed.",
+      "WaterNoneNone": "They didn't drink anything.",
       "NoExhaustion": "But they managed to avoid exhaustion.",
       "Exhaustion": "Thus, they suffered {exhaustion} levels of exhaustion.",
-      "ExhaustionDeath": "Regrettably, {actorName} reached 6 levels of exhaustion and perished.",
+      "ExhaustionDeath": "Regrettably, {actorName} reached {max_levels} levels of exhaustion and perished.",
       "ExhaustionArmor": "They chose to keep their armor on, and recovered none of their exhaustion.",
       "HitDiceArmor": "They recovered less hit dice than normal because they rested in their armor.",
       "NoHitDiceArmor": "They recovered none of their hit dice because they rested in their armor.",
@@ -108,12 +108,22 @@
         "Title": "Delete profile",
         "Content": "Are you sure you want to delete the \"{profile}\" module profile?"
       },
+      "PromptRest": {
+        "Title": "Prompt Rest For Players",
+        "ConfigureProfiles": "Configure Profiles",
+        "Short": "Short Rest",
+        "Long": "Long Rest",
+        "NewDayTitle": "New Day",
+        "NewDayHint": "This causes characters who finish the rest to recover abilities that recharge on a \"per day\" basis.",
+        "NewDaySimpleCalendarHint": "Based on the type selected below, characters who finish the rest to recover abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
+        "NewDay": "(new day)",
+        "Submit": "Submit",
+        "PlayerListShort": "Rest"
+      },
       "ShortRest": {
+        "ForcedNewDayTitle": "New Day",
+        "ForcedNewDayHint": "A new day dawns, so this short rest will recover abilities that recharge on a \"per day\" basis.",
         "NoHitDiceRest": "Take a short rest? On a short rest you may recover primary or secondary resources.",
-        "SpellSlotRecovery": "Recover Spell Slots with {featureName}",
-        "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
-        "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
-        "FullSpells": "You're full on spells, you have no need to regain any spell slots.",
         "NoMoreRests": "No more short rests",
         "NoMoreRestsSmall": "You have have no more capacity for a short rest, as your game's rules mandate a maximum of <strong>{max_short_rests}</strong> per long rest.",
         "ShortRestLimit": "You have <strong>{num_short_rests}</strong> short rests remaining before you must take a long rest.",
@@ -122,14 +132,6 @@
         "MinHitDiceSpend": "You must spend <strong>{min_spend}</strong> hit dice to finish this short rest.",
         "MaxHitDiceSpend": "You can only spend <strong>{max_spend}</strong> hit dice during this short rest (<strong>{current}</strong> left).",
         "FinishRest": "Finish Short Rest"
-      },
-      "PromptRest": {
-        "Title": "Prompt Rest For Players",
-        "ConfigureProfiles": "Configure Profiles",
-        "Short": "Short Rest",
-        "Long": "Long Rest",
-        "Submit": "Submit",
-        "PlayerListShort": "Rest"
       },
       "ShortRestHealthWarning": {
         "Title": "Finish Short Rest?",
@@ -144,32 +146,50 @@
         "Content": "You need to spend at least {num_dice} hit dice to finish this short rest, but you do not have any left."
       },
       "LongRest": {
+        "ForcedNewDayTitle": "New Day",
+        "ForcedNewDayHint": "A new day dawns, so this long rest will recover abilities that recharge on a \"per day\" basis.",
         "Begin": "Begin Long Rest",
         "BeginExplanation": "By beginning your long rest, you will regain some of your hit dice so that you can roll them to regain hit points.",
         "CustomRules": "You are playing with custom rules, which means that you may regain hit points, hit dice, class resources, limited use item charges, and spell slots differently.",
         "CustomRulesLink": "Check out the custom rules.",
-        "RestTab": "Resting",
-        "FoodAndWaterTab": "Food & Water",
-        "FoodRequirement": "You need to eat another <strong>{food}</strong> units of food today.",
-        "FoodSated": "You've already eaten enough today.",
-        "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water today.",
-        "WaterSated": "You've already drank enough today.",
-        "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer <strong>1 level of exhaustion</strong> in <strong>{days} days</strong>.",
-        "FoodExhaustion": "Because you are starving, you will automatically suffer <strong>1 level of exhaustion</strong> if you finish this day without having eaten the full required amount of food.",
-        "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
-        "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
-        "DragDrop": "Drag and drop items to consume, or select:",
-        "DayWorth": "One use of item worth entire day of {type}",
-        "ExternalFood": "Has access to external food source",
-        "ExternalFoodFull": "Eat until sated",
-        "ExternalFoodHalf": "Eat half amount needed",
-        "ExternalWater": "Has access to external water source",
-        "ExternalWaterFull": "Drink until sated",
-        "ExternalWaterHalf": "Drink half amount needed",
-        "AmountToConsume": "Amount To Consume",
         "ArmorRecovery": "Remove Armor During Long Rest?",
         "ArmorRecoveryHint": "Since you have non-light armor equipped, you will suffer penalties. Click on the orange custom rules text to see how it impacts you.",
         "FinishRest": "Finish Long Rest"
+      },
+      "RestSteps": {
+        "Next": "Next Step",
+        "Prev": "Previous Step",
+        "Rest": {
+          "Title": "Rest"
+        },
+        "FoodWater": {
+          "Title": "Food & Water",
+          "FoodRequirement": "You need to eat another <strong>{food}</strong> units of food.",
+          "FoodSated": "You've already eaten enough.",
+          "FoodAlmostExhaustion": "If you finish this day without having eaten the full amount of food, you will automatically suffer <strong>1 level of exhaustion</strong> in <strong>{days} days</strong>.",
+          "FoodExhaustion": "Because you are starving, you will automatically suffer <strong>1 level of exhaustion</strong> if you finish this day without having eaten the full required amount of food.",
+          "ExternalFood": "Has access to external food source",
+          "ExternalFoodFull": "Eat until sated",
+          "ExternalFoodHalf": "Eat half amount needed",
+          "WaterRequirement": "You need to drink another <strong>{water}</strong> units of water.",
+          "AmountToConsume": "Amount To Consume",
+          "WaterSated": "You've already drank enough.",
+          "NoWater": "You will automatically suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day having drank less than half of the requirement amount of water.",
+          "HalfWater": "You must make a DC {dc} Constitution saving throw or suffer <strong>{exhaustion} levels of exhaustion</strong> if you finish this day without drinking the full amount.",
+          "DragDrop": "Drag and drop items to consume, or select:",
+          "DayWorth": "One use of item worth entire day of {type}",
+          "ExternalWater": "Has access to external water source",
+          "ExternalWaterFull": "Drink until sated",
+          "ExternalWaterHalf": "Drink half amount needed"
+        },
+        "SpellRecovery": {
+          "Title": "Magic Recovery",
+          "SpellSlotFeature": "Recover Spell Slots with {featureName}",
+          "SpellSlotRule": "Recover Spell Slots",
+          "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
+          "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
+          "FullSpells": "You're full on spells, you have no need to regain any spell slots."
+        }
       },
       "LongRestWarning": {
         "Title": "Finish Long Rest?",
@@ -236,6 +256,14 @@
       "HitDieBonus": {
         "Title": "Hit Die Bonus",
         "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+      },
+      "LongRestSpellPointsBonus": {
+        "Title": "Spell slot point-like recovery bonus",
+        "Hint": "This is a bonus that will be added to the spell slot recovery during a long rest."
+      },
+      "LongRestSpellPointsFormula": {
+        "Title": "Spell slot point-like recovery formula",
+        "Hint": "This trait allows you to override the spell slot recovery formula for this specific character."
       },
       "FoodUnitsPerDay": {
         "Title": "Units of food required per day",
@@ -359,6 +387,10 @@
           "Title": "Exhaustion Module Integration",
           "Hint": "This setting allows you to use other modules in order to apply their respective exhaustion active effects on characters."
         },
+        "OneDnDExhaustion": {
+          "Title": "Enable One D&D Exhaustion",
+          "Hint": "In the new One D&D, exhaustion instead stacks to 10 (upon which you still die), and applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Note: This is not compatible with the CUB exhaustion integration above."
+        },
         "RollHitDice": {
           "Title": "Enable long rest hit dice rolls",
           "Hint": "Enables the hit dice roll UI in the Long Rest dialog."
@@ -390,6 +422,10 @@
         "SpellSlotsRecoveryFraction": {
           "Title": "Spell slots recovery fraction",
           "Hint": "The fraction of spell slots to recover on a long rest."
+        },
+        "CustomSpellSlotRecovery": {
+          "Title": "Enable spell slot point-like recovery rule",
+          "Hint": "Enabling this setting will cause everyone with spell slots to recover them like the wizard \"Arcane Recovery\" feature, where you have you choose which spell slots you recover. This setting can only be enabled when \"Spell slots recovery fraction\" is set to custom. Characters regain a number of spell slots equal to the custom formula's setting."
         },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Pact spell slots recovery fraction",

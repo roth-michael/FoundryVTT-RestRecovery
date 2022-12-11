@@ -18,6 +18,7 @@ const CONSTANTS = {
     QUICK_HD_ROLL: "quick-hd-roll",
     SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
+    ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
     
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -43,6 +44,7 @@ const CONSTANTS = {
      *-------------------------------------------*/
     AUTOMATE_EXHAUSTION: "automate-exhaustion",
     EXHAUSTION_INTEGRATION: "exhaustion-integration",
+    ONE_DND_EXHAUSTION: "one-dnd-exhaustion",
     LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
     PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
     PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
@@ -51,6 +53,7 @@ const CONSTANTS = {
     HD_MULTIPLIER: "recovery-hitdice",
     LONG_RESOURCES_MULTIPLIER: "recovery-resources",
     LONG_SPELLS_MULTIPLIER: "recovery-spells",
+    LONG_CUSTOM_SPELL_RECOVERY: "long-recovery-custom-spell-points",
     LONG_PACT_SPELLS_MULTIPLIER: "long-recovery-pact-spells",
     LONG_USES_OTHERS_MULTIPLIER: "recovery-uses-others",
     LONG_USES_FEATS_MULTIPLIER: "recovery-uses-feats",
@@ -197,8 +200,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "shortrest",
     customSettingsDialog: true,
-    validate: (settingsMap) => {
-      return settingsMap.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
+    dependsOn: [CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE],
+    validate: (settings) => {
+      return settings.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
     },
     config: false,
     default: 0,
@@ -210,8 +214,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "shortrest",
     customSettingsDialog: true,
-    validate: (settingsMap) => {
-      return settingsMap.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
+    dependsOn: [CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE],
+    validate: (settings) => {
+      return settings.get(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE).value;
     },
     customFormula: CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND_FORMULA,
     config: false,
@@ -223,6 +228,14 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
     },
     default: CONSTANTS.FRACTIONS.FULL,
+  },
+  [CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND_FORMULA]: {
+    scope: "world",
+    group: "shortrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@details.level",
   },
   [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",
@@ -344,8 +357,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Hint",
     scope: "world",
     group: "longrest",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
     },
     config: false,
     type: String,
@@ -355,6 +369,21 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.MODULES.CUB]: "REST-RECOVERY.Modules.CUB",
     },
     default: CONSTANTS.FRACTIONS.NONE,
+  },
+  [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION]: {
+    name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint",
+    scope: "world",
+    group: "longrest",
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+          || settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.CUB;
+    },
+    customSettingsDialog: true,
+    config: false,
+    default: false,
+    type: Boolean
   },
   [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE]: {
     name: "REST-RECOVERY.Settings.LongRest.RollHitDice.Title",
@@ -371,8 +400,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
     scope: "world",
     group: "longrest",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value
     },
     config: false,
     default: false,
@@ -383,8 +413,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
     scope: "world",
     group: "longrest",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
+    dependsOn: [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
     },
     config: false,
     default: false,
@@ -508,6 +539,27 @@ CONSTANTS.DEFAULT_SETTINGS = {
     type: String,
     default: "@slot.max",
   },
+  [CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY]: {
+    name: "REST-RECOVERY.Settings.LongRest.CustomSpellSlotRecovery.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.CustomSpellSlotRecovery.Hint",
+    dependsOn: [CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER],
+    validate: (settings) => {
+      return settings.get(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER).value !== CONSTANTS.FRACTIONS.CUSTOM;
+    },
+    callback: (settings) => {
+      const setting = settings.get(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA);
+      if(setting.value === "@slot.max"){
+        setting.store.set("ceil(min(17, @details.level+1)/2)*2");
+      }
+    },
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    nonDefaultSetting: true,
+    config: false,
+    default: false,
+    type: Boolean
+  },
   [CONSTANTS.SETTINGS.LONG_PACT_SPELLS_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.LongRest.PactSpellSlotsLongRecoveryFraction.Title",
     hint: "REST-RECOVERY.Settings.LongRest.PactSpellSlotsLongRecoveryFraction.Hint",
@@ -626,8 +678,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
   [CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE]: {
     name: "REST-RECOVERY.Settings.LongRest.ArmorHitDiceRecoveryFraction.Title",
     hint: "REST-RECOVERY.Settings.LongRest.ArmorHitDiceRecoveryFraction.Hint",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
     },
     scope: "world",
     group: "longrest",
@@ -656,9 +709,10 @@ CONSTANTS.DEFAULT_SETTINGS = {
   [CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.AutomateArmorExhaustion.Title",
     hint: "REST-RECOVERY.Settings.LongRest.AutomateArmorExhaustion.Hint",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-          || !settingsMap.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+          || !settings.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
     },
     scope: "world",
     group: "longrest",
@@ -813,8 +867,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "foodandwater",
     customSettingsDialog: true,
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
     },
     config: false,
     default: 1,
@@ -826,8 +881,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "foodandwater",
     customSettingsDialog: true,
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
     },
     config: false,
     default: 1,
@@ -840,8 +896,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     group: "foodandwater",
     customSettingsDialog: true,
     config: false,
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
     },
     choices: {
       [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
@@ -858,8 +915,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     group: "foodandwater",
     customSettingsDialog: true,
     config: false,
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
     },
     choices: {
       [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
@@ -874,9 +932,10 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
     scope: "world",
     group: "foodandwater",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-        || !settingsMap.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+        || !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
     },
     config: false,
     default: false,
@@ -887,8 +946,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.FoodAndWater.NoFoodDuration.Hint",
     scope: "world",
     group: "foodandwater",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
     },
     config: false,
     default: "3+max(1,@abilities.con.mod)",
@@ -899,8 +959,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.FoodAndWater.HalfWaterSaveDC.Hint",
     scope: "world",
     group: "foodandwater",
-    validate: (settingsMap) => {
-      return !settingsMap.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION).value
     },
     config: false,
     default: 15,

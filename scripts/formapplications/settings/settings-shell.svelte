@@ -1,17 +1,11 @@
 <script>
-  import CONSTANTS from "../../constants.js";
 
   import { getContext } from 'svelte';
   import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
   import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-  import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
-
-  import { setSetting, getSetting } from "../../lib/lib.js";
-
+  import { gameSettings } from "../../settings.js";
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
-  import SaveProfileDialog from "./SaveProfileDialog.svelte";
-  import API from "../../api.js";
 
   const { application } = getContext('external');
 
@@ -19,59 +13,13 @@
 
   let form;
 
-  let settingsMap = new Map();
-
-  let settings = {};
-
-  let profiles = API.getAllProfilesData();
-  let activeProfile = API.getActiveProfile();
-
-  if(profiles[activeProfile] === undefined){
-    activeProfile = "Default";
-  }
-
-  loadSettings()
-  validateSettings();
-
-  function loadSettings() {
-    const profileData = API.getProfileData(activeProfile);
-    settings = Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS())
-      .map(entry => {
-        entry[1].value = profileData[entry[0]] ?? getSetting(entry[0]);
-        entry[1].disabled = false;
-        settingsMap.set(entry[0], entry[1]);
-        return entry;
-      }).reduce(function (r, a) {
-        r[a[1].group] = r[a[1].group] || [];
-        r[a[1].group].push(a);
-        return r;
-      }, Object.create(null));
-  }
-
-  function validateSettings() {
-    for (const group of Object.keys(settings)) {
-      for (let index = 0; index < settings[group].length; index++) {
-        if (!settings[group][index][1].validate) continue;
-        settings[group][index][1].disabled = settings[group][index][1].validate(settingsMap);
-        if (!settings[group][index][1].disabled) continue;
-        settings[group][index][1].value = settings[group][index][1].default;
-      }
-    }
-    profiles[activeProfile] = Object.fromEntries(Array.from(settingsMap).map(entry => {
-      return [entry[0], entry[1].value];
-    }));
-  }
-
-  function resetSetting(group, index) {
-    settings[group][index][1].value = settings[group][index][1].default;
-    validateSettings();
-  }
+  gameSettings.cleanup();
 
   async function deleteProfile() {
 
     const result = await TJSDialog.confirm({
       title: localize("REST-RECOVERY.Dialogs.DeleteProfile.Title"),
-      content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: activeProfile }),
+      content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: gameSettings.activeProfile }),
       modal: true,
       draggable: false,
       autoClose: true,
@@ -82,10 +30,7 @@
       return;
     }
 
-    delete profiles[activeProfile];
-    activeProfile = "Default";
-    profiles = profiles;
-    loadProfile();
+    return gameSettings.deleteProfile(gameSettings.activeProfile);
 
   }
 
@@ -98,7 +43,7 @@
         content: {
           class: SaveProfileDialog,
           props: {
-            existingProfiles: Object.keys(profiles)
+            existingProfiles: Object.keys(gameSettings.profiles)
           }
         },
         label: "Okay",
@@ -111,26 +56,17 @@
 
     if (!result) return;
 
-    profiles[result] = foundry.utils.duplicate(profiles[activeProfile]);
-    activeProfile = result;
-    settings = settings;
-    validateSettings();
+    const newProfile = foundry.utils.duplicate(gameSettings.activeProfileData);
+
+    return gameSettings.createProfile(result, newProfile, true);
 
   }
 
-  function loadProfile() {
-    for (let [key, setting] of Array.from(settingsMap)) {
-      const profileValue = profiles[activeProfile][key];
-      if (profileValue !== undefined) {
-        setting.value = profileValue;
-      }
-    }
-    settings = settings;
-    validateSettings();
+  async function changeProfile(){
+    return gameSettings.setActiveProfile(gameSettings.activeProfile);
   }
 
   async function resetDefaultSetting() {
-
     const result = await TJSDialog.confirm({
       title: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Title"),
       content: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Content"),
@@ -139,17 +75,9 @@
       autoClose: true,
       rejectClose: false
     });
+    if (!result) return;
 
-    if (!result) {
-      return;
-    }
-
-    profiles[activeProfile] = Object.fromEntries(Object.entries(CONSTANTS.GET_DEFAULT_SETTINGS()).map(entry => {
-      return [entry[0], entry[1].default];
-    }))
-
-    loadProfile();
-
+    return gameSettings.resetAll();
   }
 
   function requestSubmit() {
@@ -157,8 +85,7 @@
   }
 
   async function updateSettings() {
-    await API.updateProfiles(profiles);
-    await API.setActiveProfile(activeProfile);
+    await gameSettings.persistSettings();
     application.close();
   }
 
@@ -169,22 +96,25 @@
 <svelte:options accessors={true}/>
 
 <ApplicationShell bind:elementRoot>
-  <form bind:this={form} on:submit|once|preventDefault={updateSettings} autocomplete="off">
+  <form bind:this={form} autocomplete="off" on:submit|once|preventDefault={updateSettings}>
 
     <h2 style="text-align: center; margin-bottom: 1rem;">{localize("REST-RECOVERY.Dialogs.ModuleConfig.Title")}</h2>
 
     <div class="preset-select">
       <label>{localize("REST-RECOVERY.Dialogs.ModuleConfig.ModuleProfile")}</label>
-      <select bind:value={activeProfile} on:change={loadProfile}>
-        {#each Object.keys(profiles) as profile (profile)}
+      <select bind:value={gameSettings.activeProfile} on:change={() => { changeProfile(); }}>
+        {#each Object.keys(gameSettings.profiles) as profile (profile)}
           <option value="{profile}">{profile}</option>
         {/each}
       </select>
       <button type="button" on:click={newProfile}><i class="fas fa-plus"></i></button>
-      <button type="button" class:hidden={activeProfile !== "Default"} on:click={resetDefaultSetting}><i
-        class="fas fa-redo"></i></button>
-      <button type="button" class:hidden={activeProfile === "Default"} disabled={activeProfile === "Default"}
-              on:click={deleteProfile}><i class="fas fa-trash-alt"></i></button>
+      <button type="button" class:hidden={gameSettings.activeProfile !== "Default"} on:click={resetDefaultSetting}>
+        <i class="fas fa-redo"></i>
+      </button>
+      <button type="button" class:hidden={gameSettings.activeProfile === "Default"}
+              disabled={gameSettings.activeProfile === "Default"} on:click={deleteProfile}>
+        <i class="fas fa-trash-alt"></i>
+      </button>
     </div>
 
     <Tabs bind:activeTab tabs={[
@@ -197,15 +127,14 @@
 
     <section class="tab-body">
 
-      {#each Object.keys(settings) as group, index (index)}
+      {#each Array.from(gameSettings.groupedSettings.keys()) as group, index (group)}
+
         <div class="tab flex" class:active={activeTab === group} data-group="primary" data-tab="{group}">
 
-          {#each settings[group] as [key, setting], setting_index (key)}
-            {#if !setting.hidden}
-              <div class="setting" on:change={validateSettings}>
-                <Setting {group} {setting_index} {key} {setting} {settingsMap} {resetSetting}/>
-              </div>
-            {/if}
+          {#each gameSettings.groupedSettings.get(group) as setting, setting_index (setting.key)}
+            <div class="setting">
+              <Setting key={setting.key}/>
+            </div>
           {/each}
 
           {#if group === "general"}
@@ -238,8 +167,9 @@
     </section>
 
     <footer>
-      <button type="button" on:click={requestSubmit}><i
-        class="far fa-save"></i> {localize("REST-RECOVERY.Dialogs.ModuleConfig.Submit")}</button>
+      <button type="button" on:click={requestSubmit}>
+        <i class="far fa-save"></i> {localize("REST-RECOVERY.Dialogs.ModuleConfig.Submit")}
+      </button>
     </footer>
   </form>
 </ApplicationShell>

@@ -13,7 +13,7 @@
       setting.name = localize(setting.name)
       setting.hint = localize(setting.hint)
       setting.value = settings[key] ?? getSetting(key);
-      if(setting.customSettingsDialog) {
+      if (setting.customSettingsDialog) {
         if (typeof setting.value === "boolean") {
           setting.settingText = setting.value ? "Yes" : "No";
         } else if (typeof setting.value === "string") {
@@ -65,11 +65,11 @@
       width: 300px;
     }
 
-    .fa-info-circle{
+    .fa-info-circle {
       opacity: 0.25;
     }
 
-    td:hover .fa-info-circle{
+    td:hover .fa-info-circle {
       opacity: 0.75;
     }
   }

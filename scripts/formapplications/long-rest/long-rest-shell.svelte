@@ -10,17 +10,16 @@
   import Dialog from "../components/Dialog.svelte";
   import CustomSettings from "../custom-settings-dialog/CustomSettingsDialog.svelte";
   import HitDieRoller from "../components/HitDieRoller.svelte";
-  import Tabs from "../components/Tabs.svelte";
-
-  import FoodWaterTab from "./FoodWaterTab.svelte";
   import RestWorkflow from "../../rest-workflow.js";
-  import { getActorConsumableValues, getSetting } from "../../lib/lib.js";
+  import * as lib from "../../lib/lib.js";
+  import { getSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
+  import Steps from "../rest-steps/Steps.svelte";
 
   const { application } = getContext('external');
 
   export let elementRoot;
-  export let actor;
+  const actor = application.options.actor;
   let healthBarText;
   let currHP;
   let maxHP;
@@ -35,52 +34,39 @@
 
   $: application.reactive.headerButtonNoClose = startedLongRest;
 
-  let variant = game.settings.get("dnd5e", "restVariant");
-  let promptNewDay = variant !== "gritty";
-  let newDay = variant === "normal";
-  
-  if (game.modules.get("foundryvtt-simple-calendar")?.active) {
-    promptNewDay = false;
-    newDay = false;
-    let API = SimpleCalendar.api;
-    let currentHour = API.currentDateTime().hour;
-    let currentMinute =  API.currentDateTime().minute;
-    switch (game.settings.get("dnd5e", "restVariant")) {
-        case "epic":
-	    if (currentHour == 0) newDay = true;
-            break;
-        case "gritty":
-            newDay = true;
-            break;
-        default:
-            if (currentHour <= 7)  newDay = true;
-    }
-  }
+  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const timeChanges = lib.getTimeChanges(false);
+  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
+  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "gritty";
 
   let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
   let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
   let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
   let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
-  const actorNeedsNoFoodWater = getProperty(actor, `flags.dnd5e.noFoodWater`);
-  const enableFoodAndWater = getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && !actorNeedsNoFoodWater;
-
   const showArmorCheckbox = getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && workflow.healthData.hasNonLightArmor;
-
-  let {
-    actorRequiredFood,
-    actorRequiredWater,
-    actorFoodSatedValue,
-    actorWaterSatedValue
-  } = getActorConsumableValues(actor);
 
   let healthData = workflow.healthData;
   updateHealthBarText();
 
   let selectedHitDice = Object.entries(healthData.availableHitDice).filter(entry => entry[1])?.[0]?.[0];
 
-  export async function requestSubmit() {
-    if (enableRollHitDice && healthData.hitDiceSpent === 0 && healthPercentageToGain < 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
+  async function nextStep() {
+    activeStep = Math.min(workflow.steps.length, activeStep + 1);
+  }
+
+  async function prevStep() {
+    activeStep = Math.max(0, activeStep - 1);
+  }
+
+  async function requestSubmit() {
+
+    if (enableRollHitDice
+      && healthData.hitDiceSpent === 0
+      && healthPercentageToGain < 0.75
+      && workflow.healthRegained === 0
+      && workflow.totalHitDice > 0
+    ) {
       const doContinue = await TJSDialog.confirm({
         title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
         content: {
@@ -100,7 +86,9 @@
       })
       if (!doContinue) return false;
     }
+
     form.requestSubmit();
+
   }
 
   async function updateSettings() {
@@ -181,6 +169,8 @@
     })
   }
 
+  let activeStep = 0;
+
 </script>
 
 <svelte:options accessors={true}/>
@@ -189,88 +179,110 @@
   <form bind:this={form} on:submit|preventDefault={updateSettings} autocomplete=off id="short-rest-hd"
         class="dialog-content">
 
-    {#if enableFoodAndWater}
-      <Tabs bind:activeTab tabs={[
-            { value: "rest", icon: "fas fa-bed", label: "REST-RECOVERY.Dialogs.LongRest.RestTab" },
-            {
-                value: "foodwater", icon: "fas fa-drumstick-bite", label: "REST-RECOVERY.Dialogs.LongRest.FoodAndWaterTab",
-                highlight: (actorRequiredFood && actorFoodSatedValue < actorRequiredFood) || (actorRequiredWater && actorWaterSatedValue < actorRequiredWater)
-            }
-        ]}/>
+    {#if workflow.steps.length > 1}
+      <Steps steps={workflow.steps} bind:activeStep={activeStep}/>
     {/if}
 
-    <section class="tab-body">
+    {#if activeStep === 0}
 
-      <div class="tab" class:active={activeTab === "rest"} data-group="primary" data-tab="rest">
+      {#if usingDefaultSettings}
+        <p>{localize("DND5E.LongRestHint")}</p>
+      {:else}
+        <p>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}</p>
+        <p class="notes">
+          <a style="color: var(--color-text-hyperlink);"
+             on:click={showCustomRulesDialog}>
+            {localize("REST-RECOVERY.Dialogs.LongRest.CustomRulesLink")}
+          </a>
+        </p>
+      {/if}
 
-        {#if usingDefaultSettings}
-          <p>{localize("DND5E.LongRestHint")}</p>
-        {:else}
-          <p>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}</p>
-          <p class="notes"><a style="color: var(--color-text-hyperlink);"
-                              on:click={showCustomRulesDialog}>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRulesLink")}</a>
-          </p>
+      {#if !showStartLongRestButton}
+        {#if enableRollHitDice}
+          <HitDieRoller
+            bind:selectedHitDice="{selectedHitDice}"
+            bind:healthData="{healthData}"
+            onHitDiceFunction="{rollHitDice}"
+            onAutoFunction="{autoRollHitDie}"
+            workflow="{workflow}"
+          />
         {/if}
 
-        {#if !showStartLongRestButton}
-          {#if enableRollHitDice}
-            <HitDieRoller
-              bind:selectedHitDice="{selectedHitDice}"
-              bind:healthData="{healthData}"
-              onHitDiceFunction="{rollHitDice}"
-              onAutoFunction="{autoRollHitDie}"
-              workflow="{workflow}"
-            />
-          {/if}
-
-          {#if promptNewDay}
-            <div class="form-group">
-              <label>{localize("DND5E.NewDay")}</label>
-              <input type="checkbox" name="newDay" bind:checked={newDay}/>
-              <p class="hint">{localize("DND5E.NewDayHint")}</p>
-            </div>
-          {/if}
+        {#if promptNewDay || newDay}
+          <div class="form-group">
+            <label>
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayTitle" : "DND5E.NewDay")}
+            </label>
+            {#if promptNewDay}
+              <input type="checkbox" bind:checked={newDay}/>
+            {/if}
+            <p class="hint">
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
+            </p>
+          </div>
         {/if}
 
-        {#if showHealthBar}
-          <HealthBar text="{healthBarText}" progress="{healthPercentage}" progressGhost="{healthPercentageToGain}"/>
-        {/if}
+      {/if}
 
-      </div>
+      {#if showHealthBar}
+        <HealthBar text="{healthBarText}" progress="{healthPercentage}" progressGhost="{healthPercentageToGain}"/>
+      {/if}
 
-      {#if enableFoodAndWater && (actorRequiredFood || actorRequiredWater)}
-        <div class="tab" class:active={activeTab === "foodwater"} data-group="primary" data-tab="foodwater">
-          <FoodWaterTab {actor} {workflow}/>
+      {#if showArmorCheckbox}
+        <div class="form-group">
+          <label>{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecovery")}</label>
+          <input type="checkbox" bind:checked={healthData.removeNonLightArmor}/>
+          <p class="hint">{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecoveryHint")}</p>
         </div>
       {/if}
 
-    </section>
+    {:else}
 
-    {#if showArmorCheckbox}
-      <div class="form-group">
-        <label>{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecovery")}</label>
-        <input type="checkbox" bind:checked={healthData.removeNonLightArmor}/>
-        <p class="hint">{localize("REST-RECOVERY.Dialogs.LongRest.ArmorRecoveryHint")}</p>
-      </div>
+      <svelte:component this={workflow.steps[activeStep].component} {workflow}/>
+
     {/if}
 
-    {#if showStartLongRestButton && activeTab !== "foodwater"}
+    {#if showStartLongRestButton}
       <div class="form-group" style="margin: 0.5rem 0;">
         <p class="notes">{localize("REST-RECOVERY.Dialogs.LongRest.BeginExplanation")}</p>
       </div>
     {/if}
+
     <footer class="flexrow" style="margin-top:0.5rem;">
-      {#if !showStartLongRestButton}
-        <button type="button" class="dialog-button" on:click={requestSubmit}><i
-          class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.FinishRest")}</button>
-      {:else}
+      {#if showStartLongRestButton}
         <button type="button" class="dialog-button" on:click={startLongRest}>
           <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.Begin")}
         </button>
+      {:else}
+        {#if workflow.steps.length > 1 && !showStartLongRestButton}
+          <button type="button" class="dialog-button" disabled={activeStep === 0} on:click={() => { prevStep(); }}>
+            <i class="fas fa-chevron-left"></i> {localize("REST-RECOVERY.Dialogs.RestSteps.Prev")}
+          </button>
+        {/if}
+
+        {#if activeStep === workflow.steps.length - 1}
+          <button type="button" class="dialog-button" on:click={requestSubmit}>
+            <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.FinishRest")}
+          </button>
+        {:else}
+          <button type="button" class="dialog-button" on:click={() => { nextStep(); }}>
+            {localize("REST-RECOVERY.Dialogs.RestSteps.Next")} <i class="fas fa-chevron-right"></i>
+          </button>
+        {/if}
+
       {/if}
-      <button type="button" class="dialog-button" on:click={cancel}><i class="fas fa-times"></i> {localize("Cancel")}
-      </button>
     </footer>
 
   </form>
 </ApplicationShell>
+
+<style lang="scss">
+
+  .dialog-button {
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+</style>

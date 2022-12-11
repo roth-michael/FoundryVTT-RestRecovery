@@ -54,7 +54,7 @@ function patch_shortRest() {
   
       // Display a Dialog for rolling hit dice
       if ( config.dialog ) {
-        try { config.newDay = await ShortRestDialog.show({ actor: this }, dialogOptions);
+        try { config.newDay = await ShortRestDialog.show({ ...config, actor: this }, dialogOptions);
         } catch(err) { return; }
       }
   
@@ -96,7 +96,7 @@ function patch_longRest() {
       RestWorkflow.make(this, true);
   
       if ( config.dialog ) {
-        try { config.newDay = await LongRestDialog.show({ actor: this }, dialogOptions); }
+        try { config.newDay = await LongRestDialog.show({ ...config, actor: this }, dialogOptions); }
         catch(err) { return; }
       }
   
@@ -141,6 +141,10 @@ function patch_rest() {
         longRest,
         newDay
       };
+
+      const workflow = RestWorkflow.get(this);
+      result.updateData = await workflow._handleExhaustion(result.updateData);
+      result.updateItems = await workflow._handleFoodAndWaterItems(result.updateItems);
   
       /**
        * A hook event that fires after rest result is calculated, but before any updates are performed.
@@ -151,12 +155,6 @@ function patch_rest() {
        * @returns {boolean}          Explicitly return `false` to prevent the rest updates from being performed.
        */
       if ( Hooks.call("dnd5e.preRestCompleted", this, result) === false ) return result;
-      
-      if (longRest) {
-        const workflow = RestWorkflow.get(this);
-        result.updateData = await workflow._handleExhaustion(result.updateData);
-        result.updateItems = await workflow._handleFoodAndWaterItems(result.updateItems);
-      }
       
       // Perform updates
       await this.update(result.updateData);

@@ -1,42 +1,43 @@
 <script>
-    import { tweened } from "svelte/motion";
-    import { cubicOut } from "svelte/easing";
+  import { tweened } from "svelte/motion";
+  import { cubicOut } from "svelte/easing";
 
-    export let text;
-    export let progress = 0;
-    export let progressGhost = 0;
+  export let text;
+  export let progress = 0;
+  export let progressGhost = 0;
 
-    export let progressBar = tweened(0, {
-        duration: 400,
-        easing: cubicOut,
-    });
+  export let progressBar = tweened(0, {
+    duration: 400,
+    easing: cubicOut,
+  });
 
-    export let progressBarGhost = tweened(0, {
-        duration: 400,
-        easing: cubicOut,
-    });
+  export let progressBarGhost = tweened(0, {
+    duration: 400,
+    easing: cubicOut,
 
-    $: progress, updateProgress();
-    $: progressGhost, updateProgress();
+  });
 
-    function updateProgress(){
-        progressBar.set(progress);
-        progressBarGhost.set(progressGhost);
-    }
+  $: progress, updateProgress();
+  $: progressGhost, updateProgress();
+
+  function updateProgress() {
+    progressBar.set(progress);
+    progressBarGhost.set(progressGhost);
+  }
 
 </script>
 
 <div>
-    <div class="healthbar">
-        <div class="progress_ghost" style="width:{$progressBarGhost*100}%;"></div>
-        <div class="progress" style="width:{$progressBar*100}%;"></div>
-        <div class="overlay">{text}</div>
-    </div>
+  <div class="healthbar">
+    <div class="progress_ghost" style="width:{$progressBarGhost*100}%;"></div>
+    <div class="progress" style="width:{$progressBar*100}%;"></div>
+    <div class="overlay">{text}</div>
+  </div>
 </div>
 
 <style lang="scss">
 
-  .healthbar{
+  .healthbar {
     width: 100%;
     height: 20px;
     border-radius: 5px;
@@ -47,7 +48,7 @@
       height: 100%;
     }
 
-    .progress_ghost{
+    .progress_ghost {
       z-index: 1;
       background-color: #bb7777;
     }
@@ -59,7 +60,7 @@
       top: -20px;
     }
 
-    .overlay{
+    .overlay {
       z-index: 3;
       position: relative;
       top: -40px;

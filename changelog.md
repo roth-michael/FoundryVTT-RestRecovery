@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.4.0
+- Added Simple Calendar support, prompting rests now automatically advances the current date & time
+- Added One D&D exhaustion support, and integrated custom active effect into DFred's Conventient Effects
+- Added support for spell slot point-like recovery for all classes (similar to Wizards' Arcane Recovery) on long rests
+- Added further support for heroic and gritty rest variants - if you are playing with the gritty variant, food can be consumed during short rests, and long rests require 7 days worth of food
+- Improved the long/short rest UI; removed tabs and introduced steps to better inform users of things they might want to do
+- Fixed error where a player with a 1st level bard without the Song of Rest feature would throw an error every time another player would roll a hit die
+
 ## Version 1.3.10
 - Made prompt rest button darker
 
