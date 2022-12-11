@@ -1030,7 +1030,10 @@ export default class RestWorkflow {
       for (let [level, slot] of Object.entries(this.actor.system.spells)) {
         if (!slot.override && !slot.max) continue;
         let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
-        if (level !== "pact" && customSpellRecovery) continue;
+        if (level !== "pact" && customSpellRecovery){
+          updates[`system.spells.${level}.value`] = 0;
+          continue;
+        }
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof multiplier === "string"
           ? Math.max(lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
