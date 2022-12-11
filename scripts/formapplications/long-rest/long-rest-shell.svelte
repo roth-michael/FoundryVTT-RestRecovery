@@ -86,6 +86,7 @@
       })
       if (!doContinue) return false;
     }
+
     form.requestSubmit();
 
   }
@@ -168,7 +169,7 @@
     })
   }
 
-  let activeStep = 1;
+  let activeStep = 0;
 
 </script>
 

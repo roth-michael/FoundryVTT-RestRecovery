@@ -1,4 +1,5 @@
 import CONSTANTS from "./constants.js";
+import { getSetting } from "./lib/lib.js";
 
 export default class plugins {
 
@@ -18,22 +19,52 @@ export default class plugins {
     if (!game?.dfreds?.effectInterface) return;
     const DFREDS = game?.dfreds?.effectInterface;
 
+    const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
+
     const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
-    const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
+
     const actorUuid = actor.uuid;
 
-    for (let level = 1; level <= 5; level++) {
-      let levelName = `Exhaustion ${level}`;
-      if (levelName !== exhaustionEffectName && DFREDS.hasEffectApplied(levelName, actorUuid)) {
+    if (!oneDndExhaustionEnabled) {
+      for (let level = 1; level <= 5; level++) {
+        let levelName = `Exhaustion ${level}`;
+        if (levelName !== `Exhaustion ${exhaustionLevel}` && DFREDS.hasEffectApplied(levelName, actorUuid)) {
+          await DFREDS.removeEffect({
+            effectName: levelName, uuid: actorUuid
+          });
+        }
+      }
+
+      if (exhaustionLevel >= 1 && exhaustionLevel <= 6) {
+        await DFREDS.addEffect({ effectName: `Exhaustion ${exhaustionLevel}`, uuid: actorUuid });
+      }
+    } else {
+      const presetEffect = game?.dfreds?.effects.customEffects.find(effect => {
+        return getProperty(effect.flags, "rest-recovery.exhaustion-effect");
+      });
+      if (exhaustionLevel >= 1) {
+        await DFREDS.addEffect({
+          effectName: presetEffect.name,
+          uuid: actorUuid
+        });
+      }else{
         await DFREDS.removeEffect({
-          effectName: levelName, uuid: actorUuid
+          effectName: presetEffect.name,
+          uuid: actorUuid
         });
       }
     }
+  }
 
-    if (exhaustionLevel >= 1 && exhaustionLevel <= 5) {
-      await DFREDS.addEffect({ effectName: exhaustionEffectName, uuid: actorUuid });
+  static async createConvenientEffect(){
+    if(game?.dfreds?.effects.customEffects.find(effect => {
+      return getProperty(effect.flags, "rest-recovery.exhaustion-effect");
+    })){
+      return;
     }
+    return game?.dfreds?.effectInterface.createNewCustomEffectsWith({
+      activeEffects: [oneDndExhaustionEffectData]
+    });
   }
 
   static async handleCombatUtilityBelt(actor, data) {
@@ -56,4 +87,44 @@ export default class plugins {
       await CUB.addCondition(exhaustionEffectName, actor);
     }
   }
+}
+
+const oneDndExhaustionEffectData = {
+  "label": "Exhaustion (One D&D)",
+  "description": "One D&D exhaustion applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Once a character reaches 10 levels of exhaustion, they perish.",
+  "icon": "icons/svg/downgrade.svg",
+  "tint": null,
+  "seconds": null,
+  "rounds": null,
+  "turns": null,
+  "isDynamic": false,
+  "isViewable": true,
+  "flags": {
+    "isCustomConvenient": true,
+    "convenientDescription": "One D&D exhaustion applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Once a character reaches 10 levels of exhaustion, they perish.",
+    "rest-recovery": {
+      "exhaustion-effect": true
+    }
+  },
+  "changes": [{
+    "key": "system.bonuses.All-Attacks",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  }, {
+    "key": "system.bonuses.abilities.save",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  }, {
+    "key": "system.bonuses.abilities.check",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  }, {
+    "key": "system.bonuses.spell.dc",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  }]
 }

@@ -2,6 +2,7 @@ import CONSTANTS from "./constants.js";
 import SettingsShim from "./formapplications/settings/settings.js";
 import { getSetting } from "./lib/lib.js";
 import { writable } from "svelte/store";
+import plugins from "./plugins.js";
 
 class RestRecoverySettings {
 
@@ -14,7 +15,7 @@ class RestRecoverySettings {
     this.initialized = false;
   }
 
-  get activeProfileData(){
+  get activeProfileData() {
     return this.profiles?.[this.activeProfile];
   }
 
@@ -24,8 +25,8 @@ class RestRecoverySettings {
     return value;
   }
 
-  set(key, value){
-    if(this.settings.get(key)) {
+  set(key, value) {
+    if (this.settings.get(key)) {
       this.settings.get(key).store.set(value);
     }
     return game.settings.set(this.namespace, key, value);
@@ -33,7 +34,7 @@ class RestRecoverySettings {
 
   register(key, options) {
     game.settings.register(this.namespace, key, options);
-    if(!options.group) return;
+    if (!options.group) return;
     const value = getSetting(key);
     const store = writable(value);
     const setting = {
@@ -42,12 +43,12 @@ class RestRecoverySettings {
     };
     this.settings.set(key, setting);
     store.subscribe((val) => {
-      if(!this.initialized) return;
+      if (!this.initialized) return;
       setting.value = val;
       this.activeProfileData[key] = val;
       this.validateSettings(key);
     });
-    if(setting.hidden) return;
+    if (setting.hidden) return;
     const group = this.groupedSettings.get(options.group) ?? [];
     group.push(setting);
     this.groupedSettings.set(options.group, group);
@@ -58,72 +59,76 @@ class RestRecoverySettings {
     setting.store.set(setting.default);
   }
 
-  resetAll(){
-    for(const key of this.settings.keys()){
+  resetAll() {
+    for (const key of this.settings.keys()) {
       this.reset(key);
     }
   }
 
-  validateSettings(changedSettingKey = false){
+  validateSettings(changedSettingKey = false) {
     const settingsToValidate = Array.from(this.settings).filter(([_, setting]) => {
       return setting?.dependsOn && (!changedSettingKey || setting?.dependsOn.includes(changedSettingKey))
     });
-    for(const [key, setting] of settingsToValidate){
+    for (const [key, setting] of settingsToValidate) {
       const disabled = setting.validate(this.settings);
       setting.disabled.set(disabled);
-      if(disabled){
+      if (disabled) {
         this.reset(key)
       }
     }
   }
 
-  async updateSettingsFromActiveProfile(persist = false){
-    for(const [key, setting] of this.settings){
+  async updateSettingsFromActiveProfile(persist = false) {
+    for (const [key, setting] of this.settings) {
       const value = this.activeProfileData[key];
       setting.store.set(value);
-      if(persist){
+      if (persist) {
         await this.set(key, value)
       }
     }
   }
 
-  async setActiveProfile(inProfile, persist = false){
+  async setActiveProfile(inProfile, persist = false) {
     this.activeProfile = inProfile;
     await this.updateSettingsFromActiveProfile(persist);
-    if(!persist) return;
+    if (!persist) return;
     return this.set(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE, this.activeProfile);
   }
 
-  async createProfile(inProfile, inProfileData, setActive = false, persist = false){
+  async createProfile(inProfile, inProfileData, setActive = false, persist = false) {
     this.profiles[inProfile] = inProfileData;
     await this.updateProfiles(this.profiles, persist);
-    if(setActive){
+    if (setActive) {
       await this.setActiveProfile(inProfile, persist);
     }
   }
 
-  async updateProfiles(inProfiles, persist = false){
+  async updateProfiles(inProfiles, persist = false) {
     this.profiles = inProfiles;
     await this.updateSettingsFromActiveProfile(persist);
-    if(!persist) return;
+    if (!persist) return;
     return this.set(CONSTANTS.SETTINGS.MODULE_PROFILES, this.profiles)
   }
 
-  async deleteProfile(inProfile, persist = false){
+  async deleteProfile(inProfile, persist = false) {
     delete this.profiles[inProfile];
     await this.updateProfiles(this.profiles, persist);
     return this.setActiveProfile("Default", persist);
   }
 
-  async persistSettings(){
+  async persistSettings() {
     await this.updateProfiles(this.profiles, true);
     await this.setActiveProfile(this.activeProfile, true);
+    if (this.settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value
+      && this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) {
+      await plugins.createConvenientEffect();
+    }
   }
 
   cleanup() {
-    for(const [key, setting] of this.settings){
+    for (const [key, setting] of this.settings) {
       setting.store.set(getSetting(key));
-      if(!setting.customFormula) continue;
+      if (!setting.customFormula) continue;
       setting.customFormulaSetting = this.settings.get(setting.customFormula);
     }
     this.validateSettings();

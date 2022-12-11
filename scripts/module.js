@@ -19,41 +19,40 @@ Hooks.once("init", () => {
   registerSheetOverrides();
   RestWorkflow.initialize();
   console.log("Rest Recovery 5e | Initialized");
+
+  Hooks.on("renderPlayerList", (app, html) => {
+
+    if (!game.user.isGM || !getSetting(CONSTANTS.SETTINGS.SHOW_PLAYER_LIST_REST_BUTTON)) return;
+
+    const minimalUI = game.modules.get('minimal-ui')?.active;
+    const itemPiles = game.modules.get('item-piles')?.active;
+
+    const classes = "rest-recovery-prompt-rest-button" + (minimalUI ? " minimal-ui-button" : "");
+
+    let parent = html;
+    const tradeButton = html.find(".item-piles-player-list-trade-button");
+    if (itemPiles && tradeButton.length && !minimalUI) {
+      tradeButton.html(`<i class="fas fa-handshake"></i> Trade`);
+      tradeButton.addClass(classes);
+      parent = $(`<div class="rest-recovery-button-parent"></div>`);
+      parent.append(tradeButton);
+      html.append(parent);
+    }
+    const text = !minimalUI ? (itemPiles && tradeButton.length ? "Rest" : "Prompt Rest") : "";
+    const button = $(`<button type="button" class="${classes}"><i class="fas fa-bed"></i>${text}</button>`);
+
+    button.click(() => {
+      PromptRestDialog.show();
+    });
+
+    parent.append(button);
+
+  });
 });
 
 Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
   //new SettingsShim().render(true);
-  game.actors.getName("Akra (Dragonborn Cleric)").longRest()
+  // game.actors.getName("Akra (Dragonborn Cleric)").longRest()
 })
-
-
-Hooks.on("renderPlayerList", (app, html) => {
-
-  if (!game.user.isGM || !getSetting(CONSTANTS.SETTINGS.SHOW_PLAYER_LIST_REST_BUTTON)) return;
-
-  const minimalUI = game.modules.get('minimal-ui')?.active;
-  const itemPiles = game.modules.get('item-piles')?.active;
-
-  const classes = "rest-recovery-prompt-rest-button" + (minimalUI ? " minimal-ui-button" : "");
-
-  let parent = html;
-  const tradeButton = html.find(".item-piles-player-list-trade-button");
-  if (itemPiles && tradeButton.length && !minimalUI) {
-    tradeButton.html(`<i class="fas fa-handshake"></i> Trade`);
-    tradeButton.addClass(classes);
-    parent = $(`<div class="rest-recovery-button-parent"></div>`);
-    parent.append(tradeButton);
-    html.append(parent);
-  }
-  const text = !minimalUI ? (itemPiles && tradeButton.length ? "Rest" : "Prompt Rest") : "";
-  const button = $(`<button type="button" class="${classes}"><i class="fas fa-bed"></i>${text}</button>`);
-
-  button.click(() => {
-    PromptRestDialog.show();
-  });
-
-  parent.append(button);
-
-});

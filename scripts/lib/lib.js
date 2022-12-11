@@ -96,7 +96,7 @@ export function isRealNumber(inNumber) {
     && isFinite(inNumber);
 }
 
-export function getActorConsumableValues(actor) {
+export function getActorConsumableValues(actor, grittyLongRest) {
 
   let actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
   let actorWaterSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
@@ -114,6 +114,9 @@ export function getActorConsumableValues(actor) {
   let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
     ? actorRequiredWaterUnits
     : waterUnitsSetting;
+
+  actorRequiredFood *= grittyLongRest ? 7 : 1;
+  actorRequiredWater *= grittyLongRest ? 7 : 1;
 
   if (actorNeedsNoFoodWater) {
     actorRequiredFood = 0;

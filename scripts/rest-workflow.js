@@ -196,7 +196,7 @@ export default class RestWorkflow {
       this.healthData.hitPointsToRegainFromRest = hitPointsToRegainFromRest;
     }
 
-    this.foodWaterRequirement = lib.getActorConsumableValues(this.actor);
+    this.foodWaterRequirement = lib.getActorConsumableValues(this.actor, this.longRest && this.restVariant === "gritty");
 
     this.refreshHealthData();
   }
@@ -469,7 +469,7 @@ export default class RestWorkflow {
 
     let hpRegained = 0;
 
-    if (!this.features.usedSongOfRest) {
+    if (!this.features.usedSongOfRest && this.features.bardFeature) {
       const formula = getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
       const roll = lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
@@ -808,17 +808,22 @@ export default class RestWorkflow {
         }
       }
 
-      updates['system.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, 6));
-      if (lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION) && updates['system.attributes.exhaustion'] === 6) {
-        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.ExhaustionDeath", { actorName: this.actor.name }));
-      }
-
       if (exhaustionGain) {
         this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.Exhaustion", {
           exhaustion: actorExhaustion - actorInitialExhaustion
         }));
       } else if (exhaustionSave) {
         this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.NoExhaustion"));
+      }
+
+      const maxExhaustion = lib.getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) ? 10 : 6;
+
+      updates['system.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, maxExhaustion));
+      if (updates['system.attributes.exhaustion'] === maxExhaustion) {
+        this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.ExhaustionDeath", {
+          actorName: this.actor.name,
+          max_levels: maxExhaustion
+        }));
       }
     }
 
