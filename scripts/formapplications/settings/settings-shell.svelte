@@ -4,8 +4,10 @@
   import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
   import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
   import { gameSettings } from "../../settings.js";
+  import { TJSDialog } from "@typhonjs-fvtt/runtime/svelte/application";
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
+  import SaveProfileDialog from "./SaveProfileDialog.svelte";
 
   const { application } = getContext('external');
 
@@ -30,7 +32,9 @@
       return;
     }
 
-    return gameSettings.deleteProfile(gameSettings.activeProfile);
+    await gameSettings.deleteProfile(gameSettings.activeProfile);
+
+    gameSettings.profiles = gameSettings.profiles;
 
   }
 
@@ -58,7 +62,9 @@
 
     const newProfile = foundry.utils.duplicate(gameSettings.activeProfileData);
 
-    return gameSettings.createProfile(result, newProfile, true);
+    await gameSettings.createProfile(result, newProfile, true);
+
+    gameSettings.profiles = gameSettings.profiles;
 
   }
 

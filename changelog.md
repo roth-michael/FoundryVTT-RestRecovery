@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.4.1
+- Fixed issue with module profiles
+
 ## Version 1.4.0
 - Added Simple Calendar support, prompting rests now automatically advances the current date & time
 - Added One D&D exhaustion support, and integrated custom active effect into DFred's Conventient Effects

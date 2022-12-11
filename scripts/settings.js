@@ -16,7 +16,7 @@ class RestRecoverySettings {
   }
 
   get activeProfileData() {
-    return this.profiles?.[this.activeProfile];
+    return this.profiles?.[this.activeProfile] ?? {};
   }
 
   get(key, localize = false) {
@@ -80,7 +80,7 @@ class RestRecoverySettings {
 
   async updateSettingsFromActiveProfile(persist = false) {
     for (const [key, setting] of this.settings) {
-      const value = this.activeProfileData[key];
+      const value = this.activeProfileData?.[key] ?? setting.default;
       setting.store.set(value);
       if (persist) {
         await this.set(key, value)
