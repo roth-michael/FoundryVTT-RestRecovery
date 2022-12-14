@@ -83,7 +83,13 @@
       "WaterNoneNone": "N'a pas bu de la journée.",
       "NoExhaustion": "Mais a évité l'épuisement.",
       "Exhaustion": "Et souffre de {exhaustion} niveau d'épuisement.",
-      "ExhaustionDeath": "Malheureusement, {actorName} a péri en atteignant le niveau 6 d'épuisement."
+      "ExhaustionDeath": "Malheureusement, {actorName} a péri en atteignant le niveau 6 d'épuisement.",
+      "ExhaustionArmor": "They chose to keep their armor on, and recovered none of their exhaustion.",
+      "HitDiceArmor": "They recovered less hit dice than normal because they rested in their armor.",
+      "NoHitDiceArmor": "They recovered none of their hit dice because they rested in their armor.",
+      "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice.",
+      "CouldNotLongRest": " could not take a long rest.",
+      "CouldNotShortRest": " could not take a short rest."
 
       "Dialogs": {
         "SaveProfile": {

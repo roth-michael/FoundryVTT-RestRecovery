@@ -87,10 +87,27 @@
     const timeChanges = lib.getTimeChanges(restType === "longRest");
     await game.time.advance(timeChanges.restTime);
 
-    SocketHandler.emit(SocketHandler.PROMPT_REST, {
-      userActors: [...configuration],
-      restType
-    })
+    let restText = (restType === "longRest") ? game.i18n.format("REST-RECOVERY.Chat.CouldNotLongRest") : game.i18n.format("REST-RECOVERY.Chat.CouldNotShortRest");
+
+    configuration.forEach((element) => {
+      if (getProperty(game.actors.get(element.split("-")[1]), `flags.dae.RR5EPrevent${restType}`)) {
+          configuration.delete(element);
+          ChatMessage.create({
+            content: `<br>${game.actors.get(element.split("-")[1]).name} ${restText}`,
+            speaker: {
+                alias: game.actors.get(element.split("-")[1]).name
+              }
+          });
+      };
+    });
+
+    if (configuration.size) {
+      SocketHandler.emit(SocketHandler.PROMPT_REST, {
+       userActors: [...configuration],
+       restType
+     })
+    } 
+    
     application.options.resolve();
     application.close();
   }
