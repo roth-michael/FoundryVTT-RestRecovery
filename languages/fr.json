@@ -88,8 +88,8 @@
       "HitDiceArmor": "They recovered less hit dice than normal because they rested in their armor.",
       "NoHitDiceArmor": "They recovered none of their hit dice because they rested in their armor.",
       "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice.",
-      "CouldNotLongRest": " could not take a long rest.",
-      "CouldNotShortRest": " could not take a short rest."
+      "CouldNotLongRest": "{actorName} could not take a long rest.",
+      "CouldNotShortRest": "{actorName} could not take a short rest."
 
       "Dialogs": {
         "SaveProfile": {

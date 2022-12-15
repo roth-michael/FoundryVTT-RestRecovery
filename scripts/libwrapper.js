@@ -22,6 +22,16 @@ export default function registerLibwrappers() {
   
 }
 
+function preventRestChatMessage(restType, actor) {
+  ChatMessage.create({
+      content: "<p>" + localize("REST-RECOVERY.Chat.CouldNot" + (restType === "longRest" ? "LongRest" : "ShortRest"), {
+          actorName: actor.name
+      }) + "</p>",
+      speaker: {
+          alias: actor.name
+      }
+  });
+}
 
 function patch_shortRest() {
   libWrapper.ignore_conflicts(CONSTANTS.MODULE_NAME, ["dnd5e-helpers"], [
@@ -44,6 +54,7 @@ function patch_shortRest() {
        * @param {RestConfiguration} config  Configuration options for the rest.
        * @returns {boolean}                 Explicitly return `false` to prevent the rest from being started.
        */
+      if (getProperty(this, `flags.dae.rest-recovery.prevent.shortRest`)) return preventRestChatMessage("shortRest", this);
       if ( Hooks.call("dnd5e.preShortRest", this, config) === false ) return;
       
       RestWorkflow.make(this);
@@ -91,6 +102,7 @@ function patch_longRest() {
        * @param {RestConfiguration} config  Configuration options for the rest.
        * @returns {boolean}                 Explicitly return `false` to prevent the rest from being started.
        */
+      if (getProperty(this, `flags.dae.rest-recovery.prevent.longRest`)) return preventRestChatMessage("longRest", this);
       if ( Hooks.call("dnd5e.preLongRest", this, config) === false ) return;
       
       RestWorkflow.make(this, true);
