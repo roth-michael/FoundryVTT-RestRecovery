@@ -456,6 +456,10 @@
             "Hint": "Aqui você pode configurar como o recurso Cura do Sangue Negro de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
           }
         }
+      },
+      "Warnings": {
+        "PreventedLongRest" : "You cannot long rest because you are under an effect that prevents you from doing so!",
+        "PreventedShortRest" :  "You cannot short rest because you are under an effect that prevents you from doing so!"
       }
     }
 }

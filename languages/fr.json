@@ -90,7 +90,7 @@
       "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice.",
       "CouldNotLongRest": "{actorName} could not take a long rest.",
       "CouldNotShortRest": "{actorName} could not take a short rest."
-
+    },
       "Dialogs": {
         "SaveProfile": {
           "Title": "Créer un profil",
@@ -426,6 +426,10 @@
             "Hint": "Vous pouvez configurer ici le nom capacité Récupération des sangs-noirs (verdan) dans votre partie. Il peut s'agir d'une chaîne localisée."
           }
         }
+      },
+      "Warnings": {
+        "PreventedLongRest" : "You cannot long rest because you are under an effect that prevents you from doing so!",
+        "PreventedShortRest" :  "You cannot short rest because you are under an effect that prevents you from doing so!"
       }
     }
   }
