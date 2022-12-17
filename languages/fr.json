@@ -5,6 +5,10 @@
       "Druid": "Druide",
       "Bard": "Barde"
     },
+    "Warnings": {
+      "PreventedLongRest": "You cannot long rest because you are under an effect that prevents you from doing so!",
+      "PreventedShortRest": "You cannot short rest because you are under an effect that prevents you from doing so!"
+    },
     "FeatureNames": {
       "ArcaneRecovery": "Restauration magique",
       "NaturalRecovery": "Récupération naturelle",
@@ -91,345 +95,341 @@
       "CouldNotLongRest": "{actorName} could not take a long rest.",
       "CouldNotShortRest": "{actorName} could not take a short rest."
     },
-      "Dialogs": {
-        "SaveProfile": {
-          "Title": "Créer un profil",
-          "Enter": "Tapez le nom du profil :",
-          "OverrideProfile": "Votre nouveau profil ne peut pas avoir le même nom que l'ancien",
-          "Empty": "Votre nouveau profil ne peut pas avoir titre vide"
-        },
-        "DiscardChanges": {
-          "Title": "Annuler les modifications",
-          "Content": "Vous avez des modifications non sauvegardées. Êtes-vous certain de vouloir changer de profil ?"
-        },
-        "ResetDefaultChanges": {
-          "Title": "Réinitialiser les paramètres",
-          "Content": "Êtes-vous certain de vouloir réinitialiser les paramètres par défaut du profil par défaut ?"
-        },
-        "DeleteProfile": {
-          "Title": "Supprimer le profil",
-          "Content": "Êtes-vous certain de vouloir supprimer le profil \"{profile}\" ?"
-        },
-        "ShortRest": {
-          "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
-          "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
-          "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
-          "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
-          "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
-          "NoMoreRests": "Aucun repos court restant",
-          "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de <strong>{max_short_rests}</strong> repos courts par repos long.",
-          "ShortRestLimit": "Vous pouvez encore faire <strong>{num_short_rests}</strong> repos courts avant de devoir faire un repos long.",
-          "ShortRestLimitSmall": "Les règles de votre partie autorisent un maximum de <strong>{max_short_rests}</strong> par repos long.",
-          "AutoRoll": "Auto",
-          "MinHitDiceSpend": "Vous devez encore lancer <strong>{min_spend}</strong> dés de vie avant de pouvoir terminer votre repos court."
-        },
-        "ShortRestHealthWarning": {
-          "Title": "Terminer le repos court ?",
-          "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
-        },
-        "ShortRestHitDice": {
-          "Title": "Lancer des dés de vie ?",
-          "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Êtes-vous certain de vouloir continuer ?"
-        },
-        "ShortRestNoHitDice": {
-          "Title": "Aucun dé de vie restant",
-          "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Toutefois vous n'avez plus de dés de vie."
-        },
-        "LongRest": {
-          "Begin": "Commencer le repos long",
-          "BeginExplanation": "En commençant votre repos long, vous allez récupérer une partie de vos dés de vie que vous pourrez ensuite lancer pour récupérer des points de vie.",
-          "CustomRules": "Vous jouez avec des règles personnalisées, ce qui signifie que vous pourriez récupérer de façon différente des points de vie, des dés de vie, des aptitudes de classe, des charges d'objets à usage limité et des emplacements de sort.",
-          "CustomRulesLink": "Voir les règles personnalisées.",
-          "RestTab": "Repos",
-          "FoodAndWaterTab": "Nourriture & eau",
-          "FoodRequirement": "Vous avez encore besoin de <strong>{food}</strong> unité(s) de nourriture pour la journée.",
-          "FoodSated": "Vous avez assez mangé pour la journée.",
-          "WaterRequirement": "Vous avez encore besoin de <strong>{water}</strong> unité(s) d'eau pour la journée.",
-          "WaterSated": "Vous avez assez bu pour la journée.",
-          "FoodAlmostExhaustion": "Si vous terminez la journée sans avoir manger la quantité requise de nourriture, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> dans <strong>{days} jours</strong>.",
-          "FoodExhaustion": "Parce que vous êtes affamé, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> si vous finnissez la journée sans manger la quantité requise de nourriture par jour.",
-          "NoWater": "Vous allez automatiquement souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> Si vous terminez la journée en buvant moins de la moitié d'eau requise par jour.",
-          "HalfWater": "Vous devez un jet de sauvegarde de Consitution DD {dc} ou souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> si vous terminez la journée sans boire la quantité requise d'eau par jour.",
-          "DragDrop": "Glissez et déposez des objets consommables, ou sélectionnez :",
-          "DayWorth": "Une utilisation de cet objet est l'équivalent d'une journée de {type}",
-          "ExternalFood": "Accès à une source externe de nourriture",
-          "ExternalFoodFull": "Manger jusqu'à être repu",
-          "ExternalFoodHalf": "Manger la moitié nécessaire par jour",
-          "ExternalWater": "Accès à une source externe d'eau",
-          "ExternalWaterFull": "Boire jusqu'à être hydraté",
-          "ExternalWaterHalf": "Boire la moitié nécessaire par jour",
-          "AmountToConsume": "Montant à consommer"
-        },
-        "LongRestWarning": {
-          "Title": "Terminer le repos long ?",
-          "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos long ?"
-        },
-        "LongRestSettingsDialog": {
-          "Title": "Paramètres de repos long",
-          "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
-        },
-        "Resources": {
-          "Configure": "Configuration de la récupération des ressources",
-          "Title": "Configuration des ressources",
-          "Name": "Nom",
-          "Value": "Valeur",
-          "Short": "Court",
-          "Long": "Long",
-          "RecoveryFormula": "Formule de récupération"
-        },
-        "ModuleConfig": {
-          "Title": "Configuration de Rest Recovery",
-          "General": "Paramètres généraux",
-          "LongRest": "Repos long",
-          "ShortRest": "Repos court",
-          "ItemNames": "Nommage",
-          "FoodAndWater": "Nourriture & eau",
-          "MoreToCome": "Plus de paramètres à venir !",
-          "Request": "Demander une nouvelle fonctionnalité ici.",
-          "Submit": "Soumettre les paramètres",
-          "ModuleProfile": "Profil :",
-          "ImportProfile": "Importer un profil",
-          "ExportProfile": "Exporter un profil"
-        },
-        "ItemOverrides": {
-          "Title": "Rest Recovery : Nourriture & eau",
-          "UsesCustomRecovery": "Récupération personnalisée",
-          "Type": "Type :",
-          "Enabled": "Activé",
-          "Formula": "Formule :",
-          "IsConsumable": "Est un consommable",
-          "DayWorth": "Une charge suffisante pour une journée complète",
-          "ChargesDescription": "Le système de nourriture et d'eau de Rest Recovery nécessite l'objet d'avoir des charges à utiliser. Une charge étant l'équivalent d'une unité de nourriture ou d'eau."
-        },
-        "AbilityUse": {
-          "Title": "Sélectionnez la quantité à consommer de l'objet :",
-          "DayWorthTitleBoth": "Ce type de consommable est l'équivalent d'une journée complète de nourriture et d'eau.",
-          "DayWorthTitleFood": "Ce type de consommable est l'équivalent d'une journée complète de nourriture.",
-          "DayWorthTitleWater": "Ce type de consommable est l'équivalent d'une journée complète d'eau'.",
-          "DayWorthTitleCont": "Vous n'aurez pas besoin de consommer quoique ce soit de ce type avant la journée prochaine. Vous ne pouvez pas consommer la moitié de ce type de consommable.",
-          "SatedFood": "Vous êtes déjà repu, vous ne tirerez aucun bénéfice de manger ceci.",
-          "NotSatedFood": "Vous devez manger {units} unités pour être repu.",
-          "SatedWater": "Vous êtes déjà hydraté, vous ne tirerez aucun bénéfice de boire ceci.",
-          "NotSatedWater": "Vous devez boire {units} unités pour être hydraté.",
-          "FullUnit": "Consommer une unité complète",
-          "HalfUnit": "Consommer une moité d'unité"
+    "Dialogs": {
+      "SaveProfile": {
+        "Title": "Créer un profil",
+        "Enter": "Tapez le nom du profil :",
+        "OverrideProfile": "Votre nouveau profil ne peut pas avoir le même nom que l'ancien",
+        "Empty": "Votre nouveau profil ne peut pas avoir titre vide"
+      },
+      "DiscardChanges": {
+        "Title": "Annuler les modifications",
+        "Content": "Vous avez des modifications non sauvegardées. Êtes-vous certain de vouloir changer de profil ?"
+      },
+      "ResetDefaultChanges": {
+        "Title": "Réinitialiser les paramètres",
+        "Content": "Êtes-vous certain de vouloir réinitialiser les paramètres par défaut du profil par défaut ?"
+      },
+      "DeleteProfile": {
+        "Title": "Supprimer le profil",
+        "Content": "Êtes-vous certain de vouloir supprimer le profil \"{profile}\" ?"
+      },
+      "ShortRest": {
+        "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
+        "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
+        "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
+        "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
+        "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
+        "NoMoreRests": "Aucun repos court restant",
+        "NoMoreRestsSmall": "Vous ne pouvez plus faire de repos courts. Les règles de votre partie permettent un maximum de <strong>{max_short_rests}</strong> repos courts par repos long.",
+        "ShortRestLimit": "Vous pouvez encore faire <strong>{num_short_rests}</strong> repos courts avant de devoir faire un repos long.",
+        "ShortRestLimitSmall": "Les règles de votre partie autorisent un maximum de <strong>{max_short_rests}</strong> par repos long.",
+        "AutoRoll": "Auto",
+        "MinHitDiceSpend": "Vous devez encore lancer <strong>{min_spend}</strong> dés de vie avant de pouvoir terminer votre repos court."
+      },
+      "ShortRestHealthWarning": {
+        "Title": "Terminer le repos court ?",
+        "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos court ?"
+      },
+      "ShortRestHitDice": {
+        "Title": "Lancer des dés de vie ?",
+        "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Êtes-vous certain de vouloir continuer ?"
+      },
+      "ShortRestNoHitDice": {
+        "Title": "Aucun dé de vie restant",
+        "Content": "Vous devez encore lancer au moins {num_dice} dés de vie avant de pouvoir terminer votre repos court. Toutefois vous n'avez plus de dés de vie."
+      },
+      "LongRest": {
+        "Begin": "Commencer le repos long",
+        "BeginExplanation": "En commençant votre repos long, vous allez récupérer une partie de vos dés de vie que vous pourrez ensuite lancer pour récupérer des points de vie.",
+        "CustomRules": "Vous jouez avec des règles personnalisées, ce qui signifie que vous pourriez récupérer de façon différente des points de vie, des dés de vie, des aptitudes de classe, des charges d'objets à usage limité et des emplacements de sort.",
+        "CustomRulesLink": "Voir les règles personnalisées.",
+        "RestTab": "Repos",
+        "FoodAndWaterTab": "Nourriture & eau",
+        "FoodRequirement": "Vous avez encore besoin de <strong>{food}</strong> unité(s) de nourriture pour la journée.",
+        "FoodSated": "Vous avez assez mangé pour la journée.",
+        "WaterRequirement": "Vous avez encore besoin de <strong>{water}</strong> unité(s) d'eau pour la journée.",
+        "WaterSated": "Vous avez assez bu pour la journée.",
+        "FoodAlmostExhaustion": "Si vous terminez la journée sans avoir manger la quantité requise de nourriture, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> dans <strong>{days} jours</strong>.",
+        "FoodExhaustion": "Parce que vous êtes affamé, vous allez automatiquement souffrir <strong>d'un niveau d'épuisement</strong> si vous finnissez la journée sans manger la quantité requise de nourriture par jour.",
+        "NoWater": "Vous allez automatiquement souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> Si vous terminez la journée en buvant moins de la moitié d'eau requise par jour.",
+        "HalfWater": "Vous devez un jet de sauvegarde de Consitution DD {dc} ou souffrir de <strong>{exhaustion} niveaux d'épuisement</strong> si vous terminez la journée sans boire la quantité requise d'eau par jour.",
+        "DragDrop": "Glissez et déposez des objets consommables, ou sélectionnez :",
+        "DayWorth": "Une utilisation de cet objet est l'équivalent d'une journée de {type}",
+        "ExternalFood": "Accès à une source externe de nourriture",
+        "ExternalFoodFull": "Manger jusqu'à être repu",
+        "ExternalFoodHalf": "Manger la moitié nécessaire par jour",
+        "ExternalWater": "Accès à une source externe d'eau",
+        "ExternalWaterFull": "Boire jusqu'à être hydraté",
+        "ExternalWaterHalf": "Boire la moitié nécessaire par jour",
+        "AmountToConsume": "Montant à consommer"
+      },
+      "LongRestWarning": {
+        "Title": "Terminer le repos long ?",
+        "Content": "Vous n'avez pas encore jeté de dés de vie, êtes-vous sûr de vouloir terminer le repos long ?"
+      },
+      "LongRestSettingsDialog": {
+        "Title": "Paramètres de repos long",
+        "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
+      },
+      "Resources": {
+        "Configure": "Configuration de la récupération des ressources",
+        "Title": "Configuration des ressources",
+        "Name": "Nom",
+        "Value": "Valeur",
+        "Short": "Court",
+        "Long": "Long",
+        "RecoveryFormula": "Formule de récupération"
+      },
+      "ModuleConfig": {
+        "Title": "Configuration de Rest Recovery",
+        "General": "Paramètres généraux",
+        "LongRest": "Repos long",
+        "ShortRest": "Repos court",
+        "ItemNames": "Nommage",
+        "FoodAndWater": "Nourriture & eau",
+        "MoreToCome": "Plus de paramètres à venir !",
+        "Request": "Demander une nouvelle fonctionnalité ici.",
+        "Submit": "Soumettre les paramètres",
+        "ModuleProfile": "Profil :",
+        "ImportProfile": "Importer un profil",
+        "ExportProfile": "Exporter un profil"
+      },
+      "ItemOverrides": {
+        "Title": "Rest Recovery : Nourriture & eau",
+        "UsesCustomRecovery": "Récupération personnalisée",
+        "Type": "Type :",
+        "Enabled": "Activé",
+        "Formula": "Formule :",
+        "IsConsumable": "Est un consommable",
+        "DayWorth": "Une charge suffisante pour une journée complète",
+        "ChargesDescription": "Le système de nourriture et d'eau de Rest Recovery nécessite l'objet d'avoir des charges à utiliser. Une charge étant l'équivalent d'une unité de nourriture ou d'eau."
+      },
+      "AbilityUse": {
+        "Title": "Sélectionnez la quantité à consommer de l'objet :",
+        "DayWorthTitleBoth": "Ce type de consommable est l'équivalent d'une journée complète de nourriture et d'eau.",
+        "DayWorthTitleFood": "Ce type de consommable est l'équivalent d'une journée complète de nourriture.",
+        "DayWorthTitleWater": "Ce type de consommable est l'équivalent d'une journée complète d'eau'.",
+        "DayWorthTitleCont": "Vous n'aurez pas besoin de consommer quoique ce soit de ce type avant la journée prochaine. Vous ne pouvez pas consommer la moitié de ce type de consommable.",
+        "SatedFood": "Vous êtes déjà repu, vous ne tirerez aucun bénéfice de manger ceci.",
+        "NotSatedFood": "Vous devez manger {units} unités pour être repu.",
+        "SatedWater": "Vous êtes déjà hydraté, vous ne tirerez aucun bénéfice de boire ceci.",
+        "NotSatedWater": "Vous devez boire {units} unités pour être hydraté.",
+        "FullUnit": "Consommer une unité complète",
+        "HalfUnit": "Consommer une moité d'unité"
+      }
+    },
+    "Traits": {
+      "Title": "Repos et récupération",
+      "HitDieBonus": {
+        "Title": "Bonus au dé de vie",
+        "Hint": "À chaque fois que ce personnage lance un dé de vie, ce champ applique un bonus à ce lancé. Cela peut être une formule, comme \"1d6 + 3\"."
+      },
+      "FoodUnitsPerDay": {
+        "Title": "Nombre d'unités de nourriture requis par jour",
+        "Hint": "Ce champ redéfinit le nombre d'unités de nourriture dont le personnage a besoin par jour."
+      },
+      "WaterUnitsPerDay": {
+        "Title": "Nombre d'unités d'eau requis par jour",
+        "Hint": "Ce champ redéfinit le nombre d'unités d'eau dont le personnage a besoin par jour."
+      },
+      "NoFoodWater": {
+        "Title": "Désactiver la consommation de nourriture et d'eau",
+        "Hint": "Si activé, le personnage n'a pas besoin de manger ou de boire. Utile pour des capacité comme \"De nature immortelle\" du sorcier."
+      }
+    },
+    "Settings": {
+      "Configure": {
+        "Title": "Configuration du module",
+        "Label": "Paramètres de repos",
+        "Hint": "Vous pouvez configurer le fonctionnement des repos avec ce bouton."
+      },
+      "QuickHDRoll": {
+        "Title": "Jet rapide des dés de vie (passer la fenêtre)",
+        "Hint": "Passer la fenêtre de configuration de dés de vie et les jeter immédiatement."
+      },
+      "Debug": {
+        "Title": "Activer le mode debug",
+        "Label": "Afficher des messages de debug dans la console"
+      },
+      "General": {
+        "EnableAutoRollButton": {
+          "Title": "Activer le jet automatique des dés de vie",
+          "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
         }
       },
-      "Traits": {
-        "Title": "Repos et récupération",
-        "HitDieBonus": {
-          "Title": "Bonus au dé de vie",
-          "Hint": "À chaque fois que ce personnage lance un dé de vie, ce champ applique un bonus à ce lancé. Cela peut être une formule, comme \"1d6 + 3\"."
+      "FoodAndWater": {
+        "EnableFoodAndWater": {
+          "Title": "Activer l'automatisation de la nourritur et de l'eau",
+          "Hint": "Cela active les fonctionnalités liées à la nourriture et l'eau, ci-dessous."
+        },
+        "DisableRollConsumableItems": {
+          "Title": "Désactiver l'envoi du consommable dans le chat pendant un repos",
+          "Hint": "Par défaut, si un personnage consomme un objet pendant un repos long, la carte de l'objet sera affichée dans le chat (comme si on cliquait dessus depuis la feuille de personnage). Ce paramètre désactive ce comportement."
         },
         "FoodUnitsPerDay": {
           "Title": "Nombre d'unités de nourriture requis par jour",
-          "Hint": "Ce champ redéfinit le nombre d'unités de nourriture dont le personnage a besoin par jour."
+          "Hint": "Ce paramètre permet de configurer le nombre d'unités de nourriture requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation de nourriture."
         },
         "WaterUnitsPerDay": {
           "Title": "Nombre d'unités d'eau requis par jour",
-          "Hint": "Ce champ redéfinit le nombre d'unités d'eau dont le personnage a besoin par jour."
+          "Hint": "Ce paramètre permet de configurer le nombre d'unités d'eau requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation d'eau."
         },
-        "NoFoodWater": {
-          "Title": "Désactiver la consommation de nourriture et d'eau",
-          "Hint": "Si activé, le personnage n'a pas besoin de manger ou de boire. Utile pour des capacité comme \"De nature immortelle\" du sorcier."
+        "ExternalFoodAccess": {
+          "Title": "Accès à une source externe de nourriture",
+          "Hint": "Ce paramètre permet de configurer si les joueurs pourront sélectionner l'option \"Source de nourriture externe\" en guise de remplacement de la consommation d'un objet, durant un repos long. \"Complet\" signifie aucun problème pour en trouver comme dans des villes avec des tavernes , \"Moitié\" signifie une accès limité ou une nourriture de mauvaise qualité, \"Aucun\" signifie des étendues sauvages ou une famine."
+        },
+        "ExternalWaterAccess": {
+          "Title": "Accès à une source externe d'eau",
+          "Hint": "Comme pour la nourriture, mais pour l'eau. Garder à l'esprit que \"Moitié\" et \"Aucun\" vont causer très rapidement de l'épuisement aux personnages s'il n'ont pas de consommables (et si l'option sur l'épuisement est activée)."
+        },
+        "AutomateFoodWaterExhaustion": {
+          "Title": "Automatiser l'épuisement en l'absence de nourriture et d'eau",
+          "Hint": "Activé ce paramètre fait en sorte que les personnages souffrent automatiquement de niveau d'épuisement s'ils ne mangent pas ou ne boivent pas assez. Ceci requiert le paramètre d'épuisement activé dans la fenêtre de configuration des repos long."
+        },
+        "NoFoodDuration": {
+          "Title": "Nombre maximum de jours sans manger",
+          "Hint": "Ce paramètre indique combien de jours un personnage peut passer sans manger avant de souffrir de l'épuisement."
+        },
+        "HalfWaterSaveDC": {
+          "Title": "DD de l'épuisement dû au manque d'eau",
+          "Hint": "Ce paramètre configure la valeur du DD du jet de sauvegare de Constitution si les personnages boivent seulement la moitié de l'eau requise par jour."
         }
       },
-      "Settings": {
-        "Configure": {
-          "Title": "Configuration du module",
-          "Label": "Paramètres de repos",
-          "Hint": "Vous pouvez configurer le fonctionnement des repos avec ce bouton."
+      "ShortRest": {
+        "IgnoreInactive": {
+          "Title": "Ignorer les personnages joueurs inactifs",
+          "Hint": "Si vous avez un barde avec le Chant de repos ou un personnage avec le don Chef dans votre groupe, ils ne seront considérés comme présents que si le joueur est actif et connecté."
         },
-        "QuickHDRoll": {
-          "Title": "Jet rapide des dés de vie (passer la fenêtre)",
-          "Hint": "Passer la fenêtre de configuration de dés de vie et les jeter immédiatement."
+        "MaxShortRests": {
+          "Title": "Nombre maximum de repos courts par repos long",
+          "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
         },
-        "Debug": {
-          "Title": "Activer le mode debug",
-          "Label": "Afficher des messages de debug dans la console"
+        "MinHitDieSpend": {
+          "Title": "Nombre minimum de dés de vie à lancer",
+          "Hint": "Ce paramètre oblige les personnages à lancer un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
         },
-        "General": {
-          "EnableAutoRollButton": {
-            "Title": "Activer le jet automatique des dés de vie",
-            "Hint": "Cela rajoute un bouton aux fenêtres de repos long et court et permettant au joueur de jeter automatiquement les dés de vie restants jusqu'à ce que le personne soit à son maximum de points de vie."
-          }
+        "NoHitDice": {
+          "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
+          "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
         },
-        "FoodAndWater": {
-          "EnableFoodAndWater": {
-            "Title": "Activer l'automatisation de la nourritur et de l'eau",
-            "Hint": "Cela active les fonctionnalités liées à la nourriture et l'eau, ci-dessous."
-          },
-          "DisableRollConsumableItems": {
-            "Title": "Désactiver l'envoi du consommable dans le chat pendant un repos",
-            "Hint": "Par défaut, si un personnage consomme un objet pendant un repos long, la carte de l'objet sera affichée dans le chat (comme si on cliquait dessus depuis la feuille de personnage). Ce paramètre désactive ce comportement."
-          },
-          "FoodUnitsPerDay": {
-            "Title": "Nombre d'unités de nourriture requis par jour",
-            "Hint": "Ce paramètre permet de configurer le nombre d'unités de nourriture requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation de nourriture."
-          },
-          "WaterUnitsPerDay": {
-            "Title": "Nombre d'unités d'eau requis par jour",
-            "Hint": "Ce paramètre permet de configurer le nombre d'unités d'eau requis par jour pour les personnages. La valeur \"0\" désactive entièrement la consommation d'eau."
-          },
-          "ExternalFoodAccess": {
-            "Title": "Accès à une source externe de nourriture",
-            "Hint": "Ce paramètre permet de configurer si les joueurs pourront sélectionner l'option \"Source de nourriture externe\" en guise de remplacement de la consommation d'un objet, durant un repos long. \"Complet\" signifie aucun problème pour en trouver comme dans des villes avec des tavernes , \"Moitié\" signifie une accès limité ou une nourriture de mauvaise qualité, \"Aucun\" signifie des étendues sauvages ou une famine."
-          },
-          "ExternalWaterAccess": {
-            "Title": "Accès à une source externe d'eau",
-            "Hint": "Comme pour la nourriture, mais pour l'eau. Garder à l'esprit que \"Moitié\" et \"Aucun\" vont causer très rapidement de l'épuisement aux personnages s'il n'ont pas de consommables (et si l'option sur l'épuisement est activée)."
-          },
-          "AutomateFoodWaterExhaustion": {
-            "Title": "Automatiser l'épuisement en l'absence de nourriture et d'eau",
-            "Hint": "Activé ce paramètre fait en sorte que les personnages souffrent automatiquement de niveau d'épuisement s'ils ne mangent pas ou ne boivent pas assez. Ceci requiert le paramètre d'épuisement activé dans la fenêtre de configuration des repos long."
-          },
-          "NoFoodDuration": {
-            "Title": "Nombre maximum de jours sans manger",
-            "Hint": "Ce paramètre indique combien de jours un personnage peut passer sans manger avant de souffrir de l'épuisement."
-          },
-          "HalfWaterSaveDC": {
-            "Title": "DD de l'épuisement dû au manque d'eau",
-            "Hint": "Ce paramètre configure la valeur du DD du jet de sauvegare de Constitution si les personnages boivent seulement la moitié de l'eau requise par jour."
-          }
+        "ResourcesRecoveryFraction": {
+          "Title": "Fraction des ressources à récupérer",
+          "Hint": "La fraction des ressources à récupérer lors d'un repos court."
         },
-        "ShortRest": {
-          "IgnoreInactive": {
-            "Title": "Ignorer les personnages joueurs inactifs",
-            "Hint": "Si vous avez un barde avec le Chant de repos ou un personnage avec le don Chef dans votre groupe, ils ne seront considérés comme présents que si le joueur est actif et connecté."
-          },
-          "MaxShortRests": {
-            "Title": "Nombre maximum de repos courts par repos long",
-            "Hint": "Ce paramètre permet de faire en sorte que les personnages ne puissent pas prendre plus d'un certain nombre de repos courts avant d'effectuer un repos long. Prendre un repos long remet à zéro le compteur. Mettre la valeur à 0 désactive ce paramètre."
-          },
-          "MinHitDieSpend": {
-            "Title": "Nombre minimum de dés de vie à lancer",
-            "Hint": "Ce paramètre oblige les personnages à lancer un minimum de dés de vie avant de terminer un repos court. 0 désactive ce paramètre."
-          },
-          "NoHitDice": {
-            "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
-            "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
-          },
-          "ResourcesRecoveryFraction": {
-            "Title": "Fraction des ressources à récupérer",
-            "Hint": "La fraction des ressources à récupérer lors d'un repos court."
-          },
-          "ItemUsesRecoveryFraction": {
-            "Title": "Fraction des charges d'objet à récupérer",
-            "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos court."
-          },
-          "FeatUsesRecoveryFraction": {
-            "Title": "Fraction des charges d'aptitudes à récupérer",
-            "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos court."
-          }
+        "ItemUsesRecoveryFraction": {
+          "Title": "Fraction des charges d'objet à récupérer",
+          "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos court."
         },
-        "LongRest": {
-          "AutomateExhaustion": {
-            "Title": "Activer l'automatisation de l'épuisement",
-            "Hint": "Cela fait en sorte que l'épuisement est réduit de 1 à chaque repos long."
-          },
-          "ExhaustionIntegration": {
-            "Title": "Gestion de l'épuisement pas un module tiers",
-            "Hint": "Ce paramètre permet de sélectionner un module tiers afin d'appliquer automatiquement les niveaux d'épuisement (ainsi que leurs effets actifs) sur les personnages."
-          },
-          "RollHitDice": {
-            "Title": "Activer les dés de vie lors du repos long",
-            "Hint": "Active les éléments d'interface relatifs aux jets de dés de vie dans la fenêtre de repos long."
-          },
-          "PreRegainHitDice": {
-            "Title": "Activer la récupération des dés de vie avant la fin d'un repos long",
-            "Hint": "Cela permet de faire en sorte que les dés de vie soient récupérés avant la fin d'un repos long, afin de pouvoir les jeter pour regagner des points de vie lors de ce même repos."
-          },
-          "PreRegainHitDiceBuffer": {
-            "Title": "Activer la récupération maximum de dés de vie",
-            "Hint": "Ce paramètre permet au personnage de toujours regagner le maximum de dés de vie. Et ce, même si cela devrait l'amener au-dessus de son maximum de dés de vie, de façon à n'en pas gacher inutilement. Tout dé de vie en trop restant et non utilisé après un repos long sera décompter (afin de respecter la limite maximum). "
-          },
-          "HitPointsRecoveryFraction": {
-            "Title": "Fraction des points de vie à récupérer",
-            "Hint": "La fraction des points de vie à récupérer lors d'un repos long."
-          },
-          "HitDiceRecoveryFraction": {
-            "Title": "Fraction des dés de vie à récupérer",
-            "Hint": "La fraction des dés de vie à récupérer lors d'un repos long."
-          },
-          "HitDiceRecoveryRounding": {
-            "Title": "Arrondi de la récupération des dés de vie",
-            "Hint": "Comment arrondir le nombre de dés de vie récupérés lors d'un repos long."
-          },
-          "ResourcesRecoveryFraction": {
-            "Title": "Fraction des ressources à récupérer",
-            "Hint": "La fraction des ressources à récupérer lors d'un repos long."
-          },
-          "SpellSlotsRecoveryFraction": {
-            "Title": "Fraction des emplacements de sort à récupérer",
-            "Hint": "La fraction des emplacements de sort à récupérer lors d'un repos long (pacte exclu)."
-          },
-          "ItemUsesRecoveryFraction": {
-            "Title": "Fraction des charges d'objet à récupérer",
-            "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos long."
-          },
-          "FeatUsesRecoveryFraction": {
-            "Title": "Fraction des charges d'aptitudes à récupérer",
-            "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos long."
-          },
-          "DailyUsesRecoveryFraction": {
-            "Title": "Fraction des charges journalières à récupérer",
-            "Hint": "La fraction des charges journalières à récupérer lors d'un repos long (objets avec le paramètre \"Jour\" dans les champs d'utilisation limité)."
-          }
-        },
-        "ItemNames": {
-          "WizardClassName": {
-            "Title": "Nom de la classe de Magicien",
-            "Hint": "Vous pouvez configurer ici le nom de la classe de Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "DruidClassName": {
-            "Title": "Nom de la classe de Druide",
-            "Hint": "Vous pouvez configurer ici le nom de la classe de Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "BardClassName": {
-            "Title": "Nom de la classe de Barde",
-            "Hint": "Vous pouvez configurer ici le nom de la classe de Barde dans votre partie. Cela permet de savoir quel Chant de repos utiliser. Il peut s'agir d'une chaîne localisée."
-          },
-          "ArcaneRecovery": {
-            "Title": "Nom de l'aptitude Restauration magique",
-            "Hint": "Vous pouvez configurer ici le nom de l'aptitude Restauration magique du Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "NaturalRecovery": {
-            "Title": "Nom de l'aptitude Récupération naturelle",
-            "Hint": "Vous pouvez configurer ici le nom de l'aptitude Récupération naturelle du Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "SongOfRest": {
-            "Title": "Nom de l'aptitude Chant de repos",
-            "Hint": "Vous pouvez configurer ici le nom de l'aptitude Chant de repos du Barde dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "ChefFeat": {
-            "Title": "Nom du don Chef",
-            "Hint": "Vous pouvez configurer ici le nom du don Chef dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "ChefTools": {
-            "Title": "Nom des Ustensiles de cuisinier",
-            "Hint": "Vous pouvez configurer ici le nom des Ustensiles de cuisinier dans votre partie. Il peut s'agir d'une chaîne localisée. Laisser vide si vous voulez désactiver la présence des Ustensiles de cuisinier dans l'inventaire du personnage pour pouvoir utiliser ce don."
-          },
-          "DurableFeat": {
-            "Title": "Nom du don Endurant",
-            "Hint": "Vous pouvez configurer ici le nom du don Endurant dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "PeriaptItem": {
-            "Title": "Nom de l'objet Amulette de cicatrisation",
-            "Hint": "Vous pouvez configurer ici le nom de l'objet Amulette de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "WoundClosureBlessing": {
-            "Title": "Nom de la Bénédiction de cicatrisation",
-            "Hint": "Vous pouvez configurer ici le nom de la Bénédiction de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
-          },
-          "BlackBloodFeature": {
-            "Title": "Nom de la capacité Récupération des sangs-noirs",
-            "Hint": "Vous pouvez configurer ici le nom capacité Récupération des sangs-noirs (verdan) dans votre partie. Il peut s'agir d'une chaîne localisée."
-          }
+        "FeatUsesRecoveryFraction": {
+          "Title": "Fraction des charges d'aptitudes à récupérer",
+          "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos court."
         }
       },
-      "Warnings": {
-        "PreventedLongRest" : "You cannot long rest because you are under an effect that prevents you from doing so!",
-        "PreventedShortRest" :  "You cannot short rest because you are under an effect that prevents you from doing so!"
+      "LongRest": {
+        "AutomateExhaustion": {
+          "Title": "Activer l'automatisation de l'épuisement",
+          "Hint": "Cela fait en sorte que l'épuisement est réduit de 1 à chaque repos long."
+        },
+        "ExhaustionIntegration": {
+          "Title": "Gestion de l'épuisement pas un module tiers",
+          "Hint": "Ce paramètre permet de sélectionner un module tiers afin d'appliquer automatiquement les niveaux d'épuisement (ainsi que leurs effets actifs) sur les personnages."
+        },
+        "RollHitDice": {
+          "Title": "Activer les dés de vie lors du repos long",
+          "Hint": "Active les éléments d'interface relatifs aux jets de dés de vie dans la fenêtre de repos long."
+        },
+        "PreRegainHitDice": {
+          "Title": "Activer la récupération des dés de vie avant la fin d'un repos long",
+          "Hint": "Cela permet de faire en sorte que les dés de vie soient récupérés avant la fin d'un repos long, afin de pouvoir les jeter pour regagner des points de vie lors de ce même repos."
+        },
+        "PreRegainHitDiceBuffer": {
+          "Title": "Activer la récupération maximum de dés de vie",
+          "Hint": "Ce paramètre permet au personnage de toujours regagner le maximum de dés de vie. Et ce, même si cela devrait l'amener au-dessus de son maximum de dés de vie, de façon à n'en pas gacher inutilement. Tout dé de vie en trop restant et non utilisé après un repos long sera décompter (afin de respecter la limite maximum). "
+        },
+        "HitPointsRecoveryFraction": {
+          "Title": "Fraction des points de vie à récupérer",
+          "Hint": "La fraction des points de vie à récupérer lors d'un repos long."
+        },
+        "HitDiceRecoveryFraction": {
+          "Title": "Fraction des dés de vie à récupérer",
+          "Hint": "La fraction des dés de vie à récupérer lors d'un repos long."
+        },
+        "HitDiceRecoveryRounding": {
+          "Title": "Arrondi de la récupération des dés de vie",
+          "Hint": "Comment arrondir le nombre de dés de vie récupérés lors d'un repos long."
+        },
+        "ResourcesRecoveryFraction": {
+          "Title": "Fraction des ressources à récupérer",
+          "Hint": "La fraction des ressources à récupérer lors d'un repos long."
+        },
+        "SpellSlotsRecoveryFraction": {
+          "Title": "Fraction des emplacements de sort à récupérer",
+          "Hint": "La fraction des emplacements de sort à récupérer lors d'un repos long (pacte exclu)."
+        },
+        "ItemUsesRecoveryFraction": {
+          "Title": "Fraction des charges d'objet à récupérer",
+          "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos long."
+        },
+        "FeatUsesRecoveryFraction": {
+          "Title": "Fraction des charges d'aptitudes à récupérer",
+          "Hint": "La fraction des charges d'aptitudes à récupérer lors d'un repos long."
+        },
+        "DailyUsesRecoveryFraction": {
+          "Title": "Fraction des charges journalières à récupérer",
+          "Hint": "La fraction des charges journalières à récupérer lors d'un repos long (objets avec le paramètre \"Jour\" dans les champs d'utilisation limité)."
+        }
+      },
+      "ItemNames": {
+        "WizardClassName": {
+          "Title": "Nom de la classe de Magicien",
+          "Hint": "Vous pouvez configurer ici le nom de la classe de Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "DruidClassName": {
+          "Title": "Nom de la classe de Druide",
+          "Hint": "Vous pouvez configurer ici le nom de la classe de Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "BardClassName": {
+          "Title": "Nom de la classe de Barde",
+          "Hint": "Vous pouvez configurer ici le nom de la classe de Barde dans votre partie. Cela permet de savoir quel Chant de repos utiliser. Il peut s'agir d'une chaîne localisée."
+        },
+        "ArcaneRecovery": {
+          "Title": "Nom de l'aptitude Restauration magique",
+          "Hint": "Vous pouvez configurer ici le nom de l'aptitude Restauration magique du Magicien dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "NaturalRecovery": {
+          "Title": "Nom de l'aptitude Récupération naturelle",
+          "Hint": "Vous pouvez configurer ici le nom de l'aptitude Récupération naturelle du Druide dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "SongOfRest": {
+          "Title": "Nom de l'aptitude Chant de repos",
+          "Hint": "Vous pouvez configurer ici le nom de l'aptitude Chant de repos du Barde dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "ChefFeat": {
+          "Title": "Nom du don Chef",
+          "Hint": "Vous pouvez configurer ici le nom du don Chef dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "ChefTools": {
+          "Title": "Nom des Ustensiles de cuisinier",
+          "Hint": "Vous pouvez configurer ici le nom des Ustensiles de cuisinier dans votre partie. Il peut s'agir d'une chaîne localisée. Laisser vide si vous voulez désactiver la présence des Ustensiles de cuisinier dans l'inventaire du personnage pour pouvoir utiliser ce don."
+        },
+        "DurableFeat": {
+          "Title": "Nom du don Endurant",
+          "Hint": "Vous pouvez configurer ici le nom du don Endurant dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "PeriaptItem": {
+          "Title": "Nom de l'objet Amulette de cicatrisation",
+          "Hint": "Vous pouvez configurer ici le nom de l'objet Amulette de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "WoundClosureBlessing": {
+          "Title": "Nom de la Bénédiction de cicatrisation",
+          "Hint": "Vous pouvez configurer ici le nom de la Bénédiction de cicatrisation dans votre partie. Il peut s'agir d'une chaîne localisée."
+        },
+        "BlackBloodFeature": {
+          "Title": "Nom de la capacité Récupération des sangs-noirs",
+          "Hint": "Vous pouvez configurer ici le nom capacité Récupération des sangs-noirs (verdan) dans votre partie. Il peut s'agir d'une chaîne localisée."
+        }
       }
     }
   }
+}

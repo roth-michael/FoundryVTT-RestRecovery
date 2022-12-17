@@ -87,25 +87,13 @@
     const timeChanges = lib.getTimeChanges(restType === "longRest");
     await game.time.advance(timeChanges.restTime);
 
-    configuration.forEach((element) => {
-    if (getProperty(game.actors.get(element.split("-")[1]), `flags.dae.rest-recovery.prevent.${restType}`)) {
-        configuration.delete(element);
-        ChatMessage.create({
-            content: "<p>" + localize("REST-RECOVERY.Chat.CouldNot" + (restType === "longRest" ? "LongRest" : "ShortRest"), {actorName: game.actors.get(element.split("-")[1]).name}) + "</p>",
-            speaker: {
-                alias: game.actors.get(element.split("-")[1]).name
-            }
-        });
-      };
-    });
-
     if (configuration.size) {
       SocketHandler.emit(SocketHandler.PROMPT_REST, {
-       userActors: [...configuration],
-       restType
-     })
-    } 
-    
+        userActors: [...configuration],
+        restType
+      })
+    }
+
     application.options.resolve();
     application.close();
   }

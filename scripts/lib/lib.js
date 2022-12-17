@@ -1,5 +1,10 @@
 import CONSTANTS from "../constants.js";
 
+export function custom_warning(message, console = true){
+  ui.notifications.warn("Rest Recovery | " + game.i18n.localize(message), { console })
+}
+
+
 export function ordinalSuffixOf(i) {
   let j = i % 10;
   let k = i % 100;

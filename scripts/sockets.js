@@ -1,6 +1,7 @@
 import { TJSDialog } from "@typhonjs-fvtt/runtime/svelte/application";
 import CustomDialog from "./formapplications/components/Dialog.svelte";
 import { wait } from "./lib/lib.js";
+import { localize } from "@typhonjs-fvtt/runtime/_dist/svelte/helper/index.js";
 
 export default class SocketHandler {
 
@@ -31,18 +32,34 @@ export default class SocketHandler {
   static async _promptRest(data, senderId) {
 
     const sender = game.users.get(senderId);
+    const actorsToRest = [];
     const offlineResters = [];
-    const actorsToRest = data.userActors.reduce((acc, userActorPair) => {
+    const isLongRest = data.restType === "longRest";
+    for(const userActorPair of data.userActors){
       const [userId, actorId] = userActorPair.split('-');
       const user = game.users.get(userId);
       const actor = game.actors.get(actorId);
-      if (actor && user === game.user) {
-        acc.push(actor);
+
+      if(!actor) continue;
+
+      const preventRest = getProperty(actor, `flags.dae.rest-recovery.prevent.${data.restType}`);
+
+      if(preventRest){
+        if(sender === game.user) {
+          await ChatMessage.create({
+            content: `<p>${localize("REST-RECOVERY.Chat.CouldNot" + (isLongRest ? "LongRest" : "ShortRest"), { actorName: actor.name })}</p>`,
+            speaker: {
+              alias: actor.name
+            }
+          });
+        }
+      }else if(user === game.user){
+        actorsToRest.push(actor);
       } else if (actor && !user.active && sender === game.user) {
         offlineResters.push(actor);
       }
-      return acc;
-    }, [])
+
+    }
 
     const width = 425;
     const midPoint = window.innerWidth / actorsToRest.length;
@@ -89,7 +106,7 @@ export default class SocketHandler {
 
     offlineResters.forEach((actor, index) => {
       actor[data.restType]({}, offlineIndexOffset ? { left: offlineMidPoint + (offlineIndexOffset + index) * width } : {});
-    })
+    });
 
   }
 

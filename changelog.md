@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.4.2
+- Added support for flags that prevents long and short rests - thank you sasquach45932 for the contribution!
+  - Requires you to use DAE or a macro to set these flags on the actor:
+    - `flags.dae.rest-recovery.prevent.longRest`
+    - `flags.dae.rest-recovery.prevent.shortRest`
+  - With DAE, you can use `flags.dae` as the attribute key and `rest-recovery.prevent.[shortRest/longRest] 1` as the value to prevent the rest
+- Added `ignoreFlags` secondary argument to `Actor#longRest` and `Actor#shortRest` to ignore the aforementioned behavior 
+
 ## Version 1.4.1
 - Fixed issue with module profiles
 
