@@ -87,7 +87,9 @@
       "ExhaustionArmor": "They chose to keep their armor on, and recovered none of their exhaustion.",
       "HitDiceArmor": "They recovered less hit dice than normal because they rested in their armor.",
       "NoHitDiceArmor": "They recovered none of their hit dice because they rested in their armor.",
-      "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice."
+      "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice.",
+      "CouldNotLongRest": "{actorName} could not take a long rest.",
+      "CouldNotShortRest": "{actorName} could not take a short rest."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -506,6 +508,10 @@
           "Hint": "Here you can configure what a Verdan's Black Blood Healing feature is called in your game. This can be a localized string."
         }
       }
+    },
+    "Warnings": {
+      "PreventedLongRest" : "You cannot long rest because you are under an effect that prevents you from doing so!",
+      "PreventedShortRest" :  "You cannot short rest because you are under an effect that prevents you from doing so!"
     }
   }
 }

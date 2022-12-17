@@ -87,7 +87,9 @@
         "ExhaustionArmor": "Ele(a) decidiu continuar vestindo sua armadura, e não recuperou nenhum dos seus pontos de exaustão.",
         "HitDiceArmor": "Ele(a) recuperou menos dados de vida que o normal porque descansou vestindo sua armadura.",
         "NoHitDiceArmor": "Ele(a) não recuperou nenhum dado de vida porque descansou vestindo sua armadura.",
-        "HitDiceNoArmor": "Ele(a) decidiu não vestir a sua armadura enquanto descansa e recuperou a quantidade normal de dados de vida."
+        "HitDiceNoArmor": "Ele(a) decidiu não vestir a sua armadura enquanto descansa e recuperou a quantidade normal de dados de vida.",
+        "CouldNotLongRest": "{actorName} could not take a long rest.",
+        "CouldNotShortRest": "{actorName} could not take a short rest."  
       },
       "Dialogs": {
         "SaveProfile": {
@@ -454,6 +456,10 @@
             "Hint": "Aqui você pode configurar como o recurso Cura do Sangue Negro de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
           }
         }
+      },
+      "Warnings": {
+        "PreventedLongRest" : "You cannot long rest because you are under an effect that prevents you from doing so!",
+        "PreventedShortRest" :  "You cannot short rest because you are under an effect that prevents you from doing so!"
       }
     }
 }
