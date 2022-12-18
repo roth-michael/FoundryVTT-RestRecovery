@@ -45,7 +45,7 @@ function patch_shortRest() {
        */
       if (Hooks.call("dnd5e.preShortRest", this, config) === false) return;
 
-      if (getProperty(this, `flags.dae.rest-recovery.prevent.shortRest`) && !config.ignoreFlags) {
+      if (getProperty(this, CONSTANTS.FLAGS.PREVENT_SHORT_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedShortRest");
         return false;
       }
@@ -100,7 +100,7 @@ function patch_longRest() {
        */
       if (Hooks.call("dnd5e.preLongRest", this, config) === false) return;
 
-      if (getProperty(this, `flags.dae.rest-recovery.prevent.longRest`) && !config.ignoreFlags) {
+      if (getProperty(this, CONSTANTS.FLAGS.PREVENT_LONG_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedLongRest");
         return false;
       }

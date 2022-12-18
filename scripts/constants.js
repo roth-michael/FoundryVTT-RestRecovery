@@ -986,11 +986,25 @@ CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD = "food";
 CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER = "water";
 CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH = "both";
 
-
 CONSTANTS.FLAGS.STARVATION = baseFlag + "starvation";
 CONSTANTS.FLAGS.SATED_FOOD = baseFlag + "sated.food";
 CONSTANTS.FLAGS.SATED_WATER = baseFlag + "sated.water";
 CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS = baseFlag + "currentShortRests";
+
+// DAE Flags
+const daeFlag = `flags.dae.${CONSTANTS.MODULE_NAME}.`
+CONSTANTS.FLAGS.PREVENT = daeFlag + "prevent.";
+CONSTANTS.FLAGS.PREVENT_LONG_REST = CONSTANTS.FLAGS.PREVENT + "longRest";
+CONSTANTS.FLAGS.PREVENT_SHORT_REST = CONSTANTS.FLAGS.PREVENT + "shortRest";
+CONSTANTS.FLAGS.NEEDS_NO_FOOD = daeFlag + "force.noFood";
+CONSTANTS.FLAGS.NEEDS_NO_WATER = daeFlag + "force.noWater";
+CONSTANTS.FLAGS.MAXIMISE_HIT_DIE_ROLL = daeFlag + "force.maximiseHitDieRoll";
+
+// D&D 5e Flags
+const dndFlag = `flags.dnd5e.`
+CONSTANTS.FLAGS.NEEDS_NO_FOOD_AND_WATER = dndFlag + "noFoodWater";
+CONSTANTS.FLAGS.REQUIRED_FOOD = dndFlag + "foodUnits";
+CONSTANTS.FLAGS.REQUIRED_WATER = dndFlag + "waterUnits";
 
 CONSTANTS.CONSUMABLE = {
   NONE: "none",

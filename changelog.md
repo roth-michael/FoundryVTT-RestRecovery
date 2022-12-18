@@ -1,5 +1,12 @@
 # Rest Recovery Changelog
 
+## Version 1.4.3
+- Added the following flags to use with Dynamic Active Effects:
+  - Require no food: `flags.dae.rest-recovery.force.noFood`
+  - Require no water: `flags.dae.rest-recovery.force.noWater`
+  - Force maximum number on hit die rolls: `flags.dae.rest-recovery.force.maximiseHitDieRoll`
+- Fixed error when opening the short rest UI when Simple Calendar was active
+
 ## Version 1.4.2
 - Added support for flags that prevents long and short rests - thank you sasquach45932 for the contribution!
   - Requires you to use DAE or a macro to set these flags on the actor:

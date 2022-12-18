@@ -25,6 +25,8 @@
   let form;
   let startedShortRest = false;
 
+  const workflow = RestWorkflow.get(actor);
+
   $: application.reactive.headerButtonNoClose = startedShortRest;
 
   const maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
@@ -43,8 +45,6 @@
   const timeChanges = lib.getTimeChanges(false);
   let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
   let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "epic";
-
-  const workflow = RestWorkflow.get(actor);
 
   updateHealthBarText();
 

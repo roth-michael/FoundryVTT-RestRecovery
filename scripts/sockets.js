@@ -2,6 +2,7 @@ import { TJSDialog } from "@typhonjs-fvtt/runtime/svelte/application";
 import CustomDialog from "./formapplications/components/Dialog.svelte";
 import { wait } from "./lib/lib.js";
 import { localize } from "@typhonjs-fvtt/runtime/_dist/svelte/helper/index.js";
+import CONSTANTS from "./constants.js";
 
 export default class SocketHandler {
 
@@ -42,7 +43,7 @@ export default class SocketHandler {
 
       if(!actor) continue;
 
-      const preventRest = getProperty(actor, `flags.dae.rest-recovery.prevent.${data.restType}`);
+      const preventRest = getProperty(actor, CONSTANTS.FLAGS.PREVENT + data.restType);
 
       if(preventRest){
         if(sender === game.user) {

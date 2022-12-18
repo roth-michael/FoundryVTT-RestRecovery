@@ -106,16 +106,18 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   let actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
   let actorWaterSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
 
-  let actorNeedsNoFoodWater = getProperty(actor, `flags.dnd5e.noFoodWater`);
+  let actorNeedsNoFoodWater = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_FOOD_AND_WATER);
+  let actorNeedsNoFood = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_FOOD);
+  let actorNeedsNoWater = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_WATER);
 
   let foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
-  let actorRequiredFoodUnits = getProperty(actor, `flags.dnd5e.foodUnits`);
+  let actorRequiredFoodUnits = getProperty(actor, CONSTANTS.FLAGS.REQUIRED_FOOD);
   let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && foodUnitsSetting !== 0
     ? actorRequiredFoodUnits
     : foodUnitsSetting;
 
   let waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
-  let actorRequiredWaterUnits = getProperty(actor, `flags.dnd5e.waterUnits`);
+  let actorRequiredWaterUnits = getProperty(actor, CONSTANTS.FLAGS.REQUIRED_WATER);
   let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
     ? actorRequiredWaterUnits
     : waterUnitsSetting;
@@ -123,10 +125,8 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   actorRequiredFood *= grittyLongRest ? 7 : 1;
   actorRequiredWater *= grittyLongRest ? 7 : 1;
 
-  if (actorNeedsNoFoodWater) {
-    actorRequiredFood = 0;
-    actorRequiredWater = 0;
-  }
+  actorRequiredFood = actorNeedsNoFoodWater || actorNeedsNoFood ? 0 : actorRequiredFood;
+  actorRequiredWater = actorNeedsNoFoodWater || actorNeedsNoWater ? 0 : actorRequiredWater;
 
   return {
     actorRequiredFood,

@@ -95,7 +95,9 @@ export default class RestWorkflow {
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
 
-      let formula = "1" + denomination;
+      const forceMaxRoll = getProperty(actor, CONSTANTS.FLAGS.MAXIMISE_HIT_DIE_ROLL);
+
+      let formula = !forceMaxRoll ? "1" + denomination : denomination.slice(1);
 
       if (hasBlackBlood) {
         formula += "r<3";
@@ -1146,11 +1148,11 @@ export default class RestWorkflow {
 
     if (usesCur === usesMax) return updates;
 
-    const customRecovery = item.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.enabled;
-    const customFormula = item.flags?.[CONSTANTS.MODULE_NAME]?.[CONSTANTS.FLAG_NAME]?.recovery?.custom_formula ?? "";
+    const customRecovery = getProperty(item, CONSTANTS.FLAGS.RECOVERY_ENABLED);
+    const customFormula = getProperty(item, CONSTANTS.FLAGS.RECOVERY_FORMULA);
 
     let recoverValue;
-    if (customRecovery) {
+    if (customRecovery && customFormula) {
       const customRoll = lib.evaluateFormula(customFormula, {
         actor: actor,
         item: foundry.utils.deepClone(item.system)
