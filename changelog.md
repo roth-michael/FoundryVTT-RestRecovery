@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.4.4
+- Fixed characters without a need for food & water getting empty food & water step in rest UIs
+
 ## Version 1.4.3
 - Added the following flags to use with Dynamic Active Effects:
   - Force maximum number on hit die rolls: `rest-recovery.force.maximiseHitDieRoll 1`
