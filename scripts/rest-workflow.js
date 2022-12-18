@@ -158,7 +158,10 @@ export default class RestWorkflow {
       },
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.FoodWater.Title",
-        required: lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && (this.longRest || this.restVariant === "gritty"),
+        required: lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)
+          && (this.longRest || this.restVariant === "gritty")
+          && this.foodWaterRequirement.actorRequiredFood > 0
+          && this.foodWaterRequirement.actorRequiredWater > 0,
         component: FoodWater
       },
       {
