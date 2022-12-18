@@ -43,7 +43,7 @@ export default class SocketHandler {
 
       if(!actor) continue;
 
-      const preventRest = getProperty(actor, CONSTANTS.FLAGS.PREVENT + data.restType);
+      const preventRest = getProperty(actor, CONSTANTS.FLAGS.DAE.PREVENT + data.restType);
 
       if(preventRest){
         if(sender === game.user) {

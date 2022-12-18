@@ -103,21 +103,23 @@ export function isRealNumber(inNumber) {
 
 export function getActorConsumableValues(actor, grittyLongRest) {
 
-  let actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
-  let actorWaterSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
+  const actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
+  const actorWaterSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
 
-  let actorNeedsNoFoodWater = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_FOOD_AND_WATER);
-  let actorNeedsNoFood = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_FOOD);
-  let actorNeedsNoWater = getProperty(actor, CONSTANTS.FLAGS.NEEDS_NO_WATER);
+  const actorNeedsNoFoodWater = getProperty(actor, CONSTANTS.FLAGS.DND.NEEDS_NO_FOOD_AND_WATER);
+  const actorNeedsNoFood = getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_FOOD);
+  const actorNeedsNoWater = getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_WATER);
 
-  let foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
-  let actorRequiredFoodUnits = getProperty(actor, CONSTANTS.FLAGS.REQUIRED_FOOD);
+  const foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
+  const actorRequiredFoodUnits = getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
+    ?? getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_FOOD);
   let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && foodUnitsSetting !== 0
     ? actorRequiredFoodUnits
     : foodUnitsSetting;
 
-  let waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
-  let actorRequiredWaterUnits = getProperty(actor, CONSTANTS.FLAGS.REQUIRED_WATER);
+  const waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
+  const actorRequiredWaterUnits = getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
+    ?? getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_WATER);
   let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
     ? actorRequiredWaterUnits
     : waterUnitsSetting;

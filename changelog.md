@@ -2,9 +2,11 @@
 
 ## Version 1.4.3
 - Added the following flags to use with Dynamic Active Effects:
-  - Require no food: `flags.dae.rest-recovery.force.noFood`
-  - Require no water: `flags.dae.rest-recovery.force.noWater`
-  - Force maximum number on hit die rolls: `flags.dae.rest-recovery.force.maximiseHitDieRoll`
+  - Force maximum number on hit die rolls: `rest-recovery.force.maximiseHitDieRoll 1`
+  - Require no food: `rest-recovery.force.noFood 1`
+  - Require no water: `rest-recovery.force.noWater 1`
+  - Require more food: `rest-recovery.require.food [units of food]`
+  - Require more water: `rest-recovery.require.water [units of water]`
 - Fixed error when opening the short rest UI when Simple Calendar was active
 
 ## Version 1.4.2

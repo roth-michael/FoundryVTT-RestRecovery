@@ -95,7 +95,7 @@ export default class RestWorkflow {
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
 
-      const forceMaxRoll = getProperty(actor, CONSTANTS.FLAGS.MAXIMISE_HIT_DIE_ROLL);
+      const forceMaxRoll = getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
 
       let formula = !forceMaxRoll ? "1" + denomination : denomination.slice(1);
 
