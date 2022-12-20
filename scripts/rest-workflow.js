@@ -64,9 +64,8 @@ export default class RestWorkflow {
     Hooks.on("preUpdateActor", (actor, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
       const exhaustion = getProperty(data, "system.attributes.exhaustion");
-      if (exhaustion === undefined || !rests.get(actor.uuid)) return;
-      const integration = lib.getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
-      return plugins.handleIntegration(integration + "-exhaustion", actor, data);
+      if (exhaustion === undefined) return;
+      return plugins.handleExhaustion(actor, data);
     });
 
     Hooks.on("dnd5e.preRollHitDie", (actor, config, denomination) => {

@@ -13,6 +13,14 @@ export default class plugins {
     return this._integrationMap[integration](...args);
   }
 
+  static handleExhaustion(actor, data){
+    const integration = getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
+    if(this._integrationMap[integration]){
+      return this._integrationMap[integration](actor, data);
+    }
+    return this.handleNativeExhaustion(actor, data);
+  }
+
   static async handleDFredsConvenientEffects(actor, data) {
 
     if (!game.modules.get(CONSTANTS.MODULES.DFREDS)?.active) return;
@@ -85,6 +93,18 @@ export default class plugins {
 
     if (exhaustionLevel >= 1 && exhaustionLevel <= 5) {
       await CUB.addCondition(exhaustionEffectName, actor);
+    }
+  }
+
+  static handleNativeExhaustion(actor, data){
+    const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
+    if(!oneDndExhaustionEnabled) return;
+    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+    const actorExhaustionEffect = actor.effects.find(effect => getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
+    if(exhaustionLevel > 0 && !actorExhaustionEffect){
+      return actor.createEmbeddedDocuments("ActiveEffect", [oneDndExhaustionEffectData]);
+    }else if(exhaustionLevel <= 0 && actorExhaustionEffect){
+      return actor.deleteEmbeddedDocuments("ActiveEffect", [actorExhaustionEffect.id]);
     }
   }
 }

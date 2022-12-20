@@ -11,8 +11,8 @@
   const store = setting.store;
   const disabled = setting.disabled;
 
-  function callback(){
-    if(!setting.callback) return;
+  function callback() {
+    if (!setting.callback) return;
     setting.callback(gameSettings.settings);
   }
 
@@ -22,11 +22,18 @@
 <div class="form-group flexrow">
 
   <div class="label-side">
-    <label>{localize(setting.name)}
-      <a>
-        <i title="Reset setting" class="fas fa-undo reset-setting" on:click={() => { gameSettings.reset(key)}}></i>
-      </a>
-    </label>
+    <div>
+      <label>{localize(setting.name)}
+        <a>
+          <i title="Reset setting" class="fas fa-undo reset-setting" on:click={() => { gameSettings.reset(key)}}></i>
+        </a>
+      </label>
+      {#if setting.moduleIntegration}
+      <label class="module-integration">
+        {localize("REST-RECOVERY.Settings.RequiresModule", { module_name: setting.moduleIntegration.label })}
+      </label>
+      {/if}
+    </div>
     <p class="notes">{localize(setting.hint)}</p>
   </div>
 
@@ -112,6 +119,16 @@
   .label-side {
     flex: 1;
     margin-right: 1rem;
+
+    & > div {
+      display: flex;
+    }
+  }
+
+  .module-integration {
+    text-align: right;
+    opacity: 0.75;
+    font-style: italic;
   }
 
   .choice-container {

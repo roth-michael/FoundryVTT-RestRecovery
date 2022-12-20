@@ -55,6 +55,13 @@ export function determineRoundingMethod(settingKey) {
 }
 
 export function getSetting(key, localize = false) {
+  if(!localize) {
+    const setting = CONSTANTS.DEFAULT_SETTINGS[key];
+    if (setting?.moduleIntegration && !game.modules.get(setting.moduleIntegration.key)?.active) {
+      return setting.default;
+    }
+  }
+
   const value = game.settings.get(CONSTANTS.MODULE_NAME, key);
   if (localize) return game.i18n.localize(value);
   return value;
@@ -149,7 +156,7 @@ export function roundHalf(num) {
 
 export function getTimeChanges(isLongRest) {
 
-  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const simpleCalendarActive = getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const timeConfig = simpleCalendarActive
     ? SimpleCalendar.api.getTimeConfiguration()
     : { hoursInDay: 24, minutesInHour: 60, secondsInMinute: 60 };

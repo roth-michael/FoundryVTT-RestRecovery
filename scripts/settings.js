@@ -67,7 +67,7 @@ class RestRecoverySettings {
 
   validateSettings(changedSettingKey = false) {
     const settingsToValidate = Array.from(this.settings).filter(([_, setting]) => {
-      return setting?.dependsOn && (!changedSettingKey || setting?.dependsOn.includes(changedSettingKey))
+      return setting?.moduleIntegration || (setting?.dependsOn && (!changedSettingKey || setting?.dependsOn.includes(changedSettingKey)))
     });
     for (const [key, setting] of settingsToValidate) {
       const disabled = setting.validate(this.settings);

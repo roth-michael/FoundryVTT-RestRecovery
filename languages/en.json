@@ -302,10 +302,19 @@
         "Title": "Enable debugging",
         "Label": "Prints debug messages to the console"
       },
+      "RequiresModule": "Requires {module_name}",
       "General": {
         "EnableAutoRollButton": {
           "Title": "Enable hit dice auto roll button",
           "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
+        },
+        "EnablePromptRestTimePassing": {
+          "Title": "Enable automatic time passage on prompt rest",
+          "Hint": "This enables time passing whenever players and prompted to rest by a GM. This may cause time-based active effects on characters to expire."
+        },
+        "EnableSimpleCalendarIntegration": {
+          "Title": "Enable Simple Calendar integration",
+          "Hint": "Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar."
         }
       },
       "FoodAndWater": {

@@ -35,7 +35,7 @@
   const cleanConfig = writable([]);
 
   const restVariant = game.settings.get("dnd5e", "restVariant");
-  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const longRestWouldBeNewDay = lib.getTimeChanges(true).isNewDay;
   const shortRestWouldBeNewDay = lib.getTimeChanges(false).isNewDay;
 
@@ -85,12 +85,17 @@
     await game.restrecovery.setActiveProfile(activeProfile);
     await lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
     const timeChanges = lib.getTimeChanges(restType === "longRest");
-    await game.time.advance(timeChanges.restTime);
+
+    if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING)) {
+      await game.time.advance(timeChanges.restTime);
+    }
 
     if (configuration.size) {
       SocketHandler.emit(SocketHandler.PROMPT_REST, {
         userActors: [...configuration],
-        restType
+        restType,
+        newDay: forceNewDay,
+        promptNewDay: false
       })
     }
 

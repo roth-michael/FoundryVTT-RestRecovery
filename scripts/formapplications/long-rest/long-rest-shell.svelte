@@ -34,10 +34,10 @@
 
   $: application.reactive.headerButtonNoClose = startedLongRest;
 
-  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const timeChanges = lib.getTimeChanges(false);
-  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
-  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "gritty";
+  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay ?? true;
+  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "gritty" && application.options.promptNewDay;
 
   let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
   let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);

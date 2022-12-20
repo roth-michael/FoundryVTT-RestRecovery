@@ -41,10 +41,10 @@
     : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
   maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
 
-  const simpleCalendarActive = game.modules.get("foundryvtt-simple-calendar")?.active;
+  const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const timeChanges = lib.getTimeChanges(false);
   let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
-  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "epic";
+  let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "epic" && application.options.promptNewDay;
 
   updateHealthBarText();
 
@@ -224,9 +224,7 @@
             <label>
               {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" : "DND5E.NewDay")}
             </label>
-            {#if promptNewDay}
-              <input type="checkbox" bind:checked={newDay}/>
-            {/if}
+            <input type="checkbox" bind:checked={newDay} disabled={!promptNewDay}/>
             <p class="hint">
               {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
             </p>

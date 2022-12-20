@@ -40,6 +40,14 @@ const migrations = {
       await setSetting(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER_FORMULA, findOldSettingValue("recovery-day-formula"));
     }
 
+  },
+
+  "1.4.4": async () => {
+
+    if(game.modules.get("simple-calendar")?.active){
+      await setSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION, true);
+    }
+
   }
 
 }

@@ -18,8 +18,9 @@ const CONSTANTS = {
     QUICK_HD_ROLL: "quick-hd-roll",
     SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
+    ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
     ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
-    
+
     /*-------------------------------------------*
      *            Short Rest Settings            *
      *-------------------------------------------*/
@@ -161,6 +162,28 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     default: true,
     type: Boolean
+  },
+  [CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING]: {
+    name: "REST-RECOVERY.Settings.General.EnablePromptRestTimePassing.Title",
+    hint: "REST-RECOVERY.Settings.General.EnablePromptRestTimePassing.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: true,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION]: {
+    name: "REST-RECOVERY.Settings.General.EnableSimpleCalendarIntegration.Title",
+    hint: "REST-RECOVERY.Settings.General.EnableSimpleCalendarIntegration.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: false,
+    type: Boolean,
+    moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
+    validate: () => {
+      return !game.modules.get("foundryvtt-simple-calendar")?.active;
+    },
   },
   
   /*-------------------------------------------*

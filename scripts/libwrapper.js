@@ -32,7 +32,7 @@ function patch_shortRest() {
     "CONFIG.Actor.documentClass.prototype.shortRest",
     async function (config, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: false, autoHD: false, autoHDThreshold: 3, ignoreFlags: false
+        dialog: true, chat: true, newDay: false, promptNewDay: true, autoHD: false, autoHDThreshold: 3, ignoreFlags: false
       }, config);
 
       /**
@@ -87,7 +87,7 @@ function patch_longRest() {
     "CONFIG.Actor.documentClass.prototype.longRest",
     async function (config = {}, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: true, ignoreFlags: false
+        dialog: true, chat: true, newDay: true, promptNewDay: true, ignoreFlags: false
       }, config);
 
       /**

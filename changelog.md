@@ -1,6 +1,10 @@
 # Rest Recovery Changelog
 
 ## Version 1.4.4
+- Added full One D&D exhaustion support without a need for any integrations; any amount of exhaustion now automatically applies penalties
+- Added setting that disables the "New Day" automation with Simple Calendar installed
+- Added setting that can disable the automatic passage of time when rests are prompted of players
+- Tweaked prompt rest UI to enforce the "New Day" checkbox so players cannot pick when it has been pre-picked by the GM
 - Fixed characters without a need for food & water getting empty food & water step in rest UIs
 
 ## Version 1.4.3
