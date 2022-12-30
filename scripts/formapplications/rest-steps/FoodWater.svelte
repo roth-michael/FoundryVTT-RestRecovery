@@ -308,7 +308,7 @@
             <span class="item-name">{item.fullName}</span>
             <label>
               {#if !item.consumable.dayWorth}
-                <input type="number" bind:value={item.amount} on:change={() => {
+                <input type="number" bind:value={item.amount} step="0.5" on:change={() => {
                             item.amount = Math.max(0.5, Math.min(item.usesLeft, roundHalf(item.amount)));
                             calculateAmountOfItems();
                         }}/>

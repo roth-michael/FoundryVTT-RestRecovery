@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.4.5
+- Fixed exhaustion integrations not working properly
+- Fixed number food & water quantity inputs not accepting a valid value of 0.5 
+
 ## Version 1.4.4
 - Added full One D&D exhaustion support without a need for any integrations; any amount of exhaustion now automatically applies penalties
 - Added setting that disables the "New Day" automation with Simple Calendar installed

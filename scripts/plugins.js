@@ -13,12 +13,13 @@ export default class plugins {
     return this._integrationMap[integration](...args);
   }
 
-  static handleExhaustion(actor, data){
+  static handleExhaustion(...args) {
     const integration = getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
-    if(this._integrationMap[integration]){
-      return this._integrationMap[integration](actor, data);
+    const integrationFunction = this._integrationMap[integration+"-exhaustion"];
+    if (integrationFunction) {
+      return integrationFunction(...args);
     }
-    return this.handleNativeExhaustion(actor, data);
+    return this.handleNativeExhaustion(...args);
   }
 
   static async handleDFredsConvenientEffects(actor, data) {
@@ -34,7 +35,7 @@ export default class plugins {
     const actorUuid = actor.uuid;
 
     if (!oneDndExhaustionEnabled) {
-      for (let level = 1; level <= 5; level++) {
+      for (let level = 1; level <= 6; level++) {
         let levelName = `Exhaustion ${level}`;
         if (levelName !== `Exhaustion ${exhaustionLevel}` && DFREDS.hasEffectApplied(levelName, actorUuid)) {
           await DFREDS.removeEffect({
@@ -55,7 +56,7 @@ export default class plugins {
           effectName: presetEffect.name,
           uuid: actorUuid
         });
-      }else{
+      } else {
         await DFREDS.removeEffect({
           effectName: presetEffect.name,
           uuid: actorUuid
@@ -64,10 +65,10 @@ export default class plugins {
     }
   }
 
-  static async createConvenientEffect(){
-    if(game?.dfreds?.effects.customEffects.find(effect => {
+  static async createConvenientEffect() {
+    if (game?.dfreds?.effects.customEffects.find(effect => {
       return getProperty(effect.flags, "rest-recovery.exhaustion-effect");
-    })){
+    })) {
       return;
     }
     return game?.dfreds?.effectInterface.createNewCustomEffectsWith({
@@ -96,14 +97,14 @@ export default class plugins {
     }
   }
 
-  static handleNativeExhaustion(actor, data){
+  static handleNativeExhaustion(actor, data) {
     const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
-    if(!oneDndExhaustionEnabled) return;
+    if (!oneDndExhaustionEnabled) return;
     const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
     const actorExhaustionEffect = actor.effects.find(effect => getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
-    if(exhaustionLevel > 0 && !actorExhaustionEffect){
+    if (exhaustionLevel > 0 && !actorExhaustionEffect) {
       return actor.createEmbeddedDocuments("ActiveEffect", [oneDndExhaustionEffectData]);
-    }else if(exhaustionLevel <= 0 && actorExhaustionEffect){
+    } else if (exhaustionLevel <= 0 && actorExhaustionEffect) {
       return actor.deleteEmbeddedDocuments("ActiveEffect", [actorExhaustionEffect.id]);
     }
   }
