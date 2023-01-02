@@ -1,5 +1,12 @@
 # Rest Recovery Changelog
 
+## Version 1.4.6
+- Added optional setting to prevent hit dice recovery on long rests if any hit dice are rolled 
+- Added optional setting which limits how many hit dice characters can roll on a long rest 
+- Fixed multiple bards with Song of Rest would not select the highest level bard to roll
+- Fixed character resource configuration throwing error and not opening properly
+- Fixed auto-rolling hit dice on a long rest would sometimes use short rest rules
+
 ## Version 1.4.5
 - Fixed exhaustion integrations not working properly
 - Fixed number food & water quantity inputs not accepting a valid value of 0.5 

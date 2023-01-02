@@ -56,13 +56,13 @@
     if (minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice) {
       if (workflow.totalHitDice <= 0) {
         await TJSDialog.prompt({
-          title: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
+          title: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Title"),
           content: {
             class: Dialog,
             props: {
               icon: "fas fa-exclamation-triangle",
-              header: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Title"),
-              content: localize("REST-RECOVERY.Dialogs.ShortRestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+              header: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Title"),
+              content: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
             }
           },
           modal: true,
@@ -75,13 +75,13 @@
         return false;
       }
       const doContinue = await TJSDialog.confirm({
-        title: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
+        title: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Title"),
         content: {
           class: Dialog,
           props: {
             icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Title"),
-            content: localize("REST-RECOVERY.Dialogs.ShortRestHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+            header: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Title"),
+            content: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
           }
         },
         modal: true,
@@ -96,13 +96,13 @@
     }
     if (workflow.healthPercentage <= 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
       const doContinue = await TJSDialog.confirm({
-        title: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Title"),
+        title: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
         content: {
           class: Dialog,
           props: {
             icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Title"),
-            content: localize("REST-RECOVERY.Dialogs.ShortRestHealthWarning.Content")
+            header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
+            content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content")
           }
         },
         modal: true,

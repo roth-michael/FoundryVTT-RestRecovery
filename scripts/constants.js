@@ -48,7 +48,9 @@ const CONSTANTS = {
     ONE_DND_EXHAUSTION: "one-dnd-exhaustion",
     LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
     PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
+    PREVENT_REST_REGAIN_HIT_DICE: "prevent-rest-regain-hit-dice",
     PRE_REST_REGAIN_BUFFER: "pre-rest-regain-hit-dice-buffer",
+    LONG_MAX_HIT_DICE_SPEND: "long-rest-maximum-hit-die-spend",
     HD_ROUNDING: "recovery-rounding",
     HP_MULTIPLIER: "recovery-hitpoints",
     HD_MULTIPLIER: "recovery-hitdice",
@@ -59,11 +61,12 @@ const CONSTANTS = {
     LONG_USES_OTHERS_MULTIPLIER: "recovery-uses-others",
     LONG_USES_FEATS_MULTIPLIER: "recovery-uses-feats",
     LONG_USES_DAILY_MULTIPLIER: "recovery-day",
-  
+
     LONG_REST_ARMOR_AUTOMATION: "long-rest-heavy-armor-automation",
     LONG_REST_ARMOR_HIT_DICE: "long-rest-heavy-armor-recovery-hitdice",
     LONG_REST_ARMOR_EXHAUSTION: "long-rest-heavy-armor-exhaustion",
-    
+
+    LONG_MAX_HIT_DICE_SPEND_FORMULA: "long-max-hit-die-spend-formula",
     HP_MULTIPLIER_FORMULA: "long-recovery-hitpoints-formula",
     HD_MULTIPLIER_FORMULA: "long-recovery-hitdice-formula",
     LONG_RESOURCES_MULTIPLIER_FORMULA: "long-recovery-resources-formula",
@@ -423,9 +426,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDice.Hint",
     scope: "world",
     group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE],
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE, CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value || settings.get(CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE).value
     },
     config: false,
     default: false,
@@ -436,13 +439,55 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.PreRegainHitDiceBuffer.Hint",
     scope: "world",
     group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE],
+    dependsOn: [CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE, CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
+      return !settings.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value || settings.get(CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE).value
     },
     config: false,
     default: false,
     type: Boolean
+  },
+  [CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE]: {
+    name: "REST-RECOVERY.Settings.LongRest.PreventRegainHitDice.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.PreventRegainHitDice.Hint",
+    scope: "world",
+    group: "longrest",
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE, CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value || settings.get(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE).value
+    },
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND]: {
+    name: "REST-RECOVERY.Settings.LongRest.MaxHitDieSpend.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.MaxHitDieSpend.Hint",
+    scope: "world",
+    group: "longrest",
+    customSettingsDialog: true,
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE).value;
+    },
+    customFormula: CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+    },
+    default: CONSTANTS.FRACTIONS.FULL,
+  },
+  [CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND_FORMULA]: {
+    scope: "world",
+    group: "longrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "floor(@details.level/2)",
   },
   [CONSTANTS.SETTINGS.HP_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.LongRest.HitPointsRecoveryFraction.Title",

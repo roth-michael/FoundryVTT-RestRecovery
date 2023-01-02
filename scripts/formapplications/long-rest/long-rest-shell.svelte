@@ -44,6 +44,11 @@
   let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
   let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
+  const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
+  const maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+    ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
+    : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+
   const showArmorCheckbox = getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && workflow.healthData.hasNonLightArmor;
 
   let healthData = workflow.healthData;
@@ -68,13 +73,13 @@
       && workflow.totalHitDice > 0
     ) {
       const doContinue = await TJSDialog.confirm({
-        title: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
+        title: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
         content: {
           class: Dialog,
           props: {
             icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.LongRestWarning.Title"),
-            content: localize("REST-RECOVERY.Dialogs.LongRestWarning.Content")
+            header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
+            content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content")
           }
         },
         modal: true,
@@ -205,6 +210,7 @@
             onHitDiceFunction="{rollHitDice}"
             onAutoFunction="{autoRollHitDie}"
             workflow="{workflow}"
+            maxSpendHitDice="{maxSpendHitDice}"
           />
         {/if}
 
@@ -226,6 +232,13 @@
 
       {#if showHealthBar}
         <HealthBar text="{healthBarText}" progress="{healthPercentage}" progressGhost="{healthPercentageToGain}"/>
+      {/if}
+
+      {#if maxSpendHitDice > 0 && maxSpendHitDice !== healthData.level}
+        <p>{@html localize("REST-RECOVERY.Dialogs.LongRest.MaxHitDiceSpend", {
+          max_spend: maxSpendHitDice,
+          current: maxSpendHitDice - healthData.hitDiceSpent
+        })}</p>
       {/if}
 
       {#if showArmorCheckbox}

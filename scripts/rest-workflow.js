@@ -355,6 +355,7 @@ export default class RestWorkflow {
 
     let bardLevel = false;
     let characters = game.actors.filter(actor => actor.type === "character" && actor.hasPlayerOwner);
+
     for (let actor of characters) {
 
       // Only consider the actor if it has more than 0 hp, as features cannot be used if they are unconscious
@@ -372,9 +373,11 @@ export default class RestWorkflow {
         const songOfRest = actor.items.find(item => item.name.startsWith(lib.getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true)));
         if (songOfRest) {
           const level = bardClass.system.levels;
-          this.features.bard = bardLevel > level ? this.features.bard : actor;
-          bardLevel = bardLevel > level ? bardLevel : level;
-          this.features.bardFeature = songOfRest;
+          if (level > bardLevel) {
+            bardLevel = level;
+            this.features.bard = actor;
+            this.features.bardFeature = songOfRest;
+          }
         }
       }
 
@@ -395,13 +398,22 @@ export default class RestWorkflow {
     let avgHitDiceRegain = this.getAverageHitDiceRoll();
     let missingHP = this.maxHP - this.currHP;
     let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
+    let minSpendHitDice = 0;
+    let maxSpendHitDice = Infinity;
 
-    const minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
-    const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
-    let maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
-      ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
-      : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
-    maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
+    if (this.longRest) {
+      const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
+      maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+        ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
+        : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
+    } else {
+      minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
+      const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
+      maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+        ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
+        : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
+      maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
+    }
 
     // While the character is missing at least 10% of its hp, and we predict we can roll hit dice, and we have some left, roll hit dice
     while (missingHP && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0) {
@@ -485,7 +497,7 @@ export default class RestWorkflow {
           bard: this.features.bard.name
         }),
         speaker: ChatMessage.getSpeaker({ actor: this.actor })
-      })
+      });
 
       this.features.usedSongOfRest = true;
     }
@@ -623,17 +635,25 @@ export default class RestWorkflow {
     let { maxHitDice } = this._getMaxHitDiceRecovery();
     let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
 
-    if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
-      const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
-      if (armor) {
-        if (!this.healthData.removeNonLightArmor) {
-          if (maxHitDice === 0) {
-            this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.NoHitDiceArmor");
-          } else if (hitDiceRecovered) {
-            this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceArmor");
+
+    if (this.longRest) {
+
+      if (this.healthData.hitDiceSpent > 0 && hitDiceRecovered === 0 && lib.getSetting(CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE)) {
+
+        this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.PreventedHitDiceRecovery");
+
+      } else if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
+        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
+        if (armor) {
+          if (!this.healthData.removeNonLightArmor) {
+            if (maxHitDice === 0) {
+              this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.NoHitDiceArmor");
+            } else if (hitDiceRecovered) {
+              this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceArmor");
+            }
+          } else {
+            this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceNoArmor");
           }
-        } else {
-          this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceNoArmor");
         }
       }
     }
@@ -966,6 +986,10 @@ export default class RestWorkflow {
       maxHitDice = Math.min(maximumHitDiceToRecover, maxHitDice);
     }
 
+    if (this.healthData.hitDiceSpent > 0 && lib.getSetting(CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE)) {
+      maxHitDice = 0;
+    }
+
     return { maxHitDice };
 
   }
@@ -1034,7 +1058,7 @@ export default class RestWorkflow {
       for (let [level, slot] of Object.entries(this.actor.system.spells)) {
         if (!slot.override && !slot.max) continue;
         let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
-        if (level !== "pact" && customSpellRecovery){
+        if (level !== "pact" && customSpellRecovery) {
           updates[`system.spells.${level}.value`] = 0;
           continue;
         }
