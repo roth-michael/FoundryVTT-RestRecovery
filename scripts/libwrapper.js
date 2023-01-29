@@ -130,6 +130,7 @@ function patch_rest() {
       let hitPointUpdates = {};
       let hitDiceRecovered = 0;
       let hitDiceUpdates = [];
+      const rolls = [];
 
       // Recover hit points & hit dice on long rest
       if (longRest) {
@@ -151,11 +152,12 @@ function patch_rest() {
         },
         updateItems: [
           ...hitDiceUpdates,
-          ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay })
+          ...await this._getRestItemUsesRecovery({ recoverLongRestUses: longRest, recoverDailyUses: newDay, rolls })
         ],
         longRest,
         newDay
       };
+      result.rolls = rolls;
 
       const workflow = RestWorkflow.get(this);
       result.updateData = await workflow._handleExhaustion(result.updateData);
@@ -274,61 +276,63 @@ function patch_getUsageUpdates() {
   libWrapper.register(
     CONSTANTS.MODULE_NAME,
     "CONFIG.Item.documentClass.prototype._getUsageUpdates",
+
     function _getUsageUpdates({
       consumeQuantity, consumeRecharge, consumeResource, consumeSpellSlot,
-      consumeSpellLevel, consumeUsage
-    }) {
+      consumeSpellLevel, consumeUsage}) {
+
       const actorUpdates = {};
       const itemUpdates = {};
       const resourceUpdates = [];
 
       // Consume Recharge
-      if (consumeRecharge) {
+      if ( consumeRecharge ) {
         const recharge = this.system.recharge || {};
-        if (recharge.charged === false) {
-          ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: this.name }));
+        if ( recharge.charged === false ) {
+          ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
           return false;
         }
         itemUpdates["system.recharge.charged"] = false;
       }
 
       // Consume Limited Resource
-      if (consumeResource) {
+      if ( consumeResource ) {
         const canConsume = this._handleConsumeResource(itemUpdates, actorUpdates, resourceUpdates);
-        if (canConsume === false) return false;
+        if ( canConsume === false ) return false;
       }
 
       // Consume Spell Slots
-      if (consumeSpellSlot && consumeSpellLevel) {
-        if (Number.isNumeric(consumeSpellLevel)) consumeSpellLevel = `spell${consumeSpellLevel}`;
+      if ( consumeSpellSlot && consumeSpellLevel ) {
+        if ( Number.isNumeric(consumeSpellLevel) ) consumeSpellLevel = `spell${consumeSpellLevel}`;
         const level = this.actor?.system.spells[consumeSpellLevel];
         const spells = Number(level?.value ?? 0);
-        if (spells === 0) {
+        if ( spells === 0 ) {
           const labelKey = consumeSpellLevel === "pact" ? "DND5E.SpellProgPact" : `DND5E.SpellLevel${this.system.level}`;
           const label = game.i18n.localize(labelKey);
-          ui.notifications.warn(game.i18n.format("DND5E.SpellCastNoSlots", { name: this.name, level: label }));
+          ui.notifications.warn(game.i18n.format("DND5E.SpellCastNoSlots", {name: this.name, level: label}));
           return false;
         }
         actorUpdates[`system.spells.${consumeSpellLevel}.value`] = Math.max(spells - 1, 0);
       }
 
-      const consumeFull = RestWorkflow.itemsListened.get(this.id) ?? true;
+      const overrideLogic = RestWorkflow.itemsListened.get(this.id);
+      const consumeFull = overrideLogic ?? true;
 
       // Consume Limited Usage
-      if (consumeUsage) {
+      if ( consumeUsage ) {
         const uses = this.system.uses || {};
         const available = Number(uses.value ?? 0);
         let used = false;
         const remaining = Math.max(available - (consumeFull ? 1 : 0.5), 0);
-        if (available > 0) {
+        if ( (overrideLogic && available > 0) || (!overrideLogic && available >= 1) ) {
           used = true;
           itemUpdates["system.uses.value"] = remaining;
         }
 
         // Reduce quantity if not reducing usages or if usages hit zero, and we are set to consumeQuantity
-        if (consumeQuantity && (!used || (remaining === 0))) {
+        if ( consumeQuantity && (!used || (remaining === 0)) ) {
           const q = Number(this.system.quantity ?? 1);
-          if (q >= 1) {
+          if ( q >= 1 ) {
             used = true;
             itemUpdates["system.quantity"] = Math.max(q - 1, 0);
             itemUpdates["system.uses.value"] = uses.max ?? 1;
@@ -336,14 +340,14 @@ function patch_getUsageUpdates() {
         }
 
         // If the item was not used, return a warning
-        if (!used) {
-          ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", { name: this.name }));
+        if ( !used ) {
+          ui.notifications.warn(game.i18n.format("DND5E.ItemNoUses", {name: this.name}));
           return false;
         }
       }
 
       // Return the configured usage
-      return { itemUpdates, actorUpdates, resourceUpdates };
+      return {itemUpdates, actorUpdates, resourceUpdates};
     },
     "OVERRIDE"
   )

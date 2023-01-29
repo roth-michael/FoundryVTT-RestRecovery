@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.4.7
+- Fixed error surrounding the 2.0.x D&D5e updates regarding item recovery rolls 
+
 ## Version 1.4.6
 - Added optional setting to prevent hit dice recovery on long rests if any hit dice are rolled 
 - Added optional setting which limits how many hit dice characters can roll on a long rest 

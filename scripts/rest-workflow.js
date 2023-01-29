@@ -1128,7 +1128,7 @@ export default class RestWorkflow {
 
   _recoverItemsUses(updates, args) {
 
-    const { recoverLongRestUses, recoverDailyUses } = args;
+    const { recoverLongRestUses, recoverDailyUses, rolls } = args;
 
     const longFeatsMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER);
     const longOthersMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER);
@@ -1143,11 +1143,11 @@ export default class RestWorkflow {
     for (const item of this.actor.items) {
       if (item.system.uses) {
         if (recoverDailyUses && item.system.uses.per === "day") {
-          updates = this._recoverItemUse(actorRollData, updates, item, dailyMultiplier);
+          this._recoverItemUse(actorRollData, updates, item, dailyMultiplier, rolls);
         } else if (recoverLongRestUses && item.system.uses.per === "lr") {
-          updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier);
-        } else if (!recoverLongRestUses && item.system.uses.per === "sr") {
-          updates = this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier);
+          this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier, rolls);
+        } else if (item.system.uses.per === "sr") {
+          this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier, rolls);
         }
       } else if (recoverLongRestUses && item.system.recharge && item.system.recharge.value) {
         updates.push({ _id: item.id, "system.recharge.charged": true });
@@ -1167,12 +1167,12 @@ export default class RestWorkflow {
   }
 
 
-  _recoverItemUse(actor, updates, item, multiplier = 1.0) {
+  _recoverItemUse(actor, updates, item, multiplier = 1.0, rolls) {
 
     const usesMax = item.system.uses.max;
     const usesCur = item.system.uses.value;
 
-    if (usesCur === usesMax) return updates;
+    if (usesCur === usesMax) return;
 
     const customRecovery = getProperty(item, CONSTANTS.FLAGS.RECOVERY_ENABLED);
     const customFormula = getProperty(item, CONSTANTS.FLAGS.RECOVERY_FORMULA);
@@ -1183,6 +1183,7 @@ export default class RestWorkflow {
         actor: actor,
         item: foundry.utils.deepClone(item.system)
       });
+      rolls.push(customRoll)
       recoverValue = Math.max(0, Math.min(usesCur + customRoll.total, usesMax));
       const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(usesMax - usesCur, customRoll.total)}</a>`;
       this.itemsRegainedMessages.push([item.type, `<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
@@ -1206,8 +1207,6 @@ export default class RestWorkflow {
         "system.uses.value": recoverValue
       });
     }
-
-    return updates;
 
   }
 
