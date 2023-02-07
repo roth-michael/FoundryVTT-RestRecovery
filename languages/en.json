@@ -121,8 +121,10 @@
         "Short": "Short Rest",
         "Long": "Long Rest",
         "NewDayTitle": "New Day",
+        "NoNewDayTitle": "Not A New Day",
         "NewDayHint": "This causes characters who finish the rest to recover abilities that recharge on a \"per day\" basis.",
         "NewDaySimpleCalendarHint": "Based on the type selected below, characters who finish the rest to recover abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
+        "NoNewDaySimpleCalendarHint": "Neither long nor a short rest would result in a new day, so characters who finish either will <strong>not</strong> recovery abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
         "NewDay": "(new day)",
         "Submit": "Submit",
         "PlayerListShort": "Rest"

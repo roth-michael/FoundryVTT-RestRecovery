@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.4.8
+- Fixed Prompt Rest UI sometimes pushing elements out of view
+- Improved Simple Calendar integration by displaying more helpful information when a new day is not going to happen due to either rest types
+- Fixed long rest hit dice max buffer not working
+
 ## Version 1.4.7
 - Fixed error surrounding the 2.0.x D&D5e updates regarding item recovery rolls 
 

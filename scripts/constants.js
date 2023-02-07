@@ -4,14 +4,14 @@ const CONSTANTS = {
   SETTINGS: {
     
     MIGRATION_VERSION: "migration-version",
-    
+
     /*-------------------------------------------*
      *          Global Module Settings           *
      *-------------------------------------------*/
     MODULE_PROFILES: "module-profiles",
     ACTIVE_MODULE_PROFILE: "active-module-profile",
     PROMPT_REST_CONFIG: "prompt-rest-config",
-    
+
     /*-------------------------------------------*
      *           General Rest Settings           *
      *-------------------------------------------*/
@@ -33,13 +33,13 @@ const CONSTANTS = {
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
     SHORT_PACT_SPELLS_MULTIPLIER: "short-rest-recovery-pact-spells",
-    
+
     MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
     SHORT_RESOURCES_MULTIPLIER_FORMULA: "short-recovery-resources-formula",
     SHORT_USES_OTHERS_MULTIPLIER_FORMULA: "short-recovery-uses-others-formula",
     SHORT_USES_FEATS_MULTIPLIER_FORMULA: "short-recovery-uses-feats-formula",
     SHORT_PACT_SPELLS_MULTIPLIER_FORMULA: "short-recovery-pact-spells-formula",
-    
+
     /*-------------------------------------------*
      *             Long Rest Settings            *
      *-------------------------------------------*/
@@ -76,7 +76,7 @@ const CONSTANTS = {
     LONG_USES_FEATS_MULTIPLIER_FORMULA: "long-recovery-uses-feats-formula",
     LONG_USES_DAILY_MULTIPLIER_FORMULA: "long-recovery-day-formula",
     LONG_REST_ARMOR_HIT_DICE_FORMULA: "long-recovery-heavy-armor-hitdice-formula",
-    
+
     /*-------------------------------------------*
      *               Item names                  *
      *-------------------------------------------*/
@@ -92,7 +92,7 @@ const CONSTANTS = {
     PERIAPT_ITEM: "periapt-item-name",
     WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
     BLACK_BLOOD_FEATURE: "black-blood-feature-name",
-    
+
     /*-------------------------------------------*
      *          Food and Water Settings          *
      *-------------------------------------------*/
@@ -1058,6 +1058,11 @@ CONSTANTS.FLAGS.STARVATION = baseFlag + "starvation";
 CONSTANTS.FLAGS.SATED_FOOD = baseFlag + "sated.food";
 CONSTANTS.FLAGS.SATED_WATER = baseFlag + "sated.water";
 CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS = baseFlag + "currentShortRests";
+
+CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG = baseFlag + `hitDiceBuffer`;
+CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG = baseFlag + `-=hitDiceBuffer`;
+
+
 
 // DAE Flags
 const daeFlag = `flags.dae.${CONSTANTS.MODULE_NAME}.`

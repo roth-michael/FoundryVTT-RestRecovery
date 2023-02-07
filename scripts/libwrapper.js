@@ -234,10 +234,7 @@ function patch_getRestHitDiceRecovery() {
     CONSTANTS.MODULE_NAME,
     "CONFIG.Actor.documentClass.prototype._getRestHitDiceRecovery",
     function (wrapped, args) {
-      if (getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) {
-        return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecoveryPost")
-      }
-      return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecoveryPre", false)
+      return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecovery", true);
     }
   )
 }

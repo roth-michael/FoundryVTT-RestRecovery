@@ -131,7 +131,7 @@
 <ApplicationShell bind:elementRoot>
   <form bind:this={form} on:submit|preventDefault={submitPrompt} autocomplete=off class="dialog-content">
 
-    <div class="grid-table">
+    <div class="rest-recovery-grid-table">
       <div style="font-size:1rem; margin-bottom:0.25rem;">Player characters to prompt rests for</div>
       <div style="text-align: center;">
         <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;"
@@ -174,21 +174,28 @@
       </div>
 
 
-      {#if !simpleCalendarActive || longRestWouldBeNewDay || shortRestWouldBeNewDay}
+      {#if !simpleCalendarActive}
         <div style="margin-top:0.25rem; grid-column: {simpleCalendarActive ? '1 / 3' : '1'};">
           <span style="font-size: 1rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.NewDayTitle")}</span>
           <p style="font-size: 0.75rem; color: #4b4a44;">
-            {#if !simpleCalendarActive}
-              {localize("REST-RECOVERY.Dialogs.PromptRest.NewDayHint")}
-            {:else}
-              {@html localize("REST-RECOVERY.Dialogs.PromptRest.NewDaySimpleCalendarHint")}
-            {/if}
+						{localize("REST-RECOVERY.Dialogs.PromptRest.NewDayHint")}
           </p>
         </div>
-
         {#if !simpleCalendarActive}
           <input type="checkbox" bind:checked={forceNewDay}/>
+				{:else}
+					<div></div>
         {/if}
+			{:else}
+
+				<div style="margin-top:0.25rem; grid-column: {simpleCalendarActive ? '1 / 3' : '1'};">
+					<span style="font-size: 1rem;">{@html localize(`REST-RECOVERY.Dialogs.PromptRest.${!longRestWouldBeNewDay && !shortRestWouldBeNewDay ? "No" : ""}NewDayTitle`)}</span>
+					<p style="font-size: 0.75rem; color: #4b4a44;">
+						{@html localize(`REST-RECOVERY.Dialogs.PromptRest.${!longRestWouldBeNewDay && !shortRestWouldBeNewDay ? "No" : ""}NewDaySimpleCalendarHint`)}
+					</p>
+				</div>
+				<div></div>
+
       {/if}
 
     </div>
@@ -221,11 +228,12 @@
 
 <style lang="scss">
 
-  .grid-table {
+  .rest-recovery-grid-table {
     display: grid;
     align-items: center;
     grid-template-columns: 1fr auto;
     column-gap: 0.5rem;
+		max-width: 100%;
 
     .line {
       grid-column: 1 / -1;

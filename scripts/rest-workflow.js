@@ -68,10 +68,13 @@ export default class RestWorkflow {
       return plugins.handleExhaustion(actor, data);
     });
 
+    let cachedDenomination = false;
     Hooks.on("dnd5e.preRollHitDie", (actor, config, denomination) => {
 
       const workflow = RestWorkflow.get(actor);
       if (!workflow) return;
+
+      cachedDenomination = denomination;
 
       const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
@@ -118,6 +121,32 @@ export default class RestWorkflow {
       }
 
       config.formula = `max(0, ${formula})`;
+
+    });
+
+    Hooks.on("dnd5e.rollHitDie", (actor, roll, updates) => {
+
+      const workflow = RestWorkflow.get(actor);
+      if (!workflow) return;
+
+      const denomination = cachedDenomination;
+
+      const hitDice = updates.class["system.hitDiceUsed"]-1;
+
+      const clsItem = actor.items.find(i => {
+        return i.system.hitDice === denomination && i.system.hitDiceUsed === hitDice;
+      });
+
+      if(!clsItem) return;
+
+      const bufferDice = getProperty(clsItem, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG);
+
+      if((bufferDice ?? 0) > 0){
+        delete updates.class["system.hitDiceUsed"];
+        updates.class[CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG] = bufferDice-1;
+      }else if(bufferDice === 0){
+        updates.class[`-=${CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG}`] = null;
+      }
 
     });
 
@@ -225,7 +254,11 @@ export default class RestWorkflow {
       if (item.type === "class") {
         const d = item.system;
         const denom = d.hitDice || "d6";
-        const available = parseInt(d.levels || 1) - parseInt(d.hitDiceUsed || 0);
+        let available = parseInt(d.levels || 1) - parseInt(d.hitDiceUsed || 0);
+        if(this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)){
+          const hitDiceBuffer = getProperty(item, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG) ?? 0;
+          available += hitDiceBuffer;
+        }
         hd[denom] = denom in hd ? hd[denom] + available : available;
       }
       return hd;
@@ -587,9 +620,9 @@ export default class RestWorkflow {
 
     let { maxHitDice } = this._getMaxHitDiceRecovery();
 
-    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
+    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery(true);
 
-    let hitDiceLeftToRecover = maxHitDice - hitDiceRecovered;
+    let hitDiceLeftToRecover = Math.max(0, maxHitDice - hitDiceRecovered);
 
     if (hitDiceLeftToRecover > 0) {
       const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
@@ -598,17 +631,11 @@ export default class RestWorkflow {
 
       const biggestClass = sortedClasses[0];
 
-      const update = updates.find(update => update._id === biggestClass.id);
-      if (update) {
-        if (updates[updates.indexOf(update)]["system.hitDiceUsed"] >= 0) {
-          updates[updates.indexOf(update)]["system.hitDiceUsed"] -= hitDiceLeftToRecover;
-        }
-      } else {
-        updates.push({
-          _id: biggestClass.id,
-          "system.hitDiceUsed": hitDiceLeftToRecover * -1
-        })
-      }
+      updates.push({
+        _id: biggestClass.id,
+        [CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG]: hitDiceLeftToRecover
+      });
+
     }
 
     await this.actor.updateEmbeddedDocuments("Item", updates);
@@ -633,8 +660,7 @@ export default class RestWorkflow {
     }
 
     let { maxHitDice } = this._getMaxHitDiceRecovery();
-    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice, forced: true });
-
+    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery(true);
 
     if (this.longRest) {
 
@@ -905,45 +931,14 @@ export default class RestWorkflow {
 
   }
 
-  _getRestHitDiceRecoveryPre({ maxHitDice = undefined } = {}) {
+  _getRestHitDiceRecovery(results, forced = false) {
 
-    if (!this.longRest) return {};
-
-    return this._getMaxHitDiceRecovery({ maxHitDice });
-
-  }
-
-  _getRestHitDiceRecoveryPost(results, { forced = false } = {}) {
-
-    if (forced) {
+    if (forced || !getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) {
       return results;
     }
 
-    const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
-      return (parseInt(b.system.hitDice.slice(1)) || 0) - (parseInt(a.system.hitDice.slice(1)) || 0);
-    });
-
-    for (const item of sortedClasses) {
-      if (item.system.hitDiceUsed < 0) {
-        const update = results.updates.find(update => update._id === item.id);
-        if (update) {
-          results.updates[results.updates.indexOf(update)]["system.hitDiceUsed"] = 0;
-        } else {
-          results.updates.push({
-            _id: item.id,
-            "system.hitDiceUsed": 0
-          })
-        }
-
-      } else {
-        const update = results.updates.find(update => update._id === item.id);
-        if (update) {
-          results.updates.splice(results.updates.indexOf(update), 1);
-        }
-      }
-    }
-
     results.hitDiceRecovered = Math.max(0, Math.min(this.actor.system.details.level, this.totalHitDice) - this.healthData.startingHitDice);
+    results.updates = [];
 
     return results;
 
@@ -1120,6 +1115,12 @@ export default class RestWorkflow {
 
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
       updates.push({ _id: this.spellData.feature.id, "system.uses.value": 0 });
+    }
+
+    if(this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
+      Object.values(this.actor.classes).forEach(cls => {
+        updates.push({ _id: cls.id, [CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG]: null });
+      })
     }
 
     return updates;

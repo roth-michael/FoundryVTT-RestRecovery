@@ -22,7 +22,8 @@ export default class PromptRestDialog extends SvelteApplication {
       id: "rest-request-app",
       width: 350,
       height: "auto",
-      classes: ["dnd5e dialog"]
+      classes: ["dnd5e dialog rest-recovery-request-app"],
+      resizable: true
     })
   }
 
