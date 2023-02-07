@@ -1,6 +1,7 @@
 # Rest Recovery Changelog
 
 ## Version 1.4.8
+- Added Quick Setup for common setups (such as Slow Natural Healing)
 - Fixed Prompt Rest UI sometimes pushing elements out of view
 - Improved Simple Calendar integration by displaying more helpful information when a new day is not going to happen due to either rest types
 - Fixed long rest hit dice max buffer not working

@@ -5,12 +5,6 @@ export default class PromptRestDialog extends SvelteApplication {
 
   constructor(options = {}, dialogData = {}) {
     super({
-      title: game.i18n.localize("REST-RECOVERY.Dialogs.PromptRest.Title"),
-      zIndex: 102,
-      svelte: {
-        class: PromptRestShell,
-        target: document.body
-      },
       close: () => this.options.reject(),
       ...options
     }, dialogData);
@@ -18,6 +12,12 @@ export default class PromptRestDialog extends SvelteApplication {
 
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
+      title: game.i18n.localize("REST-RECOVERY.Dialogs.PromptRest.Title"),
+      zIndex: 102,
+      svelte: {
+        class: PromptRestShell,
+        target: document.body
+      },
       closeOnSubmit: false,
       id: "rest-request-app",
       width: 350,

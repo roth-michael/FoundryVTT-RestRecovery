@@ -129,6 +129,7 @@
 <svelte:options accessors={true}/>
 
 <ApplicationShell bind:elementRoot>
+
   <form bind:this={form} on:submit|preventDefault={submitPrompt} autocomplete=off class="dialog-content">
 
     <div class="rest-recovery-grid-table">

@@ -3,6 +3,7 @@ import SettingsShim from "./formapplications/settings/settings.js";
 import { getSetting } from "./lib/lib.js";
 import { writable } from "svelte/store";
 import plugins from "./plugins.js";
+import { QuickSetupShim } from "./formapplications/quick-setup/quick-setup.js";
 
 class RestRecoverySettings {
 
@@ -138,6 +139,15 @@ class RestRecoverySettings {
   }
 
   initialize() {
+
+    game.settings.registerMenu(this.namespace, "quickSetup", {
+      name: "REST-RECOVERY.Settings.QuickSetup.Title",
+      label: "REST-RECOVERY.Settings.QuickSetup.Label",
+      hint: "REST-RECOVERY.Settings.QuickSetup.Hint",
+      icon: "fas fa-cog",
+      type: QuickSetupShim,
+      restricted: true
+    });
 
     game.settings.registerMenu(this.namespace, "configureRest", {
       name: "REST-RECOVERY.Settings.Configure.Title",

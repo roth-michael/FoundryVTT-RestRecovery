@@ -8,6 +8,7 @@
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
   import SaveProfileDialog from "./SaveProfileDialog.svelte";
+  import { QuickSetup } from "../quick-setup/quick-setup.js";
 
   const { application } = getContext('external');
 
@@ -95,6 +96,11 @@
     application.close();
   }
 
+  async function openQuickSetup(){
+    QuickSetup.show();
+    application.close();
+	}
+
   let activeTab = "general";
 
 </script>
@@ -144,7 +150,16 @@
           {/each}
 
           {#if group === "general"}
-            <div style="text-align: center; font-size: 1rem; margin-top:3rem;">
+						<div style="text-align: center; font-size: 1rem; margin-top:2rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.25)">
+							<p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.Confused")}</p>
+							<p>
+								<a on:click={() => { openQuickSetup() }} class="link-text">
+									{localize("REST-RECOVERY.Dialogs.ModuleConfig.QuickSetup")}
+								</a>
+							</p>
+						</div>
+
+            <div style="text-align: center; font-size: 1rem; margin-top:2rem;">
               <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}
               <p>
               <p style="margin-bottom:1rem;">
@@ -156,9 +171,9 @@
               <p>
                 {localize("REST-RECOVERY.Dialogs.ModuleConfig.Donate")}
               </p>
-              <p>
+              <p style="display: flex; justify-content: center">
                 <a href="https://ko-fi.com/fantasycomputerworks" target="_blank"
-                   style="text-decoration: none !important;">
+                   style="text-decoration: none !important; flex: 0 1 auto;">
                   <button class="donate-button" type="button">
                     <img src="https://storage.ko-fi.com/cdn/cup-border.png">
                     <span>Donate</span>

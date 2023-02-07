@@ -9,6 +9,7 @@ import RestWorkflow from "./rest-workflow.js";
 import API from "./api.js";
 import { gameSettings } from "./settings.js";
 import SettingsShim from "./formapplications/settings/settings.js";
+import { QuickSetup } from "./formapplications/quick-setup/quick-setup.js";
 
 Hooks.once("init", () => {
   SocketHandler.initialize();
@@ -23,6 +24,7 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
+  // QuickSetup.show();
   // new SettingsShim().render(true);
   // game.actors.getName("Akra (Dragonborn Cleric)").longRest()
 })
