@@ -34,11 +34,15 @@
     }
   ],
   "relationships": {
+    "systems": [{
+      "id": "dnd5e",
+      "type": "system",
+      "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/release-2.1.4/system.json",
+      "compatibility": {
+        "verified": "2.0.3"
+      }
+    }],
     "requires": [
-      {
-        "id": "dnd5e",
-        "type": "system"
-      },
       {
         "id": "lib-wrapper",
         "type": "module"
