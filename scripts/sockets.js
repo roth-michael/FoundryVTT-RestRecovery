@@ -69,7 +69,8 @@ export default class SocketHandler {
     actorsToRest.forEach((actor, index) => {
       actor[data.restType]({
           newDay: data.newDay,
-          promptNewDay: data.promptNewDay
+          promptNewDay: data.promptNewDay,
+          restPrompted: true,
         },
         indexOffset ? { left: midPoint + (indexOffset + index) * width } : {}
       );

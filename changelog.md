@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.4.9
+- Added option to prevent users from initiating rests without being prompted
+- Fixed module being visible and activatable in other systems
+- Fixed hit dice recovery fraction not being respected
+
 ## Version 1.4.8
 - Added Quick Setup for common setups (such as Slow Natural Healing)
 - Fixed Prompt Rest UI sometimes pushing elements out of view

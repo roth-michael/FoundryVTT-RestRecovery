@@ -20,6 +20,7 @@ const CONSTANTS = {
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
     ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
+    PREVENT_USER_REST: "prevent-user-rest",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -157,6 +158,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
   /*-------------------------------------------*
    *           General Rest Settings           *
    *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.PREVENT_USER_REST]: {
+    name: "REST-RECOVERY.Settings.General.PreventUserRest.Title",
+    hint: "REST-RECOVERY.Settings.General.PreventUserRest.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: false,
+    type: Boolean
+  },
   [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
     name: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Title",
     hint: "REST-RECOVERY.Settings.General.EnableAutoRollButton.Hint",

@@ -32,7 +32,7 @@ function patch_shortRest() {
     "CONFIG.Actor.documentClass.prototype.shortRest",
     async function (config, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: false, promptNewDay: true, autoHD: false, autoHDThreshold: 3, ignoreFlags: false
+        dialog: true, chat: true, newDay: false, promptNewDay: true, autoHD: false, autoHDThreshold: 3, ignoreFlags: false, restPrompted: false
       }, config);
 
       /**
@@ -47,6 +47,11 @@ function patch_shortRest() {
 
       if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedShortRest");
+        return false;
+      }
+
+      if(getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !config.restPrompted){
+        custom_warning("REST-RECOVERY.Warnings.NotPromptedShortRest");
         return false;
       }
 
@@ -87,7 +92,7 @@ function patch_longRest() {
     "CONFIG.Actor.documentClass.prototype.longRest",
     async function (config = {}, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: true, promptNewDay: true, ignoreFlags: false
+        dialog: true, chat: true, newDay: true, promptNewDay: true, ignoreFlags: false, restPrompted: false
       }, config);
 
       /**
@@ -102,6 +107,11 @@ function patch_longRest() {
 
       if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedLongRest");
+        return false;
+      }
+
+      if(getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !config.restPrompted){
+        custom_warning("REST-RECOVERY.Warnings.NotPromptedLongRest");
         return false;
       }
 

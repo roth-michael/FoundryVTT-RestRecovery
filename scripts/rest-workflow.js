@@ -15,6 +15,7 @@ export default class RestWorkflow {
     this.actor = actor;
     this.longRest = longRest;
     this.finished = false;
+    this.preRestRegainHitDice = false;
     this.restVariant = game.settings.get("dnd5e", "restVariant");
 
     this.spellSlotsRegainedMessage = "";
@@ -620,7 +621,9 @@ export default class RestWorkflow {
 
     let { maxHitDice } = this._getMaxHitDiceRecovery();
 
-    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery(true);
+    this.preRestRegainHitDice = true;
+    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+    this.preRestRegainHitDice = false;
 
     let hitDiceLeftToRecover = Math.max(0, maxHitDice - hitDiceRecovered);
 
@@ -660,7 +663,7 @@ export default class RestWorkflow {
     }
 
     let { maxHitDice } = this._getMaxHitDiceRecovery();
-    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery(true);
+    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery();
 
     if (this.longRest) {
 
@@ -931,15 +934,14 @@ export default class RestWorkflow {
 
   }
 
-  _getRestHitDiceRecovery(results, forced = false) {
+  _getRestHitDiceRecovery(results) {
 
-    if (forced || !getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) {
+    if (this.preRestRegainHitDice || !lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) {
       return results;
     }
 
     results.hitDiceRecovered = Math.max(0, Math.min(this.actor.system.details.level, this.totalHitDice) - this.healthData.startingHitDice);
     results.updates = [];
-
     return results;
 
   }

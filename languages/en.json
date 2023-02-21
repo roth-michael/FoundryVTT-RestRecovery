@@ -7,7 +7,9 @@
     },
     "Warnings": {
       "PreventedLongRest": "You cannot long rest because you are under an effect that prevents you from doing so!",
-      "PreventedShortRest": "You cannot short rest because you are under an effect that prevents you from doing so!"
+      "PreventedShortRest": "You cannot short rest because you are under an effect that prevents you from doing so!",
+      "NotPromptedLongRest": "The GM has configured this game so you cannot start a long rest without being prompted!",
+      "NotPromptedShortRest": "The GM has configured this game so you cannot start a short rest without being prompted!"
     },
     "FeatureNames": {
       "ArcaneRecovery": "Arcane Recovery",
@@ -320,6 +322,10 @@
       },
       "RequiresModule": "Requires {module_name}",
       "General": {
+        "PreventUserRest": {
+          "Title": "Prevent User Rest",
+          "Hint": "This prevents users from initiating rests themselves, and must be prompted to rest by the GM."
+        },
         "EnableAutoRollButton": {
           "Title": "Enable hit dice auto roll button",
           "Hint": "This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full."
