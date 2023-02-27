@@ -3,6 +3,7 @@ import CONSTANTS from "./constants.js";
 import RestWorkflow from "./rest-workflow.js";
 import LongRestDialog from "./formapplications/long-rest/long-rest.js";
 import { custom_warning, getSetting } from "./lib/lib.js";
+import * as lib from "./lib/lib.js";
 
 export default function registerLibwrappers() {
 
@@ -244,7 +245,12 @@ function patch_getRestHitDiceRecovery() {
     CONSTANTS.MODULE_NAME,
     "CONFIG.Actor.documentClass.prototype._getRestHitDiceRecovery",
     function (wrapped, args) {
-      return RestWorkflow.wrapperFn(this, wrapped, args, "_getRestHitDiceRecovery", true);
+      const rest = RestWorkflow.get(this)
+      const maxHitDice = rest ? { maxHitDice: rest._getMaxHitDiceRecovery() } : args;
+      if(lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)){
+        return RestWorkflow.wrapperFn(this, wrapped, maxHitDice, "_getPostRestHitDiceRecovery");
+      }
+      return wrapped(maxHitDice);
     }
   )
 }

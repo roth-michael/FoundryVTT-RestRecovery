@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.4.10
+- Added support for the War Wizard's Power Surge feature
+- Fixed hit dice recovery fraction not being respected when long rest hit dice rolling was not enabled
+- Fixed Configure Resource Recovery stretching to take all available space on most character sheets
+
 ## Version 1.4.9
 - Added option to prevent users from initiating rests without being prompted
 - Fixed module being visible and activatable in other systems

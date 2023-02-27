@@ -85,6 +85,7 @@ const CONSTANTS = {
     DRUID_CLASS: "druid-class-name",
     BARD_CLASS: "bard-class-name",
     ARCANE_RECOVERY: "arcane-recovery-feature-name",
+    POWER_SURGE: "power-surge-feature-name",
     NATURAL_RECOVERY: "natural-recovery-feature-name",
     SONG_OF_REST: "song-of-rest-name",
     CHEF_FEAT: "chef-feat-name",
@@ -842,6 +843,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     localize: true,
     default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.POWER_SURGE]: {
+    name: "REST-RECOVERY.Settings.ItemNames.PowerSurge.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.PowerSurge.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    localize: true,
+    default: "REST-RECOVERY.FeatureNames.PowerSurge",
     type: String
   },
   [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {

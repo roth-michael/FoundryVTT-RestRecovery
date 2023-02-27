@@ -78,7 +78,7 @@ function patch_actorSheet(app, html, data) {
     targetElem = html.find('.center-pane .resources')[0];
     if (!targetElem) return;
   }
-  const elem = $(`<div class="form-group" style="${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"}"  title="Module: Rest Recovery for 5e">
+  const elem = $(`<div class="form-group" style="${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;"  title="Module: Rest Recovery for 5e">
         <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
         <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
             <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>

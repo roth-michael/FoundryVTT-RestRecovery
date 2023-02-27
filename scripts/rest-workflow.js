@@ -28,6 +28,12 @@ export default class RestWorkflow {
     this.consumableData = { items: [] };
   }
 
+  static get LongRestItemNameHandlers() {
+    return {
+      [lib.getSetting(CONSTANTS.SETTINGS.POWER_SURGE, true)]: "_handlePowerSurgeFeature"
+    }
+  }
+
   get maxHP() {
     return this.actor.system.attributes.hp.max + (this.actor.system.attributes.hp.tempmax ?? 0)
   }
@@ -575,16 +581,9 @@ export default class RestWorkflow {
     }
   }
 
-  static wrapperFn(actor, wrapped, args, fnName, runWrap = true) {
+  static wrapperFn(actor, wrapped, args, fnName) {
 
     const workflow = this.get(actor);
-
-    if (!runWrap) {
-      if (workflow && workflow[fnName]) {
-        return wrapped(workflow[fnName](args));
-      }
-      return wrapped(args);
-    }
 
     let updates = wrapped(args);
     if (workflow && workflow[fnName]) {
@@ -595,16 +594,9 @@ export default class RestWorkflow {
 
   }
 
-  static async asyncWrappedFn(actor, wrapped, args, fnName, runWrap = true) {
+  static async asyncWrappedFn(actor, wrapped, args, fnName) {
 
     const workflow = this.get(actor);
-
-    if (!runWrap) {
-      if (workflow && workflow[fnName]) {
-        return wrapped(workflow[fnName](args));
-      }
-      return wrapped(args);
-    }
 
     let updates = await wrapped(args);
     if (workflow && workflow[fnName]) {
@@ -619,7 +611,7 @@ export default class RestWorkflow {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return;
 
-    let { maxHitDice } = this._getMaxHitDiceRecovery();
+    const maxHitDice = this._getMaxHitDiceRecovery();
 
     this.preRestRegainHitDice = true;
     let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
@@ -662,7 +654,7 @@ export default class RestWorkflow {
       }
     }
 
-    let { maxHitDice } = this._getMaxHitDiceRecovery();
+    const maxHitDice = this._getMaxHitDiceRecovery();
     let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery();
 
     if (this.longRest) {
@@ -934,16 +926,11 @@ export default class RestWorkflow {
 
   }
 
-  _getRestHitDiceRecovery(results) {
-
-    if (this.preRestRegainHitDice || !lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) {
-      return results;
-    }
-
+  _getPostRestHitDiceRecovery(results) {
+    if(this.preRestRegainHitDice) return results;
     results.hitDiceRecovered = Math.max(0, Math.min(this.actor.system.details.level, this.totalHitDice) - this.healthData.startingHitDice);
     results.updates = [];
     return results;
-
   }
 
   _getMaxHitDiceRecovery({ maxHitDice = undefined } = {}) {
@@ -987,7 +974,7 @@ export default class RestWorkflow {
       maxHitDice = 0;
     }
 
-    return { maxHitDice };
+    return maxHitDice;
 
   }
 
@@ -1143,8 +1130,13 @@ export default class RestWorkflow {
 
     const actorRollData = this.actor.getRollData();
 
+    const longRestItemNameHandlers = RestWorkflow.LongRestItemNameHandlers;
+
     for (const item of this.actor.items) {
-      if (item.system.uses) {
+      const itemHandlerFn = longRestItemNameHandlers[item.name];
+      if(recoverLongRestUses && itemHandlerFn){
+        this[itemHandlerFn](actorRollData, updates, item, rolls);
+      } else if (item.system.uses) {
         if (recoverDailyUses && item.system.uses.per === "day") {
           this._recoverItemUse(actorRollData, updates, item, dailyMultiplier, rolls);
         } else if (recoverLongRestUses && item.system.uses.per === "lr") {
@@ -1170,7 +1162,7 @@ export default class RestWorkflow {
   }
 
 
-  _recoverItemUse(actor, updates, item, multiplier = 1.0, rolls) {
+  _recoverItemUse(actorRollData, updates, item, multiplier = 1.0, rolls) {
 
     const usesMax = item.system.uses.max;
     const usesCur = item.system.uses.value;
@@ -1183,7 +1175,7 @@ export default class RestWorkflow {
     let recoverValue;
     if (customRecovery && customFormula) {
       const customRoll = lib.evaluateFormula(customFormula, {
-        actor: actor,
+        actor: actorRollData,
         item: foundry.utils.deepClone(item.system)
       });
       rolls.push(customRoll)
@@ -1208,6 +1200,24 @@ export default class RestWorkflow {
       updates.push({
         _id: item.id,
         "system.uses.value": recoverValue
+      });
+    }
+
+  }
+
+  _handlePowerSurgeFeature(actorRollData, updates, item) {
+
+    const numSurges = getProperty(item, "system.uses.value");
+    if(numSurges === 1) return;
+
+    const update = updates.find(update => update._id === item.id);
+
+    if (update) {
+      update["system.uses.value"] = 1;
+    } else {
+      updates.push({
+        _id: item.id,
+        "system.uses.value": 1
       });
     }
 
@@ -1329,7 +1339,6 @@ export default class RestWorkflow {
     return actor.updateEmbeddedDocuments("Item", updates);
 
   }
-
 
   static _patchConsumableItem(item, updates) {
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
