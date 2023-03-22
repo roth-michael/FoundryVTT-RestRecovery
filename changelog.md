@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.4.11
+- Fixed food & water not showing up in the rest dialog if the character didn't need water but needed food
+
 ## Version 1.4.10
 - Added support for the War Wizard's Power Surge feature
 - Fixed hit dice recovery fraction not being respected when long rest hit dice rolling was not enabled
