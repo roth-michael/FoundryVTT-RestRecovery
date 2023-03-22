@@ -6,7 +6,7 @@ import { getSetting } from "./lib/lib.js";
 export default function registerSheetOverrides() {
   Hooks.on("renderItemSheet5e", patch_itemSheet);
   Hooks.on("renderActorSheet5e", patch_actorSheet);
-  Hooks.on("renderAbilityUseDialog", patch_AbilityUseDialog)
+  Hooks.on("renderAbilityUseDialog", patch_AbilityUseDialog);
   registerTraits();
 }
 
@@ -68,9 +68,44 @@ function registerTraits() {
 
 }
 
+let styleTag = false;
 
 function patch_actorSheet(app, html, data) {
+
   let actor = game.actors.get(data.actor._id);
+
+  if(game.modules.get("tidy5e-sheet")?.active && lib.getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)){
+
+    if(!styleTag) {
+      styleTag = document.createElement("style");
+      document.head.appendChild(styleTag);
+      styleTag.type = "text/css";
+      styleTag.appendChild(document.createTextNode(`
+    .tidy5e.sheet.actor .exhaustion-container:hover .exhaustion-wrap {
+      width: 254px;
+    }`));
+    }
+
+    const exhaustionElem = [
+      $(`<li data-elvl="7">7</li>`),
+      $(`<li data-elvl="8">8</li>`),
+      $(`<li data-elvl="9">9</li>`),
+      $(`<li data-elvl="10">10</li>`)
+    ]
+
+    exhaustionElem.forEach(elem => {
+      elem.on("click", async function(event) {
+        event.preventDefault();
+        let target = event.currentTarget;
+        let value = Number(target.dataset.elvl);
+        await actor.update({ "system.attributes.exhaustion": value });
+      })
+    })
+
+    html.find(".exhaust-level").append(exhaustionElem)
+
+  }
+
   let border = true;
   let targetElem = html.find('.center-pane .attributes')[0];
   if (!targetElem) {

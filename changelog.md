@@ -1,8 +1,9 @@
 # Rest Recovery Changelog
 
 ## Version 1.4.11
+- Added support for One D&D Exhaustion with Tidy 5e sheet (simply adds more exhaustion options in the UI)
 - Fixed food & water not showing up in the rest dialog if the character didn't need water but needed food
-- Turned off One 
+- Turned off exhaustion integrations when One D&D Exhaustion is active due to strange behavior
 
 ## Version 1.4.10
 - Added support for the War Wizard's Power Surge feature
