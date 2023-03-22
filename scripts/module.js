@@ -25,6 +25,6 @@ Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
   // QuickSetup.show();
-  // new SettingsShim().render(true);
+  //new SettingsShim().render(true);
   // game.actors.getName("Akra (Dragonborn Cleric)").longRest()
 })

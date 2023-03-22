@@ -2,6 +2,7 @@
 
 ## Version 1.4.11
 - Fixed food & water not showing up in the rest dialog if the character didn't need water but needed food
+- Turned off One 
 
 ## Version 1.4.10
 - Added support for the War Wizard's Power Surge feature

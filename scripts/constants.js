@@ -394,9 +394,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Hint",
     scope: "world",
     group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value || settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value
     },
     config: false,
     type: String,
@@ -410,12 +410,12 @@ CONSTANTS.DEFAULT_SETTINGS = {
   [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",
     hint: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint",
+    hint2: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint2",
     scope: "world",
     group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION],
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-          || settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.CUB;
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value;
     },
     customSettingsDialog: true,
     config: false,

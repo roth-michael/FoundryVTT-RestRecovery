@@ -427,7 +427,8 @@
         },
         "OneDnDExhaustion": {
           "Title": "Enable One D&D Exhaustion",
-          "Hint": "In the new One D&D, exhaustion instead stacks to 10 (upon which you still die), and applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Note: This is not compatible with the CUB exhaustion integration above."
+          "Hint": "In the new One D&D, exhaustion instead stacks to 10 (upon which you still die), and applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Simply change the exhaustion level on the characters, and the penalty is automatically applied.",
+          "Hint2": "Note: This is not compatible with the exhaustion integrations above."
         },
         "RollHitDice": {
           "Title": "Enable long rest hit dice rolls",

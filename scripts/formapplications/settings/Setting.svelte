@@ -34,7 +34,15 @@
       </label>
       {/if}
     </div>
-    <p class="notes">{localize(setting.hint)}</p>
+    <p class="notes">
+			{@html localize(setting.hint)}
+		</p>
+		{#if setting?.hint2}
+			<p class="notes notes-2">
+				{@html localize(setting.hint2)}
+			</p>
+		{/if}
+
   </div>
 
   <div class="form-fields input-side">
@@ -142,5 +150,9 @@
   input[type="number"] {
     min-width: 100px;
   }
+
+	.notes-2 {
+		font-weight: bold;
+	}
 
 </style>
