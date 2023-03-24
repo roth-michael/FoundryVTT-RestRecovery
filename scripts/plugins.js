@@ -128,7 +128,22 @@ const oneDndExhaustionEffectData = {
     }
   },
   "changes": [{
-    "key": "system.bonuses.All-Attacks",
+    "key": "system.bonuses.msak.attack",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  }, {
+    "key": "system.bonuses.mwak.attack",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  },  {
+    "key": "system.bonuses.rsak.attack",
+    "value": "-@attributes.exhaustion",
+    "mode": 2,
+    "priority": 20
+  },  {
+    "key": "system.bonuses.rwak.attack",
     "value": "-@attributes.exhaustion",
     "mode": 2,
     "priority": 20
