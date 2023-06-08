@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.4.12
+- Bumped supported Foundry version to v11
+- Bumped supported D&D version to 2.0.0 
+
 ## Version 1.4.11
 - Added support for One D&D Exhaustion with Tidy 5e sheet (simply adds more exhaustion options in the UI)
 - Fixed food & water not showing up in the rest dialog if the character didn't need water but needed food

@@ -30,7 +30,7 @@ export default class plugins {
 
     const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
 
-    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
 
     const actorUuid = actor.uuid;
 
@@ -82,7 +82,7 @@ export default class plugins {
     if (!game?.cub?.enhancedConditions?.supported) return;
     const CUB = game.cub;
 
-    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
+    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
     const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
 
     for (let level = 1; level <= 5; level++) {
