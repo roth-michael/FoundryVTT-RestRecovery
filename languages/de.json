@@ -1,0 +1,566 @@
+{
+  "REST-RECOVERY": {
+    "ClassNames": {
+      "Wizard": "Magier",
+      "Druid": "Druide",
+      "Bard": "Barde"
+    },
+    "Warnings": {
+      "PreventedLongRest": "Lange Rast wird von einem Effekt verhindert!",
+      "PreventedShortRest": "Kurze Rast wird von einem Effekt verhindert!",
+      "NotPromptedLongRest": "Die SL hat das Spiel so konfiguriert, dass eine lange Rast nur auf Aufforderung genutzt werden kann.",
+      "NotPromptedShortRest": "Die SL hat das Spiel so konfiguriert, dass eine kurze Rast nur auf Aufforderung genutzt werden kann."
+    },
+    "FeatureNames": {
+      "ArcaneRecovery": "Arkane Erholung",
+      "NaturalRecovery": "Natürliche Erholung",
+      "PowerSurge": "Magieschub",
+      "SongOfRest": "Lied der Erholung",
+      "ChefFeat": "Koch",
+      "ChefTools": "Kochutensilien",
+      "PeriaptItem": "Anhänger der Wundheilung",
+      "WoundClosureBlessing": "Segen der Wundheilung",
+      "DurableFeat": "Widerstandsfähig",
+      "BlackBloodFeature": "Schwarzblutheilung"
+    },
+    "PatchedRecovery": "{recoveryName} von {actorName} wurde gepatcht.",
+    "PatchedConsumable": "Nutzungen von {itemName} aktualisiert.",
+    "Modules": {
+      "DFreds": "DFreds Convenient Effects",
+      "CUB": "Combat Utility Belt"
+    },
+    "Fractions": {
+      "None": "Kein(e)",
+      "Quarter": "Viertel",
+      "Half": "Halb",
+      "Full": "Voll",
+      "Custom": "Eigene Formel"
+    },
+    "Rounding": {
+      "RoundDown": "Abrunden",
+      "RoundUp": "Aufrunden"
+    },
+    "Misc": {
+      "Food": "Nahrung",
+      "Water": "Wasser",
+      "Both": "Beides"
+    },
+    "NumberToText": {
+      "1": "Ein",
+      "2": "Zwei",
+      "3": "Drei",
+      "4": "Vier",
+      "5": "Fünf",
+      "1st": "1.",
+      "2nd": "2.",
+      "3rd": "3.",
+      "4th": "4.",
+      "5th": "5.",
+      "6th": "6.",
+      "7th": "7.",
+      "8th": "8.",
+      "9th": "9."
+    },
+    "Chat": {
+      "RegainedUses": "Außerdem wurde Folgendes zurückerhalten:",
+      "SpellSlotList": "{number} Zauberplatz vom {level} Grad",
+      "SpellSlotListPlural": "{number} Zauberplätze vom {level} Grad",
+      "RecoveryNameNum": "{name} hat {number} Nutzungen zurückerhalten",
+      "SongOfRest": "{name} genießt das Lied der Erholung von {bard}.",
+      "SongOfRestSelf": "{name} genießt das eigene Lied der Erholung.",
+      "Chef": "{name} genießt leckere Speisen von {chef}.",
+      "ChefSelf": "{name} genießt die eigenen leckeren Speisen.",
+      "ConsumedBothDayWorth": "{actorName} verbraucht {itemName} als Nahrung und Wasser für einen vollen Tag.",
+      "ConsumedBoth": "{actorName} verbraucht {itemName} für {charges} Einheiten Nahrung und Wasser.",
+      "ConsumedFoodDayWorth": "{actorName} verbraucht {itemName} als Nahrung für einen vollen Tag.",
+      "ConsumedFood": "{actorName} verbraucht {itemName} für {charges} Einheiten Nahrung.",
+      "ConsumedWaterDayWorth": "{actorName} verbraucht {itemName} als Wasser für einen vollen Tag.",
+      "ConsumedWater": "{actorName} verbraucht {itemName} als {charges} Einheiten Wasser.",
+      "RequiredSatedFood": "{units} Einheiten Nahrung werden für einen Tag benötigt.",
+      "RequiredSatedWater": "{units} Einheiten Wasser werden für einen Tag benötigt.",
+      "SatedFood": "Der Hunger wurde gestillt.",
+      "SatedWater": "Der Durst wurde gestillt.",
+      "FoodFullNone": "Der Hunger wurde durch eigene Vorräte gestillt.",
+      "FoodHalfNone": "Der Hunger konnte nur zur Hälfte durch eigene Vorräte gestillt werden.",
+      "FoodHalfHalf": "Der Hunger wurde durch externe Quellen und eigene Vorräte gestillt.",
+      "FoodNoneFull": "Der Hunger wurde durch externe Quellen gestillt.",
+      "FoodNoneHalf": "Der Hunger konnte nur zur Hälfte durch externe Quellen gestillt werden.",
+      "FoodNoneNone": "Der Hunger wurde nicht gestillt.",
+      "WaterFullNone": "Der Durst wurde durch eigene Vorräte gestillt.",
+      "WaterHalfNone": "Der Durst konnte nur zur Hälfte durch eigene Vorräte gestillt werden.",
+      "WaterHalfHalf": "Der Durst wurde durch externe Quellen und eigene Vorräte gestillt.",
+      "WaterNoneFull": "Der Durst wurde durch externe Quellen gestillt.",
+      "WaterNoneHalf": "Der Durst konnte nur zur Hälfte durch fremde Quellen gestillt werden.",
+      "WaterNoneNone": "Der Durst wurde nicht gestillt.",
+      "NoExhaustion": "Aber Erschöpfung wurde vermieden.",
+      "Exhaustion": "Daher wurden {exhaustion} Stufen Erschöpfung erlitten.",
+      "ExhaustionDeath": "Leider erreichte {actorName} {max_levels} Stufen Erschöpfung und verstarb.",
+      "ExhaustionArmor": "Durch die Entscheidung, die Rüstung anzubehalten wurde keine Erschöpfung regeneriert.",
+      "HitDiceArmor": "Es wurden weniger Trefferwürfel als normal zurückerlangt, da die Rüstung bei der Rast anbehalten wurde.",
+      "NoHitDiceArmor": "Es wurden keine Tefferwürfel zurückerhalten, da die Rüstung bei der Rast anbehalten wurde.",
+      "HitDiceNoArmor": "Es wurde die normale Menge Trefferwürfel zurückerlangt, da die Rüstung für die Rast ausgezogen wurde.",
+      "PreventedHitDiceRecovery": "Da für die Rast Trefferwürfel verwendet wurden, wurden keine Tefferwürfel zurückerlangt.",
+      "CouldNotLongRest": "{actorName} konnte keine lange Rast einlegen.",
+      "CouldNotShortRest": "{actorName} konnte keine kurze Rast einlegen."
+    },
+    "Dialogs": {
+      "SaveProfile": {
+        "Title": "Neues Profil",
+        "Enter": "Profilname:",
+        "OverrideProfile": "Neues Profil kann nicht den Namen eines alten Profils haben",
+        "Empty": "Neues Profil kann keinen leeren Namen haben"
+      },
+      "DiscardChanges": {
+        "Title": "Änderungen verwerfen",
+        "Content": "Dieses Profil hat nicht gespeicherte Änderungen. Soll wirklich das Profil gewechselt werden?"
+      },
+      "ResetDefaultChanges": {
+        "Title": "Auf Default zurücksetzen",
+        "Content": "Soll das \"Default\"-Profil auf die Voreinstellungen zurückgesetzt werden?"
+      },
+      "DeleteProfile": {
+        "Title": "Profil löschen",
+        "Content": "Profil \"{profile}\" löschen?"
+      },
+      "QuickSetup": {
+        "Title": "Rest Recovery: Schnelles Setup",
+        "SlowNaturalHealingTitle": "Langsame Natürliche Heilung",
+        "SlowNaturalHealingLabel": "Charaktere erhalten keine Trefferpunkte am Ende einer langen Rast zurück. Stattdessen müssen sie wie bei einer kurzen Rast Trefferwürfel verbrauchen, um zu regenerieren.",
+        "RecoverHitDiceTitle": "Trefferwürfel vor langer Rast erhalten",
+        "RecoverHitDiceLabel": "Verändert Langsame Natürliche Heilung so, dass Charaktere ihre Trefferwürfel beim Beginn der langen Rast zurückerhalten statt am Ende.",
+        "OpenSettings": "Einstellungen"
+      },
+      "PromptRest": {
+        "Title": "Spieler zu Rast auffordern",
+        "ConfigureProfiles": "Profile konfigurieren",
+        "Short": "Kurze Rast",
+        "Long": "Lange Rast",
+        "NewDayTitle": "Neuer Tag",
+        "NoNewDayTitle": "Kein neuer Tag",
+        "NewDayHint": "Fähigkeiten, die pro \"pro Tag\" nutzbar sind werden zurückerlangt.",
+        "NewDaySimpleCalendarHint": "Basierend auf der Auswahl unten erlangen Charaktere am Ende der Rast Fähigkeiten zurück, die \"pro Tag\" nutzbar sind. Gesteuert durch das Modul <strong>Simple Calendar</strong>.",
+        "NoNewDaySimpleCalendarHint": "Weder kurze noch lange Rast enden in einem neuen Tag, Charaktere erhalten also <strong>keine</strong> Fähigkeiten zurück, die \"pro Tag\" nutzbar sind. Gesteuert durch das Modul <strong>Simple Calendar</strong>.",
+        "NewDay": "(neuer Tag)",
+        "Submit": "Speichern",
+        "PlayerListShort": "Rasten"
+      },
+      "ShortRest": {
+        "ForcedNewDayTitle": "Neuer Tag",
+        "ForcedNewDayHint": "Ein neuer Tag bricht an, daher wird diese kurze Rast Fähigkeiten aufladen, die \"pro Tag\" nutzbar sind.",
+        "NoHitDiceRest": "Kurze Rast einlegen? Durch eine kurze Rast können primäre und sekundäre Ressourcen zurückerlangt werden.",
+        "NoMoreRests": "Keine weiteren kurzen Rasten",
+        "NoMoreRestsSmall": "Eine kurze Rast hat keinen Nutzen, da die Regeln maximal <strong>{max_short_rests}</strong> kurze Rasten pro langer Rast festlegen.",
+        "ShortRestLimit": "<strong>{num_short_rests}</strong> kurze Rasten können noch vor der nächsten langen Rast eingelegt werden.",
+        "ShortRestLimitSmall": "Maximal <strong>{max_short_rests}</strong> kurze Rasten pro langer Rast.",
+        "AutoRoll": "Auto-Würfeln",
+        "MinHitDiceSpend": "Es müssen mindestens<strong>{min_spend}</strong> Trefferwürfel verwendet werden, um diese kurze Rast abzuschließen.",
+        "MaxHitDiceSpend": "Es können nur <strong>{max_spend}</strong> Trefferwürfel während dieser kurzen Rast verwendet werden (<strong>{current}</strong> verbleibend).",
+        "FinishRest": "Kurze Rast nehmen"
+      },
+      "RestHealthWarning": {
+        "Title": "Lange Rast abschließen?",
+        "Content": "Es wurden keine Trefferwürfel verwendet, um Trefferpunkte zu regenerieren. Soll die lange Rast wirklich abgeschlossen werden?"
+      },
+      "RestSpendHitDice": {
+        "Title": "Trefferwürfel verwenden?",
+        "Content": "Es müssen mindestens {num_dice} Trefferwürfel verwendet werden, um diese Rast abzuschließen. Sicher, dass das getan werden soll?"
+      },
+      "RestNoHitDice": {
+        "Title": "Keine verbleibenden Trefferwürfel",
+        "Content": "Es müssten mindestens {num_dice} Trefferwürfel für diese Rast verwendet werden, aber es sind keine mehr übrig."
+      },
+      "LongRest": {
+        "ForcedNewDayTitle": "Neuer Tag",
+        "ForcedNewDayHint": "Ein neuer Tag bricht an, daher wird diese lange Rast Fähigkeiten augladen, die \"pro Tag\" nutzbar sind.",
+        "Begin": "Lange Rast starten",
+        "BeginExplanation": "Durch das Starten der langen Rast werden Trefferwürfel zurückgewonnen, damit diese zum Regenerieren von Trefferpunkten genutzt werden können.",
+        "CustomRules": "Es wurden geänderte Regeln festgelegt, wodurch gegebenenfalls Trefferpunkte und -würfel, Klassenressourcen, Gegenstandsnutzungen, Zauberplätze etc. anders zurückgewonnen werden.",
+        "CustomRulesLink": "Geänderte Regeln ansehen.",
+        "MinHitDiceSpend": "Es müssen <strong>{min_spend}</strong> Trefferwürfel ausgegeben werden, um diese lange Rast abzuschließen.",
+        "MaxHitDiceSpend": "Es können während dieser langen Rast nur <strong>{max_spend}</strong> Trefferwürfel ausgegeben werden (<strong>{current}</strong> verbleibend).",
+        "ArmorRecovery": "Rüstung während langer Rast ablegen?",
+        "ArmorRecoveryHint": "Die ausgerüstete nicht-leichte Rüstung sorgt für Nachteile. Per Klick auf den organgen Regeltext können Details angezeigt werden.",
+        "FinishRest": "Lange Rast nehmen"
+      },
+      "RestSteps": {
+        "Next": "Weiter",
+        "Prev": "Zurück",
+        "Rest": {
+          "Title": "Rasten"
+        },
+        "FoodWater": {
+          "Title": "Nahrung & Wasser",
+          "FoodRequirement": "Es werden noch <strong>{food}</strong> Einheiten Nahrung benötigt.",
+          "FoodSated": "Hunger ist gestillt.",
+          "FoodAlmostExhaustion": "Wenn dieser Tag endet, ohne dass der Hunger gestillt wurde, verursacht das <strong>1 Stufe Erschöpfung</strong> in <strong>{days} Tagen</strong>.",
+          "FoodExhaustion": "Der Hunger verursacht automatisch <strong>1 Stufe Erschöpfung</strong>, falls er heute nicht gestillt wird.",
+          "ExternalFood": "Hat Zugang zu extener Nahrungsquelle",
+          "ExternalFoodFull": "Vollen Hunger stillen",
+          "ExternalFoodHalf": "Halben Hunger stillen",
+          "WaterRequirement": "Es werden noch <strong>{water}</strong> Einheiten Wasser benötigt.",
+          "AmountToConsume": "Verbrauchsmenge",
+          "WaterSated": "Durst ist gestillt.",
+          "NoWater": "Wenn heute weniger als der halbe Durst gestillt wird, verursacht das <strong>{exhaustion} Stufen Erschöpfung</strong>.",
+          "HalfWater": "Wenn der Durst heute nicht vollständig gestillt wird, ist ein Konstitutionsrettungswurf gegen SG {dc} nötig, um weitere <strong>{exhaustion} Stufen Erschöpfung</strong> zu vermeiden.",
+          "DragDrop": "Items zum Verbrauchen hineinziehen oder wählen:",
+          "DayWorth": "Eine Nutzung für einen vollen Tag {type}",
+          "ExternalWater": "Hat Zugang zu extener Wasserquelle",
+          "ExternalWaterFull": "Vollen Durst stillen",
+          "ExternalWaterHalf": "Halben Durst stillen"
+        },
+        "SpellRecovery": {
+          "Title": "Magie-Rückgewinnung",
+          "SpellSlotFeature": "Zauberplätze durch {featureName} zurückerlangen",
+          "SpellSlotRule": "Zauberplätze zurückerlangen",
+          "SpellSlotsLeft": "{spellSlotsLeft} Grade von Zauberplätzen können zurückerlangt werden.",
+          "NoFeatureUse": "Keine Nutzungen von {featureName} verbleiben, daher können keine Zauberplätze während dieser kurzen Rast zurückgewonnen werden.",
+          "FullSpells": "Alle Zauberplätze sind voll, also müssen keine zurückgewonnen werden."
+        }
+      },
+      "LongRestSettingsDialog": {
+        "Title": "Lange Rast",
+        "Content": "Dies sind die Einstellungen der SL für lange Rasten in diesem Spiel."
+      },
+      "CharacterOwnersOffline": {
+        "Title": "Spieler sind offline",
+        "Content": "Die Besitzer der folgenden Charaktere sind offline, Rast stattdessen für sie abschließen?"
+      },
+      "Resources": {
+        "Configure": "Ressourcen-Rückgewinnung",
+        "Title": "Ressourcenkonfiguration",
+        "Name": "Name",
+        "Value": "Wert",
+        "Short": "Kurz",
+        "Long": "Lang",
+        "RecoveryFormula": "Rückgewinnungsformel"
+      },
+      "ModuleConfig": {
+        "Title": "Rest Recovery Einstellungen",
+        "General": "Allgemeine Einstellungen",
+        "LongRest": "Lange Rast",
+        "ShortRest": "Kurze Rast",
+        "ItemNames": "Merkmalnamen",
+        "FoodAndWater": "Nahrung & Wasser",
+        "Confused": "Verwirrt? Zu viele Optionen?",
+        "QuickSetup": "Hier klicken für Schnell-Setup!",
+        "Donate": "Falls das Modul gefällt, hilft eine Spende, es am Laufen zu halten!",
+        "MoreToCome": "Weitere Konfigurationsoptionen folgen...",
+        "Request": "Neue Funktionen hier anfragen.",
+        "Submit": "Speichern",
+        "ModuleProfile": "Modulprofil:",
+        "ImportProfile": "Profil importieren",
+        "ExportProfile": "Profil exportieren"
+      },
+      "ItemOverrides": {
+        "Title": "Rest Recovery: Food & Water",
+        "UsesCustomRecovery": "Eigene Rückgewinnung",
+        "Type": "Typ:",
+        "Enabled": "Aktiv",
+        "Formula": "Formel:",
+        "IsConsumable": "Ist Verbrauchsgut",
+        "DayWorth": "Eine Nutzung reicht für einen vollen Tag",
+        "ChargesDescription": "Das System für Nahrung und Wasser von Rest Recovery erfordert, dass das Item verbrauchbare Nutzungen hat - eine Nutzung entspricht einer Einheit Nahrung oder Wasser."
+      },
+      "AbilityUse": {
+        "Title": "Wählen, wie viel vom Item verbraucht werden soll:",
+        "DayWorthTitleBoth": "Dieses Verbrauchsgut still Hunger und Durst für einen vollen Tag.",
+        "DayWorthTitleFood": "Dieses Verbrauchsgut still den Hunger für einen vollen Tag.",
+        "DayWorthTitleWater": "Dieses Verbrauchsgut still den Durst für einen vollen Tag.",
+        "DayWorthTitleCont": "Bis zum nächsten Tag muss nichts mehr verzehrt werden. Hiervon kann nicht bloß die Hälfte verzehrt werden.",
+        "SatedFood": "Hunger ist bereits gestillt, etwas zu essen bringt keine Vorteile.",
+        "NotSatedFood": "Um den Hunger zu stillen sind noch {units} Einheiten Nahrung nötig.",
+        "SatedWater": "Durst ist bereits gestillt, etwas zu trinken bringt keine Vorteile.",
+        "NotSatedWater": "Um den Durst zu stillen sind noch {units} Einheiten Wasser nötig.",
+        "FullUnit": "Ganze Einheit verbrauchen",
+        "HalfUnit": "Halbe Einheit verbruachen"
+      }
+    },
+    "Traits": {
+      "Title": "Rast-Rückgewinnung",
+      "HitDieBonus": {
+        "Title": "Trefferwürfelbonus",
+        "Hint": "Wenn dieser Charakter einen Trefferwürfel nutzt, erhält er auf den Wurf diesen Bonus. Kann eine Formel sein, etwa \"1d6 + 3\"."
+      },
+      "LongRestSpellPointsBonus": {
+        "Title": "Zauberplatzpunkte-artiger Bonus",
+        "Hint": "Dieser Bonus wird auf die Rückgewinnung von Zauberplätzen bei einer langen Rast addiert."
+      },
+      "LongRestSpellPointsFormula": {
+        "Title": "Zauberplatzpunkte-artige Formel",
+        "Hint": "Überschreibt die Formel für die Zauberplatzpunkte-artige Rückgewinnung von Zauberlätzen für diesen Charakter."
+      },
+      "FoodUnitsPerDay": {
+        "Title": "Nahrung pro Tag",
+        "Hint": "Überschreibt, wie viele Einheiten Nahrung der Charakter pro Tag benötigt."
+      },
+      "WaterUnitsPerDay": {
+        "Title": "Wasser pro Tag",
+        "Hint": "Überschreibt, wie viele Einheiten Wasser der Charakter pro Tag benötigt."
+      },
+      "NoFoodWater": {
+        "Title": "Benötigt keine Nahrung & Wasser",
+        "Hint": "Wenn aktiviert benötigt dieser Charakter weder Nahrung noch Wasser."
+      }
+    },
+    "Settings": {
+      "QuickSetup": {
+        "Title": "Schnell-Setup",
+        "Label": "Schnell-Setup öffnen",
+        "Hint": "Einfaches Interface um schnell häufige Einstellungen für Rasten zu wählen."
+      },
+      "Configure": {
+        "Title": "Moduleinstellungen",
+        "Label": "Rasten konfigurieren",
+        "Hint": "Öffnet die Detail-Einstellungen des Moduls für Rasten und mehr."
+      },
+      "QuickHDRoll": {
+        "Title": "Trefferwürfel-Dialog überspringen",
+        "Hint": "Erlaubt das schnelle Würfeln von Trefferwürfeln, indem der Würfeldialog übersprungen wird."
+      },
+      "ShowPlayerListRestButton": {
+        "Title": "Rast-Aufforderungsbutton",
+        "Hint": "Legt fest, ob der Button um die Spieler zur Rast aufzufordern unter der Spielerliste unten links angezeigt wird (benötigt Neuladen)"
+      },
+      "Debug": {
+        "Title": "Debugging aktivieren",
+        "Label": "Gibt Debugnachrichten in der Konsole aus"
+      },
+      "RequiresModule": "Benötigt {module_name}",
+      "General": {
+        "PreventUserRest": {
+          "Title": "Rast durch Spieler verhindern",
+          "Hint": "Blockiert, dass Spieler selbst Rasten initiieren können. Die SL muss zur Rast auffordern."
+        },
+        "EnableAutoRollButton": {
+          "Title": "Auto-Würfeln-Button",
+          "Hint": "Fügt dem Dialog für lange und kurze Rasten einen Button zu, der Spielern erlaubt, automatisch Trefferwürfel zu verwenden, bis ihre TP beinahe voll sind."
+        },
+        "EnablePromptRestTimePassing": {
+          "Title": "Zeit vergeht bei Rastaufforderung",
+          "Hint": "Zeit vergeht durch Rasten automatisch, wenn die Spieler durch die SL zur Rast aufgefordert wurden. Dadurch laufen gegebenenfalls zeitabhängige Effekte auf Akteuren ab."
+        },
+        "EnableSimpleCalendarIntegration": {
+          "Title": "Integration mit Simple Calendar",
+          "Hint": "Sorgt dafür, dass die \"Neuer Tag\"-Auswahl in Rastdialogen automatisch anhand der Zeit und dem Kalender erfolgt."
+        }
+      },
+      "FoodAndWater": {
+        "EnableFoodAndWater": {
+          "Title": "Automatisierung von Nahrung/Wasser",
+          "Hint": "Aktiviert die Unterfunktionen für die Automatisierung von Nahrung und Wasser."
+        },
+        "DisableRollConsumableItems": {
+          "Title": "Würfeln von Verbrauchsgütern deaktivieren",
+          "Hint": "Standardmäßig werden während einer langen Rast verbrauchte Verbrauchsgüter gewürfelt, als wäre im Charakterbogen auf das Item geklickt worden. Diese Einstellung deaktiviert diesen automatischen Wurf."
+        },
+        "FoodUnitsPerDay": {
+          "Title": "Nahrungseinheiten pro Tag",
+          "Hint": "Legt fest, wie viele Einheiten Nahrung Charaktere pro Tag benötigen. Der Wert 0 deaktiviert diese Einstellung."
+        },
+        "WaterUnitsPerDay": {
+          "Title": "Wassereinheiten pro Tag",
+          "Hint": "Legt fest, wie viele Einheiten Wasser Charaktere pro Tag benötigen. Der Wert 0 deaktiviert diese Einstellung."
+        },
+        "ExternalFoodAccess": {
+          "Title": "Zugang zu externen Nahrungsquellen",
+          "Hint": "Legt fest, ob Spieler während der Rast wählen können, ob sie Nahrung aus einer externen Quelle beziehen statt Vorräte zu verzehren. \"Voll\" heißt voller Zugang wie in Tavernen und Städten, \"Halb\" heißt eingeschränkte oder schlechte Nahrung, \"Keine\" Wildnis oder Hungern."
+        },
+        "ExternalWaterAccess": {
+          "Title": "Zugang zu externen Wasserquellen",
+          "Hint": "Wie oben, aber für Wasser. \"Halb\" und \"Kein\" bedeuten, dass Charaktere ziemlich direkt Erschöpfung erleiden, sobald sie keine Verbrauchsgüter mehr im Inventar haben."
+        },
+        "AutomateFoodWaterExhaustion": {
+          "Title": "Erschöpfung durch Nahrungg/Wasser automatisieren",
+          "Hint": "Wenn aktiviert erleiden Charaktere Erschöpfung, wenn sie nicht genug essen oder trinken. Setzt voraus, dass Automatisierung von Erschöpfung bei langer Rast aktiviert ist."
+        },
+        "NoFoodDuration": {
+          "Title": "Maximale Tage ohne Nahrung",
+          "Hint": "Wie viele Tage Charaktere ohne Essen auskommen, bevor sie automatisch Erschöpfung erleiden."
+        },
+        "HalfWaterSaveDC": {
+          "Title": "Halber Durst Erschöpfungs-SG",
+          "Hint": "Legt den SG für den Konstitutionsrettungswurf fest, den Charaktere ablegen müssen, wenn sie nur ihren halben Durst stillen."
+        }
+      },
+      "ShortRest": {
+        "IgnoreInactive": {
+          "Title": "Inaktive Spielercharaktere ignorieren",
+          "Hint": "Falls ein Barde mit Lied der Erholung oder ein Charakter der Koch ist existieren, werden diese nur berücksichtigt, wenn ihre Besitzer eingeloggt und aktiv sind."
+        },
+        "MaxShortRests": {
+          "Title": "Maximale kurze Rasten pro langer Rast",
+          "Hint": "Verhindert, dass Charaktere mehr kurze Rasten nehmen als dieses Maximum, bevor sie eine lange Rast abschließen. Eine 0 deaktiviert diese Einstellung."
+        },
+        "MinHitDieSpend": {
+          "Title": "Minimale Trefferwürfelverwendung",
+          "Hint": "Verhindert, dass Charaktere eine kurze Rast abschließen, wenn sie nicht mindestens diese Zahl von Trefferwürfeln aufwenden. Eine 0 deaktiviert diese Einstellung."
+        },
+        "MaxHitDieSpend": {
+          "Title": "Maximale Trefferwürfelverwendung",
+          "Hint": "Verhindert, dass Charaktere weitere Trefferwürfel würfeln, wenn sie diese Zahl Trefferwürfel verwendet haben. Kann nie weniger sein als der Wert der Einstellung \"Minimale Trefferwürfelverwendung\"."
+        },
+        "NoHitDice": {
+          "Title": "Trefferwürfel bei kurzer Rast deaktivieren",
+          "Hint": "Verhindert, dass Charaktere während kurzen Rasten Trefferwürfel nutzen."
+        },
+        "ResourcesRecoveryFraction": {
+          "Title": "Ressourcen-Rückgewinnunsanteil",
+          "Hint": "Der Anteil Ressourcen, der durch eine kurze Rast zurückgewonnen wird."
+        },
+        "ItemUsesRecoveryFraction": {
+          "Title": "Gegenstandsnutzungen-Rückgewinnung",
+          "Hint": "Der Anteil von Itemnutzungen (Gegenstände, Verbrauchsgüter etc.) die durch eine kurze Rast zurückgewonnen werden, falls das jeweilige Item begrenzte Nutzungen pro kurze Rast hat."
+        },
+        "FeatUsesRecoveryFraction": {
+          "Title": "Merkmalnutzungen-Rückgewinnung",
+          "Hint": "Der Anteil von Merkmalnutzungen, die durch eine kurze Rast für Merkmale zurückgewonnen werden, die begrenzte Nutzungen pro kurze Rast haben."
+        },
+        "PactSpellSlotsLongRecoveryFraction": {
+          "Title": "Paktzauberplatz-Rückgewinnung",
+          "Hint": "Der Anteil von Hexenmeister-Paktzauberplätzen, die durch eine kurze Rast zurückgewonnen werden."
+        }
+      },
+      "LongRest": {
+        "AutomateExhaustion": {
+          "Title": "Erschöpfung automatisieren",
+          "Hint": "Erschöpfung wird nach einer langen Rast automatisch um 1 gesenkt."
+        },
+        "ExhaustionIntegration": {
+          "Title": "Erschöpfung-Modulintegration",
+          "Hint": "Erlaubt die Nutzung anderer Module für deren jeweilige Erschöpfungseffekte auf Charakteren."
+        },
+        "OneDnDExhaustion": {
+          "Title": "One D&D Erschöpfung",
+          "Hint": "Nutzt die Regeln von One D&D, wo Erschöpfung bis 10 stapelbar ist (wobei 10 wie gehabt zum Tod für), und ein Malus von -1 pro Stufe Erschöpfung auf Attributs-, Angriffs- und Rettungswürfe sowie den Zauber-SG fällig wird. Einfach die Erschöpfung vom Charakter ändern und der Malus wird automatisch angewandt.",
+          "Hint2": "Hinweis: Dies ist nicht mit der Erschöpfung-Modulintegration oben kompatibel."
+        },
+        "RollHitDice": {
+          "Title": "Trefferwürfel bei langer Rast",
+          "Hint": "Aktiviert das Interface zum Werfen von Trefferwürfeln auch bei langer Rast."
+        },
+        "PreRegainHitDice": {
+          "Title": "Trefferwürfel vor Rast-Ende zurückerhalten",
+          "Hint": "Wenn aktiviert werden die zurückgewonnenen Trefferwürfel vor Ende der langen Rast gutgeschrieben, damit sie schon bei dieser Rast verwendet werden können."
+        },
+        "PreRegainHitDiceBuffer": {
+          "Title": "Trefferwürfel-Puffer",
+          "Hint": "Wenn aktiviert werden überzählige Trefferwürfel über dem Maximum behalten, bis die lange Rast endet. Damit sind sie nicht verschwendet, wenn weitere während der Rast gewürfelt werden."
+        },
+        "PreventRegainHitDice": {
+          "Title": "Keine TW-Rückgewinnung, wenn TW eingesetzt wurden",
+          "Hint": "Wenn aktiviert werden bei einer langen Rast keine Trefferwürfel zurückgewonnen, wenn während der Rast Trefferwürfel eingesetzt wurden, um TP zu regenerieren. Inkompatibel mit der Einstellung \"Trefferwürfel vor Rast-Ende zurückerhalten\"."
+        },
+        "MaxHitDieSpend": {
+          "Title": "Maximale Trefferwürfelverwendung",
+          "Hint": "Verhindert, dass Charaktere weitere Trefferwürfel würfeln, wenn sie diese Zahl Trefferwürfel verwendet haben."
+        },
+        "HitPointsRecoveryFraction": {
+          "Title": "Trefferpunkte-Rückgewinnung",
+          "Hint": "Anteil Trefferpunkte, der durch eine lange Rast zurückgewonnen wird."
+        },
+        "HitDiceRecoveryFraction": {
+          "Title": "Trefferwürfel-Rückgewinnung",
+          "Hint": "Anteil Trefferwürfel, der durch eine lange Rast zurückgewonnen wird."
+        },
+        "HitDiceRecoveryRounding": {
+          "Title": "Trefferwürfel-Rückgewinnung-Rundung",
+          "Hint": "Wie die Zahl der zurückgewonnenen Trefferwürfel gerundet wird."
+        },
+        "ResourcesRecoveryFraction": {
+          "Title": "Ressourcen-Rückgewinnung",
+          "Hint": "Anteil der Ressource, der durch eine lange Rast zurückgewonnen wird."
+        },
+        "SpellSlotsRecoveryFraction": {
+          "Title": "Zauberplatz-Rückgewinnung",
+          "Hint": "Anteil der Zauberplätze, der durch eine lange Rast zurückgewonnen wird."
+        },
+        "CustomSpellSlotRecovery": {
+          "Title": "Zauberplatzpunkte-artige Rückgewinnung",
+          "Hint": "Falls aktiviert, werden von allen Zauberplätze ähnlich dem \"Arkane Erholung\"-Merkmal des Magiers rückgewonnen, wo gewählt werden muss, welche Zauberplätze zurückgewonnen werden. Kann nur genutzt werden, wenn \"Zauberplatz-Rückgewinnung\" auf \"Eigene Formel\" gesetzt wird. Charaktere erhalten eine Zahl Zauberplätze gleich dem Wert der Formel zurück."
+        },
+        "PactSpellSlotsLongRecoveryFraction": {
+          "Title": "Paktzauberplatz-Rückgewinnung",
+          "Hint": "Anteil Paktzauberplätze, die durch eine lange Rast zurückgewonnen wird."
+        },
+        "ItemUsesRecoveryFraction": {
+          "Title": "Gegenstandsnutzungen-Rückgewinnung",
+          "Hint": "Anteil von Itemnutzungen (auf Gegenständen, Verbrauchsgütern etc.), die durch eine lange Rast zurückgewonnen werden."
+        },
+        "FeatUsesRecoveryFraction": {
+          "Title": "Merkmalnutzungen-Rückgewinnung",
+          "Hint": "Anteil von Merkmalnutzungen, die durch eine lange Rast zurückgewonnen werden."
+        },
+        "DailyUsesRecoveryFraction": {
+          "Title": "Tägliche Nutzungen-Rückgewinnung",
+          "Hint": "Anteil der täglichen Nutzungen, die durch eine lange Rast zurückgewonnen werden (auf Gegenständen mit Nutzungen pro Tag)."
+        },
+        "AutomateArmor": {
+          "Title": "Rüstung bei Rast automatisieren",
+          "Hint": "Wenn aktiv stört nicht-leichte Rüstung eine lange Rast. Siehe folgende Einstellungen."
+        },
+        "ArmorHitDiceRecoveryFraction": {
+          "Title": "Trefferwürfel-Rückgewinnung in Rüstung",
+          "Hint": "Anteil Trefferwürfel, der durch eine lange Rast zurückgewonnen wird, wenn ein Charakter nicht-leichte Rüstung trägt."
+        },
+        "AutomateArmorExhaustion": {
+          "Title": "Rüstung verhinder Erholung von Erschöpfung",
+          "Hint": "Wenn aktiv verhindert das Tragen nicht-leichter Rüstung, dass Charaktere sich von Erschöpfung erholen. Erfordert, dass die Automatisierung von Erschöpfung aktiviert ist."
+        }
+      },
+      "ItemNames": {
+        "WizardClassName": {
+          "Title": "Name der Magierklasse",
+          "Hint": "Hier kann festgelegt werden, wie die Magierklasse in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "DruidClassName": {
+          "Title": "Name der Druidenklasse",
+          "Hint": "Hier kann festgelegt werden, wie die Druidenklasse in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "BardClassName": {
+          "Title": "Name der Bardenklasse",
+          "Hint": "Hier kann festgelegt werden, wie die Bardenklasse in diesem Spiel heißt. Wird genutzt, um zu erkennen, wenn Lied der Erholung genutzt werden kann. Kann ein Locale-String sein."
+        },
+        "ArcaneRecovery": {
+          "Title": "Name von Arkane Erholung",
+          "Hint": "Hier kann festgelegt werden, wie die Arkane Erholung vom Magier in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "PowerSurge": {
+          "Title": "Name von Magieschub",
+          "Hint": "Hier kann festgelegt werden, wie der Magieschub vom Magier in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "NaturalRecovery": {
+          "Title": "Name von Natürliche Erholung",
+          "Hint": "Hier kann festgelegt werden, wie die Natürliche Erholung vom Druiden in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "SongOfRest": {
+          "Title": "Name von Lied der Erholung",
+          "Hint": "Hier kann festgelegt werden, wie das Lied der Erholung vom Barden in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "ChefFeat": {
+          "Title": "Name vom Koch-Talent",
+          "Hint": "Hier kann festgelegt werden, wie das Koch-Talent in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "ChefTools": {
+          "Title": "Name von Kuchutensilien",
+          "Hint": "Hier kann festgelegt werden, wie Kochutensilien in diesem Spiel heißen. Kann ein Locale-String sein. Leer lassen, falls Kochutensilien für die Verwendung vom Koch-Talent nicht nötig sein sollen."
+        },
+        "DurableFeat": {
+          "Title": "Name vom Widerstandsfähig-Talent",
+          "Hint": "Hier kann festgelegt werden, wie das Talent Widerstandsfähig in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "PeriaptItem": {
+          "Title": "Name vom Anhänger der Wundheilung",
+          "Hint": "Hier kann festgelegt werden, wie der Anhänger der Wundheilung in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "WoundClosureBlessing": {
+          "Title": "Name vom Segen der Wundheilung",
+          "Hint": "Hier kann festgelegt werden, wie Segen der Wundheilung in diesem Spiel heißt. Kann ein Locale-String sein."
+        },
+        "BlackBloodFeature": {
+          "Title": "Name der Schwarzblutheilung",
+          "Hint": "Hier kann festgelegt werden, wie die Schwarzblutheilung in diesem Spiel heißt. Kann ein Locale-String sein."
+        }
+      }
+    }
+  }
+}
