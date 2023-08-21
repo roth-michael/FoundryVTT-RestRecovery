@@ -6,7 +6,6 @@
   import { getSetting, setSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
   import SettingsShim from "../settings/settings.js";
-  import { gameSettings } from "../../settings.js";
 
   const { application } = getContext('external');
 
@@ -25,6 +24,10 @@
 
   async function submitPrompt() {
     await game.settings.set("dnd5e", "restVariant", restVariant);
+    const settingWindow = Object.values(ui.windows).find(app => app instanceof SettingsConfig);
+		if(settingWindow) {
+      settingWindow.element.find('select[name="dnd5e.restVariant"]').val(restVariant);
+    }
     await setSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER, slowHealingEnabled ? CONSTANTS.FRACTIONS.NONE : CONSTANTS.FRACTIONS.FULL);
     await setSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE, slowHealingEnabled);
     await setSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE, bufferEnabled);

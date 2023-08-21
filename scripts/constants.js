@@ -120,8 +120,7 @@ const CONSTANTS = {
   },
   
   MODULES: {
-    DFREDS: "dfreds-convenient-effects",
-    CUB: "combat-utility-belt"
+    DFREDS: "dfreds-convenient-effects"
   },
   
   USING_DEFAULT_LONG_REST_SETTINGS() {
@@ -402,8 +401,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     type: String,
     choices: {
       [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
-      [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds",
-      [CONSTANTS.MODULES.CUB]: "REST-RECOVERY.Modules.CUB",
+      [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds"
     },
     default: CONSTANTS.FRACTIONS.NONE,
   },

@@ -1,6 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
-import { getSetting } from "./lib/lib.js";
+import { addToUpdates, getSetting } from "./lib/lib.js";
 import plugins from "./plugins.js";
 import FoodWater from "./formapplications/rest-steps/FoodWater.svelte";
 import SpellRecovery from "./formapplications/rest-steps/SpellRecovery.svelte";
@@ -625,10 +625,10 @@ export default class RestWorkflow {
 
       const biggestClass = sortedClasses[0];
 
-      updates.push({
+      lib.addToUpdates(updates, {
         _id: biggestClass.id,
         [CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG]: hitDiceLeftToRecover
-      });
+      })
 
     }
 
@@ -698,7 +698,7 @@ export default class RestWorkflow {
         actorRequiredWater,
         actorFoodSatedValue,
         actorWaterSatedValue
-      } = lib.getActorConsumableValues(this.actor);
+      } = lib.getActorConsumableValues(this.actor, this.restVariant);
 
       let actorDaysWithoutFood = getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
@@ -925,13 +925,6 @@ export default class RestWorkflow {
 
   }
 
-  _getPostRestHitDiceRecovery(results) {
-    if(this.preRestRegainHitDice) return results;
-    results.hitDiceRecovered = Math.max(0, Math.min(this.actor.system.details.level, this.totalHitDice) - this.healthData.startingHitDice);
-    results.updates = [];
-    return results;
-  }
-
   _getMaxHitDiceRecovery({ maxHitDice = undefined } = {}) {
 
     let multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
@@ -1102,12 +1095,18 @@ export default class RestWorkflow {
     updates = this._recoverItemsUses(updates, args);
 
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
-      updates.push({ _id: this.spellData.feature.id, "system.uses.value": 0 });
+      lib.addToUpdates(updates, {
+        _id: this.spellData.feature.id,
+        "system.uses.value": 0
+      })
     }
 
     if(this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
       Object.values(this.actor.classes).forEach(cls => {
-        updates.push({ _id: cls.id, [CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG]: null });
+        lib.addToUpdates(updates, {
+          _id: cls.id,
+          [CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG]: null
+        });
       })
     }
 
@@ -1144,7 +1143,7 @@ export default class RestWorkflow {
           this._recoverItemUse(actorRollData, updates, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier, rolls);
         }
       } else if (recoverLongRestUses && item.system.recharge && item.system.recharge.value) {
-        updates.push({ _id: item.id, "system.recharge.charged": true });
+        lib.addToUpdates(updates, { _id: item.id, "system.recharge.charged": true });
       }
     }
 
@@ -1191,16 +1190,10 @@ export default class RestWorkflow {
       recoverValue = Math.max(0, Math.min(usesCur + recoverValue, usesMax));
     }
 
-    const update = updates.find(update => update._id === item.id);
-
-    if (update) {
-      update["system.uses.value"] = recoverValue;
-    } else {
-      updates.push({
-        _id: item.id,
-        "system.uses.value": recoverValue
-      });
-    }
+    lib.addToUpdates(updates, {
+      _id: item.id,
+      "system.uses.value": recoverValue
+    })
 
   }
 
@@ -1209,16 +1202,10 @@ export default class RestWorkflow {
     const numSurges = getProperty(item, "system.uses.value");
     if(numSurges === 1) return;
 
-    const update = updates.find(update => update._id === item.id);
-
-    if (update) {
-      update["system.uses.value"] = 1;
-    } else {
-      updates.push({
-        _id: item.id,
-        "system.uses.value": 1
-      });
-    }
+    lib.addToUpdates(updates, {
+      _id: item.id,
+      "system.uses.value": 1
+    })
 
   }
 
@@ -1246,25 +1233,49 @@ export default class RestWorkflow {
         _id: item.id
       };
 
-      const newUses = getProperty(update, "system.uses.value") ?? consumableData.usesLeft - consumableData.amount;
-      update["system.uses.value"] = newUses;
+      const maxUses = getProperty(update, "system.uses.max") ?? getProperty(item, "system.uses.max");
+      const currentUses = getProperty(update, "system.uses.value") ?? getProperty(item, "system.uses.value");
+      const currentQuantity = getProperty(update, "system.quantity") ?? getProperty(item, "system.quantity");
+
+      const usesLeft = currentUses - consumableData.amount;
+      const totalUsesLeft = ((maxUses * currentQuantity) - (maxUses - currentUses)) - consumableData.amount;
+
+      // maxUses is 10
+      // current uses is 4
+      // current quantity is 20
+      // consumed amount is 10
+      // usesLeft is 4 - 10 = -6
+      // totalUsesLeft is (10 * 20 = 200) + (-6) = 194
+
+      // if usesLeft <= 0
+      // divide totalUsesLeft by maxUses, 194 / 10 = 19.4
+      // newQuantity is Math.floor(19.4) = 19
+      // newUses is (19.4 - 19) * 10 = 4
+
+      const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
+
+      if(usesLeft <= 0){
+        const totalUsesRemaining = totalUsesLeft / maxUses;
+        let newQuantity = Math.floor(totalUsesRemaining);
+        let newUses = Math.round((totalUsesRemaining - newQuantity) * maxUses);
+        if(newUses === 0){
+          newUses++;
+          newQuantity--;
+        }
+        update["system.quantity"] = Math.max(0, newQuantity);
+        update["system.uses.value"] = newUses;
+        if(Math.max(0, newQuantity) <= 0 && consumeQuantity){
+          itemsToDelete.push(consumableData.id);
+        }
+      }else{
+        update["system.uses.value"] = usesLeft;
+      }
 
       if (updateIndex > -1) {
         updates.splice(updateIndex, 1);
       }
 
-      const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
-      const quantity = getProperty(item, "system.quantity");
-
-      if (consumeQuantity && quantity <= 1 && newUses === 0) {
-        itemsToDelete.push(consumableData.id);
-      } else {
-        if (consumeQuantity && newUses === 0) {
-          update["system.uses.value"] = getProperty(item, "system.uses.max") ?? 1;
-          update["system.quantity"] = quantity - 1;
-        }
-        updates.push(update);
-      }
+      updates.push(update);
     }
 
     await this.actor.deleteEmbeddedDocuments("Item", itemsToDelete);
@@ -1365,6 +1376,7 @@ export default class RestWorkflow {
     } = lib.getActorConsumableValues(item.parent);
 
     const currCharges = getProperty(item, "system.uses.value");
+    const currQuantity = getProperty(item, "system.quantity");
     const newCharges = getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
     const chargesUsed = currCharges < newCharges ? currCharges : currCharges - newCharges;
 

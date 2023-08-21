@@ -75,39 +75,6 @@ export default class plugins {
       activeEffects: [oneDndExhaustionEffectData]
     });
   }
-
-  static async handleCombatUtilityBelt(actor, data) {
-
-    if (!game.modules.get(CONSTANTS.MODULES.CUB)?.active) return;
-    if (!game?.cub?.enhancedConditions?.supported) return;
-    const CUB = game.cub;
-
-    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
-    const exhaustionEffectName = `Exhaustion ${exhaustionLevel}`;
-
-    for (let level = 1; level <= 5; level++) {
-      let levelName = `Exhaustion ${level}`;
-      if (levelName !== exhaustionEffectName && CUB.hasCondition(levelName, actor, { warn: false })) {
-        await CUB.removeCondition(levelName, actor, { warn: false });
-      }
-    }
-
-    if (exhaustionLevel >= 1 && exhaustionLevel <= 5) {
-      await CUB.addCondition(exhaustionEffectName, actor);
-    }
-  }
-
-  static handleNativeExhaustion(actor, data) {
-    const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
-    if (!oneDndExhaustionEnabled) return;
-    const exhaustionLevel = getProperty(data, "data.attributes.exhaustion");
-    const actorExhaustionEffect = actor.effects.find(effect => getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
-    if (exhaustionLevel > 0 && !actorExhaustionEffect) {
-      return actor.createEmbeddedDocuments("ActiveEffect", [oneDndExhaustionEffectData]);
-    } else if (exhaustionLevel <= 0 && actorExhaustionEffect) {
-      return actor.deleteEmbeddedDocuments("ActiveEffect", [actorExhaustionEffect.id]);
-    }
-  }
 }
 
 const oneDndExhaustionEffectData = {

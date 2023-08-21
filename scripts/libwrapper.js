@@ -247,9 +247,6 @@ function patch_getRestHitDiceRecovery() {
     function (wrapped, args) {
       const rest = RestWorkflow.get(this)
       const maxHitDice = rest ? { maxHitDice: rest._getMaxHitDiceRecovery() } : args;
-      if(lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)){
-        return RestWorkflow.wrapperFn(this, wrapped, maxHitDice, "_getPostRestHitDiceRecovery");
-      }
       return wrapped(maxHitDice);
     }
   )

@@ -199,3 +199,16 @@ export function getTimeChanges(isLongRest) {
 export function wait(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+
+export function addToUpdates(updates, toAdd){
+  const existingUpdateIndex = updates.findIndex(update => update._id === toAdd._id);
+  if(existingUpdateIndex > -1){
+    updates[existingUpdateIndex] = foundry.utils.mergeObject(
+      updates[existingUpdateIndex],
+      toAdd
+    )
+  }else{
+    updates.push(toAdd);
+  }
+}

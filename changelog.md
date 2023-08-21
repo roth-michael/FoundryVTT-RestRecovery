@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.4.13
+- Added german localization (Thank you mhilbrunner on github!)
+- Fixed various food & water bugs surrounding the gritty realism rest variant
+- Fixed optional setting to regain hit dice before starting a long rest sometimes not working properly
+- Bumped supported D&D version 2.3.0
+
 ## Version 1.4.12
 - Bumped supported Foundry version to v11
 - Bumped supported D&D version to 2.2.0

@@ -42,9 +42,10 @@
     "systems": [{
       "id": "dnd5e",
       "type": "system",
-      "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/release-2.1.4/system.json",
+      "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/latest/system.json",
       "compatibility": {
-        "verified": "2.2.0"
+        "verified": "2.3.0",
+        "minimum": "2.3.0"
       }
     }],
     "requires": [
