@@ -2,8 +2,8 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[Request] ENTER TITLE HERE"
-labels: enhancement
-assignees: Haxxer
+labels: enhancement, help wanted
+assignees: ''
 
 ---
 
