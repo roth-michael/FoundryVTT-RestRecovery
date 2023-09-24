@@ -156,7 +156,7 @@
   $:
   {
     $doc;
-    const hpUpdate = getProperty(doc.updateOptions, "system.system.attributes.hp");
+    const hpUpdate = getProperty(doc.updateOptions, "system.attributes.hp");
     if (hpUpdate) {
       updateHealthData();
     }
