@@ -323,6 +323,14 @@
       },
       "RequiresModule": "Requires {module_name}",
       "General": {
+        "PeriaptRollMechanics": {
+          "Title": "Periapt of Wound Closure Mechanics",
+          "Hint": "This configures how the item \"Periapt of Wound Closure\" handles the multiplication of the hit die roll.",
+          "Options": {
+            "MultiplyRoll": "Multiply dice roll",
+            "MultiplyTotal": "Multiply total result"
+          }
+        },
         "PreventUserRest": {
           "Title": "Prevent User Rest",
           "Hint": "This prevents users from initiating rests themselves, and must be prompted to rest by the GM."

@@ -90,6 +90,7 @@ export default class RestWorkflow {
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
         : false;
       const hasWoundClosure = (periapt && periapt?.system?.attunement === 2) || (blessing && blessing?.type === "feat");
+      const multiplyTotal = getSetting(CONSTANTS.SETTINGS.PERIAPT_ROLL_MECHANICS) === CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_TOTAL;
 
       const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
@@ -112,7 +113,7 @@ export default class RestWorkflow {
         formula += "r<3";
       }
 
-      if (hasWoundClosure) {
+      if (hasWoundClosure && !multiplyTotal) {
         formula = "(" + formula + "*2)";
       }
 
@@ -128,6 +129,10 @@ export default class RestWorkflow {
       }
 
       config.formula = `max(0, ${formula})`;
+
+      if(hasWoundClosure && multiplyTotal){
+        config.formula = `${formula}*2`;
+      }
 
     });
 
@@ -235,7 +240,7 @@ export default class RestWorkflow {
       this.healthData.hitPointsToRegainFromRest = hitPointsToRegainFromRest;
     }
 
-    this.foodWaterRequirement = lib.getActorConsumableValues(this.actor, this.longRest && this.restVariant === "gritty");
+    this.foodWaterRequirement = lib.getActorConsumableValues(this.actor, this.restVariant === "gritty" && this.longRest);
 
     this.refreshHealthData();
   }
@@ -610,15 +615,15 @@ export default class RestWorkflow {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return;
 
-    const maxHitDice = this._getMaxHitDiceRecovery();
-
     this.preRestRegainHitDice = true;
+    const maxHitDice = this._getMaxHitDiceRecovery();
     let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
     this.preRestRegainHitDice = false;
 
     let hitDiceLeftToRecover = Math.max(0, maxHitDice - hitDiceRecovered);
 
     if (hitDiceLeftToRecover > 0) {
+
       const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
         return (parseInt(b.system.hitDice.slice(1)) || 0) - (parseInt(a.system.hitDice.slice(1)) || 0);
       });
@@ -698,7 +703,7 @@ export default class RestWorkflow {
         actorRequiredWater,
         actorFoodSatedValue,
         actorWaterSatedValue
-      } = lib.getActorConsumableValues(this.actor, this.restVariant);
+      } = lib.getActorConsumableValues(this.actor, this.restVariant === "gritty" && this.longRest);
 
       let actorDaysWithoutFood = getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
@@ -926,6 +931,8 @@ export default class RestWorkflow {
   }
 
   _getMaxHitDiceRecovery({ maxHitDice = undefined } = {}) {
+
+    if(!this.preRestRegainHitDice && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE)) return 0;
 
     let multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
     let roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
@@ -1218,7 +1225,7 @@ export default class RestWorkflow {
     const {
       actorRequiredFood,
       actorRequiredWater
-    } = lib.getActorConsumableValues(this.actor);
+    } = lib.getActorConsumableValues(this.actor, this.restVariant === "gritty" && this.longRest);
 
     if ((!actorRequiredFood && !actorRequiredWater) || !this.consumableData.items.length) return updates;
 
@@ -1233,24 +1240,12 @@ export default class RestWorkflow {
         _id: item.id
       };
 
-      const maxUses = getProperty(update, "system.uses.max") ?? getProperty(item, "system.uses.max");
-      const currentUses = getProperty(update, "system.uses.value") ?? getProperty(item, "system.uses.value");
+      const maxUses = getProperty(update, "system.uses.max") ?? getProperty(item, "system.uses.max") ?? 1;
+      const currentUses = getProperty(update, "system.uses.value") ?? getProperty(item, "system.uses.value") ?? 1;
       const currentQuantity = getProperty(update, "system.quantity") ?? getProperty(item, "system.quantity");
 
       const usesLeft = currentUses - consumableData.amount;
-      const totalUsesLeft = ((maxUses * currentQuantity) - (maxUses - currentUses)) - consumableData.amount;
-
-      // maxUses is 10
-      // current uses is 4
-      // current quantity is 20
-      // consumed amount is 10
-      // usesLeft is 4 - 10 = -6
-      // totalUsesLeft is (10 * 20 = 200) + (-6) = 194
-
-      // if usesLeft <= 0
-      // divide totalUsesLeft by maxUses, 194 / 10 = 19.4
-      // newQuantity is Math.floor(19.4) = 19
-      // newUses is (19.4 - 19) * 10 = 4
+      const totalUsesLeft = ((maxUses * currentQuantity) - (maxUses - currentUses));
 
       const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
 
@@ -1259,7 +1254,7 @@ export default class RestWorkflow {
         let newQuantity = Math.floor(totalUsesRemaining);
         let newUses = Math.round((totalUsesRemaining - newQuantity) * maxUses);
         if(newUses === 0){
-          newUses++;
+          newUses = maxUses;
           newQuantity--;
         }
         update["system.quantity"] = Math.max(0, newQuantity);
@@ -1310,7 +1305,7 @@ export default class RestWorkflow {
       if (!this.itemsListened.has(item.id)) return;
       const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
       if (!consumable?.enabled) return;
-      return this._handleConsumableItem(item, data);
+      return this._handleConsumableItem(item, data, this);
     });
   }
 
@@ -1360,7 +1355,7 @@ export default class RestWorkflow {
     }));
   }
 
-  static _handleConsumableItem(item, data) {
+  static _handleConsumableItem(item, data, workflow) {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
 
@@ -1373,10 +1368,9 @@ export default class RestWorkflow {
       actorRequiredWater,
       actorFoodSatedValue,
       actorWaterSatedValue
-    } = lib.getActorConsumableValues(item.parent);
+    } = lib.getActorConsumableValues(item.parent, workflow.restVariant === "gritty" && workflow.longRest);
 
     const currCharges = getProperty(item, "system.uses.value");
-    const currQuantity = getProperty(item, "system.quantity");
     const newCharges = getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
     const chargesUsed = currCharges < newCharges ? currCharges : currCharges - newCharges;
 
@@ -1384,8 +1378,8 @@ export default class RestWorkflow {
 
     if (consumable.type === "both") {
 
-      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
-      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorFoodSatedValue : actorFoodSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorWaterSatedValue : actorWaterSatedValue + chargesUsed;
 
       const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {

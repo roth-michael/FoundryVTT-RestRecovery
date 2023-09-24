@@ -150,7 +150,7 @@
           {/each}
 
           {#if group === "general"}
-						<div style="text-align: center; font-size: 1rem; margin-top:2rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(0,0,0,0.25)">
+						<div style="text-align: center; font-size: 1rem; margin-top: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.25)">
 							<p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.Confused")}</p>
 							<p>
 								<a on:click={() => { openQuickSetup() }} class="link-text">
@@ -159,9 +159,8 @@
 							</p>
 						</div>
 
-            <div style="text-align: center; font-size: 1rem; margin-top:2rem;">
-              <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}
-              <p>
+            <div style="text-align: center; font-size: 1rem; margin-top:1rem;">
+              <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}</p>
               <p style="margin-bottom:1rem;">
                 <a class="link-text"
                    href="https://github.com/fantasycalendar/FoundryVTT-RestRecovery/issues/new?assignees=&labels=&template=feature_request.md&title="
@@ -215,7 +214,7 @@
     cursor: pointer;
     -webkit-border-radius: 100px;
     display: flex;
-    margin: 10px auto;
+    margin: 5px auto;
 
     img {
       border: 0;

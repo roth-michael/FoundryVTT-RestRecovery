@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.4.14
+- Added option to set how Periapt of Wound Closure multiplies hit die rolls
+- Fixed regaining hit dice before finishing a long rest giving characters their hit dice back before and after the rest
+- Fixed hit dice buffer when regaining hit dice before starting a long rest not overflowing the maximum amount
+- Fixed food and water items with 1/1 use subtracting 2 quantity of the items when consumed
+- Fixed food and water items causing exhaustion even when consuming the correct amounts
+- Fixed One D&D Exhaustion not working
+
 ## Version 1.4.13
 - Added german localization (Thank you mhilbrunner on github!)
 - Fixed various food & water bugs surrounding the gritty realism rest variant

@@ -21,6 +21,7 @@ const CONSTANTS = {
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
     ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
     PREVENT_USER_REST: "prevent-user-rest",
+    PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -122,6 +123,11 @@ const CONSTANTS = {
   MODULES: {
     DFREDS: "dfreds-convenient-effects"
   },
+
+  PERIAPT_MECHANICS: {
+    MULTIPLY_ROLL: "multiply-roll",
+    MULTIPLY_TOTAL: "multiply-total"
+  },
   
   USING_DEFAULT_LONG_REST_SETTINGS() {
     const settings = this.GET_DEFAULT_SETTINGS();
@@ -197,6 +203,19 @@ CONSTANTS.DEFAULT_SETTINGS = {
     validate: () => {
       return !game.modules.get("foundryvtt-simple-calendar")?.active;
     },
+  },
+  [CONSTANTS.SETTINGS.PERIAPT_ROLL_MECHANICS]: {
+    name: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Title",
+    hint: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: "multiply-roll",
+    type: String,
+    choices: {
+      [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_ROLL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyRoll",
+      [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_TOTAL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyTotal",
+    }
   },
   
   /*-------------------------------------------*

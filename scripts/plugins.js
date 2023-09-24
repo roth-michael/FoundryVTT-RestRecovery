@@ -75,6 +75,18 @@ export default class plugins {
       activeEffects: [oneDndExhaustionEffectData]
     });
   }
+
+  static handleNativeExhaustion(actor, data) {
+    const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
+    if (!oneDndExhaustionEnabled) return;
+    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
+    const actorExhaustionEffect = actor.effects.find(effect => getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
+    if (exhaustionLevel > 0 && !actorExhaustionEffect) {
+      return actor.createEmbeddedDocuments("ActiveEffect", [oneDndExhaustionEffectData]);
+    } else if (exhaustionLevel <= 0 && actorExhaustionEffect) {
+      return actor.deleteEmbeddedDocuments("ActiveEffect", [actorExhaustionEffect.id]);
+    }
+  }
 }
 
 const oneDndExhaustionEffectData = {

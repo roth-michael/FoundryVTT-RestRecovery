@@ -137,8 +137,8 @@ function patch_itemSheet(app, html, { item } = {}) {
 function patch_itemConsumableInputs(app, html, item) {
 
   const customConsumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
-  const uses = Number(getProperty(item, "data.uses.max"));
-  const per = getProperty(item, "data.uses.per");
+  const uses = Number(getProperty(item, "system.uses.max"));
+  const per = getProperty(item, "system.uses.per");
   const validUses = uses && uses > 0 && per;
 
   let targetElem = html.find('.form-header')?.[1];
