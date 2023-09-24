@@ -122,7 +122,6 @@
     const item = actor.items.get(itemId);
 
     if (!item) {
-      // Todo: Notify couldn't find item
       return;
     }
 
@@ -130,14 +129,14 @@
 
     if (!consumable?.enabled) return;
 
-    const maxUses = getProperty(item, "system.uses.max");
-    const quantity = getProperty(item, "system.quantity");
-    const usesLeft = getProperty(item, "system.uses.value");
+    const maxUses = getProperty(item, "system.uses.max") ?? 1;
+    const usesLeft = getProperty(item, "system.uses.value") ?? 1;
+    const quantity = getProperty(item, "system.quantity") ?? 1;
 
     const totalUsesLeft = ((maxUses * quantity) - (maxUses - usesLeft));
 
     if (totalUsesLeft <= 0) {
-      // Todo: Notify item has no uses
+      ui.notifications.warn(localize("REST-RECOVERY.Warnings.ItemNoUses", { item: item.name }));
       return;
     }
 

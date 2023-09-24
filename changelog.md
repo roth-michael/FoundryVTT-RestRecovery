@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.4.15
+
+- Fixed Periapt of Wound Closure only multiplying the modifier when set to multiply total
+- Fixed several issues with consuming multiple units of food or water that had multiple uses & quantities 
+
 ## Version 1.4.14
 - Added option to set how Periapt of Wound Closure multiplies hit die rolls
 - Fixed regaining hit dice before finishing a long rest giving characters their hit dice back before and after the rest

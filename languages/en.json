@@ -9,7 +9,8 @@
       "PreventedLongRest": "You cannot long rest because you are under an effect that prevents you from doing so!",
       "PreventedShortRest": "You cannot short rest because you are under an effect that prevents you from doing so!",
       "NotPromptedLongRest": "The GM has configured this game so you cannot start a long rest without being prompted!",
-      "NotPromptedShortRest": "The GM has configured this game so you cannot start a short rest without being prompted!"
+      "NotPromptedShortRest": "The GM has configured this game so you cannot start a short rest without being prompted!",
+      "ItemNoUses": "\"{item}\" has no more uses left, so you cannot consume it."
     },
     "FeatureNames": {
       "ArcaneRecovery": "Arcane Recovery",

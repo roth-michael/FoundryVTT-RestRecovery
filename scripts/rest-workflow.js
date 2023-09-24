@@ -78,10 +78,9 @@ export default class RestWorkflow {
     let cachedDenomination = false;
     Hooks.on("dnd5e.preRollHitDie", (actor, config, denomination) => {
 
-      const workflow = RestWorkflow.get(actor);
-      if (!workflow) return;
-
-      cachedDenomination = denomination;
+      if (RestWorkflow.get(actor)){
+        cachedDenomination = denomination;
+      }
 
       const periapt = getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.PERIAPT_ITEM, true))
@@ -131,7 +130,7 @@ export default class RestWorkflow {
       config.formula = `max(0, ${formula})`;
 
       if(hasWoundClosure && multiplyTotal){
-        config.formula = `${formula}*2`;
+        config.formula = `(${formula})*2`;
       }
 
     });
@@ -1244,26 +1243,27 @@ export default class RestWorkflow {
       const currentUses = getProperty(update, "system.uses.value") ?? getProperty(item, "system.uses.value") ?? 1;
       const currentQuantity = getProperty(update, "system.quantity") ?? getProperty(item, "system.quantity");
 
-      const usesLeft = currentUses - consumableData.amount;
-      const totalUsesLeft = ((maxUses * currentQuantity) - (maxUses - currentUses));
-
       const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
 
-      if(usesLeft <= 0){
-        const totalUsesRemaining = totalUsesLeft / maxUses;
-        let newQuantity = Math.floor(totalUsesRemaining);
-        let newUses = Math.round((totalUsesRemaining - newQuantity) * maxUses);
-        if(newUses === 0){
-          newUses = maxUses;
-          newQuantity--;
-        }
-        update["system.quantity"] = Math.max(0, newQuantity);
-        update["system.uses.value"] = newUses;
-        if(Math.max(0, newQuantity) <= 0 && consumeQuantity){
-          itemsToDelete.push(consumableData.id);
-        }
+      const currentTotalUses = ((maxUses * currentQuantity) - (maxUses - currentUses));
+      const newTotalUses = currentTotalUses - consumableData.amount;
+
+      if(Math.max(0, newTotalUses) <= 0 && consumeQuantity){
+
+        itemsToDelete.push(consumableData.id);
+
       }else{
+
+        const totalQuantityLeft = newTotalUses / maxUses;
+        const fractionLeft = totalQuantityLeft - Math.floor(totalQuantityLeft);
+        let usesLeft = maxUses;
+        if(fractionLeft > 0){
+          usesLeft = Math.max(1, Math.round(maxUses * fractionLeft));
+        }
+
+        update["system.quantity"] = Math.ceil(totalQuantityLeft);
         update["system.uses.value"] = usesLeft;
+
       }
 
       if (updateIndex > -1) {
