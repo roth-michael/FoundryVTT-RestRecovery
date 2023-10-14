@@ -33,7 +33,7 @@ function patch_shortRest() {
     "CONFIG.Actor.documentClass.prototype.shortRest",
     async function (config, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: false, promptNewDay: true, autoHD: false, autoHDThreshold: 3, ignoreFlags: false, restPrompted: false
+        dialog: true, chat: true, newDay: false, promptNewDay: true, autoHD: false, autoHDThreshold: 3, ignoreFlags: false, restPrompted: false, options: {}
       }, config);
 
       /**
@@ -56,7 +56,7 @@ function patch_shortRest() {
         return false;
       }
 
-      RestWorkflow.make(this);
+      RestWorkflow.make(this, false, config);
 
       // Take note of the initial hit points and number of hit dice the Actor has
       const hd0 = this.system.attributes.hd;
@@ -93,7 +93,7 @@ function patch_longRest() {
     "CONFIG.Actor.documentClass.prototype.longRest",
     async function (config = {}, dialogOptions = {}) {
       config = foundry.utils.mergeObject({
-        dialog: true, chat: true, newDay: true, promptNewDay: true, ignoreFlags: false, restPrompted: false
+        dialog: true, chat: true, newDay: true, promptNewDay: true, ignoreFlags: false, restPrompted: false, options: {}
       }, config);
 
       /**
@@ -116,7 +116,7 @@ function patch_longRest() {
         return false;
       }
 
-      RestWorkflow.make(this, true);
+      RestWorkflow.make(this, true, config);
 
       if (config.dialog) {
         try {

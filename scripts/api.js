@@ -5,6 +5,10 @@ import { gameSettings } from "./settings.js";
 
 export default class API {
 
+	static get daeFlags() {
+		return CONSTANTS.FLAGS.DAE;
+	}
+
   /**
    * Renders the prompt rest UI.
    *

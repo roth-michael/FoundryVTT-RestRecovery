@@ -1119,10 +1119,11 @@ CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG = baseFlag + `-=hitDiceBuffer`;
 
 // DAE Flags
 const daeFlag = `flags.dae.${CONSTANTS.MODULE_NAME}.`
+const daeFlagPrevent = daeFlag + "prevent.";
 CONSTANTS.FLAGS.DAE = {};
-CONSTANTS.FLAGS.DAE.PREVENT = daeFlag + "prevent.";
-CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST = CONSTANTS.FLAGS.DAE.PREVENT + "longRest";
-CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST = CONSTANTS.FLAGS.DAE.PREVENT + "shortRest";
+CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST = daeFlagPrevent + "longRest";
+CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST = daeFlagPrevent + "shortRest";
+CONSTANTS.FLAGS.DAE.PREVENT_EXHAUSTION_RECOVERY = daeFlagPrevent + "exhaustionRecovery";
 CONSTANTS.FLAGS.DAE.NEEDS_NO_FOOD = daeFlag + "force.noFood";
 CONSTANTS.FLAGS.DAE.NEEDS_NO_WATER = daeFlag + "force.noWater";
 CONSTANTS.FLAGS.DAE.REQUIRED_FOOD = daeFlag + "require.food";

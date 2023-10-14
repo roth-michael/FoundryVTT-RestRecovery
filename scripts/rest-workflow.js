@@ -1,6 +1,6 @@
 import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
-import { getSetting } from "./lib/lib.js";
+import { custom_warning, getSetting } from "./lib/lib.js";
 import plugins from "./plugins.js";
 import FoodWater from "./formapplications/rest-steps/FoodWater.svelte";
 import SpellRecovery from "./formapplications/rest-steps/SpellRecovery.svelte";
@@ -11,7 +11,7 @@ export default class RestWorkflow {
 
 	static itemsListened = new Map()
 
-	constructor(actor, longRest) {
+	constructor(actor, longRest, config = {}) {
 		this.actor = actor;
 		this.longRest = longRest;
 		this.finished = false;
@@ -24,6 +24,7 @@ export default class RestWorkflow {
 		this.resourcesRegainedMessages = [];
 		this.foodAndWaterMessage = [];
 		this.steps = [];
+		this.config = config;
 
 		this.consumableData = { items: [] };
 	}
@@ -173,9 +174,9 @@ export default class RestWorkflow {
 		rests.delete(actor.uuid);
 	}
 
-	static make(actor, longRest = false) {
+	static make(actor, longRest = false, config = {}) {
 		this.remove(actor);
-		const workflow = new this(actor, longRest);
+		const workflow = new this(actor, longRest, config);
 		rests.set(actor.uuid, workflow);
 		return workflow.setup();
 	}
@@ -397,7 +398,9 @@ export default class RestWorkflow {
 		const ignoreInactivePlayers = lib.getSetting(CONSTANTS.SETTINGS.IGNORE_INACTIVE_PLAYERS);
 
 		let bardLevel = false;
-		let characters = game.actors.filter(actor => actor.type === "character" && actor.hasPlayerOwner);
+		let characters = this.config?.options?.actorsToRest?.length
+			? this.config?.options?.actorsToRest.map(uuid => fromUuidSync(uuid))
+			: game.actors.filter(actor => actor.type === "character" && actor.hasPlayerOwner);
 
 		for (let actor of characters) {
 
@@ -857,6 +860,10 @@ export default class RestWorkflow {
 			}
 
 			if (lib.getSetting(CONSTANTS.SETTINGS.PREVENT_LONG_REST_EXHAUSTION_RECOVERY)) {
+				exhaustionToRemove = 0;
+			}
+
+			if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_EXHAUSTION_RECOVERY) && !this.config.ignoreFlags) {
 				exhaustionToRemove = 0;
 			}
 

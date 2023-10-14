@@ -62,6 +62,8 @@ export default class SocketHandler {
 
     }
 
+		const allActorsResting = actorsToRest.concat(offlineResters);
+
     const width = 425;
     const midPoint = window.innerWidth / actorsToRest.length;
     const indexOffset = actorsToRest.length > 1 ? (actorsToRest.length / 2) * -1 : 0;
@@ -71,6 +73,7 @@ export default class SocketHandler {
           newDay: data.newDay,
           promptNewDay: data.promptNewDay,
           restPrompted: true,
+	        options: { actorsToRest: allActorsResting.map(actor => actor.uuid) }
         },
         indexOffset ? { left: midPoint + (indexOffset + index) * width } : {}
       );
@@ -107,7 +110,10 @@ export default class SocketHandler {
     const offlineIndexOffset = offlineResters.length > 1 ? (offlineResters.length / 2) * -1 : 0;
 
     offlineResters.forEach((actor, index) => {
-      actor[data.restType]({}, offlineIndexOffset ? { left: offlineMidPoint + (offlineIndexOffset + index) * width } : {});
+      actor[data.restType](
+				{ options: { actorsToRest: allActorsResting.map(actor => actor.uuid) } },
+	      offlineIndexOffset ? { left: offlineMidPoint + (offlineIndexOffset + index) * width } : {}
+      );
     });
 
   }
