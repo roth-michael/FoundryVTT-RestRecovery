@@ -129,9 +129,27 @@
 
     if (!consumable?.enabled) return;
 
+    const foodRequired = Math.max(0.5, actorRequiredFood - newFoodSatedValue);
+    const waterRequired = Math.max(0.5, actorRequiredWater - newWaterSatedValue);
+    const maxBothRequired = Math.max(foodRequired, waterRequired);
+
     const maxUses = getProperty(item, "system.uses.max") ?? 1;
     const usesLeft = getProperty(item, "system.uses.value") ?? 1;
     const quantity = getProperty(item, "system.quantity") ?? 1;
+    let countsAs = 1;
+    if(consumable.dayWorth){
+      switch (consumable.type) {
+        case "both":
+          countsAs = Math.ceil(maxBothRequired / (workflow.restVariant === "gritty" ? 7 : 1));
+          break;
+        case "food":
+          countsAs = Math.ceil(foodRequired / (workflow.restVariant === "gritty" ? 7 : 1));
+          break;
+        case "water":
+          countsAs = Math.ceil(waterRequired / (workflow.restVariant === "gritty" ? 7 : 1));
+          break;
+      }
+		}
 
     const totalUsesLeft = ((maxUses * quantity) - (maxUses - usesLeft));
 
@@ -150,36 +168,29 @@
       return;
     }
 
-    const foodRequired = Math.max(0.5, actorRequiredFood - newFoodSatedValue);
-    const waterRequired = Math.max(0.5, actorRequiredWater - newWaterSatedValue);
-    const maxBothRequired = Math.max(foodRequired, waterRequired);
-
     const consumableItem = {
       id: item.id,
       item: item,
       index: typeIndex[consumable.type],
       fullName: `${item.name} (${localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumable.type))}) - ${totalUsesLeft} left`,
-      baseAmount: 0,
       amount: 0,
+			countsAs,
       totalUsesLeft,
       quantity,
       consumable
     };
 
-    switch (consumable.type) {
-      case "both":
-        consumableItem['baseAmount'] = maxBothRequired;
-        consumableItem['amount'] = maxBothRequired;
-        break;
-      case "food":
-        consumableItem['baseAmount'] = foodRequired;
-        consumableItem['amount'] = foodRequired;
-        break;
-      case "water":
-        consumableItem['baseAmount'] = waterRequired;
-        consumableItem['amount'] = waterRequired;
-        break;
-    }
+		switch (consumable.type) {
+			case "both":
+				consumableItem['amount'] = Math.ceil(maxBothRequired / countsAs);
+				break;
+			case "food":
+				consumableItem['amount'] = Math.ceil(foodRequired / countsAs);
+				break;
+			case "water":
+				consumableItem['amount'] = Math.ceil(waterRequired / countsAs);
+				break;
+		}
 
     consumableItem['amount'] = Math.min(totalUsesLeft, consumableItem['amount']);
 
@@ -213,10 +224,10 @@
 
     for (const item of $consumableItems) {
       if (!hasAccessToFood && (item.consumable.type === "food" || item.consumable.type === "both")) {
-        newFoodSatedValue += item.amount;
+        newFoodSatedValue += item.countsAs * item.amount;
       }
       if (!hasAccessToWater && (item.consumable.type === "water" || item.consumable.type === "both")) {
-        newWaterSatedValue += item.amount;
+        newWaterSatedValue += item.countsAs * item.amount;
       }
     }
 
@@ -328,11 +339,11 @@
 					<div class="flexcol">
 						<span class="item-name">{item.fullName}</span>
 						<label>
-							{#if !item.consumable.dayWorth}
-								<input type="number" bind:value={item.amount} step="0.5" on:change={() => {
+							<input type="number" bind:value={item.amount} step="0.5" on:change={() => {
                             item.amount = Math.max(0.5, Math.min(item.totalUsesLeft, roundHalf(item.amount)));
                             calculateAmountOfItems();
                         }}/>
+							{#if !item.consumable.dayWorth}
 								{localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.AmountToConsume")}
 							{:else}
 								{localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.consumable.type))}

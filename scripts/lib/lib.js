@@ -108,6 +108,17 @@ export function isRealNumber(inNumber) {
     && isFinite(inNumber);
 }
 
+/**
+ *
+ * @param actor
+ * @param grittyLongRest
+ * @returns {{
+ *    actorRequiredWater: Number,
+ *    actorWaterSatedValue: Number,
+ *    actorRequiredFood: Number,
+ *    actorFoodSatedValue: Number
+ * }}
+ */
 export function getActorConsumableValues(actor, grittyLongRest) {
 
   const actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;

@@ -48,6 +48,7 @@ const CONSTANTS = {
     AUTOMATE_EXHAUSTION: "automate-exhaustion",
     EXHAUSTION_INTEGRATION: "exhaustion-integration",
     ONE_DND_EXHAUSTION: "one-dnd-exhaustion",
+    PREVENT_LONG_REST_EXHAUSTION_RECOVERY: "long-rest-prevent-exhaustion-recovery",
     LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
     PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
     PREVENT_REST_REGAIN_HIT_DICE: "prevent-rest-regain-hit-dice",
@@ -428,6 +429,20 @@ CONSTANTS.DEFAULT_SETTINGS = {
     name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",
     hint: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint",
     hint2: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint2",
+    scope: "world",
+    group: "longrest",
+    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value;
+    },
+    customSettingsDialog: true,
+    config: false,
+    default: false,
+    type: Boolean
+  },
+  [CONSTANTS.SETTINGS.PREVENT_LONG_REST_EXHAUSTION_RECOVERY]: {
+    name: "REST-RECOVERY.Settings.LongRest.PreventLongRestExhaustionRecovery.Title",
+    hint: "REST-RECOVERY.Settings.LongRest.PreventLongRestExhaustionRecovery.Hint",
     scope: "world",
     group: "longrest",
     dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],

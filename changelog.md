@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.4.16
+
+- Added setting that when enabled prevents exhaustion from being recovered on long rests
+- Fixed logic handling of day worth consumables
+
 ## Version 1.4.15
 
 - Fixed Periapt of Wound Closure only multiplying the modifier when set to multiply total
