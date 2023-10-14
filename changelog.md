@@ -1,12 +1,16 @@
 # Rest Recovery Changelog
 
-## Version 1.4.16
+## Version 1.4.17
 
 - Added setting that when enabled prevents exhaustion from being recovered on long rests
 - Added active effect support for `flags.dae.rest-recovery.prevent.exhaustionRecovery` - setting this to `1` causes any character affected this active effect from being able to recover from exhaustion
 - Added `game.restrecovery.daeFlags` which lists all of the above options
 - Tweaked rests that are prompted by GMs to now only consider the prompted characters when determining active features such as Song of Rest and the Chef feat
 - Fixed logic handling of consumables that are worth an entire day of food and/or water
+
+## Version 1.4.16
+
+- Fixed healthbar in short rest UI not updating
 
 ## Version 1.4.15
 
