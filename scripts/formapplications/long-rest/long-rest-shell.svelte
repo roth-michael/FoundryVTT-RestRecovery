@@ -164,12 +164,11 @@
         class: CustomSettings
       },
       label: "Okay",
-      modal: true,
-      draggable: false,
       options: {
         height: "auto",
         width: "350",
-        headerButtonNoClose: true
+        headerButtonNoClose: true,
+	      zIndex: 10
       }
     })
   }

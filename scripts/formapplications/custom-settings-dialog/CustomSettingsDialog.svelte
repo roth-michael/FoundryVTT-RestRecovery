@@ -49,7 +49,7 @@
     </tr>
     {#each shownSettings.filter(s => s.visible) as setting, index (index)}
       <tr>
-        <td title={setting.hint}><i class="fas fa-info-circle"></i> {setting.name}</td>
+        <td data-tooltip={setting.hint} data-tooltip-direction="UP"><i class="fas fa-info-circle"></i> {setting.name}</td>
         <td>{setting.settingText}</td>
       </tr>
     {/each}

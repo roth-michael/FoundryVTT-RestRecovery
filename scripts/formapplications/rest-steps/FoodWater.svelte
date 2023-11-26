@@ -132,6 +132,7 @@
     const foodRequired = Math.max(0.5, actorRequiredFood - newFoodSatedValue);
     const waterRequired = Math.max(0.5, actorRequiredWater - newWaterSatedValue);
     const maxBothRequired = Math.max(foodRequired, waterRequired);
+    const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
 
     const maxUses = getProperty(item, "system.uses.max") ?? 1;
     const usesLeft = getProperty(item, "system.uses.value") ?? 1;
@@ -151,7 +152,7 @@
       }
 		}
 
-    const totalUsesLeft = ((maxUses * quantity) - (maxUses - usesLeft));
+    const totalUsesLeft = consumeQuantity ? ((maxUses * quantity) - (maxUses - usesLeft)) : usesLeft;
 
     if (totalUsesLeft <= 0) {
       ui.notifications.warn(localize("REST-RECOVERY.Warnings.ItemNoUses", { item: item.name }));

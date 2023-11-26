@@ -1,7 +1,7 @@
 import CONSTANTS from "./constants.js";
 import SettingsShim from "./formapplications/settings/settings.js";
 import { getSetting } from "./lib/lib.js";
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import plugins from "./plugins.js";
 import { QuickSetupShim } from "./formapplications/quick-setup/quick-setup.js";
 
@@ -11,9 +11,25 @@ class RestRecoverySettings {
     this.namespace = CONSTANTS.MODULE_NAME;
     this.settings = new Map();
     this.groupedSettings = new Map();
-    this.activeProfile = "";
-    this.profiles = {};
+    this.activeProfileStore = writable("");
+    this.profilesStore = writable({});
     this.initialized = false;
+  }
+
+  get profiles(){
+    return get(this.profilesStore);
+  }
+
+  set profiles(profiles){
+    this.profilesStore.set(profiles);
+  }
+
+  get activeProfile(){
+    return get(this.activeProfileStore);
+  }
+
+  set activeProfile(activeProfile){
+    this.activeProfileStore.set(activeProfile);
   }
 
   get activeProfileData() {
@@ -97,28 +113,33 @@ class RestRecoverySettings {
   }
 
   async createProfile(inProfile, inProfileData, setActive = false, persist = false) {
-    this.profiles[inProfile] = inProfileData;
-    await this.updateProfiles(this.profiles, persist);
+    this.profilesStore.update(profiles => {
+      profiles[inProfile] = inProfileData;
+      return profiles;
+    })
+    await this.updateProfiles(persist);
     if (setActive) {
       await this.setActiveProfile(inProfile, persist);
     }
   }
 
-  async updateProfiles(inProfiles, persist = false) {
-    this.profiles = inProfiles;
+  async updateProfiles(persist = false) {
     await this.updateSettingsFromActiveProfile(persist);
     if (!persist) return;
     return this.set(CONSTANTS.SETTINGS.MODULE_PROFILES, this.profiles)
   }
 
   async deleteProfile(inProfile, persist = false) {
-    delete this.profiles[inProfile];
-    await this.updateProfiles(this.profiles, persist);
+    this.profilesStore.update(profiles => {
+      delete profiles[inProfile];
+      return profiles;
+    })
+    await this.updateProfiles(persist);
     return this.setActiveProfile("Default", persist);
   }
 
   async persistSettings() {
-    await this.updateProfiles(this.profiles, true);
+    await this.updateProfiles(true);
     await this.setActiveProfile(this.activeProfile, true);
     if (this.settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value
       && this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) {

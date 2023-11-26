@@ -1,6 +1,7 @@
 import { SvelteApplication, TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
 import SettingsShell from './settings-shell.svelte';
 import SaveProfileDialog from "./SaveProfileDialog.svelte";
+import { gameSettings } from "../../settings.js";
 
 class Settings extends SvelteApplication {
 
@@ -43,7 +44,7 @@ class Settings extends SvelteApplication {
 
       onclick: async () => {
 
-        const profiles = this.svelte.applicationShell.profiles;
+        const profiles = gameSettings.profiles;
 
         const input = document.createElement('input');
         input.type = 'file';
@@ -79,7 +80,7 @@ class Settings extends SvelteApplication {
                 }, options).render(true);
               });
 
-              const newProfile = foundry.utils.duplicate(this.svelte.applicationShell.profiles['Default']);
+              const newProfile = foundry.utils.duplicate(profiles['Default']);
 
               const profileData = JSON.parse(reader.result);
 
@@ -87,9 +88,9 @@ class Settings extends SvelteApplication {
                 newProfile[key] = value;
               }
 
-              this.svelte.applicationShell.profiles[newProfileName] = newProfile;
-              this.svelte.applicationShell.selectedProfile = newProfileName;
-              this.svelte.applicationShell.profiles = this.svelte.applicationShell.profiles;
+              gameSettings.createProfile(newProfileName, newProfile, true, true);
+
+              this.render(true);
 
             } catch (err) {
               console.error(err);
@@ -110,11 +111,10 @@ class Settings extends SvelteApplication {
       label: game.i18n.localize("REST-RECOVERY.Dialogs.ModuleConfig.ExportProfile"),
 
       onclick: async () => {
-        const profiles = this.svelte.applicationShell.profiles;
-        const selectedProfile = this.svelte.applicationShell.selectedProfile;
-        const profile = profiles[selectedProfile];
+        const selectedProfile = gameSettings.activeProfile;
+        const profileData = gameSettings.activeProfileData;
         const a = document.createElement("a");
-        const file = new Blob([JSON.stringify(profile)], { type: "text/json" });
+        const file = new Blob([JSON.stringify(profileData)], { type: "text/json" });
         a.href = URL.createObjectURL(file);
         a.download = selectedProfile + ".json";
         a.click();

@@ -6,15 +6,14 @@
   export let progress = 0;
   export let progressGhost = 0;
 
-  export let progressBar = tweened(0, {
+  export let progressBar = tweened(progress, {
     duration: 400,
-    easing: cubicOut,
+    easing: cubicOut
   });
 
-  export let progressBarGhost = tweened(0, {
+  export let progressBarGhost = tweened(progressGhost, {
     duration: 400,
-    easing: cubicOut,
-
+    easing: cubicOut
   });
 
   $: progress, updateProgress();

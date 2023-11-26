@@ -126,54 +126,7 @@ function patch_actorSheet(app, html, data) {
 }
 
 function patch_itemSheet(app, html, { item } = {}) {
-
-  if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable") {
-    patch_itemConsumableInputs(app, html, item);
-  }
-
   patch_itemCustomRecovery(app, html, item);
-}
-
-function patch_itemConsumableInputs(app, html, item) {
-
-  const customConsumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
-  const uses = Number(getProperty(item, "system.uses.max"));
-  const per = getProperty(item, "system.uses.per");
-  const validUses = uses && uses > 0 && per;
-
-  let targetElem = html.find('.form-header')?.[1];
-  if (!targetElem) return;
-  $(`
-        <div class="form-header">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Title")}</div>
-        <div class="form-group">
-            <div class="form-fields" style="margin-right:0.5rem;">
-                <label class="checkbox" style="font-size:13px;">
-                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_ENABLED}" ${customConsumable.enabled ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable")}
-                </label>
-            </div>
-            <div class="form-fields" style="margin-right:0.5rem;">
-                <label style="flex:0 1 auto;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Type")}</label>
-                <select name="${CONSTANTS.FLAGS.CONSUMABLE_TYPE}" ${!customConsumable.enabled ? "disabled" : ""}>
-                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD}">${game.i18n.localize("REST-RECOVERY.Misc.Food")}</option>
-                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER}">${game.i18n.localize("REST-RECOVERY.Misc.Water")}</option>
-                    <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH}">${game.i18n.localize("REST-RECOVERY.Misc.Both")}</option>
-                </select>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <div class="form-fields" style="margin-right:0.5rem;">
-                <label class="checkbox" style="font-size:13px;">
-                    <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
-                </label>
-            </div>
-        </div>
-        
-        <small style="display:${customConsumable.enabled && !validUses ? "block" : "none"}; margin: 0.5rem 0;">
-            <i class="fas fa-info-circle" style="color:rgb(217, 49, 49);"></i> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.ChargesDescription")}
-        </small>
-    `).insertBefore(targetElem);
-
 }
 
 function patch_itemCustomRecovery(app, html, item) {

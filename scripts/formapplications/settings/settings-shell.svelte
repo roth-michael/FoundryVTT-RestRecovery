@@ -12,11 +12,11 @@
 
   const { application } = getContext('external');
 
+  gameSettings.cleanup();
+
   export let elementRoot;
 
   let form;
-
-  gameSettings.cleanup();
 
   async function deleteProfile() {
 
@@ -34,8 +34,6 @@
     }
 
     await gameSettings.deleteProfile(gameSettings.activeProfile);
-
-    gameSettings.profiles = gameSettings.profiles;
 
   }
 
@@ -64,8 +62,6 @@
     const newProfile = foundry.utils.duplicate(gameSettings.activeProfileData);
 
     await gameSettings.createProfile(result, newProfile, true);
-
-    gameSettings.profiles = gameSettings.profiles;
 
   }
 
@@ -103,6 +99,9 @@
 
   let activeTab = "general";
 
+  const activeProfileStore = gameSettings.activeProfileStore;
+  const profileStore = gameSettings.profilesStore;
+
 </script>
 
 <svelte:options accessors={true}/>
@@ -114,9 +113,9 @@
 
     <div class="preset-select">
       <label>{localize("REST-RECOVERY.Dialogs.ModuleConfig.ModuleProfile")}</label>
-      <select bind:value={gameSettings.activeProfile} on:change={() => { changeProfile(); }}>
-        {#each Object.keys(gameSettings.profiles) as profile (profile)}
-          <option value="{profile}">{profile}</option>
+      <select bind:value={$activeProfileStore} on:change={() => { changeProfile(); }}>
+        {#each Object.keys($profileStore) as profile (profile)}
+          <option>{profile}</option>
         {/each}
       </select>
       <button type="button" on:click={newProfile}><i class="fas fa-plus"></i></button>
