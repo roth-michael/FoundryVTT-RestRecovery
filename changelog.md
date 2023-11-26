@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+
+## Version 1.5.0
+- Fixed incompatibility with D&D5e 2.4.0
+- Fixed bug with food and water items without auto destroy enabled would be consumed anyway
+
 ## Version 1.4.17
 
 - Added setting that when enabled prevents exhaustion from being recovered on long rests
