@@ -6,7 +6,6 @@ import { getSetting } from "./lib/lib.js";
 export default function registerSheetOverrides() {
   Hooks.on("renderItemSheet5e", patch_itemSheet);
   Hooks.on("renderActorSheet5e", patch_actorSheet);
-  Hooks.on("renderAbilityUseDialog", patch_AbilityUseDialog);
   registerTraits();
 }
 

@@ -36,6 +36,13 @@ class RestRecoverySettings {
     return this.profiles?.[this.activeProfile] ?? {};
   }
 
+  setProfileData(key, value){
+    this.profilesStore.update(data => {
+      data[this.activeProfile][key] = value;
+      return data;
+    })
+  }
+
   get(key, localize = false) {
     const value = game.settings.get(this.namespace, key);
     if (localize) return game.i18n.localize(value);
@@ -62,7 +69,7 @@ class RestRecoverySettings {
     store.subscribe((val) => {
       if (!this.initialized) return;
       setting.value = val;
-      this.activeProfileData[key] = val;
+      this.setProfileData(key, val);
       this.validateSettings(key);
     });
     if (setting.hidden) return;

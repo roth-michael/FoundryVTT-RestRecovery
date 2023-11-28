@@ -1,0 +1,8 @@
+* [Home](/)
+  * [API & Functions](api.md)
+  * [General Settings](general-settings.md)
+  * [Actor Traits](actor-traits.md)
+  * [Long Rest Settings](long-rest-settings.md)
+  * [Short Rest Settings](short-rest-settings.md)
+  * [Food & Water Settings](food-and-water-settings.md)
+  * [Item Recognition Settings](item-recognition-settings.md)

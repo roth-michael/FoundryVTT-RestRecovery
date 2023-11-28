@@ -1,5 +1,7 @@
 # Rest Recovery Changelog
 
+## Version 1.5.1
+- Fixed minor issue with forgotten code that should not exist
 
 ## Version 1.5.0
 - Fixed incompatibility with D&D5e 2.4.0
