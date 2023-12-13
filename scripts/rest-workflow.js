@@ -748,8 +748,16 @@ export default class RestWorkflow {
       }
     }
 
+    for(let i = results.updateItems.length-1; i >= 0; i--){
+      if(Object.keys(results.updateItems[i]).includes("system.hitDiceUsed")){
+        results.updateItems.splice(i, 1);
+      }
+    }
+
     const maxHitDice = this._getMaxHitDiceRecovery();
-    let { hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+
+    updates.forEach(update => lib.addToUpdates(results.updateItems, update));
 
     if (this.longRest) {
 

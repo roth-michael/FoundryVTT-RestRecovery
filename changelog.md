@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.5.2
+- Fixed players regaining too many hit dice after rests
+
 ## Version 1.5.1
 - Fixed minor issue with forgotten code that should not exist
 
