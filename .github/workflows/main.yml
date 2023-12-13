@@ -106,3 +106,4 @@ jobs:
             FVTT_USERNAME: ${{ secrets.FVTT_USERNAME }}
             FVTT_PASSWORD: ${{ secrets.FVTT_PASSWORD }}
             FVTT_CHANGELOG_URL: ${{ github.event.release.html_url }}
+            FVTT_USE_NEW_PACKAGE_ADMINISTRATION_INTERFACE: true
