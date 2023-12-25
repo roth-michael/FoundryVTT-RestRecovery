@@ -4,8 +4,7 @@ import { getSetting } from "./lib/lib.js";
 export default class plugins {
 
   static _integrationMap = {
-    [CONSTANTS.MODULES.DFREDS + "-exhaustion"]: this.handleDFredsConvenientEffects,
-    [CONSTANTS.MODULES.CUB + "-exhaustion"]: this.handleCombatUtilityBelt
+    [CONSTANTS.MODULES.DFREDS + "-exhaustion"]: this.handleDFredsConvenientEffects
   }
 
   static handleIntegration(integration, ...args) {
@@ -30,7 +29,7 @@ export default class plugins {
 
     const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
 
-    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
+    const exhaustionLevel = foundry.utils.getProperty(data, "system.attributes.exhaustion");
 
     const actorUuid = actor.uuid;
 
@@ -49,7 +48,7 @@ export default class plugins {
       }
     } else {
       const presetEffect = game?.dfreds?.effects.customEffects.find(effect => {
-        return getProperty(effect.flags, "rest-recovery.exhaustion-effect");
+        return foundry.utils.getProperty(effect.flags, "rest-recovery.exhaustion-effect");
       });
       if (exhaustionLevel >= 1) {
         await DFREDS.addEffect({
@@ -67,7 +66,7 @@ export default class plugins {
 
   static async createConvenientEffect() {
     if (game?.dfreds?.effects.customEffects.find(effect => {
-      return getProperty(effect.flags, "rest-recovery.exhaustion-effect");
+      return foundry.utils.getProperty(effect.flags, "rest-recovery.exhaustion-effect");
     })) {
       return;
     }
@@ -79,8 +78,8 @@ export default class plugins {
   static handleNativeExhaustion(actor, data) {
     const oneDndExhaustionEnabled = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
     if (!oneDndExhaustionEnabled) return;
-    const exhaustionLevel = getProperty(data, "system.attributes.exhaustion");
-    const actorExhaustionEffect = actor.effects.find(effect => getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
+    const exhaustionLevel = foundry.utils.getProperty(data, "system.attributes.exhaustion");
+    const actorExhaustionEffect = actor.effects.find(effect => foundry.utils.getProperty(effect, "flags.rest-recovery.exhaustion-effect"));
     if (exhaustionLevel > 0 && !actorExhaustionEffect) {
       return actor.createEmbeddedDocuments("ActiveEffect", [oneDndExhaustionEffectData]);
     } else if (exhaustionLevel <= 0 && actorExhaustionEffect) {

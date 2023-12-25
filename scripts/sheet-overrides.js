@@ -135,9 +135,9 @@ function patch_itemSheet(app, html, { item } = {}) {
 
 function patch_itemConsumableInputs(app, html, item) {
 
-  const customConsumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
-  const uses = Number(getProperty(item, "system.uses.max"));
-  const per = getProperty(item, "system.uses.per");
+  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+  const uses = Number(foundry.utils.getProperty(item, "system.uses.max"));
+  const per = foundry.utils.getProperty(item, "system.uses.per");
   const validUses = uses && uses > 0 && per;
 
   let targetElem = html.find('.form-header')?.[1];
@@ -177,8 +177,8 @@ function patch_itemConsumableInputs(app, html, item) {
 
 function patch_itemCustomRecovery(app, html, item) {
 
-  const customRecovery = getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_ENABLED}`) ?? false;
-  const customFormula = getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_FORMULA}`) ?? "";
+  const customRecovery = foundry.utils.getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_ENABLED}`) ?? false;
+  const customFormula = foundry.utils.getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_FORMULA}`) ?? "";
   let targetElem = html.find('.uses-per')?.[0];
   if (!targetElem) return;
   $(`<div class="form-group" title="Module: Rest Recovery for 5e">

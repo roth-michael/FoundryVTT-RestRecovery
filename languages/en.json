@@ -356,7 +356,7 @@
         },
         "DisableRollConsumableItems": {
           "Title": "Disable rolling consumable items on rest",
-          "Hint": "By default, if a character chooses to consume an item during their long rest, it will be rolled as if the character clicked on its roll button. This setting will disable this automatic roll."
+          "Hint": "By default, if a character chooses to consume an item during their rest, it will be rolled as if the character clicked on its roll button. This setting will disable this automatic roll."
         },
         "FoodUnitsPerDay": {
           "Title": "Units of food required per day",
@@ -368,7 +368,7 @@
         },
         "ExternalFoodAccess": {
           "Title": "Access to external food source",
-          "Hint": "This configures whether players will be able to pick \"External Food Source\" during long rests as a replacement for consumable items. \"Full\" means full access like in inns and cities, \"Half\" means limited access or poor food, \"None\" means wilderness or starvation."
+          "Hint": "This configures whether players will be able to pick \"External Food Source\" during rests as a replacement for consumable items. \"Full\" means full access like in inns and cities, \"Half\" means limited access or poor food, \"None\" means wilderness or starvation."
         },
         "ExternalWaterAccess": {
           "Title": "Access to external water source",
@@ -376,7 +376,7 @@
         },
         "AutomateFoodWaterExhaustion": {
           "Title": "Automate food & water exhaustion",
-          "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough. Requires long rest exhaustion automation to be enabled."
+          "Hint": "Enabling this makes it so that characters suffer exhaustion if they do not eat or drink enough. Requires rest exhaustion automation to be enabled."
         },
         "NoFoodDuration": {
           "Title": "Maximum days with no food",

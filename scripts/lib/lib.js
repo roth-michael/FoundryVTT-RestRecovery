@@ -87,7 +87,7 @@ export function getConsumableItemsFromActor(actor) {
   return actor.items.map(item => {
     const consumableUses = getConsumableItemDayUses(item);
     if (!consumableUses > 0) return false;
-    const consumableData = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+    const consumableData = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
     return {
       id: item.id,
       name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumableData.type)) + ")",
@@ -97,9 +97,9 @@ export function getConsumableItemsFromActor(actor) {
 }
 
 export function getConsumableItemDayUses(item) {
-  const consumableData = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+  const consumableData = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
   if (!consumableData?.enabled) return 0;
-  return (getProperty(item, "system.uses.value") ?? 1);
+  return (foundry.utils.getProperty(item, "system.uses.value") ?? 1);
 }
 
 export function isRealNumber(inNumber) {
@@ -121,23 +121,23 @@ export function isRealNumber(inNumber) {
  */
 export function getActorConsumableValues(actor, grittyLongRest) {
 
-  const actorFoodSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
-  const actorWaterSatedValue = getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
+  const actorFoodSatedValue = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.SATED_FOOD) ?? 0;
+  const actorWaterSatedValue = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.SATED_WATER) ?? 0;
 
-  const actorNeedsNoFoodWater = getProperty(actor, CONSTANTS.FLAGS.DND.NEEDS_NO_FOOD_AND_WATER);
-  const actorNeedsNoFood = getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_FOOD);
-  const actorNeedsNoWater = getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_WATER);
+  const actorNeedsNoFoodWater = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.NEEDS_NO_FOOD_AND_WATER);
+  const actorNeedsNoFood = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_FOOD);
+  const actorNeedsNoWater = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_WATER);
 
   const foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
-  const actorRequiredFoodUnits = getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
-    ?? getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_FOOD);
+  const actorRequiredFoodUnits = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
+    ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_FOOD);
   let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && foodUnitsSetting !== 0
     ? actorRequiredFoodUnits
     : foodUnitsSetting;
 
   const waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
-  const actorRequiredWaterUnits = getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
-    ?? getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_WATER);
+  const actorRequiredWaterUnits = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
+    ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_WATER);
   let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
     ? actorRequiredWaterUnits
     : waterUnitsSetting;

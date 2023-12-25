@@ -27,8 +27,8 @@
 
   const halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
 
-  const actorExhaustion = getProperty(actor, "system.attributes.exhaustion") ?? 0;
-  const actorDaysWithoutFood = getProperty(actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
+  const actorExhaustion = foundry.utils.getProperty(actor, "system.attributes.exhaustion") ?? 0;
+  const actorDaysWithoutFood = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
   const actorExhaustionThreshold = evaluateFormula(
     getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
     actor.getRollData()
@@ -125,18 +125,18 @@
       return;
     }
 
-    const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+    const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
 
     if (!consumable?.enabled) return;
 
     const foodRequired = Math.max(0.5, actorRequiredFood - newFoodSatedValue);
     const waterRequired = Math.max(0.5, actorRequiredWater - newWaterSatedValue);
     const maxBothRequired = Math.max(foodRequired, waterRequired);
-    const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
+    const consumeQuantity = foundry.utils.getProperty(item, 'system.uses.autoDestroy') ?? false;
 
-    const maxUses = getProperty(item, "system.uses.max") ?? 1;
-    const usesLeft = getProperty(item, "system.uses.value") ?? 1;
-    const quantity = getProperty(item, "system.quantity") ?? 1;
+    const maxUses = foundry.utils.getProperty(item, "system.uses.max") ?? 1;
+    const usesLeft = foundry.utils.getProperty(item, "system.uses.value") ?? 1;
+    const quantity = foundry.utils.getProperty(item, "system.quantity") ?? 1;
     let countsAs = 1;
     if(consumable.dayWorth){
       switch (consumable.type) {

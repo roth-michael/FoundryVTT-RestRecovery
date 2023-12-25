@@ -18,6 +18,7 @@ export default class RestWorkflow {
     this.longRest = longRest;
     this.finished = false;
     this.preRestRegainHitDice = false;
+    this.newExhaustionValue = false;
     this.restVariant = game.settings.get("dnd5e", "restVariant");
 
     this.spellSlotsRegainedMessage = "";
@@ -74,7 +75,8 @@ export default class RestWorkflow {
 
     Hooks.on("preUpdateActor", (actor, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
-      const exhaustion = getProperty(data, "system.attributes.exhaustion");
+      const rest = RestWorkflow.get(actor);
+      const exhaustion = rest?.newExhaustionValue ?? foundry.utils.getProperty(data, "system.attributes.exhaustion");
       if (exhaustion === undefined) return;
       return plugins.handleExhaustion(actor, data);
     });
@@ -108,7 +110,7 @@ export default class RestWorkflow {
       const conMod = actor.system.abilities.con.mod;
       const durableMod = Math.max(2, conMod * 2);
 
-      const forceMaxRoll = getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
+      const forceMaxRoll = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
 
       let formula = !forceMaxRoll ? "1" + denomination : denomination.slice(1);
 
@@ -154,7 +156,7 @@ export default class RestWorkflow {
 
       if (!clsItem) return;
 
-      const bufferDice = getProperty(clsItem, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG);
+      const bufferDice = foundry.utils.getProperty(clsItem, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG);
 
       if ((bufferDice ?? 0) > 0) {
         delete updates.class["system.hitDiceUsed"];
@@ -167,7 +169,7 @@ export default class RestWorkflow {
 
     Hooks.on("dnd5e.preShortRest", (actor, config) => {
 
-      if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST) && !config.ignoreFlags) {
+      if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedShortRest");
         return false;
       }
@@ -201,7 +203,7 @@ export default class RestWorkflow {
 
     Hooks.on("dnd5e.preLongRest", (actor, config) => {
 
-      if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST) && !config.ignoreFlags) {
+      if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedLongRest");
         return false;
       }
@@ -359,7 +361,7 @@ export default class RestWorkflow {
         const denom = d.hitDice || "d6";
         let available = parseInt(d.levels || 1) - parseInt(d.hitDiceUsed || 0);
         if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
-          const hitDiceBuffer = getProperty(item, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG) ?? 0;
+          const hitDiceBuffer = foundry.utils.getProperty(item, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG) ?? 0;
           available += hitDiceBuffer;
         }
         hd[denom] = denom in hd ? hd[denom] + available : available;
@@ -624,7 +626,7 @@ export default class RestWorkflow {
     let hpRegained = 0;
 
     if (!this.features.usedSongOfRest && this.features.bardFeature) {
-      const formula = getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
+      const formula = foundry.utils.getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
       const roll = lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
 
@@ -701,6 +703,10 @@ export default class RestWorkflow {
     });
     this._handleFoodAndWaterItems(results);
 
+    if(foundry.utils.hasProperty(results.updateData, "system.attributes.exhaustion")) {
+      this.newExhaustionValue = results.updateData['system.attributes.exhaustion'];
+    }
+
   }
 
   async regainHitDice() {
@@ -743,7 +749,7 @@ export default class RestWorkflow {
       if (this.longRest) {
         results.updateData[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = 0;
       } else {
-        const currentShortRests = getProperty(this.actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
+        const currentShortRests = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
         results.updateData[CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS] = currentShortRests + 1;
       }
     }
@@ -832,9 +838,11 @@ export default class RestWorkflow {
 
   _handleExhaustion(results) {
 
+    debugger;
+
     if (!(this.longRest || this.restVariant === "gritty")) return;
 
-    let actorInitialExhaustion = getProperty(this.actor, "system.attributes.exhaustion") ?? 0;
+    let actorInitialExhaustion = foundry.utils.getProperty(this.actor, "system.attributes.exhaustion") ?? 0;
     let actorExhaustion = actorInitialExhaustion;
     let exhaustionGain = false;
     let exhaustionSave = false;
@@ -849,7 +857,7 @@ export default class RestWorkflow {
         actorWaterSatedValue
       } = lib.getActorConsumableValues(this.actor, this.restVariant === "gritty" && this.longRest);
 
-      let actorDaysWithoutFood = getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
+      let actorDaysWithoutFood = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
       const items = this.consumableData.items.filter(item => item.amount);
       let foodItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "food");
@@ -996,7 +1004,7 @@ export default class RestWorkflow {
         exhaustionToRemove = 0;
       }
 
-      if (getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_EXHAUSTION_RECOVERY) && !this.config.ignoreFlags) {
+      if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_EXHAUSTION_RECOVERY) && !this.config.ignoreFlags) {
         exhaustionToRemove = 0;
       }
 
@@ -1124,7 +1132,7 @@ export default class RestWorkflow {
   _getRestResourceRecovery(results, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
 
     const customRecoveryResources = Object.entries(this.actor.system.resources).filter(entry => {
-      return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
+      return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && foundry.utils.getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
     });
 
     const regularResources = Object.entries(this.actor.system.resources).filter(entry => {
@@ -1133,7 +1141,7 @@ export default class RestWorkflow {
 
     for (const [key, resource] of customRecoveryResources) {
       if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
-        const customFormula = getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
+        const customFormula = foundry.utils.getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
         const customRoll = lib.evaluateFormula(customFormula, this.actor.getRollData());
         results.updateData[`system.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
 
@@ -1307,8 +1315,8 @@ export default class RestWorkflow {
 
     if (usesCur === usesMax) return;
 
-    const customRecovery = getProperty(item, CONSTANTS.FLAGS.RECOVERY_ENABLED);
-    const customFormula = getProperty(item, CONSTANTS.FLAGS.RECOVERY_FORMULA);
+    const customRecovery = foundry.utils.getProperty(item, CONSTANTS.FLAGS.RECOVERY_ENABLED);
+    const customFormula = foundry.utils.getProperty(item, CONSTANTS.FLAGS.RECOVERY_FORMULA);
 
     let recoverValue;
     if (customRecovery && customFormula) {
@@ -1339,7 +1347,7 @@ export default class RestWorkflow {
 
   _handlePowerSurgeFeature(actorRollData, updateItems, item) {
 
-    const numSurges = getProperty(item, "system.uses.value");
+    const numSurges = foundry.utils.getProperty(item, "system.uses.value");
     if (numSurges === 1) return;
 
     lib.addToUpdates(updateItems, {
@@ -1373,10 +1381,10 @@ export default class RestWorkflow {
         _id: item.id
       };
 
-      const maxUses = getProperty(update, "system.uses.max") ?? getProperty(item, "system.uses.max") ?? 1;
-      const currentUses = getProperty(update, "system.uses.value") ?? getProperty(item, "system.uses.value") ?? 1;
-      const currentQuantity = getProperty(update, "system.quantity") ?? getProperty(item, "system.quantity");
-      const consumeQuantity = getProperty(item, 'system.uses.autoDestroy') ?? false;
+      const maxUses = foundry.utils.getProperty(update, "system.uses.max") ?? foundry.utils.getProperty(item, "system.uses.max") ?? 1;
+      const currentUses = foundry.utils.getProperty(update, "system.uses.value") ?? foundry.utils.getProperty(item, "system.uses.value") ?? 1;
+      const currentQuantity = foundry.utils.getProperty(update, "system.quantity") ?? foundry.utils.getProperty(item, "system.quantity");
+      const consumeQuantity = foundry.utils.getProperty(item, 'system.uses.autoDestroy') ?? false;
 
       if(consumeQuantity) {
 
@@ -1424,7 +1432,7 @@ export default class RestWorkflow {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
       if (!app?.item) return;
       const item = app.item;
-      const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
       if (!consumable?.enabled) return;
       let consumeFull = true;
       const element = app.element.find('input[name="consumeAmount"]:checked');
@@ -1439,11 +1447,11 @@ export default class RestWorkflow {
 
     Hooks.on('preUpdateItem', (item, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-      if (getProperty(data, CONSTANTS.FLAGS.CONSUMABLE)?.enabled && !lib.isRealNumber(getProperty(item, "system.uses.max"))) {
+      if (foundry.utils.getProperty(data, CONSTANTS.FLAGS.CONSUMABLE)?.enabled && !lib.isRealNumber(foundry.utils.getProperty(item, "system.uses.max"))) {
         return this._patchConsumableItem(item, data);
       }
       if (!this.itemsListened.has(item.id)) return;
-      const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
       if (!consumable?.enabled) return;
       return this._handleConsumableItem(item, data, this);
     });
@@ -1451,15 +1459,15 @@ export default class RestWorkflow {
 
   static patchAllConsumableItems(actor) {
 
-    const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Waterskin") && getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
+    const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Waterskin") && foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
 
     const updates = items.map(item => {
       if (item.name.startsWith("Rations")) {
         return {
           "_id": item.id,
-          "system.uses.value": getProperty(item, "system.uses.value") ?? 1,
-          "system.uses.max": getProperty(item, "system.uses.max") ?? 1,
-          "system.uses.per": getProperty(item, "system.uses.per") ?? "charges",
+          "system.uses.value": foundry.utils.getProperty(item, "system.uses.value") ?? 1,
+          "system.uses.max": foundry.utils.getProperty(item, "system.uses.max") ?? 1,
+          "system.uses.per": foundry.utils.getProperty(item, "system.uses.per") ?? "charges",
           [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
           [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
         }
@@ -1499,7 +1507,7 @@ export default class RestWorkflow {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
 
-    const consumable = getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+    const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
 
     const actorUpdates = {};
 
@@ -1510,8 +1518,8 @@ export default class RestWorkflow {
       actorWaterSatedValue
     } = lib.getActorConsumableValues(item.parent, workflow.restVariant === "gritty" && workflow.longRest);
 
-    const currCharges = getProperty(item, "system.uses.value");
-    const newCharges = getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
+    const currCharges = foundry.utils.getProperty(item, "system.uses.value");
+    const newCharges = foundry.utils.getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
     const chargesUsed = currCharges < newCharges ? currCharges : currCharges - newCharges;
 
     let message;

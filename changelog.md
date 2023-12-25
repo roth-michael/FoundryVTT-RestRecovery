@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.5.3
+- Fixed exhaustion integration with DF Convenient Effects not removing manually placed exhaustion effects
+
 ## Version 1.5.2
 - Fixed players regaining too many hit dice after rests
 

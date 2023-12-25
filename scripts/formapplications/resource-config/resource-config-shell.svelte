@@ -20,7 +20,7 @@
       let resource = entry[1];
       resource.path = `system.resources.${entry[0]}`;
       resource.flagPath = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.resources.${entry[0]}.formula`;
-      resource.formula = getProperty(actor, `${resource.flagPath}`) ?? "";
+      resource.formula = foundry.utils.getProperty(actor, `${resource.flagPath}`) ?? "";
       return resource;
     })
     .filter((resource, index) => resource.path !== "count" && index < count);

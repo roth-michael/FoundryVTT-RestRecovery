@@ -132,7 +132,7 @@
   $: {
     $doc;
     const { data } = doc.updateOptions;
-    const hpUpdate = getProperty(data, "system.attributes.hp");
+    const hpUpdate = foundry.utils.getProperty(data, "system.attributes.hp");
     if (hpUpdate) {
       updateHealthData();
     }
