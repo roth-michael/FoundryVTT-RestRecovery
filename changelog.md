@@ -2,6 +2,7 @@
 
 ## Version 1.5.3
 - Fixed exhaustion integration with DF Convenient Effects not removing manually placed exhaustion effects
+- Fixed finishing short rests would cause hit dice to be recovered
 
 ## Version 1.5.2
 - Fixed players regaining too many hit dice after rests

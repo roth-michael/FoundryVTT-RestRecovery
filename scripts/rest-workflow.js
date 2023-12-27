@@ -754,18 +754,18 @@ export default class RestWorkflow {
       }
     }
 
-    for(let i = results.updateItems.length-1; i >= 0; i--){
-      if(Object.keys(results.updateItems[i]).includes("system.hitDiceUsed")){
-        results.updateItems.splice(i, 1);
-      }
-    }
-
-    const maxHitDice = this._getMaxHitDiceRecovery();
-    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
-
-    updates.forEach(update => lib.addToUpdates(results.updateItems, update));
-
     if (this.longRest) {
+
+      for(let i = results.updateItems.length-1; i >= 0; i--){
+        if(Object.keys(results.updateItems[i]).includes("system.hitDiceUsed")){
+          results.updateItems.splice(i, 1);
+        }
+      }
+
+      const maxHitDice = this._getMaxHitDiceRecovery();
+      let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+
+      updates.forEach(update => lib.addToUpdates(results.updateItems, update));
 
       if (this.healthData.hitDiceSpent > 0 && hitDiceRecovered === 0 && lib.getSetting(CONSTANTS.SETTINGS.PREVENT_REST_REGAIN_HIT_DICE)) {
 
