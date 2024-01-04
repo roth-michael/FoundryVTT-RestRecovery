@@ -785,9 +785,9 @@ export default class RestWorkflow {
           }
         }
       }
+      results.dhd += hitDiceRecovered;
     }
 
-    results.dhd += hitDiceRecovered;
 
   }
 
