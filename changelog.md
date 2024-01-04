@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.5.4
+
+- Fixed resting throwing an unrecoverable error (thanks to JaysonMendoza on github!)
+
 ## Version 1.5.3
 - Fixed exhaustion integration with DF Convenient Effects not removing manually placed exhaustion effects
 - Fixed finishing short rests would cause hit dice to be recovered
