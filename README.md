@@ -55,4 +55,9 @@ You can find the [changelog here](changelog.md).
 
 # Contributing
 
-In order to contribute to this module, you will need to run `npm install` and then `npm run build-watch` in order to build the module's `./dist` folders.
+In order to contribute to the module, you will need to do the follwing:
+
+1. Pull this repository and either place it in your Foundry's module folder, or symlink it to that location - remember that the module folder's name needs to be `rest-recovery`
+2. Run `npm install` within the repository
+3. Run `npm run build`
+4. The module is now ready to be used, if you want to develop in real time, you can run `npm run dev` to launch a watcher that will refresh Foundry if it detects changes in the code. This will only be done on the same IP address as your Foundry client, but on port `29999`
