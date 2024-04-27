@@ -35,8 +35,8 @@
   $: application.reactive.headerButtonNoClose = startedLongRest;
 
   const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
-  const timeChanges = lib.getTimeChanges(false);
-  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay ?? true;
+  const timeChanges = lib.getTimeChanges(true);
+  let newDay = application.options.restPrompted ? application.options.newDay : (simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay ?? true);
   let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "gritty" && application.options.promptNewDay;
 
   let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
