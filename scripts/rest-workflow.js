@@ -193,7 +193,7 @@ export default class RestWorkflow {
         const dhd = actor.system.attributes.hd - hd0;
         const dhp = actor.system.attributes.hp.value - hp0;
 
-        return actor._rest(config.chat, config.newDay, false, dhd, dhp);
+        return actor._rest(config, {dhd, dhp});
 
       });
 
@@ -237,7 +237,7 @@ export default class RestWorkflow {
           }
         }
 
-        return actor._rest(config.chat, config.newDay, true);
+        return actor._rest(config);
 
       });
 
@@ -313,7 +313,7 @@ export default class RestWorkflow {
 
   fetchHealthData() {
 
-    const actorHasNonLightArmor = !!this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped)
+    const actorHasNonLightArmor = !!this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped)
 
     this.healthData = {
       level: this.actor.system.details.level,
@@ -772,7 +772,7 @@ export default class RestWorkflow {
         this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.PreventedHitDiceRecovery");
 
       } else if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
-        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
+        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
         if (armor) {
           if (!this.healthData.removeNonLightArmor) {
             if (maxHitDice === 0) {
@@ -785,7 +785,7 @@ export default class RestWorkflow {
           }
         }
       }
-      results.dhd += hitDiceRecovered;
+      results.dhd = hitDiceRecovered;
     }
 
 
@@ -837,8 +837,6 @@ export default class RestWorkflow {
   }
 
   _handleExhaustion(results) {
-
-    debugger;
 
     if (!(this.longRest || this.restVariant === "gritty")) return;
 
@@ -993,7 +991,7 @@ export default class RestWorkflow {
     if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
 
       if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION) && actorExhaustion > 0) {
-        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.armor?.type) > -1 && item.system.equipped);
+        const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
         if (armor && !this.healthData.removeNonLightArmor) {
           exhaustionToRemove = 0;
           this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.ExhaustionArmor"));
@@ -1091,7 +1089,7 @@ export default class RestWorkflow {
     const actorLevel = this.actor.system.details.level;
 
     if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
-      const armor = this.actor.items.find(item => item.type === "equipment" && item.system?.armor?.type === "heavy" && item.system.equipped);
+      const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
       if (armor && !this.healthData.removeNonLightArmor) {
         multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE);
         roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
