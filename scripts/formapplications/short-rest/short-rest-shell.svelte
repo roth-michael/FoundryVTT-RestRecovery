@@ -255,11 +255,11 @@
     {:else}
 
       <div class="form-group">
-        <label>{localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRests")}</label>
+        <label>{@html localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRests")}</label>
       </div>
 
       <p class="notes">
-        {localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", { max_short_rests: maxShortRests })}
+        {@html localize("REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall", { max_short_rests: maxShortRests })}
       </p>
 
     {/if}
