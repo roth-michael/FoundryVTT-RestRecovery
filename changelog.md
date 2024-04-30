@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.6.0
+
+- Fixed incompatibility with D&D5e 3.1.2
+- Fixed GM-handled rests for offline players not registering a new day
+- Fixed player-initiated long rests checking new day as if they were short rests
+- Fixed GM-prompted rests not properly recognizing new day with Simple Calendar integration
+- Fixed long rest hit dice regain text not matching actual hit dice regain
+
 ## Version 1.5.4
 
 - Fixed resting throwing an unrecoverable error (thanks to JaysonMendoza on github!)
