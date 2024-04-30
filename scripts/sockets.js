@@ -110,8 +110,12 @@ export default class SocketHandler {
     const offlineIndexOffset = offlineResters.length > 1 ? (offlineResters.length / 2) * -1 : 0;
 
     offlineResters.forEach((actor, index) => {
-      actor[data.restType](
-				{ options: { actorsToRest: allActorsResting.map(actor => actor.uuid) } },
+      actor[data.restType]({
+          newDay: data.newDay,
+          promptNewDay: data.promptNewDay,
+          restPrompted: true,
+          options: { actorsToRest: allActorsResting.map(actor => actor.uuid) } 
+        },
 	      offlineIndexOffset ? { left: offlineMidPoint + (offlineIndexOffset + index) * width } : {}
       );
     });

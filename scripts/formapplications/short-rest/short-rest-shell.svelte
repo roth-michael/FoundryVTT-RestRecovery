@@ -43,7 +43,7 @@
 
   const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const timeChanges = lib.getTimeChanges(false);
-  let newDay = simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay;
+  let newDay = application.options.restPrompted ? application.options.newDay : (simpleCalendarActive ? timeChanges.isNewDay : application.options.newDay ?? true);
   let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "epic" && application.options.promptNewDay;
 
   updateHealthBarText();

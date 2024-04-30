@@ -90,11 +90,13 @@
       await game.time.advance(timeChanges.restTime);
     }
 
+    const trueNewDay = simpleCalendarActive ? timeChanges.isNewDay : forceNewDay;
+
     if (configuration.size) {
       SocketHandler.emit(SocketHandler.PROMPT_REST, {
         userActors: [...configuration],
         restType,
-        newDay: forceNewDay,
+        newDay: trueNewDay,
         promptNewDay: false
       })
     }
