@@ -8,6 +8,10 @@
       "name": "Wasp",
       "url": "https://github.com/fantasycalendar",
       "discord": "Wasp#2005"
+    },
+    {
+      "name": "Michael",
+      "discord": "hi25114"
     }
   ],
   "esmodules": [
@@ -44,8 +48,8 @@
       "type": "system",
       "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/latest/system.json",
       "compatibility": {
-        "verified": "2.4.0",
-        "minimum": "2.4.0"
+        "verified": "3.1.0",
+        "minimum": "3.1.0"
       }
     }],
     "requires": [
