@@ -1187,7 +1187,7 @@ export default class RestWorkflow {
         if (!slot.override && !slot.max) continue;
         let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
         if (level !== "pact" && customSpellRecovery) {
-          results.updateData[`system.spells.${level}.value`] = 0;
+          results.updateData[`system.spells.${level}.value`] = slot.value;
           continue;
         }
         let spellMax = slot.override || slot.max;
