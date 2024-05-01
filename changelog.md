@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.6.1
+
+- Fixed spell slots being removed when taking a long rest with "Enable spell slot point-like recovery rule" enabled.
+
 ## Version 1.6.0
 
 - Fixed incompatibility with D&D5e 3.1.2
