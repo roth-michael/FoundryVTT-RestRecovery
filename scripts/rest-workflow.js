@@ -1045,8 +1045,18 @@ export default class RestWorkflow {
       extra += this.foodAndWaterMessage.join("");
     }
 
+    let newChatMessageContent = `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra;
+
+    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES)) {
+      let endDateTime = SimpleCalendar.api.currentDateTime();
+      let restDuration = this.config.duration;
+      let startDateTime = (this.config.restPrompted || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;
+
+      SimpleCalendar.api.addNote(`${this.longRest ? 'Long' : 'Short'} rest: ${this.actor.name}`, newChatMessageContent, startDateTime, endDateTime, false, 0, [], "active", null, ['default']);
+    }
+
     chatMessage.update({
-      content: `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra
+      content: newChatMessageContent
     }).then(() => {
       ui.chat.scrollBottom();
     });

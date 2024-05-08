@@ -157,28 +157,6 @@
 								</a>
 							</p>
 						</div>
-
-            <div style="text-align: center; font-size: 1rem; margin-top:1rem;">
-              <p>{localize("REST-RECOVERY.Dialogs.ModuleConfig.MoreToCome")}</p>
-              <p style="margin-bottom:1rem;">
-                <a class="link-text"
-                   href="https://github.com/fantasycalendar/FoundryVTT-RestRecovery/issues/new?assignees=&labels=&template=feature_request.md&title="
-                   target="_blank"
-                >{localize("REST-RECOVERY.Dialogs.ModuleConfig.Request")}</a>
-              </p>
-              <p>
-                {localize("REST-RECOVERY.Dialogs.ModuleConfig.Donate")}
-              </p>
-              <p style="display: flex; justify-content: center">
-                <a href="https://ko-fi.com/fantasycomputerworks" target="_blank"
-                   style="text-decoration: none !important; flex: 0 1 auto;">
-                  <button class="donate-button" type="button">
-                    <img src="https://storage.ko-fi.com/cdn/cup-border.png">
-                    <span>Donate</span>
-                  </button>
-                </a>
-              </p>
-            </div>
           {/if}
 
         </div>

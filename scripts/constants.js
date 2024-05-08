@@ -20,6 +20,7 @@ const CONSTANTS = {
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
     ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
+    ENABLE_SIMPLE_CALENDAR_NOTES: "enable-simple-calendar-notes",
     PREVENT_USER_REST: "prevent-user-rest",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
 
@@ -204,6 +205,21 @@ CONSTANTS.DEFAULT_SETTINGS = {
     validate: () => {
       return !game.modules.get("foundryvtt-simple-calendar")?.active;
     },
+  },
+  [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES]: {
+    name: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Title",
+    hint: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Hint",
+    hint2: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Hint2",
+    scope: "world",
+    group: "general",
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION],
+    moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
+    validate: (settings) => {
+      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION).value && game.modules.get("foundryvtt-simple-calendar")?.active);
+    },
+    config: false,
+    default: false,
+    type: Boolean
   },
   [CONSTANTS.SETTINGS.PERIAPT_ROLL_MECHANICS]: {
     name: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Title",
