@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.6.2
+
+- Removed branding from General Settings
+- Added setting that when enabled logs all rests as Simple Calendar notes (requires player permissions for "Create Journal Entries" and Simple Calendar "Add Notes")
+
 ## Version 1.6.1
 
 - Fixed spell slots being removed when taking a long rest with "Enable spell slot point-like recovery rule" enabled.
