@@ -17,13 +17,21 @@
     form.requestSubmit();
   }
 
-  let restVariant = game.settings.get("dnd5e", "restVariant");
+  let restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT)
+  let longRestCustomLength = getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS);
+  let shortRestCustomLength = getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS);
   let slowHealingEnabled = getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) === CONSTANTS.FRACTIONS.NONE
 		&& getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
   let bufferEnabled = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
   async function submitPrompt() {
-    await game.settings.set("dnd5e", "restVariant", restVariant);
+    if (restVariant === "custom") {
+      await setSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS, longRestCustomLength);
+      await setSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS, shortRestCustomLength);
+    } else {
+      await game.settings.set("dnd5e", "restVariant", restVariant);
+    }
+    await setSetting(CONSTANTS.SETTINGS.REST_VARIANT, restVariant);
     const settingWindow = Object.values(ui.windows).find(app => app instanceof SettingsConfig);
 		if(settingWindow) {
       settingWindow.element.find('select[name="dnd5e.restVariant"]').val(restVariant);
@@ -57,7 +65,27 @@
 				<option value="normal">{localize("SETTINGS.5eRestPHB")}</option>
 				<option value="gritty">{localize("SETTINGS.5eRestGritty")}</option>
 				<option value="epic">{localize("SETTINGS.5eRestEpic")}</option>
+        <option value="custom">{localize("REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.Title")}</option>
 			</select>
+
+      {#if restVariant === "custom"}
+        <div>
+          <div class="form control">
+            <input id="long-rest-custom-length" type="number" step="0.05" min="0" bind:value={longRestCustomLength}/>
+            <label for="long-rest-custom-length">
+              {localize("REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.LongRestCustomTitle")}
+            </label>
+          </div>
+        </div>
+        <div>
+          <div class="form control">
+            <input id="short-rest-custom-length" type="number" step="0.05" min="0" bind:value={shortRestCustomLength}/>
+            <label for="short-rest-custom-length">
+              {localize("REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.ShortRestCustomTitle")}
+            </label>
+          </div>
+        </div>
+      {/if}
 
 			<div>
 				<div class="form-control">

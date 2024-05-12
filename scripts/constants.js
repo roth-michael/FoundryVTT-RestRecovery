@@ -12,6 +12,10 @@ const CONSTANTS = {
     ACTIVE_MODULE_PROFILE: "active-module-profile",
     PROMPT_REST_CONFIG: "prompt-rest-config",
 
+    CUSTOM_LONG_REST_DURATION_HOURS: "custom-long-rest-duration",
+    CUSTOM_SHORT_REST_DURATION_HOURS: "custom-short-rest-duration",
+    REST_VARIANT: "rest-variant",
+
     /*-------------------------------------------*
      *           General Rest Settings           *
      *-------------------------------------------*/
@@ -130,6 +134,13 @@ const CONSTANTS = {
     MULTIPLY_ROLL: "multiply-roll",
     MULTIPLY_TOTAL: "multiply-total"
   },
+
+  REST_VARIANTS: {
+    NORMAL: "normal",
+    GRITTY: "gritty",
+    EPIC: "epic",
+    CUSTOM: "custom"
+  },
   
   USING_DEFAULT_LONG_REST_SETTINGS() {
     const settings = this.GET_DEFAULT_SETTINGS();
@@ -161,6 +172,30 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     default: [],
     type: Array
+  },
+  [CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS]: {
+    scope: "world",
+    config: false,
+    default: 8,
+    type: Number
+  },
+  [CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS]: {
+    scope: "world",
+    config: false,
+    default: 1,
+    type: Number
+  },
+  [CONSTANTS.SETTINGS.REST_VARIANT]: {
+    scope: "world",
+    config: false,
+    default: CONSTANTS.REST_VARIANTS.NORMAL,
+    type: String,
+    choices: {
+      [CONSTANTS.REST_VARIANTS.NORMAL]: "SETTINGS.5eRestPHB",
+      [CONSTANTS.REST_VARIANTS.GRITTY]: "SETTINGS.5eRestGritty",
+      [CONSTANTS.REST_VARIANTS.EPIC]: "SETTINGS.5eRestEpic",
+      [CONSTANTS.REST_VARIANTS.CUSTOM]: "REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.Title",
+    }
   },
   
   /*-------------------------------------------*

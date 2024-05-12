@@ -184,13 +184,16 @@ export function getTimeChanges(isLongRest) {
   const currentTime = (hour * hourInSeconds) + (minute * timeConfig.secondsInMinute) + seconds;
 
   let restTime;
-  const restVariant = game.settings.get("dnd5e", "restVariant");
+  const restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT);
   switch (restVariant) {
     case "epic":
       restTime = isLongRest ? hourInSeconds : timeConfig.secondsInMinute;
       break;
     case "gritty":
       restTime = isLongRest ? timeConfig.hoursInDay * hourInSeconds * 7 : hourInSeconds * 8;
+      break;
+    case "custom":
+      restTime = isLongRest ? getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS) * hourInSeconds : getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS) * hourInSeconds;
       break;
     default:
       restTime = isLongRest ? hourInSeconds * 8 : hourInSeconds;

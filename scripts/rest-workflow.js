@@ -19,7 +19,7 @@ export default class RestWorkflow {
     this.finished = false;
     this.preRestRegainHitDice = false;
     this.newExhaustionValue = false;
-    this.restVariant = game.settings.get("dnd5e", "restVariant");
+    this.restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT);
 
     this.spellSlotsRegainedMessage = "";
     this.hitDiceMessage = "";

@@ -125,7 +125,12 @@
         "SlowNaturalHealingLabel": "Characters do not regain hit points at the end of a long rest. Instead, they must spend hit dice to heal, like a short rest.",
         "RecoverHitDiceTitle": "Recover Hit Dice Before Long Rest",
         "RecoverHitDiceLabel": "Alters slow natural healing so that characters regain their hit dice when they start the long rest, rather than when they finish it.",
-        "OpenSettings": "Open Settings"
+        "OpenSettings": "Open Settings",
+        "5eRestCustom": {
+          "Title": "Custom (Set your own values)",
+          "LongRestCustomTitle": "Long Rest duration in hours",
+          "ShortRestCustomTitle": "Short Rest duration in hours"
+        }
       },
       "PromptRest": {
         "Title": "Prompt Rest For Players",

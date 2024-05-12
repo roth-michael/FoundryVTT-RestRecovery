@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.6.3
+
+- Added new "Custom" rest variant, accessible via the Quick Setup menu in the variant dropdown
+  - Selecting this variant will allow you to enter your own custom Long & Short Rest lengths in the Quick Setup menu
+  - Lengths are variable down to the nearest 0.05 hours (3 minutes)
+
 ## Version 1.6.2
 
 - Removed branding from General Settings
