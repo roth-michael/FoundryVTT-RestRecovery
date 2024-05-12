@@ -34,7 +34,6 @@
 
   const cleanConfig = writable([]);
 
-  const restVariant = game.settings.get("dnd5e", "restVariant");
   const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const longRestWouldBeNewDay = lib.getTimeChanges(true).isNewDay;
   const shortRestWouldBeNewDay = lib.getTimeChanges(false).isNewDay;
