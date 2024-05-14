@@ -1,5 +1,15 @@
 # Rest Recovery Changelog
 
+## Version 1.6.4
+
+- Fixed a bug where consuming the final charge of a food/water item that was set to destroy on empty would not properly update the character's hunger/thirst level
+- Added optional cost of fully/half sating hunger and thirst through external sources (e.g. meals/drinks at a tavern)
+  - This is currently globally configured, with checkboxes for enabling food & water costs individually, and cost settings for full & half for both
+    - Per-scene configuration is unlikely to be implemented, so if you anticipate different costs in the same session I'd recommend creating different rest profiles ahead of time
+  - The cost for full or half will be the same regardless of whether the resting characters have already eaten (after all, you don't get a refund for the amount of a meal that you didn't eat)
+  - If a character doesn't have enough money to "externally source" the options they've selected, they won't be able to continue the rest until changing their selection to one they can afford
+  - The currency will be automatically deducted from the character's inventory, performing currency conversions only when necessary
+
 ## Version 1.6.3
 
 - Added new "Custom" rest variant, accessible via the Quick Setup menu in the variant dropdown

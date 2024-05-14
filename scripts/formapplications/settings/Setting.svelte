@@ -51,6 +51,17 @@
 
       <input type="checkbox" bind:checked={$store} disabled={$disabled} on:change={callback}>
 
+    {:else if setting.numberAndChoiceType}
+
+      <div class="choice-container">
+        <input name="{setting.customFormula}" type="number" min=0 bind:value={$customFormulaStore} class:invalid={$customFormulaStore === ''} disabled={$disabled}>
+        <select name={setting.key} bind:value={$store} disabled={$disabled} on:change={callback}>
+          {#each Object.entries(setting.choices) as [key, choice], index (index)}
+            <option value="{key}">{localize(choice)}</option>
+          {/each}
+        </select>
+      </div>
+
     {:else if setting.choices}
 
       <div class="choice-container">

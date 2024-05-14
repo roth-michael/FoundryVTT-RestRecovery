@@ -37,6 +37,13 @@
       "Full": "Full",
       "Custom": "Custom Formula"
     },
+    "Currencies": {
+      "Copper": "cp",
+      "Electrum": "ep",
+      "Gold": "gp",
+      "Platinum": "pp",
+      "Silver": "sp"
+    },
     "Rounding": {
       "RoundDown": "Round Down",
       "RoundUp": "Round Up"
@@ -208,7 +215,9 @@
           "DayWorth": "One use of item worth entire day of {type}",
           "ExternalWater": "Has access to external water source",
           "ExternalWaterFull": "Drink until sated",
-          "ExternalWaterHalf": "Drink half amount needed"
+          "ExternalWaterHalf": "Drink half amount needed",
+          "ExternalCost": "This will cost <strong>{cost} {currency}</strong>.",
+          "CantAfford": "<strong>You cannot afford to purchase the food/water options you have selected - change your selection in order to complete this rest.</strong>"
         },
         "SpellRecovery": {
           "Title": "Magic Recovery",
@@ -380,9 +389,33 @@
           "Title": "Access to external food source",
           "Hint": "This configures whether players will be able to pick \"External Food Source\" during rests as a replacement for consumable items. \"Full\" means full access like in inns and cities, \"Half\" means limited access or poor food, \"None\" means wilderness or starvation."
         },
+        "ExternalFoodHasCost": {
+          "Title": "External food has cost",
+          "Hint": "Whether \"external food\" has a financial cost, such as the cost of a meal at a tavern."
+        },
+        "ExternalFoodFullCostCurrency": {
+          "Title": "Cost of Full food",
+          "Hint": "The cost of acquiring the full amount of food required during a rest."
+        },
+        "ExternalFoodHalfCostCurrency": {
+          "Title": "Cost of Half food",
+          "Hint": "The cost of acquiring half the amount of of food required during a rest."
+        },
         "ExternalWaterAccess": {
           "Title": "Access to external water source",
           "Hint": "Same as above, but for water. Keep in mind that \"Half\" and \"None\" will cause characters to experience exhaustion almost immediately unless they have access to consumable items."
+        },
+        "ExternalWaterHasCost": {
+          "Title": "External water has cost",
+          "Hint": "Whether \"external water\" has a financial cost, such as the cost of a drink at a tavern."
+        },
+        "ExternalWaterFullCostCurrency": {
+          "Title": "Cost of Full water",
+          "Hint": "The cost of acquiring the full amount of water required during a rest."
+        },
+        "ExternalWaterHalfCostCurrency": {
+          "Title": "Cost of Half water",
+          "Hint": "The cost of acquiring half the amount of of water required during a rest."
         },
         "AutomateFoodWaterExhaustion": {
           "Title": "Automate food & water exhaustion",

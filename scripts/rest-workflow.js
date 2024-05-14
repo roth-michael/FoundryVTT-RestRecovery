@@ -31,6 +31,7 @@ export default class RestWorkflow {
     this.exhaustionRoll = false;
 
     this.consumableData = { items: [] };
+    this.foodAndWaterCost = 0;
   }
 
   static get LongRestItemNameHandlers() {
@@ -249,6 +250,7 @@ export default class RestWorkflow {
       const workflow = RestWorkflow.get(actor);
       if (workflow) {
         workflow.patchRestResults(results);
+        workflow.updateActorCurrency();
       }
     });
 
@@ -740,6 +742,132 @@ export default class RestWorkflow {
     this.healthData.availableHitDice = this.getHitDice();
     this.healthData.totalHitDice = this.totalHitDice;
 
+  }
+
+  async updateActorCurrency() {
+    if (this.foodAndWaterCost == 0) return;
+    let remainingCost = this.foodAndWaterCost.toFixed(2);
+    let actorCurrency = foundry.utils.deepClone(this.actor.system.currency);
+    let ppRequired = Math.floor(remainingCost * 0.1);
+    remainingCost = (remainingCost - (ppRequired / 0.1)).toFixed(2);
+    let gpRequired = Math.floor(remainingCost);
+    remainingCost = (remainingCost - (gpRequired)).toFixed(2);
+    let epRequired = Math.floor(remainingCost * 2);
+    remainingCost = (remainingCost - (epRequired / 2)).toFixed(2);
+    let spRequired = Math.floor(remainingCost * 10);
+    remainingCost = (remainingCost - (spRequired / 10)).toFixed(2);
+    let cpRequired = Math.floor(remainingCost * 100);
+    remainingCost = (remainingCost - (cpRequired / 100)).toFixed(2);
+
+    // Break higher into lower
+    if (actorCurrency.cp < cpRequired) {
+      if (actorCurrency.sp > 0) {
+        actorCurrency.sp -= 1;
+        actorCurrency.cp += 10;
+      } else if (actorCurrency.ep > 0) {
+        actorCurrency.ep -= 1;
+        actorCurrency.sp += 4;
+        actorCurrency.cp += 10;
+      } else if (actorCurrency.gp > 0) {
+        actorCurrency.gp -= 1;
+        actorCurrency.ep += 1;
+        actorCurrency.sp += 4;
+        actorCurrency.cp += 10;
+      } else {
+        actorCurrency.pp -= 1;
+        actorCurrency.gp += 9;
+        actorCurrency.ep += 1;
+        actorCurrency.sp += 4;
+        actorCurrency.cp += 10;
+      }
+    }
+    actorCurrency.cp -= cpRequired;
+
+    // Combine lower into higher
+    while (actorCurrency.sp < spRequired && actorCurrency.cp >= 10) {
+      actorCurrency.cp -= 10;
+      actorCurrency.sp += 1;
+    }
+    // Break higher into lower
+    if (actorCurrency.sp < spRequired) {
+      if (actorCurrency.ep > 0) {
+        actorCurrency.ep -= 1;
+        actorCurrency.sp += 5;
+      } else if (actorCurrency.gp > 0) {
+        actorCurrency.gp -= 1;
+        actorCurrency.ep += 1;
+        actorCurrency.sp += 5;
+      } else {
+        actorCurrency.pp -= 1;
+        actorCurrency.gp += 9;
+        actorCurrency.ep += 1;
+        actorCurrency.sp += 5;
+      }
+    }
+    actorCurrency.sp -= spRequired;
+
+    // Combine lower into higher
+    while (actorCurrency.ep < epRequired && (actorCurrency.cp / 10) + actorCurrency.sp >= 5) {
+      if (actorCurrency.sp >= 5) {
+        actorCurrency.sp -= 5;
+        actorCurrency.ep += 1;
+      } else if (actorCurrency.cp >= 10) {
+        actorCurrency.cp -= 10;
+        actorCurrency.sp += 1;
+      }
+    }
+    // Break higher into lower
+    if (actorCurrency.ep < epRequired) {
+      if (actorCurrency.gp > 0) {
+        actorCurrency.gp -= 1;
+        actorCurrency.ep += 2;
+      } else {
+        actorCurrency.pp -= 1;
+        actorCurrency.gp += 9;
+        actorCurrency.ep += 2;
+      }
+    }
+    actorCurrency.ep -= epRequired;
+
+    // Combine lower into higher
+    while (actorCurrency.gp < gpRequired && (actorCurrency.cp / 50) + (actorCurrency.sp / 5) + actorCurrency.gp >= 2) {
+      if (actorCurrency.ep >= 2) {
+        actorCurrency.ep -= 2;
+        actorCurrency.gp += 1;
+      } else if (actorCurrency.sp >= 5) {
+        actorCurrency.sp -= 5;
+        actorCurrency.ep += 1;
+      } else if (actorCurrency.cp >= 10) {
+        actorCurrency.cp -= 10;
+        actorCurrency.sp += 1;
+      }
+    }
+    // Break higher into lower
+    if (actorCurrency.gp < gpRequired) {
+      actorCurrency.pp -= 1;
+      actorCurrency.gp += 10;
+    }
+    actorCurrency.gp -= gpRequired;
+
+    // Combine lower into higher - the second part of this check shouldn't be necessary but will keep it just in case somehow there's a math error or something
+    while (actorCurrency.pp < ppRequired && (actorCurrency.cp / 100) + (actorCurrency.sp / 10) + (actorCurrency.ep / 2) + actorCurrency.gp >= 10) {
+      if (actorCurrency.gp >= 10) {
+        actorCurrency.gp -= 10;
+        actorCurrency.pp += 1;
+      } else if (actorCurrency.ep >= 2) {
+        actorCurrency.ep -= 2;
+        actorCurrency.gp += 1;
+      } else if (actorCurrency.sp >= 5) {
+        actorCurrency.sp -= 5;
+        actorCurrency.ep += 1;
+      } else if (actorCurrency.cp >= 10) {
+        actorCurrency.cp -= 10;
+        actorCurrency.sp += 1;
+      }
+    }
+    actorCurrency.pp -= ppRequired;
+
+    return await this.actor.update({"system.currency": actorCurrency});
   }
 
   _finishedRest(results) {
@@ -1463,6 +1591,14 @@ export default class RestWorkflow {
       if (!consumable?.enabled) return;
       return this._handleConsumableItem(item, data, this);
     });
+
+    Hooks.on('deleteItem', (item, data) => {
+      if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
+      if (!this.itemsListened.has(item.id)) return;
+      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+      if (!consumable?.enabled) return;
+      return this._handleConsumableItem(item, data, this);
+    })
   }
 
   static patchAllConsumableItems(actor) {

@@ -109,7 +109,17 @@ const CONSTANTS = {
     FOOD_UNITS_PER_DAY: "food-units-per-day",
     WATER_UNITS_PER_DAY: "water-units-per-day",
     EXTERNAL_FOOD_ACCESS: "external-food-access",
+    EXTERNAL_FOOD_HAS_COST: "external-food-has-cost",
+    EXTERNAL_FOOD_FULL_COST: "external-food-full-cost",
+    EXTERNAL_FOOD_HALF_COST: "external-food-half-cost",
+    EXTERNAL_FOOD_FULL_COST_CURRENCY: "external-food-full-cost-currency",
+    EXTERNAL_FOOD_HALF_COST_CURRENCY: "external-food-half-cost-currency",
     EXTERNAL_WATER_ACCESS: "external-water-access",
+    EXTERNAL_WATER_HAS_COST: "external-water-has-cost",
+    EXTERNAL_WATER_FULL_COST: "external-water-full-cost",
+    EXTERNAL_WATER_HALF_COST: "external-water-half-cost",
+    EXTERNAL_WATER_FULL_COST_CURRENCY: "external-water-full-cost-currency",
+    EXTERNAL_WATER_HALF_COST_CURRENCY: "external-water-half-cost-currency",
     AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
     NO_FOOD_DURATION_MODIFIER: "no-food-duration-modifier",
     HALF_WATER_SAVE_DC: "half-water-save-dc",
@@ -140,6 +150,14 @@ const CONSTANTS = {
     GRITTY: "gritty",
     EPIC: "epic",
     CUSTOM: "custom"
+  },
+
+  CURRENCIES: {
+    COPPER: "cp",
+    ELECTRUM: "ep",
+    GOLD: "gp",
+    PLATINUM: "pp",
+    SILVER: "sp"
   },
   
   USING_DEFAULT_LONG_REST_SETTINGS() {
@@ -1080,6 +1098,82 @@ CONSTANTS.DEFAULT_SETTINGS = {
     default: "full",
     type: String
   },
+  [CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodHasCost.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodHasCost.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: true,
+    config: false,
+    type: Boolean,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS],
+    validate: (settings) => {
+      return settings.get(CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS).value === CONSTANTS.FRACTIONS.NONE
+    },
+    default: false
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_FOOD_FULL_COST_CURRENCY]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodFullCostCurrency.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodFullCostCurrency.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: false,
+    customFormula: CONSTANTS.SETTINGS.EXTERNAL_FOOD_FULL_COST,
+    config: false,
+    numberAndChoiceType: true,
+    type: String,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST).value
+    },
+    choices: {
+      [CONSTANTS.CURRENCIES.COPPER]: "REST-RECOVERY.Currencies.Copper",
+      [CONSTANTS.CURRENCIES.SILVER]: "REST-RECOVERY.Currencies.Silver",
+      [CONSTANTS.CURRENCIES.ELECTRUM]: "REST-RECOVERY.Currencies.Electrum",
+      [CONSTANTS.CURRENCIES.GOLD]: "REST-RECOVERY.Currencies.Gold",
+      [CONSTANTS.CURRENCIES.PLATINUM]: "REST-RECOVERY.Currencies.Platinum",
+    },
+    default: CONSTANTS.CURRENCIES.GOLD
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_FOOD_FULL_COST]: {
+    scope: "world",
+    group: "foodandwater",
+    config: false,
+    hidden: true,
+    type: Number,
+    default: 0
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_FOOD_HALF_COST_CURRENCY]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodHalfCostCurrency.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalFoodHalfCostCurrency.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: false,
+    customFormula: CONSTANTS.SETTINGS.EXTERNAL_FOOD_HALF_COST,
+    config: false,
+    numberAndChoiceType: true,
+    type: String,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST).value
+    },
+    choices: {
+      [CONSTANTS.CURRENCIES.COPPER]: "REST-RECOVERY.Currencies.Copper",
+      [CONSTANTS.CURRENCIES.SILVER]: "REST-RECOVERY.Currencies.Silver",
+      [CONSTANTS.CURRENCIES.ELECTRUM]: "REST-RECOVERY.Currencies.Electrum",
+      [CONSTANTS.CURRENCIES.GOLD]: "REST-RECOVERY.Currencies.Gold",
+      [CONSTANTS.CURRENCIES.PLATINUM]: "REST-RECOVERY.Currencies.Platinum",
+    },
+    default: CONSTANTS.CURRENCIES.GOLD
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_FOOD_HALF_COST]: {
+    scope: "world",
+    group: "foodandwater",
+    config: false,
+    hidden: true,
+    type: Number,
+    default: 0
+  },
   [CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS]: {
     name: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterAccess.Title",
     hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterAccess.Hint",
@@ -1098,6 +1192,82 @@ CONSTANTS.DEFAULT_SETTINGS = {
     },
     default: "full",
     type: String
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterHasCost.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterHasCost.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: true,
+    config: false,
+    type: Boolean,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS],
+    validate: (settings) => {
+      return settings.get(CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS).value === CONSTANTS.FRACTIONS.NONE
+    },
+    default: false
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_WATER_FULL_COST_CURRENCY]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterFullCostCurrency.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterFullCostCurrency.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: false,
+    customFormula: CONSTANTS.SETTINGS.EXTERNAL_WATER_FULL_COST,
+    config: false,
+    numberAndChoiceType: true,
+    type: String,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST).value
+    },
+    choices: {
+      [CONSTANTS.CURRENCIES.COPPER]: "REST-RECOVERY.Currencies.Copper",
+      [CONSTANTS.CURRENCIES.SILVER]: "REST-RECOVERY.Currencies.Silver",
+      [CONSTANTS.CURRENCIES.ELECTRUM]: "REST-RECOVERY.Currencies.Electrum",
+      [CONSTANTS.CURRENCIES.GOLD]: "REST-RECOVERY.Currencies.Gold",
+      [CONSTANTS.CURRENCIES.PLATINUM]: "REST-RECOVERY.Currencies.Platinum",
+    },
+    default: CONSTANTS.CURRENCIES.GOLD
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_WATER_FULL_COST]: {
+    scope: "world",
+    group: "foodandwater",
+    config: false,
+    hidden: true,
+    type: Number,
+    default: 0
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_WATER_HALF_COST_CURRENCY]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterHalfCostCurrency.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.ExternalWaterHalfCostCurrency.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: false,
+    customFormula: CONSTANTS.SETTINGS.EXTERNAL_WATER_HALF_COST,
+    config: false,
+    numberAndChoiceType: true,
+    type: String,
+    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST).value
+    },
+    choices: {
+      [CONSTANTS.CURRENCIES.COPPER]: "REST-RECOVERY.Currencies.Copper",
+      [CONSTANTS.CURRENCIES.SILVER]: "REST-RECOVERY.Currencies.Silver",
+      [CONSTANTS.CURRENCIES.ELECTRUM]: "REST-RECOVERY.Currencies.Electrum",
+      [CONSTANTS.CURRENCIES.GOLD]: "REST-RECOVERY.Currencies.Gold",
+      [CONSTANTS.CURRENCIES.PLATINUM]: "REST-RECOVERY.Currencies.Platinum",
+    },
+    default: CONSTANTS.CURRENCIES.GOLD
+  },
+  [CONSTANTS.SETTINGS.EXTERNAL_WATER_HALF_COST]: {
+    scope: "world",
+    group: "foodandwater",
+    config: false,
+    hidden: true,
+    type: Number,
+    default: 0
   },
   [CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Title",

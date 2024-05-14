@@ -29,6 +29,9 @@
   let startedLongRest = false;
 
   const workflow = RestWorkflow.get(actor);
+  let canAfford = true;
+  let storedCanAfford = true;
+  let storedFoodAndWaterCost = 0;
 
   let activeTab = "rest";
 
@@ -58,9 +61,19 @@
 
   async function nextStep() {
     activeStep = Math.min(workflow.steps.length, activeStep + 1);
+    if (workflow.steps[activeStep].title === "REST-RECOVERY.Dialogs.RestSteps.FoodWater.Title") {
+      canAfford = storedCanAfford;
+      workflow.foodAndWaterCost = storedFoodAndWaterCost;
+    }
   }
 
   async function prevStep() {
+    if (workflow.steps[activeStep].title === "REST-RECOVERY.Dialogs.RestSteps.FoodWater.Title") {
+      storedCanAfford = canAfford;
+      canAfford = true;
+      storedFoodAndWaterCost = workflow.foodAndWaterCost;
+      workflow.foodAndWaterCost = 0;
+    }
     activeStep = Math.max(0, activeStep - 1);
   }
 
@@ -250,7 +263,7 @@
 
     {:else}
 
-      <svelte:component this={workflow.steps[activeStep].component} {workflow}/>
+      <svelte:component bind:canAfford this={workflow.steps[activeStep].component} {workflow}/>
 
     {/if}
 
@@ -273,11 +286,11 @@
         {/if}
 
         {#if activeStep === workflow.steps.length - 1}
-          <button type="button" class="dialog-button" on:click={requestSubmit}>
+          <button disabled={canAfford === false} type="button" class="dialog-button" on:click={requestSubmit}>
             <i class="fas fa-bed"></i> {localize("REST-RECOVERY.Dialogs.LongRest.FinishRest")}
           </button>
         {:else}
-          <button type="button" class="dialog-button" on:click={() => { nextStep(); }}>
+          <button disabled={canAfford === false} type="button" class="dialog-button" on:click={() => { nextStep(); }}>
             {localize("REST-RECOVERY.Dialogs.RestSteps.Next")} <i class="fas fa-chevron-right"></i>
           </button>
         {/if}

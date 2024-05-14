@@ -13,6 +13,7 @@
   import { get, writable } from "svelte/store";
 
   export let workflow;
+  export let canAfford;
   const actor = workflow.actor;
 
   const enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)
@@ -42,6 +43,23 @@
   let externalFoodSourceAccess = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS);
   let externalWaterSourceAccess = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS);
 
+  let externalFoodSourceHasCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_HAS_COST);
+  let externalWaterSourceHasCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_HAS_COST);
+  
+  let externalFoodSourceFullCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_FULL_COST);
+  let externalFoodSourceFullCurrency = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_FULL_COST_CURRENCY);
+  let externalWaterSourceFullCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_FULL_COST);
+  let externalWaterSourceFullCurrency = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_FULL_COST_CURRENCY);
+  let externalFoodSourceHalfCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_HALF_COST);
+  let externalFoodSourceHalfCurrency = getSetting(CONSTANTS.SETTINGS.EXTERNAL_FOOD_HALF_COST_CURRENCY);
+  let externalWaterSourceHalfCost = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_HALF_COST);
+  let externalWaterSourceHalfCurrency = getSetting(CONSTANTS.SETTINGS.EXTERNAL_WATER_HALF_COST_CURRENCY);
+
+  let foodCost = 0;
+  let foodCurrency = 'gp';
+  let waterCost = 0;
+  let waterCurrency = 'gp';
+
   let newFoodSatedValue = actorFoodSatedValue;
   let newWaterSatedValue = actorWaterSatedValue;
 
@@ -64,12 +82,17 @@
   function toggleAmountOfFood() {
     if (halfFood === "full") {
       newFoodSatedValue = actorRequiredFood;
+      foodCost = externalFoodSourceFullCost;
+      foodCurrency = externalFoodSourceFullCurrency;
     } else {
       newFoodSatedValue = actorFoodSatedValue + (actorRequiredFood / 2);
+      foodCost = externalFoodSourceHalfCost;
+      foodCurrency = externalFoodSourceHalfCurrency;
     }
 
     calculateAmountOfItems();
     refreshConsumableItems();
+    calculateCanAfford();
   }
 
   function toggleAccessToWater() {
@@ -82,12 +105,17 @@
   function toggleAmountOfWater() {
     if (halfWater === "full") {
       newWaterSatedValue = actorRequiredWater;
+      waterCost = externalWaterSourceFullCost;
+      waterCurrency = externalWaterSourceFullCurrency;
     } else {
       newWaterSatedValue = actorWaterSatedValue + (actorRequiredWater / 2);
+      waterCost = externalWaterSourceHalfCost;
+      waterCurrency = externalWaterSourceHalfCurrency;
     }
 
     calculateAmountOfItems();
     refreshConsumableItems();
+    calculateCanAfford();
   }
 
   async function dropData(event) {
@@ -217,10 +245,12 @@
 
     if (!hasAccessToFood) {
       newFoodSatedValue = actorFoodSatedValue;
+      foodCost = 0;
     }
 
     if (!hasAccessToWater) {
       newWaterSatedValue = actorWaterSatedValue;
+      waterCost = 0;
     }
 
     for (const item of $consumableItems) {
@@ -267,6 +297,22 @@
     event.preventDefault();
   }
 
+  function calculateCanAfford() {
+    let actorWealth = 0;
+    let necessaryWealth = 0;
+    for (let currencyData of Object.values(CONFIG.DND5E.currencies)) {
+      actorWealth += actor.system.currency[currencyData.abbreviation] / currencyData.conversion;
+      if (externalFoodSourceHasCost && foodCurrency == currencyData.abbreviation) {
+        necessaryWealth += foodCost / currencyData.conversion;
+      }
+      if (externalWaterSourceHasCost && waterCurrency == currencyData.abbreviation) {
+        necessaryWealth += waterCost / currencyData.conversion;
+      }
+    }
+    canAfford = (actorWealth >= necessaryWealth);
+    workflow.foodAndWaterCost = necessaryWealth;
+  }
+
 </script>
 
 <div class="flex">
@@ -294,6 +340,12 @@
 							<input type="radio" value="half" bind:group={halfFood} on:change={toggleAmountOfFood}/>
 							{localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodHalf")}
 						</label>
+            {#if externalFoodSourceHasCost && foodCost > 0}
+              <p class="notes">{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalCost", {
+                cost: foodCost,
+                currency: foodCurrency
+              })}</p>
+            {/if}
 					</p>
 				{/if}
 			{/if}
@@ -325,6 +377,12 @@
 							<input type="radio" value="half" bind:group={halfWater} on:change={toggleAmountOfWater}/>
 							{localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterHalf")}
 						</label>
+            {#if externalWaterSourceHasCost && waterCost > 0}
+              <p class="notes">{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalCost", {
+                cost: waterCost,
+                currency: waterCurrency
+              })}</p>
+            {/if}
 					</p>
 				{/if}
 			{/if}
@@ -399,6 +457,9 @@
 			{/if}
 		{/if}
 	{/if}
+  {#if !canAfford}
+        <p>{@html localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.CantAfford")}</p>
+  {/if}
 
 
 </div>
