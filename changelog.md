@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.6.4
+
+- Fixed a bug where consuming the final charge of a food/water item that was set to destroy on empty would not properly update the character's hunger/thirst level
+
 ## Version 1.6.3
 
 - Added new "Custom" rest variant, accessible via the Quick Setup menu in the variant dropdown

@@ -1463,6 +1463,14 @@ export default class RestWorkflow {
       if (!consumable?.enabled) return;
       return this._handleConsumableItem(item, data, this);
     });
+
+    Hooks.on('deleteItem', (item, data) => {
+      if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
+      if (!this.itemsListened.has(item.id)) return;
+      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+      if (!consumable?.enabled) return;
+      return this._handleConsumableItem(item, data, this);
+    })
   }
 
   static patchAllConsumableItems(actor) {
