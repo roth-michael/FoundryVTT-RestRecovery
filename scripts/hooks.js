@@ -1,6 +1,7 @@
 import { getSetting } from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
 import PromptRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
+import ResourceConfig from "./formapplications/resource-config/resource-config.js";
 
 export default function registerHooks(){
 
@@ -31,6 +32,18 @@ export default function registerHooks(){
 
     parent.append(button);
 
+  });
+
+  Hooks.once("tidy5e-sheet.ready", (api) => {
+    api.config.actorTraits.registerActorTrait({
+      title: game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure"),
+      iconClass: "fas fa-cog",
+      alwaysShow: true,
+      openConfiguration: ({app, data, element, event}) => {
+        ResourceConfig.show({actor: app.actor});
+      },
+      openConfigurationTooltip: "Module: Rest Recovery for 5e",
+    });
   });
 
 }
