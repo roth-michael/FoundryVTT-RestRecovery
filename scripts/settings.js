@@ -148,9 +148,21 @@ class RestRecoverySettings {
   async persistSettings() {
     await this.updateProfiles(true);
     await this.setActiveProfile(this.activeProfile, true);
-    if (this.settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value
-      && this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) {
-      await plugins.createConvenientEffect();
+    if (this.settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value) {
+      if (this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) {
+        await plugins.createConvenientEffect();
+      }
+      if (game.modules.get("tidy5e-sheet")?.active) {
+        await game.modules.get("tidy5e-sheet").api.config.exhaustion.useSpecificLevelExhaustion({
+          totalLevels: 10
+        });
+      }
+    } else {
+      if (game.modules.get("tidy5e-sheet")?.active) {
+        await game.modules.get("tidy5e-sheet").api.config.exhaustion.useSpecificLevelExhaustion({
+          totalLevels: 6
+        });
+      }
     }
   }
 

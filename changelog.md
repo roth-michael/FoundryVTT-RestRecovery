@@ -1,5 +1,14 @@
 # Rest Recovery Changelog
 
+## Version 1.6.5
+
+- Fixed compatibility with Tidy5e sheets
+  - Custom resource recovery should now be visible in the traits list in the Attributes tab
+  - Enabling/disabling One D&D exhaustion will now enable/disable it for Tidy5e as well (you'll have to save settings at least once if you're already using both Tidy5e and have One D&D exhaustion enabled)
+  - Warning will now properly be displayed if a food/water consumable has an invalid number of max charges with food/water automation turned on
+  - Custom Recovery checkbox now properly enables the custom recovery formula field
+  - Fixed widths of item sheet checkboxes to not cut off text
+
 ## Version 1.6.4
 
 - Fixed a bug where consuming the final charge of a food/water item that was set to destroy on empty would not properly update the character's hunger/thirst level
