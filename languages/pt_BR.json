@@ -151,7 +151,10 @@
         "NoNewDaySimpleCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
         "NewDay": "(novo dia)",
         "Submit": "Enviar",
-        "PlayerListShort": "Descansar"
+        "PlayerListShort": "Descansar",
+        "PlayerListFull": "Solicitar Descanso",
+        "PromptCharactersRest": "Personagens de Jogadores para Solicitar Descansos",
+        "RestProfile": "Perfil de Descanso"
       },
       "ShortRest": {
         "ForcedNewDayTitle": "Novo Dia",
