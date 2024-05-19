@@ -129,9 +129,9 @@
       "QuickSetup": {
         "Title": "Rest Recovery: Configuração Rápida",
         "SlowNaturalHealingTitle": "Cura Natural Lenta",
-        "SlowNaturalHealingLabel": "Personagens não ganham pontos de vida no final de um descanso longo. Ao inves disso, eles devem gastar dados de vida para se curarem, como em um descanso longo.",
+        "SlowNaturalHealingLabel": "Personagens não ganham pontos de vida no final de um descanso longo. Ao inves disso, eles devem gastar dados de vida para se curarem, como em um descanso curto.",
         "RecoverHitDiceTitle": "Recuperar Dados de Vida Antes do Descanso Longo",
-        "RecoverHitDiceLabel": "Altera a cura natural lenta para os personagens recuperarem seus dados de vida no início de um descanso longo, em vez de quando eles terminam.",
+        "RecoverHitDiceLabel": "Altera a \"Cura Natural Lenta\" para os personagens recuperarem seus dados de vida no início de um descanso longo, em vez de quando eles terminam.",
         "OpenSettings": "Abrir Configurações",
         "5eRestCustom": {
           "Title": "Personalizado (Defina seus próprios valores)",
@@ -326,10 +326,10 @@
       },
       "QuickHDRoll": {
         "Title": "Rolagem Rápida de Dados de Vida (pular diálogo)",
-        "Hint": "Ignora a caixa de diálogo para rolar os dados de vida e jogá-los rapidamente."
+        "Hint": "Ignora a caixa de diálogo para rolar os dados de vida rapidamente."
       },
       "ShowPlayerListRestButton": {
-        "Title": "Mostrar botão de solicitação de descanso",
+        "Title": "Mostrar Botão de Solicitação de Descanso",
         "Hint": "Configure se o botão de requisição de descanso é exibido aos jogadores no canto inferior esquerdo da lista de jogadores (requer que o mundo seja reiniciado)"
       },
       "Debug": {
@@ -348,7 +348,7 @@
         },
         "PreventUserRest": {
           "Title": "Impedir Descanso de Usuário",
-          "Hint": "Isso previne que usuários iniciem descansos por si mesmos, e devem ser solicitados pelo MJ para descansarem."
+          "Hint": "Isso previne que usuários iniciem descansos por si mesmos, devendo ser solicitados pelo MJ para descansarem."
         },
         "EnableAutoRollButton": {
           "Title": "Habilitar Botão de Rolagem Automática de Dados de Vida",
@@ -356,7 +356,7 @@
         },
         "EnablePromptRestTimePassing": {
           "Title": "Habilitar Passagem Automática do Tempo",
-          "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos perosnagens."
+          "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
         },
         "EnableSimpleCalendarIntegration": {
           "Title": "Habilitar Integração com Simple Calendar",
@@ -492,7 +492,7 @@
         },
         "PreRegainHitDice": {
           "Title": "Habilitar Recuperação de Dados de Vida Antes de Terminar um Descanso Longo",
-          "Hint": "Isso faz com que os dados de vida sejam recuperados antes de terminar um descanso longo, para que você possa rola-los como parte desse descanso."
+          "Hint": "Isso faz com que os dados de vida sejam recuperados antes de terminar um descanso longo, para que você possa rolá-los como parte desse descanso."
         },
         "PreRegainHitDiceBuffer": {
           "Title": "Ativar Bônus de Máximo de Dados de Vida",
@@ -528,7 +528,7 @@
         },
         "CustomSpellSlotRecovery": {
           "Title": "Habilitar Regra de Recuperação de Pontos de Espaços de Magia",
-          "Hint": "Ativar esta opção faz com que todos que possuam espaços de magia, os recuperem como a característica \"Recuperação Arcana\" do Mago, onde você deve escolher quais espaços de magia irá recuperar. Essa opção só pode ser ativada caso a opção \"Fração de Recuperação de Espaços de Magia\" estiver configurada para Perosnalizado. Personagens recuperam uma quantidade de espaços de magia iguais à fórmula personalizada da configuração."
+          "Hint": "Ativar esta opção faz com que todos que possuam espaços de magia, os recuperem como a característica \"Recuperação Arcana\" do Mago, onde você deve escolher quais espaços de magia irá recuperar. Essa opção só pode ser ativada caso a opção \"Fração de Recuperação de Espaços de Magia\" estiver configurada para Personalizado. Personagens recuperam uma quantidade de espaços de magia iguais à fórmula personalizada da configuração."
         },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Fração de Recuperação de Magias de Pacto",
