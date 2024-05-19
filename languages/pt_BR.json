@@ -6,22 +6,26 @@
       "Bard": "Bardo"
     },
     "Warnings": {
-      "PreventedLongRest": "You cannot long rest because you are under an effect that prevents you from doing so!",
-      "PreventedShortRest": "You cannot short rest because you are under an effect that prevents you from doing so!"
+      "PreventedLongRest": "Você não pode realizar um descanso longo pois está sob um efeito que te impede de fazer isso!",
+      "PreventedShortRest": "Você não pode realizar um descanso curto pois está sob um efeito que te impede de fazer isso!",
+      "NotPromptedLongRest": "O Mestre configurou este jogo para que não seja possível iniciar um descanso longo sem que seja requisitado por ele!",
+      "NotPromptedShortRest": "O Mestre configurou este jogo para que não seja possível iniciar um descanso curto sem que seja requisitado por ele!",
+      "ItemNoUses": "\"{item}\" não possue mais usos, então você não pode consumí-lo."
     },
     "FeatureNames": {
       "ArcaneRecovery": "Recuperação Arcana",
       "NaturalRecovery": "Recuperação Natural",
+      "PowerSurge": "Surto de Poder",
       "SongOfRest": "Canção do Descanso",
-      "ChefFeat": "Chef",
-      "ChefTools": "Ferramentas/Utensílios de Cozinheiro",
+      "ChefFeat": "Chefe",
+      "ChefTools": "Utensílios de Cozinheiro",
       "PeriaptItem": "Periapto da Cicatrização",
       "WoundClosureBlessing": "Benção da Cicatrização",
       "DurableFeat": "Resistente",
       "BlackBloodFeature": "Cura do Sangue Negro"
     },
-    "PatchedRecovery": "O {recoveryName} de {actorName} foi usado.",
-    "PatchedConsumable": "Atualizado {itemName} com usos.",
+    "PatchedRecovery": "O(a) {recoveryName} de {actorName} foi usado(a).",
+    "PatchedConsumable": "{itemName} atualizado(a) com usos.",
     "Modules": {
       "DFreds": "DFreds Convenient Effects",
       "CUB": "Combat Utility Belt"
@@ -32,6 +36,13 @@
       "Half": "Metade",
       "Full": "Inteiro",
       "Custom": "Fórmula Personalizada"
+    },
+    "Currencies": {
+      "Copper": "pb",
+      "Electrum": "pe",
+      "Gold": "po",
+      "Platinum": "pl",
+      "Silver": "pp"
     },
     "Rounding": {
       "RoundDown": "Arredondar para Baixo",
@@ -55,45 +66,46 @@
       "5th": "5º"
     },
     "Chat": {
-      "RegainedUses": "Além disso, ele(a) recuperarou o seguinte:",
-      "SpellSlotList": "{number} espaço de magia de {level}º círculo",
-      "SpellSlotListPlural": "{number} espaços de magia de {level}º círculo",
-      "RecoveryNameNum": "{name} recuperou {number} usos",
+      "RegainedUses": "Além disso, eles recuperaram o seguinte:",
+      "SpellSlotList": "{number} espaço de magia de {level}º círculo.",
+      "SpellSlotListPlural": "{number} espaços de magia de {level}º círculo.",
+      "RecoveryNameNum": "{name} recuperou {number} uso(s).",
       "SongOfRest": "{name} desfruta a Canção do Descanso de {bard}.",
       "SongOfRestSelf": "{name} desfruta de sua própria Canção de Descanso.",
-      "Chef": "{name} desfruta de uma comida deliciosa de {chef}.",
-      "ChefSelf": "{name} desfruta de sua própria comida deliciosa.",
-      "ConsumedBothDayWorth": "{actorName} consumiu {itemName} para um dia inteiro de comida e água.",
-      "ConsumedBoth": "{actorName} consumiu {itemName} para {charges} unidades de comida e água.",
-      "ConsumedFoodDayWorth": "{actorName} comeu {itemName} para um dia inteiro de comida.",
-      "ConsumedFood": "{actorName} comeu {itemName} para {charges} unidades de comida.",
+      "Chef": "{name} desfruta de uma deliciosa comida de {chef}.",
+      "ChefSelf": "{name} desfruta de sua própria deliciosa comida.",
+      "ConsumedBothDayWorth": "{actorName} consumiu {itemName} para suprir um dia inteiro de comida e água.",
+      "ConsumedBoth": "{actorName} consumiu {itemName}, que equivale a {charges} unidade(s) de comida e água.",
+      "ConsumedFoodDayWorth": "{actorName} comeu {itemName} para suprir um dia inteiro de comida.",
+      "ConsumedFood": "{actorName} comeu {itemName}, que equivale a {charges} unidade(s) de comida.",
       "ConsumedWaterDayWorth": "{actorName} bebeu {itemName} para suprir um dia inteiro de água.",
-      "ConsumedWater": "{actorName} bebeu {itemName} para {charges} unidades de água.",
-      "RequiredSatedFood": "É necessário {units} unidades de comida para serem saciados por um dia.",
-      "RequiredSatedWater": "É necessário {units} unidades de água para serem saciados por um dia.",
-      "SatedFood": "Hoje não é necessário mais comida.",
-      "SatedWater": "Hoje não é necessário mais água.",
-      "FoodFullNone": "Ele(a) comeu comida suficiente para ficarem satisfeitos hoje.",
-      "FoodHalfNone": "Ele(a) comeu sua própria comida, mas apenas metade da quantidade que precisavam hoje.",
-      "FoodHalfHalf": "Ele(a) comeu alimentos de uma fonte externa e de sua própria comida para ficarem satisfeitos por hoje.",
-      "FoodNoneFull": "Ele(a) comeu comida suficiente de uma fonte externa para ficarem satisfeitos por hoje.",
-      "FoodNoneHalf": "Ele(a) comeu alimento de uma fonte externa, mas apenas metade da quantidade que precisavam hoje.",
-      "FoodNoneNone": "Ele(a) não comeu nada hoje.",
-      "WaterFullNone": "Ele(a) bebeu o suficiente de sua própria água para ficar satisfeito hoje.",
-      "WaterHalfNone": "Ele(a) bebeu de sua própria água, mas apenas metade da quantidade que precisava hoje.",
-      "WaterHalfHalf": "Ele(a) bebeu de uma fonte externa e de sua própria água para ficar satisfeitos por hoje.",
-      "WaterNoneFull": "Ele(a) bebeu água suficiente de uma fonte externa para ficar satisfeito por hoje.",
-      "WaterNoneHalf": "Ele(a) bebeu de uma fonte externa, mas apenas metade da quantidade que precisava hoje.",
-      "WaterNoneNone": "Ele(a) não bebeu nada hoje.",
-      "NoExhaustion": "Mas ele(a) conseguiu evitar exaustão.",
-      "Exhaustion": "Assim, sofreu {exhaustion} nível(is) de exaustão.",
-      "ExhaustionDeath": "Infelizmente, {actorName} atingiu 6 níveis de exaustão e pereceu.",
-      "ExhaustionArmor": "Ele(a) decidiu continuar vestindo sua armadura, e não recuperou nenhum dos seus pontos de exaustão.",
-      "HitDiceArmor": "Ele(a) recuperou menos dados de vida que o normal porque descansou vestindo sua armadura.",
-      "NoHitDiceArmor": "Ele(a) não recuperou nenhum dado de vida porque descansou vestindo sua armadura.",
-      "HitDiceNoArmor": "Ele(a) decidiu não vestir a sua armadura enquanto descansa e recuperou a quantidade normal de dados de vida.",
-      "CouldNotLongRest": "{actorName} could not take a long rest.",
-      "CouldNotShortRest": "{actorName} could not take a short rest."
+      "ConsumedWater": "{actorName} bebeu {itemName}, que equivale a {charges} unidade(s) de água.",
+      "RequiredSatedFood": "É necessário {units} unidade(s) de comida para serem saciados por um dia.",
+      "RequiredSatedWater": "É necessário {units} unidade(s) de água para serem saciadas por um dia.",
+      "SatedFood": "Eles não precisam de mais comida.",
+      "SatedWater": "Eles não precisam de mais água.",
+      "FoodFullNone": "Eles comeram o suficiente da própria comida para ficarem saciados.",
+      "FoodHalfNone": "Eles comeram da própria comida, mas apenas metade do necessário.",
+      "FoodHalfHalf": "Eles comeram comida de uma fonte externa e de sua própria comida para se saciarem.",
+      "FoodNoneFull": "Eles comeram comida suficiente de uma fonte externa para ficarem saciados.",
+      "FoodNoneHalf": "Eles comeram comida de uma fonte externa, mas apenas metade do necessário.",
+      "FoodNoneNone": "Eles não comeram nada.",
+      "WaterFullNone": "Eles beberam o suficiente da própria água para ficarem saciados.",
+      "WaterHalfNone": "Eles beberam da própria água, mas apenas metade do necessário.",
+      "WaterHalfHalf": "Eles beberam água de uma fonte externa e de sua própria água para se saciarem.",
+      "WaterNoneFull": "Eles beberam água suficiente de uma fonte externa para ficarem saciados.",
+      "WaterNoneHalf": "Eles beberam água de uma fonte externa, mas apenas metade do necessário.",
+      "WaterNoneNone": "Eles não beberam nada.",
+      "NoExhaustion": "Mas eles conseguiram evitar a Exaustão.",
+      "Exhaustion": "Assim, eles sofreram {exhaustion} nível(is) de Exaustão.",
+      "ExhaustionDeath": "Infelizmente, {actorName} atingiu {max_levels} níveis de Exaustão e morreu.",
+      "ExhaustionArmor": "Eles decidiram continuar vestindo suas armaduras e não recuperaram nenhum de seus pontos de Exaustão.",
+      "HitDiceArmor": "Eles recuperaram menos dados de vida que o normal pois descansaram vestindo suas armaduras.",
+      "NoHitDiceArmor": "Eles não recuperaram nenhum dado de vida pois descansaram vestindo suas armaduras.",
+      "HitDiceNoArmor": "Eles decidiram descansar sem armaduras e recuperaram a quantidade normal de dados de vida.",
+      "PreventedHitDiceRecovery": "Como eles gastaram dados de vida durante o descanso longo, eles não recuperaram nenhum dado de vida.",
+      "CouldNotLongRest": "{actorName} não pôde realizar um descanso longo.",
+      "CouldNotShortRest": "{actorName} não pôde realizar um descanso curto."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -103,82 +115,129 @@
         "Empty": "Seu novo perfil não pode estar em branco"
       },
       "DiscardChanges": {
-        "Title": "Alterações não salvas",
-        "Content": "Você tem alterações não salvas neste perfil. Você tem certeza que deseja mudar de perfil?"
+        "Title": "Alterações Não Salvas",
+        "Content": "Você tem alterações não salvas neste perfil. Tem certeza que deseja mudar de perfil?"
       },
       "ResetDefaultChanges": {
-        "Title": "Redefinir configuração padrão",
-        "Content": "Você tem certeza que deseja redefinir o perfil \"Padrão\" do módulo mas as configurações padrões?"
+        "Title": "Redefinir Configuração Padrão",
+        "Content": "Tem certeza que deseja redefinir o perfil \"Padrão\" do módulo para as configurações padrões?"
       },
       "DeleteProfile": {
-        "Title": "Excluir perfil",
-        "Content": "Tem certeza de que deseja excluir o perfil do módulo \"{profile}\"?"
+        "Title": "Excluir Perfil",
+        "Content": "Tem certeza que deseja excluir o perfil do módulo \"{profile}\"?"
+      },
+      "QuickSetup": {
+        "Title": "Rest Recovery: Configuração Rápida",
+        "SlowNaturalHealingTitle": "Cura Natural Lenta",
+        "SlowNaturalHealingLabel": "Personagens não ganham pontos de vida no final de um descanso longo. Ao inves disso, eles devem gastar dados de vida para se curarem, como em um descanso curto.",
+        "RecoverHitDiceTitle": "Recuperar Dados de Vida Antes do Descanso Longo",
+        "RecoverHitDiceLabel": "Altera a \"Cura Natural Lenta\" para os personagens recuperarem seus dados de vida no início de um descanso longo, em vez de quando eles terminam.",
+        "OpenSettings": "Abrir Configurações",
+        "5eRestCustom": {
+          "Title": "Personalizado (Defina seus próprios valores)",
+          "LongRestCustomTitle": "Duração do Descanso Longo (em horas)",
+          "ShortRestCustomTitle": "Duração do Descanso Curto (em horas)"
+        }
+      },
+      "PromptRest": {
+        "Title": "Solicitar Descanso aos Jogadores",
+        "ConfigureProfiles": "Configurar Perfis",
+        "Short": "Descanso Curto",
+        "Long": "Descanso Longo",
+        "NewDayTitle": "Novo Dia",
+        "NoNewDayTitle": "Não é um Novo Dia",
+        "NewDayHint": "Isso faz com que os personagens que terminarem o descanso recuperem habilidades que recarreguem \"por dia\".",
+        "NewDaySimpleCalendarHint": "Baseado no tipo selecionado abaixo, personagens que terminarem o descanso recuperam habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
+        "NoNewDaySimpleCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
+        "NewDay": "(novo dia)",
+        "Submit": "Enviar",
+        "PlayerListShort": "Descansar"
       },
       "ShortRest": {
+        "ForcedNewDayTitle": "Novo Dia",
+        "ForcedNewDayHint": "Um novo dia amanhece, então esse descanso curto recuperará habilidades que recarregam \"por dia\".",
         "NoHitDiceRest": "Realizar um descanso curto? Em um descanso curto você pode recuperar recursos primários ou secundários.",
-        "SpellSlotRecovery": "Recuperar Espaços de Magia com {featureName}",
-        "SpellSlotsLeft": "Você tem {spellSlotsLeft} círculos de espaços de magia restantes para recuperar.",
-        "NoFeatureUse": "Você não tem nenhum uso restante da sua/seu {featureName}, então você não poderá recuperar nenhum espaço de magia durante esse descanso curto.",
-        "FullSpells": "Você possui todos os seus espaços de magia, não existe necessidade de recuperar nenhum.",
         "NoMoreRests": "Não há mais descansos curtos",
         "NoMoreRestsSmall": "Você não tem mais capacidade para um descanso curto, pois as regras do seu jogo exigem um máximo de <strong>{max_short_rests}</strong> por descanso longo.",
         "ShortRestLimit": "Você tem <strong>{num_short_rests}</strong> descansos curtos restantes antes de precisar fazer um descanso longo.",
         "ShortRestLimitSmall": "As regras do seu jogo exigem um máximo de <strong>{max_short_rests}</strong> por descanso longo.",
-        "AutoRoll": "Automático",
-        "MinHitDiceSpend": "Você deve gastar <strong>{min_spend}</strong> dados de vida para terminar este descanso curto.",
-        "MaxHitDiceSpend": "Você só pode gastar <strong>{max_spend}</strong> dados de vida durante este descanso curto (<strong>{current}</strong> restante).",
+        "AutoRoll": "Rolagem Automática",
+        "MinHitDiceSpend": "Você deve gastar <strong>{min_spend}</strong> dado(s) de vida para terminar este descanso curto.",
+        "MaxHitDiceSpend": "Você só pode gastar <strong>{max_spend}</strong> dados de vida durante este descanso curto (<strong>{current}</strong> restante(s)).",
         "FinishRest": "Terminar Descanso Curto"
       },
-      "ShortRestHealthWarning": {
-        "Title": "Terminar Descanso Curto?",
-        "Content": "Você não gastou nenhum dado de vida para recuperar pontos de vida, tem certeza que quer terminar seu descanso curto?"
+      "RestHealthWarning": {
+        "Title": "Terminar Descanso Longo?",
+        "Content": "Você não gastou nenhum dado de vida para recuperar pontos de vida, tem certeza que quer terminar seu descanso longo?"
       },
-      "ShortRestHitDice": {
-        "Title": "Gastar Dados de Vida?",
-        "Content": "Você precisa gastar pelo menos {num_dice} dados de vida para terminar este descanso curto. Você tem certeza de que quer fazer isso?"
+      "RestSpendHitDice": {
+        "Title": "Gastar Dado de Vida?",
+        "Content": "Você precisa gastar ao menos {num_dice} dado(s) de vida oara terminar este descanso. Tem certeza que quer fazer isso?"
       },
-      "ShortRestNoHitDice": {
-        "Title": "Nenhum dado de vida restante",
-        "Content": "Você precisa gastar pelo menos {num_dice} dados de vida para terminar este descanso curto, mas não tem mais nenhum."
+      "RestNoHitDice": {
+        "Title": "Sem Dados de Vida Restantes",
+        "Content": "Você precisa gastar ao menos {num_dice} dado(s) de vida para terminar este descanso, mas você não possue nenhum."
       },
       "LongRest": {
+        "ForcedNewDayTitle": "Novo Dia",
+        "ForcedNewDayHint": "Um novo dia amanhece, então esse descanso longo recuperará habilidades que recarregam \"por dia.",
         "Begin": "Iniciar Descanso Longo",
         "BeginExplanation": "Ao iniciar seu descanso longo, você recuperará alguns de seus dados de vida para que possa usá-los para recuperar pontos de vida.",
         "CustomRules": "Você está jogando com regras personalizadas, o que significa que você pode recuperar pontos de vida, dados de vida, recursos de classe, cargas de itens de uso limitado e espaços de magia de forma diferente.",
         "CustomRulesLink": "Confira as regras personalizadas.",
-        "RestTab": "Descansando",
-        "FoodAndWaterTab": "Comida e Água",
-        "FoodRequirement": "Você precisa comer mais <strong>{food}</strong> unidades de comida hoje.",
-        "FoodSated": "Você já comeu o suficiente hoje.",
-        "WaterRequirement": "Você precisa beber mais <strong>{water}</strong> unidades de água hoje.",
-        "WaterSated": "Você já bebeu bastante hoje.",
-        "FoodAlmostExhaustion": "Se você terminar este dia sem ter comido a quantidade total de comida, sofrerá automaticamente <strong>1 nível de exaustão</strong> em <strong>{days} dias</strong>.",
-        "FoodExhaustion": "Como você está faminto, você sofrerá automaticamente <strong>1 nível de exaustão</strong> se terminar este dia sem ter comido toda a quantidade de comida necessária.",
-        "NoWater": "Você sofrerá automaticamente <strong>{exhaustion} níveis de exaustão</strong> se terminar este dia bebendo menos da metade da quantidade necessária de água.",
-        "HalfWater": "Você precisa realizar uma salvaguarda de ND {dc} ou sofrerá <strong>{exhaustion} níveis de exaustão</strong> se você terminar este dia sem beber a quantidade total.",
-        "DragDrop": "Arraste e solte itens para consumir ou selecione:",
-        "DayWorth": "Um uso de item que vale o dia inteiro de {type}",
-        "ExternalFood": "Tem acesso a fonte externa de alimentos",
-        "ExternalFoodFull": "Comer até ficar saciado",
-        "ExternalFoodHalf": "Comer metade da quantidade necessária",
-        "ExternalWater": "Tem acesso a fonte externa de água",
-        "ExternalWaterFull": "Beber até saciado",
-        "ExternalWaterHalf": "Beber metade da quantidade necessária",
-        "AmountToConsume": "Quantidade para Consumir",
+        "MinHitDiceSpend": "Você deve gastar <strong>{min_spend}</strong> dados de vida para terminar este descanso longo.",
+        "MaxHitDiceSpend": "Você pode gastar apenas <strong>{max_spend}</strong> dados de vida durante este descanso longo (<strong>{current}</strong> restante(s)).",
         "ArmorRecovery": "Remover armadura durante Descanso Longo?",
         "ArmorRecoveryHint": "Como você tem uma armadura equipada, você sofrerá penalidades. Clique no texto das regras personalizadas (em laranja) para ver como isso afetará você.",
         "FinishRest": "Terminar Descanso Longo"
       },
-      "LongRestWarning": {
-        "Title": "Terminar Descanso Longo?",
-        "Content": "Você não gastou nenhum dado para recuperar pontos de vida, você tem certeza que quer terminar seu longo descanso?"
+      "RestSteps": {
+        "Next": "Próxima Etapa",
+        "Prev": "Etapa Anterior",
+        "Rest": {
+          "Title": "Descansar"
+        },
+        "FoodWater": {
+          "Title": "Comida e Água",
+          "FoodRequirement": "Você precisa comer mais <strong>{food}</strong> unidades de comida.",
+          "FoodSated": "Você comeu o suficiente.",
+          "FoodAlmostExhaustion": "Se você terminar este dia sem ter comido toda a quantidade necessária de comida, você automaticamente irá sofrer <strong>1 nível de Exaustão</strong> em <strong>{days} dias</strong>.",
+          "FoodExhaustion": "Como você está morrendo de fome, você automaticamente irá sofrer <strong>1 nível de Exaustão</strong> se terminar este dia sem ter comido toda a quantidade necessária de comida.",
+          "ExternalFood": "Tem acesso à fonte externa de comida",
+          "ExternalFoodFull": "Comer até ficar satisfeito",
+          "ExternalFoodHalf": "Comer metade do necessário",
+          "WaterRequirement": "Você precisa beber mais <strong>{water}</strong> unidades de água.",
+          "AmountToConsume": "Quantidade à Consumir",
+          "WaterSated": "Você já bebeu o suficiente.",
+          "NoWater": "Você automaticamente irá sofrer <strong>{exhaustion} nível(s) de Exaustão</strong> se você terminar este dia bebendo menos da metade da quantidade de água necessária.",
+          "HalfWater": "Você deve realizar uma salvaguarda de Constituição CD {dc} ou sofrerá <strong>{exhaustion} nível(s) de Exaustão</strong> se você terminar este dia sem beber toda a quantidade de água necessária.",
+          "DragDrop": "Arraste e solte para consumir, ou selecione:",
+          "DayWorth": "Um uso do item vale um dia inteiro de {type}",
+          "ExternalWater": "Tem acesso à fonte externa de água",
+          "ExternalWaterFull": "Beber até ficar satisfeito",
+          "ExternalWaterHalf": "Beber metade do necessário",
+          "ExternalCost": "Isso irá custar <strong>{cost} {currency}</strong>.",
+          "CantAfford": "<strong>Você não consegue comprar as opções de comida/água selecionadas. Mude suas escolhas para conseguir completar este descanso.</strong>"
+        },
+        "SpellRecovery": {
+          "Title": "Recuperação Mágica",
+          "SpellSlotFeature": "Recuperar Espaços de Magia com {featureName}",
+          "SpellSlotRule": "Recuperar Espaços de Magia",
+          "SpellSlotsLeft": "Você tem {spellSlotsLeft} níveis de espaços de magia para recuperar.",
+          "NoFeatureUse": "Você não tem nenhum uso restante de {featureName}, então você não pode recuperar nenhum espaço de magia durante este descanso curto.",
+          "FullSpells": "Você possui todos os espaços de magia, não há necessidade de recuperar nenhum."
+        }
       },
       "LongRestSettingsDialog": {
         "Title": "Configurações de Descanso Longo",
         "Content": "Estas são as configurações que o MJ configurou para descansos longos neste jogo."
       },
+      "CharacterOwnersOffline": {
+        "Title": "Jogadores Offline",
+        "Content": "Os jogadores que são donos dos seguintes personagens que você solicitou o descanso, estão offline. Você gostaria de terminar os descansos por eles?"
+      },
       "Resources": {
-        "Configure": "Configuração de Recuperação de Recurso",
+        "Configure": "Configurar Recuperação de Recursos",
         "Title": "Configuração de Recursos",
         "Name": "Nome",
         "Value": "Valor",
@@ -193,6 +252,8 @@
         "ShortRest": "Descanso Curto",
         "ItemNames": "Nomes das Características",
         "FoodAndWater": "Comida e Água",
+        "Confused": "Confuso? Muitas Opções?",
+        "QuickSetup": "Clique aqui para abrir a Configuração Rápida!",
         "Donate": "Se você gosta deste módulo, considere doar para mantê-lo funcionando!",
         "MoreToCome": "E com mais opções por vir...",
         "Request": "Solicite novos recursos aqui.",
@@ -208,8 +269,8 @@
         "Enabled": "Habilitado",
         "Formula": "Fórmula:",
         "IsConsumable": "Item é consumível",
-        "DayWorth": "Uma carga que vale o dia inteiro",
-        "ChargesDescription": "O sistema de comida e água do Rest Recovery requer que o item tenha cargas para ser usado - uma carga é igual a uma unidade de comida ou água."
+        "DayWorth": "Uma carga vale o dia inteiro",
+        "ChargesDescription": "O sistema de comida e água do Rest Recovery requer que o item tenha cargas para ser usad. Uma carga é igual a uma unidade de comida ou água."
       },
       "AbilityUse": {
         "Title": "Selecione quanto deste item você deseja consumir:",
@@ -231,8 +292,16 @@
         "Title": "Bônus de Dados de Vida",
         "Hint": "Sempre que esse personagem rolar um dado de vida, isso aplica um bônus a essa rolagem. Pode ser uma fórmula, como \"1d6 + 3\"."
       },
+      "LongRestSpellPointsBonus": {
+        "Title": "Bônus de Recuperação de Espaços de Magia",
+        "Hint": "Esse é um bônus que será adicionado à recuperação de espaço de magia durante um descanso longo."
+      },
+      "LongRestSpellPointsFormula": {
+        "Title": "Fórmula de Recuperação de Espaços de Magia",
+        "Hint": "Este traço permite substituir a fórmula de recuperação de espaço de magia para este personagem específico."
+      },
       "FoodUnitsPerDay": {
-        "Title": "Unidades de alimentos necessárias por dia",
+        "Title": "Unidades de comida necessárias por dia",
         "Hint": "Isso substitui quantas unidades de comida esse personagem precisa por dia."
       },
       "WaterUnitsPerDay": {
@@ -245,61 +314,120 @@
       }
     },
     "Settings": {
+      "QuickSetup": {
+        "Title": "Configuração Rápida",
+        "Label": "Abrir Configuração Rápida",
+        "Hint": "Uma UI simples para uma rápida configuração das configurações comuns de descansos."
+      },
       "Configure": {
         "Title": "Configuração do Módulo",
         "Label": "Configurar Descanso",
         "Hint": "Você pode configurar como descansos funcionam nesta caixa de diálogo."
       },
       "QuickHDRoll": {
-        "Title": "Dados de Vida de Rolagem Rápida (pular caixa de diálogo)",
-        "Hint": "Ignora a caixa de diálogo para rolar os dados de vida e jogue-os rapidamente."
+        "Title": "Rolagem Rápida de Dados de Vida (pular diálogo)",
+        "Hint": "Ignora a caixa de diálogo para rolar os dados de vida rapidamente."
+      },
+      "ShowPlayerListRestButton": {
+        "Title": "Mostrar Botão de Solicitação de Descanso",
+        "Hint": "Configure se o botão de requisição de descanso é exibido aos jogadores no canto inferior esquerdo da lista de jogadores (requer que o mundo seja reiniciado)"
       },
       "Debug": {
         "Title": "Ativar depuração",
         "Label": "Imprime mensagens de depuração no console"
       },
+      "RequiresModule": "Requer {module_name}",
       "General": {
+        "PeriaptRollMechanics": {
+          "Title": "Mecânicas do Periapto de Cicatrização",
+          "Hint": "Isso configura como o item \"Periapto de Cicatrização\" lida com a multiplicação da rolagem dos dados de vida.",
+          "Options": {
+            "MultiplyRoll": "Multiplicar dados rolados",
+            "MultiplyTotal": "Multiplicar resultado total"
+          }
+        },
+        "PreventUserRest": {
+          "Title": "Impedir Descanso de Usuário",
+          "Hint": "Isso previne que usuários iniciem descansos por si mesmos, devendo ser solicitados pelo MJ para descansarem."
+        },
         "EnableAutoRollButton": {
-          "Title": "Ativar botão de rolagem automática de dados de vida",
+          "Title": "Habilitar Botão de Rolagem Automática de Dados de Vida",
           "Hint": "Isso adiciona um botão à UI de descanso longo e curto para que os jogadores possam rolar automaticamente os dados de vida até que seus PVs esteja quase cheio."
+        },
+        "EnablePromptRestTimePassing": {
+          "Title": "Habilitar Passagem Automática do Tempo",
+          "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
+        },
+        "EnableSimpleCalendarIntegration": {
+          "Title": "Habilitar Integração com Simple Calendar",
+          "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na UI de solicitação de descanso e na UI de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
+        },
+        "EnableSimpleCalendarNotes": {
+          "Title": "Habilitar Notas do Simple Calendar",
+          "Hint": "Ativar isso criará uma nota do Simple Calendar para cada descanso longo/curto dos jogadores. O conteúdo de cada nota será idêntico à mensagem de chat enviada no fim do descanso.",
+          "Hint2": "Nota: Jogadores devem possuir as permissões \"Criar Diário\" e \"Adicionar Notas\" habilitadas no Simple Calendar se descansarem enquanto estiverem online."
         }
       },
       "FoodAndWater": {
         "EnableFoodAndWater": {
-          "Title": "Habilite a automação de comidas e água",
-          "Hint": "Isso habilita sub-recursos relacionados à automação de alimentos e água, conforme visto abaixo."
+          "Title": "Habilitar Automação de Comida e Água",
+          "Hint": "Isso habilita sub-recursos relacionados à automação de comida e água, conforme visto abaixo."
         },
         "DisableRollConsumableItems": {
-          "Title": "Desativar rolagens de itens consumíveis em descanso",
-          "Hint": "Por padrão, se um personagem escolher consumir um item durante seu descanso longo, ele será rolado como se o personagem tivesse clicado em seu botão de rolagem. Esta configuração irá desabilitar rolagem automática."
+          "Title": "Desabilitar Rolagens de Itens Consumíveis em Descanso",
+          "Hint": "Por padrão, se um personagem escolher consumir um item durante seu descanso, ele será rolado como se o personagem tivesse clicado em seu botão de rolagem. Esta configuração irá desabilitar rolagem automática."
         },
         "FoodUnitsPerDay": {
-          "Title": "Unidades de alimentos necessários por dia",
+          "Title": "Unidades de Comida Necessárias Por Dia",
           "Hint": "Isso configura quantas unidades de comida os personagens precisam por dia. Definir isso como 0 desativa completamente a necessidade de alimentos."
         },
         "WaterUnitsPerDay": {
-          "Title": "Unidades de água necessárias por dia",
-          "Hint": "Isso configura quantas unidades de caracteres de água são necessárias por dia. Definir isso como 0 desativa completamente a necessidade de água."
+          "Title": "Unidades de Água Necessárias Por Dia",
+          "Hint": "Isso configura quantas unidades de água os personagens precisam por dia. Definir isso como 0 desativa completamente a necessidade de água."
         },
         "ExternalFoodAccess": {
-          "Title": "Acesso a fonte externa de alimentos",
-          "Hint": "Isso configura se os jogadores poderão escolher \"Fonte Externa de Alimentos\" durante descansos longos como substituto de itens consumíveis. \"Cheio\" significa acesso total como em pousadas e cidades, \"Meio\" significa acesso limitado ou comida ruim, \"Nenhum\" significa deserto ou fome."
+          "Title": "Acesso à Fonte Externa de Comida",
+          "Hint": "Isso configura se os jogadores poderão escolher \"Fonte Externa de Comida\" durante descansos como substituto de itens consumíveis. \"Inteiro\" significa acesso total como em pousadas e cidades, \"Metade\" significa acesso limitado ou comida ruim, \"Nenhum\" significa deserto ou fome."
+        },
+        "ExternalFoodHasCost": {
+          "Title": "Comida Externa tem Custo",
+          "Hint": "Qualquer \"Comida Externa\" tem um custo financeiro, como o custo de uma refeição em uma taverna."
+        },
+        "ExternalFoodFullCostCurrency": {
+          "Title": "Custo de Comida Inteira",
+          "Hint": "O custo de adquirir a quantidade completa de comida necessária durante um descanso."
+        },
+        "ExternalFoodHalfCostCurrency": {
+          "Title": "Custo de Metade da Comida",
+          "Hint": "O custo de adquirir metade da quantidade completa de comida necessária durante um descanso."
         },
         "ExternalWaterAccess": {
-          "Title": "Acesso a fonte externa de água",
-          "Hint": "Igual ao anterior, mas para água. Tenha em mente que \"Meio\" e \"Nenhum\" farão com que os personagens fiquem exaustos quase que imediatamente, a menos que tenham acesso a itens consumíveis."
+          "Title": "Acesso à Fonte Externa de Água",
+          "Hint": "Como o anterior, mas para água. Tenha em mente que \"Metade\" e \"Nenhum\" farão com que os personagens fiquem Exaustos quase que imediatamente, a menos que tenham acesso a itens consumíveis."
+        },
+        "ExternalWaterHasCost": {
+          "Title": "Água Externa tem Custo",
+          "Hint": "Qualquer \"Água Externa\" tem um custo financeiro, como o custo de um copo d'água em uma taverna."
+        },
+        "ExternalWaterFullCostCurrency": {
+          "Title": "Custo de Água Inteira",
+          "Hint": "O custo de adquirir a quantidade completa de água necessária durante um descanso."
+        },
+        "ExternalWaterHalfCostCurrency": {
+          "Title": "Custo de Metade da Água",
+          "Hint": "O custo de adquirir metade da quantidade completa de água necessária durante um descanso."
         },
         "AutomateFoodWaterExhaustion": {
-          "Title": "Automatize exaustão por alimentos e água",
-          "Hint": "Habilitar isso faz com que os personagens sofram exaustão se não comerem ou beberem o suficiente. Requer que a automação de exaustão de descanso longo esteja habilitada."
+          "Title": "Automatizar Exaustão de Comida e Água",
+          "Hint": "Ativar isso faz com que os personagens sofram Exaustão se não comerem ou beberem o suficiente. Requer que a opção \"Habilitar Automação de Exaustão\" esteja habilitada."
         },
         "NoFoodDuration": {
-          "Title": "Máximo de dias sem comida",
-          "Hint": "Isso configura quantos dias os personagens podem sobreviver sem comer antes de sofrer de exaustão automática."
+          "Title": "Máximo de Dias sem Comida",
+          "Hint": "Isso configura quantos dias os personagens podem sobreviver sem comer antes de sofrerem Exaustão."
         },
         "HalfWaterSaveDC": {
-          "Title": "ND de exaustão de metade d'água",
-          "Hint": "Configura o ND da salvaguarda de Constituição que os personagens devem fazer se beberem apenas metade da quantidade necessária de água."
+          "Title": "CD de Exaustão de Metade de Água",
+          "Hint": "Configura a CD da salvaguarda de Constituição que os personagens devem fazer se beberem apenas metade da quantidade necessária de água."
         }
       },
       "PromptRest": {
@@ -321,147 +449,172 @@
       },
       "ShortRest": {
         "IgnoreInactive": {
-          "Title": "Ignorar personagens de jogadores inativos",
-          "Hint": "Se você tiver um Bardo com Canção do Descanso ou um Chef em seu grupo, essas características só serão considerarados se o jogador proprietário estiver ativo e conectado."
+          "Title": "Ignorar Personagens de Jogadores Inativos",
+          "Hint": "Se você tiver um Bardo com Canção do Descanso ou um Chefe em seu grupo, essas características só serão consideradas se o jogador proprietário estiver ativo e conectado."
         },
         "MaxShortRests": {
-          "Title": "Máximo de descansos curtos por descanso longo",
+          "Title": "Máximo de Descansos Curtos por Descanso Longo",
           "Hint": "Isso evita que os personagens façam descansos curtos se atingirem um número de descansos curtos igual a esse número. Fazer um descanso longo reinicia este contador. Colocar 0 aqui desativa esta configuração."
         },
         "MinHitDieSpend": {
-          "Title": "Gasto mínimo de dado de vida",
+          "Title": "Gasto Mínimo de Dado de Vida",
           "Hint": "Isso evita que os personagens terminem um descanso curto se não gastarem esse número de dados de vida. Colocar 0 aqui desativa esta configuração."
         },
         "MaxHitDieSpend": {
-          "Title": "Gasto máximo de dado de vida",
-          "Hint": "Isso evita que os personagens joguem dados de vida depois de rolarem dados de vida iguais a esta configuração. Isso nunca pode ser menor que a configuração \"Gasto mínimo de dado de vida\"."
+          "Title": "Gasto Máximo de Dado de Vida",
+          "Hint": "Isso evita que os personagens joguem dados de vida depois de rolarem dados de vida iguais a esta configuração. Isso nunca pode ser menor que a  da opção \"Gasto Mínimo de Dado de Vida\"."
         },
         "NoHitDice": {
-          "Title": "Desabilite rolagens de dados de vida durante descansos curtos",
+          "Title": "Desabilitar Rolagens de Dados de Vida Durante Descansos Curtos",
           "Hint": "Isso evita que os personagens joguem dados de vida durante descansos curtos."
         },
         "ResourcesRecoveryFraction": {
-          "Title": "Fração de recuperação de recursos",
+          "Title": "Fração de Recuperação de Recursos",
           "Hint": "A fração de recursos para recuperar em um descanso curto."
         },
         "ItemUsesRecoveryFraction": {
-          "Title": "Fração de recuperação de itens",
+          "Title": "Fração de Recuperação de Itens",
           "Hint": "A fração de usos do item (itens, consumíveis e etc.) para recuperar em um descanso curto, se o item tiver cargas com usos limitados por descanso curto."
         },
         "FeatUsesRecoveryFraction": {
-          "Title": "Fração de recuperação de características",
-          "Hint": "A fração de característica usado para recuperar em um descanso curto, se o recurso tiver cargas com usos limitados por descanso curto."
+          "Title": "Fração de Recuperação de Características",
+          "Hint": "A fração de característica usada para recuperar em um descanso curto, se o recurso tiver cargas com usos limitados por descanso curto."
         },
         "PactSpellSlotsLongRecoveryFraction": {
-          "Title": "Fração de recuperação de magias de pacto",
+          "Title": "Fração de Recuperação de Magias de Pacto",
           "Hint": "A fração de espaços de magias de pacto de Bruxo para recuperar em um descanso curto."
         }
       },
       "LongRest": {
         "AutomateExhaustion": {
-          "Title": "Ative a automação de exaustão",
-          "Hint": "Isso faz com que a exaustão seja subtraída por 1 a cada descanso longo."
+          "Title": "Habilitar Automação de Exaustão",
+          "Hint": "Isso faz com que a Exaustão seja subtraída por 1 a cada descanso longo."
         },
         "ExhaustionIntegration": {
           "Title": "Integração do Módulo de Exaustão",
-          "Hint": "Esta configuração permite que você use outros módulos para aplicar seus respectivos efeitos ativos de exaustão nos personagens."
+          "Hint": "Esta configuração permite que você use outros módulos para aplicar seus respectivos efeitos ativos de Exaustão nos personagens."
+        },
+        "OneDnDExhaustion": {
+          "Title": "Habilitar Exaustão do One D&D",
+          "Hint": "No novo One D&D, Exaustão se acumula até um total de 10 (que você ainda morre) e aplica uma penalidade de -1 em Testes de Atributo, Jogadas de Ataque, Salvaguardas e CD de Salvaguarda de Magia por nível de Exaustão. Apenas mude os níveis de Exaustão no personagem e as penalidades serão aplicadas automaticamente.",
+          "Hint2": "Nota: Isso não é compatível com as integrações de Exaustão acima."
+        },
+        "PreventLongRestExhaustionRecovery": {
+          "Title": "Impedir Recuperação de Exaustão de Descanso Longo",
+          "Hint": "Quando ativada, esta configuração previne que personagens se recuperem de Exaustão ao finalizarem um descanso longo."
         },
         "RollHitDice": {
-          "Title": "Ativar rolagens de dados de vida em descanso longo",
+          "Title": "Habilitar Rolagem de Dados de Vida em Descanso Longo",
           "Hint": "Ativa a UI de rolagem de dados de vida na caixa de diálogo do Descanso Longo."
         },
         "PreRegainHitDice": {
-          "Title": "Habilite a recuperação dos dados de vida antes de terminar um descanso longo",
-          "Hint": "Isso faz com que os dados de vida sejam recuperados antes de terminar um descanso longo, para que você possa rola-los como parte desse descanso."
+          "Title": "Habilitar Recuperação de Dados de Vida Antes de Terminar um Descanso Longo",
+          "Hint": "Isso faz com que os dados de vida sejam recuperados antes de terminar um descanso longo, para que você possa rolá-los como parte desse descanso."
         },
         "PreRegainHitDiceBuffer": {
-          "Title": "Ativar buffer máximo de dados de vida",
+          "Title": "Ativar Bônus de Máximo de Dados de Vida",
           "Hint": "Essa configuração faz com que cada personagem sempre recupere os dados de vida, mesmo que isso coloque seus dados de vida acima do máximo, para que nenhum dado de vida seja desperdiçado. Quaisquer dados de vida não utilizados acima de seu máximo desaparecerão assim que o descanso longo for concluído."
         },
+        "PreventRegainHitDice": {
+          "Title": "Impedir Recuperação de Dados de Vida em Descanso Longo se Rolado",
+          "Hint": "Essa configuração faz com que personagens que rolem qualquer dado de vida durante um descanso longo não recuperem nenhum dado no fim do descanso longo. Isso é compatível com a configuração da opção \"Habilitar Recuperação de Dados de Vida Antes de Terminar um Descanso Longo\"."
+        },
+        "MaxHitDieSpend": {
+          "Title": "Gasto Máximo de Dado de Vida em Descanso Longo",
+          "Hint": "Isso previne que personagens rolem dados de vida uma vez que eles tenham rolado uma quantidade de dados igual à esta configuração."
+        },
         "HitPointsRecoveryFraction": {
-          "Title": "Fração de recuperação de pontos de vida",
+          "Title": "Fração de Recuperação de Pontos de Vida",
           "Hint": "A fração de pontos de vida para recuperar em um descanso longo."
         },
         "HitDiceRecoveryFraction": {
-          "Title": "Fração de recuperação de dados de vida",
+          "Title": "Fração de Recuperação de Dados de Vida",
           "Hint": "A fração de dados de vida para recuperar em um descanso longo."
         },
         "HitDiceRecoveryRounding": {
-          "Title": "Arredondamento de recuperação de dados de vida",
+          "Title": "Arredondar Recuperação de Dados de Vida",
           "Hint": "Como arredondar o número de dados de vida recuperados."
         },
         "ResourcesRecoveryFraction": {
-          "Title": "Fração de recuperação de recursos",
+          "Title": "Fração de Recuperação de Recursos",
           "Hint": "A fração de recursos para recuperar em um descanso longo."
         },
         "SpellSlotsRecoveryFraction": {
-          "Title": "Fração de recuperação de espaços de magia",
+          "Title": "Fração de Recuperação de Espaços de Magia",
           "Hint": "A fração de espaços de magia para recuperar em um descanso longo."
         },
+        "CustomSpellSlotRecovery": {
+          "Title": "Habilitar Regra de Recuperação de Pontos de Espaços de Magia",
+          "Hint": "Ativar esta opção faz com que todos que possuam espaços de magia, os recuperem como a característica \"Recuperação Arcana\" do Mago, onde você deve escolher quais espaços de magia irá recuperar. Essa opção só pode ser ativada caso a opção \"Fração de Recuperação de Espaços de Magia\" estiver configurada para Personalizado. Personagens recuperam uma quantidade de espaços de magia iguais à fórmula personalizada da configuração."
+        },
         "PactSpellSlotsLongRecoveryFraction": {
-          "Title": "Fração de recuperação de magias de pacto",
+          "Title": "Fração de Recuperação de Magias de Pacto",
           "Hint": "A fração de espaços de magias de pacto de Bruxo para recuperar em um descanso longo."
         },
         "ItemUsesRecoveryFraction": {
-          "Title": "Fração de recuperação de Itens",
+          "Title": "Fração de Recuperação de Itens",
           "Hint": "A fração de usos de itens (itens, consumíveis e etc.) para se recuperar em um descanso longo."
         },
         "FeatUsesRecoveryFraction": {
-          "Title": "Fração de recuperação de Características",
+          "Title": "Fração de Recuperação de Características",
           "Hint": "A fração de característica usado para se recuperar em um descanso longo."
         },
         "DailyUsesRecoveryFraction": {
-          "Title": "Fração de recuperação de usos diários",
-          "Hint": "A fração de usos diários para se recuperar em um descanso longo (itens com a configuração de recuperação \"Dia\")."
+          "Title": "Fração de Recuperação de Usos Diários",
+          "Hint": "A fração de usos diários para se recuperar em um descanso longo (itens com a configuração de recuperação \"Dia(s)\")."
         },
         "AutomateArmor": {
-          "Title": "Automação de descanso longo com armadura",
-          "Hint": "Com esta opção habilitada, armaduras que não sejam leve dificultam descansos longos. Configure abaixo como isso afeta o descanso longo."
+          "Title": "Automação de Descanso Longo com Armadura",
+          "Hint": "Com esta opção habilitada, armaduras que não sejam leves dificultam descansos longos. Configure abaixo como isso afeta o descanso longo."
         },
         "ArmorHitDiceRecoveryFraction": {
-          "Title": "Fração de recuperação de dados de vida com armadura",
+          "Title": "Fração de Recuperação de Dados de Vida com Armadura",
           "Hint": "Se o personagem estiver usando uma armadura que não seja leve durante um descanso longo, esta é a fração dos dados de vida que ele recupera em um descanso longo."
         },
         "AutomateArmorExhaustion": {
-          "Title": "Armadura impede recuperação de exaustão",
-          "Hint": "Quando habilitada e o personagem estiver usando uma armadura que não seja leve durante um descanso longo, ele não recupera nenhum ponto de exaustão. Requer que a automação de exaustão esteja habilitada."
+          "Title": "Armadura Impede Recuperação de Exaustão",
+          "Hint": "Se ativada e o personagem estiver usando uma armadura que não seja leve durante um descanso longo, ele não recupera nenhum ponto de Exaustão. Requer que a opção \"Automação de Descanso Longo com Armadura\" esteja ativada."
         }
       },
       "ItemNames": {
         "WizardClassName": {
-          "Title": "Nome da classe de mago",
+          "Title": "Nome da Classe Mago",
           "Hint": "Aqui você pode configurar como a classe Mago é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "DruidClassName": {
-          "Title": "Nome da classe de druida",
+          "Title": "Nome da Classe Druida",
           "Hint": "Aqui você pode configurar como a classe Druida é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "BardClassName": {
-          "Title": "Nome da classe de bardo",
-          "Hint": "Aqui você pode configurar como a classe Bardo é chamada em seu jogo. Isso é usado ter certeza de que a Canção do Descanso usada, é a certa. Isso pode ser uma string localizada."
+          "Title": "Nome da Classe Bardo",
+          "Hint": "Aqui você pode configurar como a classe Bardo é chamada em seu jogo. Isso é usado para determinar a Canção do Descanso de quem será usada. Isso pode ser uma string localizada."
         },
         "ArcaneRecovery": {
           "Title": "Nome da Recuperação Arcana",
-          "Hint": "Aqui você pode configurar como o recurso Recuperação Arcana de um mago é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como a característica Recuperação Arcana de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
+        },
+        "PowerSurge": {
+          "Title": "Nome do Surto de Poder",
+          "Hint": "Aqui você pode configurar como a característica Surto de Poder de um Mago da Guerra é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecovery": {
           "Title": "Nome da Recuperação Natural",
-          "Hint": "Aqui você pode configurar como o recurso Recuperação Natural de um druida é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como a característica Recuperação Natural de um Druida da Terra é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "SongOfRest": {
           "Title": "Nome da Canção do Descanso",
-          "Hint": "Aqui você pode configurar como o recurso Canção do Descanso de um bardo é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como a característica Canção do Descanso de um Bardo é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "ChefFeat": {
-          "Title": "Nome do talento Chef",
-          "Hint": "Aqui você pode configurar como o talento Chef é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Talento Chefe",
+          "Hint": "Aqui você pode configurar como o talento Chefe é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "ChefTools": {
-          "Title": "Nome das Ferramentas de Cozinheiro",
-          "Hint": "Aqui você pode configurar como o item ferramentas de cozinheiro é chamado em seu jogo. Isso pode ser uma string localizada. Deixe em branco se quiser desabilitar a necessidade de usar ferramentas para o chef poder usar esse talento."
+          "Title": "Nome dos Utensílios de Cozinheiro",
+          "Hint": "Aqui você pode configurar como o item Utensílios de Cozinheiro é chamado em seu jogo. Isso pode ser uma string localizada. Deixe em branco se quiser desabilitar a necessidade de usar ferramentas para o Chefe poder usar esse talento."
         },
         "DurableFeat": {
-          "Title": "Nome do talento Resistente",
+          "Title": "Nome do Talento Resistente",
           "Hint": "Aqui você pode configurar como o talento Resistente é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "PeriaptItem": {
@@ -474,7 +627,7 @@
         },
         "BlackBloodFeature": {
           "Title": "Nome de Cura do Sangue Negro",
-          "Hint": "Aqui você pode configurar como o recurso Cura do Sangue Negro de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como o traço Cura do Sangue Negro de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
         }
       }
     }
