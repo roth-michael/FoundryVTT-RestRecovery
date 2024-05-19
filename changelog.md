@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.6.6.1
+- Made One D&D sheet modification an option, so as not to conflict with other potentially compatible exhaustion modules
+
 ## Version 1.6.6
 - Added compatibility with "new" 5e actor sheet
   - Now shows resource recovery configuration option above "Favorites" section
