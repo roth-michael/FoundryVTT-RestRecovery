@@ -91,7 +91,7 @@ function patch_actorSheet(app, html, data) {
       ResourceConfig.show({ actor });
     });
   } else if (app.options.classes.includes("dnd5e2")) {
-    if (getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
+    if (getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION_SHEET_OVERRIDE)) {
       let pipsArray = $('.pips[data-prop="system.attributes.exhaustion"]');
       let leftPipsDiv = pipsArray[0];
       let rightPipsDiv = pipsArray[1];
