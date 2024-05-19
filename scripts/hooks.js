@@ -23,7 +23,7 @@ export default function registerHooks(){
       parent.append(tradeButton);
       html.append(parent);
     }
-    const text = !minimalUI ? (itemPiles && tradeButton.length ? "Rest" : "Prompt Rest") : "";
+    const text = !minimalUI ? (itemPiles && tradeButton.length ? game.i18n.localize("REST-RECOVERY.Dialogs.PromptRest.PlayerListShort") : game.i18n.localize("REST-RECOVERY.Dialogs.PromptRest.PlayerListFull")) : "";
     const button = $(`<button type="button" class="${classes}"><i class="fas fa-bed"></i>${text}</button>`);
 
     button.click(() => {

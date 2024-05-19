@@ -134,7 +134,7 @@
   <form bind:this={form} on:submit|preventDefault={submitPrompt} autocomplete=off class="dialog-content">
 
     <div class="rest-recovery-grid-table">
-      <div style="font-size:1rem; margin-bottom:0.25rem;">Player characters to prompt rests for</div>
+      <div style="font-size:1rem; margin-bottom:0.25rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.PromptCharactersRest")}</div>
       <div style="text-align: center;">
         <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;"
            on:click={() => { addPlayer() }}></i>
@@ -152,7 +152,7 @@
         </div>
       {/each}
 
-      <div style="font-size: 1rem; margin-top:0.25rem; margin-bottom:0.25rem;">Rest Profile</div>
+      <div style="font-size: 1rem; margin-top:0.25rem; margin-bottom:0.25rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.RestProfile")}</div>
       <div></div>
 
       <select bind:value={activeProfile}>

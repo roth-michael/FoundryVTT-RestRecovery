@@ -1,5 +1,12 @@
 # Rest Recovery Changelog
 
+## Version 1.6.6
+- Added compatibility with "new" 5e actor sheet
+  - Now shows resource recovery configuration option above "Favorites" section
+  - If One D&D exhaustion exabled, will now have 10 exhaustion pips to click
+    - Currently exhaustion 6-10 will show the wrong icon, as there are no core icons for those exhaustion levels (besides 6, which shows a little red skull exhaustion icon)
+- Translation updates (thanks Kharmans!)
+
 ## Version 1.6.5
 
 - Fixed compatibility with Tidy5e sheets
