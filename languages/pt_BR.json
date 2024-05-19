@@ -433,23 +433,6 @@
           "Hint": "Configura a CD da salvaguarda de Constituição que os personagens devem fazer se beberem apenas metade da quantidade necessária de água."
         }
       },
-      "PromptRest": {
-        "Title": "Solicitar Descanso aos Jogadores",
-        "ConfigureProfiles": "Configurar Perfis",
-        "Short": "Descanso Curto",
-        "Long": "Descanso Longo",
-        "NewDayTitle": "Novo Dia",
-        "NoNewDayTitle": "Não é um Novo Dia",
-        "NewDayHint": "Isso faz com que os personagens que terminarem o descanso recuperem habilidades que recarreguem \"por dia\".",
-        "NewDaySimpleCalendarHint": "Baseado no tipo selecionado abaixo, personagens que terminarem o descanso recuperam habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
-        "NoNewDaySimpleCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
-        "NewDay": "(novo dia)",
-        "Submit": "Enviar",
-        "PlayerListShort": "Descansar",
-        "PlayerListFull": "Solicitar Descanso",
-        "PromptCharactersRest": "Personagens de Jogadores para Solicitar Descansos",
-        "RestProfile": "Perfil de Descanso"
-      },
       "ShortRest": {
         "IgnoreInactive": {
           "Title": "Ignorar Personagens de Jogadores Inativos",
@@ -501,6 +484,10 @@
           "Title": "Habilitar Exaustão do One D&D",
           "Hint": "No novo One D&D, Exaustão se acumula até um total de 10 (que você ainda morre) e aplica uma penalidade de -1 em Testes de Atributo, Jogadas de Ataque, Salvaguardas e CD de Salvaguarda de Magia por nível de Exaustão. Apenas mude os níveis de Exaustão no personagem e as penalidades serão aplicadas automaticamente.",
           "Hint2": "Nota: Isso não é compatível com as integrações de Exaustão acima."
+        },
+        "OneDnDExhaustionSheetOverride": {
+          "Title": "Habilitar Substituição de Exaustão do One D&D na Ficha",
+          "Hint": "Ativa a modificação da ficha para mostrar 10 níveis de Exaustão ao invés de apenas 6."
         },
         "PreventLongRestExhaustionRecovery": {
           "Title": "Impedir Recuperação de Exaustão de Descanso Longo",
