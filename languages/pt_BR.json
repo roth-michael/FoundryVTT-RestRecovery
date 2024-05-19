@@ -302,6 +302,23 @@
           "Hint": "Configura o ND da salvaguarda de Constituição que os personagens devem fazer se beberem apenas metade da quantidade necessária de água."
         }
       },
+      "PromptRest": {
+        "Title": "Solicitar Descanso aos Jogadores",
+        "ConfigureProfiles": "Configurar Perfis",
+        "Short": "Descanso Curto",
+        "Long": "Descanso Longo",
+        "NewDayTitle": "Novo Dia",
+        "NoNewDayTitle": "Não é um Novo Dia",
+        "NewDayHint": "Isso faz com que os personagens que terminarem o descanso recuperem habilidades que recarreguem \"por dia\".",
+        "NewDaySimpleCalendarHint": "Baseado no tipo selecionado abaixo, personagens que terminarem o descanso recuperam habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
+        "NoNewDaySimpleCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
+        "NewDay": "(novo dia)",
+        "Submit": "Enviar",
+        "PlayerListShort": "Descansar",
+        "PlayerListFull": "Solicitar Descanso",
+        "PromptCharactersRest": "Personagens de Jogadores para Solicitar Descansos",
+        "RestProfile": "Perfil de Descanso"
+      },
       "ShortRest": {
         "IgnoreInactive": {
           "Title": "Ignorar personagens de jogadores inativos",
