@@ -91,22 +91,6 @@ function patch_actorSheet(app, html, data) {
       ResourceConfig.show({ actor });
     });
   } else if (app.options.classes.includes("dnd5e2")) {
-    if (getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) && getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION_SHEET_OVERRIDE)) {
-      let pipsArray = $('.pips[data-prop="system.attributes.exhaustion"]');
-      let leftPipsDiv = pipsArray[0];
-      let rightPipsDiv = pipsArray[1];
-      let pipsElements = []
-      for (let i = 1; i < 11; i++) {
-        let isFilled = actor.system.attributes.exhaustion >= i;
-        pipsElements.push($(`<button type="button" style="width:12px;height:12px;" class="pip${isFilled ? " filled" : ""}${i == 10 ? " death" : ""}" data-n="${i}" data-tooltip="Exhaustion Level ${i}" aria-label="Exhaustion Level ${i}" aria-pressed="${isFilled}"></button>`)[0])
-      }
-      leftPipsDiv.style["column-gap"] = "1px";
-      leftPipsDiv.style["padding-right"] = "6px";
-      leftPipsDiv.replaceChildren(...pipsElements.slice(0,5));
-      rightPipsDiv.style["column-gap"] = "1px";
-      rightPipsDiv.style["padding-left"] = "6px";
-      rightPipsDiv.replaceChildren(...pipsElements.slice(5));
-    }
     let targetElem = html.find(".favorites")[0];
     if (!targetElem) return;
     let border = false;

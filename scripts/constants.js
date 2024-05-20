@@ -1,6 +1,8 @@
 const CONSTANTS = {
   MODULE_NAME: "rest-recovery",
   FLAG_NAME: "data",
+  EXHAUSTION_CORE_PATH: "systems/dnd5e/icons/svg/statuses/exhaustion.svg",
+  EXHAUSTION_ONE_DND_PATH: "modules/rest-recovery/assets/exhaustion.svg",
   SETTINGS: {
     
     MIGRATION_VERSION: "migration-version",
@@ -53,7 +55,6 @@ const CONSTANTS = {
     AUTOMATE_EXHAUSTION: "automate-exhaustion",
     EXHAUSTION_INTEGRATION: "exhaustion-integration",
     ONE_DND_EXHAUSTION: "one-dnd-exhaustion",
-    ONE_DND_EXHAUSTION_SHEET_OVERRIDE: "one-dnd-exhaustion-sheet-override",
     PREVENT_LONG_REST_EXHAUSTION_RECOVERY: "long-rest-prevent-exhaustion-recovery",
     LONG_REST_ROLL_HIT_DICE: "long-rest-roll-hit-dice",
     PRE_REST_REGAIN_HIT_DICE: "pre-rest-regain-hit-dice",
@@ -138,7 +139,8 @@ const CONSTANTS = {
   },
   
   MODULES: {
-    DFREDS: "dfreds-convenient-effects"
+    DFREDS: "dfreds-convenient-effects",
+    ALTERNATIVE_EXHAUSTION: "alternative-exhaustion-5e"
   },
 
   PERIAPT_MECHANICS: {
@@ -494,6 +496,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds"
     },
     default: CONSTANTS.FRACTIONS.NONE,
+    hidden: true // For now, since was only DFreds CE and that's not currently compatible with any type of exhaustion automation
   },
   [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",
@@ -503,22 +506,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     group: "longrest",
     dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value;
+      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value || game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
     },
     customSettingsDialog: true,
-    config: false,
-    default: false,
-    type: Boolean
-  },
-  [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION_SHEET_OVERRIDE]: {
-    name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustionSheetOverride.Title",
-    hint: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustionSheetOverride.Hint",
-    scope: "world",
-    group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION],
-    validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value;
-    },
     config: false,
     default: false,
     type: Boolean
