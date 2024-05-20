@@ -483,7 +483,7 @@
         "OneDnDExhaustion": {
           "Title": "Habilitar Exaustão do One D&D",
           "Hint": "No novo One D&D, Exaustão se acumula até um total de 10 (que você ainda morre) e aplica uma penalidade de -1 em Testes de Atributo, Jogadas de Ataque, Salvaguardas e CD de Salvaguarda de Magia por nível de Exaustão. Apenas mude os níveis de Exaustão no personagem e as penalidades serão aplicadas automaticamente.",
-          "Hint2": "Nota: Isso não é compatível com as integrações de Exaustão acima."
+          "Hint2": "Nota: Isso não é compatível com o módulo <em>Alternative Exhaustion 5e</em>."
         },
         "OneDnDExhaustionSheetOverride": {
           "Title": "Habilitar Substituição de Exaustão do One D&D na Ficha",
