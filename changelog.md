@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.6.8
+- Added reference journal entry for One D&D Exhaustion condition (in Brazilian Portuguese as well - thanks Kharmans!)
+
 ## Version 1.6.7
 - Various exhaustion fixes
   - New icons for One D&D Exhaustion levels (thanks mythacri!)
