@@ -2,7 +2,7 @@
   "id": "rest-recovery",
   "title": "Rest Recovery for 5E",
   "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "authors": [
     {
       "name": "Wasp",
@@ -65,6 +65,25 @@
     "verified": "11",
     "maximum": "11"
   },
+  "packs": [
+    {
+      "name": "exhaustion",
+      "label": "exhaustion",
+      "path": "./packs/exhaustion.db",
+      "entity": "JournalEntry",
+      "type": "JournalEntry"
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Rest Recovery 5e",
+      "color": "#200da6",
+      "folders": [],
+      "packs": [
+        "exhaustion"
+      ]
+    }
+  ],
   "socket": true,
   "url": "https://github.com/roth-michael/FoundryVTT-RestRecovery",
   "manifest": "https://github.com/roth-michael/FoundryVTT-RestRecovery/releases/latest/download/module.json",
