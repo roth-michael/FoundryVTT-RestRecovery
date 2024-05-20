@@ -1603,7 +1603,7 @@ export default class RestWorkflow {
 
   static patchAllConsumableItems(actor) {
 
-    const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Waterskin") && foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
+    const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Rations (1 day)" || item.name === "Waterskin") && foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
 
     const updates = items.map(item => {
       if (item.name.startsWith("Rations")) {
