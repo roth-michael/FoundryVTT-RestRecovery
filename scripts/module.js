@@ -24,6 +24,8 @@ Hooks.once("init", () => {
 Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
+  gameSettings.cleanup();
+  gameSettings.configureOneDndExhaustion();
   // QuickSetup.show();
   //new SettingsShim().render(true);
   // game.actors.getName("Akra (Dragonborn Cleric)").longRest()

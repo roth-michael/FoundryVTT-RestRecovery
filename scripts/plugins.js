@@ -15,7 +15,7 @@ export default class plugins {
   static handleExhaustion(...args) {
     const integration = getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION);
     const integrationFunction = this._integrationMap[integration+"-exhaustion"];
-    if (integrationFunction) {
+    if (integrationFunction && false) { // Temporarily disable integrations, since we're hiding the setting but not getting rid of it
       return integrationFunction(...args);
     }
     return this.handleNativeExhaustion(...args);

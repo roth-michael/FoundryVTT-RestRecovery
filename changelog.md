@@ -1,5 +1,14 @@
 # Rest Recovery Changelog
 
+## Version 1.6.7
+- Various exhaustion fixes
+  - New icons for One D&D Exhaustion levels (thanks mythacri!)
+  - The "exhaustion integrations" option is currently disabled, as the only option (DFreds CE) doesn't play nice with any exhaustion automations
+    - You can still use CE (and even set effects to "replace" now, if you want), just know that the CE exhaustion effects will not be applied
+  - If you use the [Alternative Exhaustion 5e](https://foundryvtt.com/packages/alternative-exhaustion-5e) module, you won't have to/be able to enable One D&D Exhaustion in the Rest Recovery settings (it will already be handled by Alternative Exhaustion)
+    - If you currently use Alternative Exhaustion with "Manual Adjustment" enabled, and decide to remove it in favor of only using Rest Recovery, ensure you remove any "Global Bonuses" you have set which rely on exhaustion, as the -1 per exhaustion level is automatically handled by Rest Recovery
+  - Fixed an issue where using One D&D Exhaustion resulted in the "normal" exhaustion debuffs happening on top of the expected debuffs
+
 ## Version 1.6.6.1
 - Made One D&D sheet modification an option, so as not to conflict with other potentially compatible exhaustion modules
 
