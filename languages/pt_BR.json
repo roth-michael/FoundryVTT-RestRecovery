@@ -1,5 +1,8 @@
 {
   "REST-RECOVERY": {
+    "JournalUuids": {
+      "Exhaustion": "Compendium.rest-recovery.exhaustion.JournalEntry.TqAqEUUR8LyEDi7q.JournalEntryPage.G9wR2m7E6NheJMbV" 
+    },
     "ClassNames": {
       "Wizard": "Mago",
       "Druid": "Druida",

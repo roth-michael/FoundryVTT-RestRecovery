@@ -176,6 +176,8 @@ class RestRecoverySettings {
         styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {column-gap:1px;padding-left:6px}', 0);
         CONFIG.DND5E.conditionTypes.exhaustion.levels = 10;
         CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
+        CONFIG.DND5E.conditionTypes.exhaustion.oldReference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
+        CONFIG.DND5E.conditionTypes.exhaustion.reference = game.i18n.localize("REST-RECOVERY.JournalUuids.Exhaustion");
         CONFIG.DND5E.conditionEffects.halfMovement.delete("exhaustion-2");
         CONFIG.DND5E.conditionEffects.halfHealth.delete("exhaustion-4");
         CONFIG.DND5E.conditionEffects.noMovement.delete("exhaustion-5");
@@ -196,6 +198,7 @@ class RestRecoverySettings {
         styleSheet.deleteRule(0);
         CONFIG.DND5E.conditionTypes.exhaustion.levels = 6;
         CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_CORE_PATH;
+        CONFIG.DND5E.conditionTypes.exhaustion.reference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
         CONFIG.DND5E.conditionEffects.halfMovement.add("exhaustion-2");
         CONFIG.DND5E.conditionEffects.halfHealth.add("exhaustion-4");
         CONFIG.DND5E.conditionEffects.noMovement.add("exhaustion-5");
