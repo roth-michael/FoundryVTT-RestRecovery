@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.6.9.1
+- Fixed missing compendium & asset data
+
 ## Version 1.6.9
 - Added automatic recognition of "Rations (1 day)" imported using DDBI.
 
