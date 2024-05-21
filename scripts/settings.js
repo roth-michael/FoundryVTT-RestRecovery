@@ -168,12 +168,14 @@ class RestRecoverySettings {
     // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
     if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0"}, CONFIG.DND5E.conditionTypes.exhaustion))
     if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
-    let styleSheet = Array.from(document.styleSheets).find(sheet => sheet.href.includes(game.modules.get(CONSTANTS.MODULE_NAME).styles.first()));
+    let styleSheet = Array.from(document.styleSheets).find(sheet => sheet.href?.includes(game.modules.get(CONSTANTS.MODULE_NAME)?.styles?.first()));
     if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
       if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 10) {
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"] > .pip {width:12px;height:12px}', 0);
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {column-gap:1px;padding-right:6px}', 0);
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {column-gap:1px;padding-left:6px}', 0);
+        if (styleSheet) {
+          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"] > .pip {width:12px;height:12px}', 0);
+          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {column-gap:1px;padding-right:6px}', 0);
+          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {column-gap:1px;padding-left:6px}', 0);
+        }
         CONFIG.DND5E.conditionTypes.exhaustion.levels = 10;
         CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
         CONFIG.DND5E.conditionTypes.exhaustion.oldReference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
@@ -193,9 +195,11 @@ class RestRecoverySettings {
       }
     } else {
       if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 6) {
-        styleSheet.deleteRule(0);
-        styleSheet.deleteRule(0);
-        styleSheet.deleteRule(0);
+        if (styleSheet) {
+          styleSheet.deleteRule(0);
+          styleSheet.deleteRule(0);
+          styleSheet.deleteRule(0);
+        }
         CONFIG.DND5E.conditionTypes.exhaustion.levels = 6;
         CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_CORE_PATH;
         CONFIG.DND5E.conditionTypes.exhaustion.reference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
