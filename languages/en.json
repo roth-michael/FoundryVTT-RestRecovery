@@ -27,6 +27,10 @@
       "DurableFeat": "Durable",
       "BlackBloodFeature": "Black Blood Healing"
     },
+    "OneDnDExhaustionEffect": {
+      "Name": "Exhaustion (One D&D)",
+      "Description": "With One D&D exhaustion, a creature suffers cumulative -1 penalties per level of exhaustion to all d20 rolls (attack rolls, ability checks, skill checks, and saving throws) and spell DCs. When a creature reaches 10 levels of exhaustion, they die."
+    },
     "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
     "PatchedConsumable": "Updated {itemName} with uses.",
     "Modules": {

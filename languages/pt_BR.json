@@ -27,6 +27,10 @@
       "DurableFeat": "Resistente",
       "BlackBloodFeature": "Cura do Sangue Negro"
     },
+    "OneDnDExhaustionEffect": {
+      "Name": "Exaustão (One D&D)",
+      "Description": "Com exaustão do One D&D, uma criatura sofre uma penalidade cumulativa de -1 por nível de exaustão em todas as rolagens de d20 (jogadas de ataque, testes de atributo, testes de perícias e salvaguardas) e CD de suas magias. Quando uma criatura atingir 10 níveis de exaustão, ela morre."
+    },
     "PatchedRecovery": "O(a) {recoveryName} de {actorName} foi usado(a).",
     "PatchedConsumable": "{itemName} atualizado(a) com usos.",
     "Modules": {
