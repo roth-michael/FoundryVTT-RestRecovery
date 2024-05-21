@@ -81,7 +81,7 @@ class RestRecoverySettings {
   reset(key) {
     const setting = this.settings.get(key);
     setting.store.set(setting.default);
-    setSetting(key, setting.default); // Shouldn't be necessary.. but seems to be
+    if (game.ready) setSetting(key, setting.default); // Shouldn't be necessary.. but seems to be
   }
 
   resetAll() {
@@ -183,7 +183,7 @@ class RestRecoverySettings {
         CONFIG.DND5E.conditionEffects.noMovement.delete("exhaustion-5");
         foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
       }
-      if (this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) {
+      if (false && this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) { // Temporarily disable integrations, since we're hiding the setting but not getting rid of it
         await plugins.createConvenientEffect();
       }
       if (game.modules.get("tidy5e-sheet")?.active) {

@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.6.9.2
+- Fixed bug where One D&D Exhaustion effect would not be removed if exhaustion on an actor changed after reverting from One D&D to normal exhaustion
+
 ## Version 1.6.9.1
 - Fixed missing compendium & asset data
 
