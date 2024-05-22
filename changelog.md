@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.6.9.4
+- Fixed (one) error logged to console on world startup
+
 ## Version 1.6.9.3
 - Fixed bug where world would restart & UI would become unusable after trying to save settings (HUGE thanks to Christopher on discord)
 

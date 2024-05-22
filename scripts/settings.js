@@ -189,7 +189,7 @@ class RestRecoverySettings {
         await plugins.createConvenientEffect();
       }
       if (game.modules.get("tidy5e-sheet")?.active) {
-        await game.modules.get("tidy5e-sheet").api.config.exhaustion.useSpecificLevelExhaustion({
+        await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
           totalLevels: 10
         });
       }
@@ -209,7 +209,7 @@ class RestRecoverySettings {
         foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
       }
       if (game.modules.get("tidy5e-sheet")?.active) {
-        await game.modules.get("tidy5e-sheet").api.config.exhaustion.useSpecificLevelExhaustion({
+        await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
           totalLevels: 6
         });
       }
