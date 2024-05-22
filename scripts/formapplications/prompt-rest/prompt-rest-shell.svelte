@@ -1,16 +1,16 @@
 <script>
   import { getContext } from 'svelte';
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
+  import { localize } from '#runtime/svelte/helper';
   import { writable } from "svelte/store";
-  import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+  import { ApplicationShell } from '#runtime/svelte/component/core';
   import CONSTANTS from "../../constants.js";
   import * as lib from "../../lib/lib.js";
   import SettingsShim from "../settings/settings.js";
   import SocketHandler from "../../sockets.js";
-  import { TJSDialog } from "@typhonjs-fvtt/runtime/_dist/svelte/application/index.js";
+  import { TJSDialog } from "#runtime/svelte/application";
   import CustomSettings from "../custom-settings-dialog/CustomSettingsDialog.svelte";
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   export let elementRoot;
 

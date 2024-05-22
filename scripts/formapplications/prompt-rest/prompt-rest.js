@@ -1,5 +1,5 @@
 import PromptRestShell from './prompt-rest-shell.svelte';
-import { SvelteApplication } from '@typhonjs-fvtt/runtime/svelte/application';
+import { SvelteApplication } from '#runtime/svelte/application';
 
 export default class PromptRestDialog extends SvelteApplication {
 

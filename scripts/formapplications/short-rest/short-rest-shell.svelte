@@ -1,9 +1,9 @@
 <script>
   import { getContext } from 'svelte';
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
-  import { TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
-  import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
-  import { TJSDocument } from '@typhonjs-fvtt/runtime/svelte/store';
+  import { localize } from '#runtime/svelte/helper';
+  import { TJSDialog } from '#runtime/svelte/application';
+  import { ApplicationShell } from '#runtime/svelte/component/core';
+  import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
 
   import HealthBar from "../components/HealthBar.svelte";
   import Dialog from "../components/Dialog.svelte";
@@ -15,7 +15,7 @@
   import CONSTANTS from "../../constants.js";
   import Steps from "../rest-steps/Steps.svelte";
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   export let elementRoot;
   const actor = application.options.actor;

@@ -1,9 +1,9 @@
-import { SvelteApplication, TJSDialog } from '@typhonjs-fvtt/runtime/svelte/application';
+import { SvelteApplication, TJSDialog } from '#runtime/svelte/application';
 import SettingsShell from './settings-shell.svelte';
 import SaveProfileDialog from "./SaveProfileDialog.svelte";
 import { gameSettings } from "../../settings.js";
 
-class Settings extends SvelteApplication {
+class SettingsApp extends SvelteApplication {
 
   constructor(options = {}, dialogData = {}) {
 
@@ -135,7 +135,7 @@ export default class SettingsShim extends FormApplication {
    */
   constructor() {
     super({});
-    Settings.show();
+    SettingsApp.show();
   }
 
   async _updateObject(event, formData) {

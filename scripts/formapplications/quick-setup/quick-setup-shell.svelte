@@ -1,13 +1,13 @@
 <script>
 
-  import { ApplicationShell } from "@typhonjs-fvtt/runtime/svelte/component/core";
-  import { localize } from "@typhonjs-fvtt/runtime/svelte/helper";
+  import { ApplicationShell } from "#runtime/svelte/component/core";
+  import { localize } from "#runtime/svelte/helper";
 	import { getContext } from "svelte";
   import { getSetting, setSetting } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
   import SettingsShim from "../settings/settings.js";
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   export let elementRoot;
 
