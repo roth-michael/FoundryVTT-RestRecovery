@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.7.0
+- Updated TyphonJS and Svelte to more current releases, should see no change in user experience, but maybe some improved performance
+- Fixed an error being logged to console every time the settings menu was opened
+
 ## Version 1.6.9.4
 - Fixed (one) error logged to console on world startup
 
