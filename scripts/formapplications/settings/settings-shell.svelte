@@ -1,16 +1,16 @@
 <script>
 
   import { getContext } from 'svelte';
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
-  import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+  import { localize } from '#runtime/svelte/helper';
+  import { ApplicationShell } from '#runtime/svelte/component/core';
   import { gameSettings } from "../../settings.js";
-  import { TJSDialog } from "@typhonjs-fvtt/runtime/svelte/application";
+  import { TJSDialog } from "#runtime/svelte/application";
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
   import SaveProfileDialog from "./SaveProfileDialog.svelte";
   import { QuickSetup } from "../quick-setup/quick-setup.js";
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   gameSettings.cleanup();
 

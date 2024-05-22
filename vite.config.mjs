@@ -3,25 +3,22 @@ import resolve from '@rollup/plugin-node-resolve'; // This resolves NPM modules 
 import preprocess from 'svelte-preprocess';
 import {
   postcssConfig,
-  terserConfig,
-  typhonjsRuntime
+  terserConfig
 } from '@typhonjs-fvtt/runtime/rollup';
+
+const s_PACKAGE_ID = 'modules/rest-recovery';
+
+const s_SVELTE_HASH_ID = 'rr';
 
 const s_COMPRESS = false;  // Set to true to compress the module bundle.
 const s_SOURCEMAPS = true; // Generate sourcemaps for the bundle (recommended).
 
-// EXPERIMENTAL: Set to true to enable linking against the TyphonJS Runtime Library module.
-// You must add a Foundry module dependency on the `typhonjs` Foundry package or manually install it in Foundry from:
-// https://github.com/typhonjs-fvtt-lib/typhonjs/releases/latest/download/module.json
-const s_TYPHONJS_MODULE_LIB = false;
 
 // Used in bundling.
 const s_RESOLVE_CONFIG = {
   browser: true,
   dedupe: ['svelte']
 };
-
-let module_name = "rest-recovery";
 
 // ATTENTION!
 // You must change `base` and the `proxy` strings replacing `/modules/item-piles/` with your
@@ -31,7 +28,7 @@ export default () => {
   /** @type {import('vite').UserConfig} */
   return {
     root: 'scripts/',                             // Source location / esbuild root.
-    base: '/modules/rest-recovery/',   // Base module path that 30001 / served dev directory.
+    base: `/${s_PACKAGE_ID}/`,   // Base module path that 30001 / served dev directory.
     publicDir: false,                         // No public resources to copy.
     cacheDir: '../.vite-cache',               // Relative from root directory.
     
@@ -58,8 +55,8 @@ export default () => {
       port: 29999,
       open: false,
       proxy: {
-        '^(/modules/rest-recovery/languages)': 'http://127.0.0.1:30000',
-        '^(?!/modules/rest-recovery/)': 'http://127.0.0.1:30000',
+        [`^(/${s_PACKAGE_ID}/(languages|assets|packs|style.css))`]: 'http://127.0.0.1:30000',
+        [`^(?!/${s_PACKAGE_ID}/)`]: 'http://127.0.0.1:30000',
         '/socket.io': { target: 'ws://127.0.0.1:30000', ws: true }
       }
     },
@@ -81,23 +78,13 @@ export default () => {
     
     plugins: [
       svelte({
-        preprocess: preprocess(),
-        onwarn: (warning, handler) => {
-          // Suppress `a11y-missing-attribute` for missing href in <a> links.
-          // Foundry doesn't follow accessibility rules.
-          if (warning.message.includes(`<a> element should have an href attribute`)) {
-            return;
-          }
-          
-          // Let Rollup handle all other warnings normally.
-          handler(warning);
+        compilerOptions: {
+          cssHash: ({ hash, css }) => `svelte-${s_SVELTE_HASH_ID}-${hash(css)}`
         },
+        preprocess: preprocess()
       }),
       
       resolve(s_RESOLVE_CONFIG),    // Necessary when bundling npm-linked packages.
-      
-      // When s_TYPHONJS_MODULE_LIB is true transpile against the Foundry module version of TRL.
-      s_TYPHONJS_MODULE_LIB && typhonjsRuntime()
     ]
   };
 };

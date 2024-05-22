@@ -1,7 +1,7 @@
-import { TJSDialog } from "@typhonjs-fvtt/runtime/svelte/application";
+import { TJSDialog } from "#runtime/svelte/application";
 import CustomDialog from "./formapplications/components/Dialog.svelte";
 import { wait } from "./lib/lib.js";
-import { localize } from "@typhonjs-fvtt/runtime/_dist/svelte/helper/index.js";
+import { localize } from "#runtime/svelte/helper";
 import CONSTANTS from "./constants.js";
 
 export default class SocketHandler {

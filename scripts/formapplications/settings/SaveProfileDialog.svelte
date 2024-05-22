@@ -1,8 +1,8 @@
 <script>
   import { getContext } from 'svelte';
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
+  import { localize } from '#runtime/svelte/helper';
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   export let form;
   export let existingProfiles;

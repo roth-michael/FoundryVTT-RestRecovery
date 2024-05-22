@@ -1,6 +1,6 @@
 <script>
 
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
+  import { localize } from '#runtime/svelte/helper';
   import CONSTANTS from "../../constants.js";
   import { gameSettings } from "../../settings.js";
   import { writable } from "svelte/store";

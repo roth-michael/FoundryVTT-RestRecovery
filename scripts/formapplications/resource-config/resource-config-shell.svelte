@@ -1,13 +1,13 @@
 <script>
 
   import { getContext } from 'svelte';
-  import { localize } from '@typhonjs-fvtt/runtime/svelte/helper';
-  import { ApplicationShell } from '@typhonjs-fvtt/runtime/svelte/component/core';
+  import { localize } from '#runtime/svelte/helper';
+  import { ApplicationShell } from '#runtime/svelte/component/core';
 
   import * as lib from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
 
-  const { application } = getContext('external');
+  const { application } = getContext('#external');
 
   export let elementRoot;
   export let actor;
