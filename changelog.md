@@ -1,7 +1,7 @@
 # Rest Recovery Changelog
 
 ## Version 1.8.0
-- Should now be V12 compatible (and dnd5e 3.2) while maintaining V11 & 3.1.x functionality
+- Should now be V12 and dnd5e 3.2 compatible while maintaining V11 & 3.1.x functionality
 
 ## Version 1.7.0
 - Updated TyphonJS and Svelte to more current releases, should see no change in user experience, but maybe some improved performance
