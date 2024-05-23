@@ -77,9 +77,9 @@ export function setSetting(key, value) {
  * @param {boolean} warn
  * @returns {Roll}
  */
-export function evaluateFormula(formula, data, warn = true) {
+export async function evaluateFormula(formula, data, warn = true) {
   const rollFormula = Roll.replaceFormulaData(formula, data, { warn });
-  return new Roll(rollFormula).evaluate({ async: false });
+  return await new Roll(rollFormula).evaluate();
 }
 
 export function getConsumableItemsFromActor(actor) {

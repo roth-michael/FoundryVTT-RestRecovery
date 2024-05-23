@@ -48,9 +48,18 @@
   let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
 
   const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
-  const maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
-    ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
-    : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+  // TODO: Does this work?
+  let maxSpendHitDice;
+  if (typeof maxHitDiceSpendMultiplier === "string") {
+    lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData()).then(res => {
+      maxSpendHitDice = Math.floor(res?.total ?? 0);
+    });
+  } else {
+    maxSpendHitDice = Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+  }
+  // const maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
+  //   ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
+  //   : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
 
   const showArmorCheckbox = getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && workflow.healthData.hasNonLightArmor;
 

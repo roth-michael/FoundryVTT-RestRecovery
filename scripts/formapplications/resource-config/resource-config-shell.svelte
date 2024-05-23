@@ -25,14 +25,14 @@
     })
     .filter((resource, index) => resource.path !== "count" && index < count);
 
-  function requestSubmit() {
+  async function requestSubmit() {
     let valid = true;
     const actorData = actor.getRollData();
     for (let i = 0; i < resources.length; i++) {
       const resource = resources[i];
       if (!resource.formula) continue;
       try {
-        const roll = lib.evaluateFormula(resource.formula, actorData);
+        const roll = await lib.evaluateFormula(resource.formula, actorData);
         if (!roll) {
           valid = false;
         }

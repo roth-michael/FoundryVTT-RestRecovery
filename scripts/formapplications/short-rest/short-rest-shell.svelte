@@ -36,9 +36,14 @@
 
   const minSpendHitDice = enableRollHitDice ? getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0 : 0;
   const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
-  let maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
-    ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)
-    : Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+  let maxSpendHitDice;
+  if (typeof maxHitDiceSpendMultiplier === "string") {
+    lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData()).then(res => {
+      maxSpendHitDice = Math.floor(res?.total ?? 0);
+    });
+  } else {
+    maxSpendHitDice = Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+  }
   maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
 
   const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
@@ -156,8 +161,8 @@
   $:
   {
     $doc;
-    const { data } = doc.updateOptions;
-    const hpUpdate = foundry.utils.getProperty(data, "system.attributes.hp");
+    const { data, renderData } = doc.updateOptions;
+    const hpUpdate = foundry.utils.getProperty(data ?? renderData, "system.attributes.hp");
     if (hpUpdate) {
       updateHealthData();
     }
