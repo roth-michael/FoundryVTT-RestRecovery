@@ -30,10 +30,15 @@
 
   const actorExhaustion = foundry.utils.getProperty(actor, "system.attributes.exhaustion") ?? 0;
   const actorDaysWithoutFood = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
-  const actorExhaustionThreshold = evaluateFormula(
-    getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
-    actor.getRollData()
-  )?.total ?? 4;
+  // TODO: does this work?
+  let actorExhaustionThreshold = 4;
+  evaluateFormula(getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER), actor.getRollData()).then(res => {
+    if (res?.total) actorExhaustionThreshold = res.total;
+  })
+  // const actorExhaustionThreshold = evaluateFormula(
+  //   getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
+  //   actor.getRollData()
+  // )?.total ?? 4;
 
   let hasAccessToFood = false;
   let halfFood = false;

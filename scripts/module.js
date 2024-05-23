@@ -14,6 +14,7 @@ import { QuickSetup } from "./formapplications/quick-setup/quick-setup.js";
 Hooks.once("init", () => {
   SocketHandler.initialize();
   gameSettings.initialize();
+  gameSettings.configureOneDndExhaustion();
   registerLibwrappers();
   registerSheetOverrides();
   RestWorkflow.initialize();
@@ -25,8 +26,12 @@ Hooks.once("ready", () => {
   migrate();
   game.restrecovery = API;
   gameSettings.cleanup();
-  gameSettings.configureOneDndExhaustion();
+  setTimeout(RestWorkflow.ready, 1000);
+  console.log("Rest Recovery 5e | Ready");
   // QuickSetup.show();
   //new SettingsShim().render(true);
   // game.actors.getName("Akra (Dragonborn Cleric)").longRest()
-})
+});
+
+Hooks.once("tidy5e-sheet.ready", gameSettings.updateTidy5e);
+Hooks.once("dfreds-convenient-effects.ready", gameSettings.updateStatusEffects);

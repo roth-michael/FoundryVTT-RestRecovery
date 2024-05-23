@@ -165,8 +165,7 @@ class RestRecoverySettings {
   }
 
   async configureOneDndExhaustion() {
-    // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
-    if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0"}, CONFIG.DND5E.conditionTypes.exhaustion))
+    this.updateStatusEffects();
     if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
     let styleSheet = Array.from(document.styleSheets).find(sheet => sheet.href?.includes(game.modules.get(CONSTANTS.MODULE_NAME)?.styles?.first()));
     if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
@@ -189,9 +188,7 @@ class RestRecoverySettings {
         await plugins.createConvenientEffect();
       }
       if (game.modules.get("tidy5e-sheet")?.active) {
-        await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
-          totalLevels: 10
-        });
+        await this.updateTidy5e();
       }
     } else {
       if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 6) {
@@ -209,11 +206,21 @@ class RestRecoverySettings {
         foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
       }
       if (game.modules.get("tidy5e-sheet")?.active) {
-        await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
-          totalLevels: 6
-        });
+        await this.updateTidy5e();
       }
     }
+  }
+
+  async updateTidy5e() {
+    let isOneDnd = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
+    await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
+      totalLevels: isOneDnd ? 10 : 6
+    });
+  }
+
+  updateStatusEffects() {
+    // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
+    if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0"}, CONFIG.DND5E.conditionTypes.exhaustion));
   }
 
   initialize() {
