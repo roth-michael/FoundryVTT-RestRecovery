@@ -1,6 +1,7 @@
 .idea/*
 node_modules/*
 .vite-cache/*
+.vscode/*
 module.js
 module.js.map
 style.css

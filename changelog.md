@@ -1,5 +1,14 @@
 # Rest Recovery Changelog
 
+## Version 1.9.0
+- Now _fully_ implements RAW exhaustion - in addition to the existing speed & hp max decreases, the appropriate rolls will receive disadvantage at certain exhaustion levels
+  - Ability Checks (including skill checks) will receive disadvantage if at exhaustion 1 or above
+  - Attack Rolls and Saving Throws (including concentration saves & death saves) will receive disadvantage if at exhaustion 3 or above
+  - The above only applies if One D&D Exhaustion is not enabled
+  - If "fast-forwarding" rolls, this will happen automatically, rolling with disadvantage, or as a straight roll if it was determined by some other module (or by holding down a keybind) that the roll should have advantage for some reason
+  - Otherwise, in roll dialog, the appropriate option (again, either disadvantage or normal) will be highlighted
+- Added automatic support for [Automated Conditions 5e](https://foundryvtt.com/packages/automated-conditions-5e) - if installed & AC5e exhaustion automation is enabled, Rest Recovery will let AC5e handle the effects (unless Rest Recovery is set to use One D&D Exhaustion).
+
 ## Version 1.8.0
 - Should now be V12 and dnd5e 3.2 compatible while maintaining V11 & 3.1.x functionality
 
