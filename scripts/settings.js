@@ -4,6 +4,7 @@ import { getSetting, setSetting } from "./lib/lib.js";
 import { get, writable } from "svelte/store";
 import plugins from "./plugins.js";
 import { QuickSetupShim } from "./formapplications/quick-setup/quick-setup.js";
+import { configureOneDndExhaustion, configureExhaustionHooks } from "./helpers.js";
 
 class RestRecoverySettings {
 
@@ -149,7 +150,8 @@ class RestRecoverySettings {
   async persistSettings() {
     await this.updateProfiles(true);
     await this.setActiveProfile(this.activeProfile, true);
-    await this.configureOneDndExhaustion();
+    await configureOneDndExhaustion();
+    await configureExhaustionHooks();
   }
 
   cleanup() {
@@ -162,65 +164,6 @@ class RestRecoverySettings {
     this.activeProfile = this.get(CONSTANTS.SETTINGS.ACTIVE_MODULE_PROFILE);
     this.profiles = foundry.utils.deepClone(this.get(CONSTANTS.SETTINGS.MODULE_PROFILES));
     this.initialized = true;
-  }
-
-  async configureOneDndExhaustion() {
-    this.updateStatusEffects();
-    if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
-    let styleSheet = Array.from(document.styleSheets).find(sheet => sheet.href?.includes(game.modules.get(CONSTANTS.MODULE_NAME)?.styles?.first()));
-    if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
-      if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 10) {
-        if (styleSheet) {
-          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"] > .pip {width:12px;height:12px}', 0);
-          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {column-gap:1px;padding-right:6px}', 0);
-          styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {column-gap:1px;padding-left:6px}', 0);
-        }
-        CONFIG.DND5E.conditionTypes.exhaustion.levels = 10;
-        CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
-        CONFIG.DND5E.conditionTypes.exhaustion.oldReference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
-        CONFIG.DND5E.conditionTypes.exhaustion.reference = game.i18n.localize("REST-RECOVERY.JournalUuids.Exhaustion");
-        CONFIG.DND5E.conditionEffects.halfMovement.delete("exhaustion-2");
-        CONFIG.DND5E.conditionEffects.halfHealth.delete("exhaustion-4");
-        CONFIG.DND5E.conditionEffects.noMovement.delete("exhaustion-5");
-        foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
-      }
-      if (false && this.settings.get(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) { // Temporarily disable integrations, since we're hiding the setting but not getting rid of it
-        await plugins.createConvenientEffect();
-      }
-      if (game.modules.get("tidy5e-sheet")?.active) {
-        await this.updateTidy5e();
-      }
-    } else {
-      if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 6) {
-        if (styleSheet) {
-          styleSheet.deleteRule(0);
-          styleSheet.deleteRule(0);
-          styleSheet.deleteRule(0);
-        }
-        CONFIG.DND5E.conditionTypes.exhaustion.levels = 6;
-        CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_CORE_PATH;
-        CONFIG.DND5E.conditionTypes.exhaustion.reference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
-        CONFIG.DND5E.conditionEffects.halfMovement.add("exhaustion-2");
-        CONFIG.DND5E.conditionEffects.halfHealth.add("exhaustion-4");
-        CONFIG.DND5E.conditionEffects.noMovement.add("exhaustion-5");
-        foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
-      }
-      if (game.modules.get("tidy5e-sheet")?.active) {
-        await this.updateTidy5e();
-      }
-    }
-  }
-
-  async updateTidy5e() {
-    let isOneDnd = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
-    await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
-      totalLevels: isOneDnd ? 10 : 6
-    });
-  }
-
-  updateStatusEffects() {
-    // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
-    if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0"}, CONFIG.DND5E.conditionTypes.exhaustion));
   }
 
   initialize() {
