@@ -10,7 +10,7 @@ export default function registerSheetOverrides() {
   registerTraits();
 }
 
-function registerTraits() {
+export function registerTraits() {
 
   CONFIG.DND5E.characterFlags.hitDieBonus = {
     section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
