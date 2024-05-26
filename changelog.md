@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.9.1
+- Fixed a bug where food/water-related special traits wouldn't show up unless world was reloaded
+
 ## Version 1.9.0
 - Now _fully_ implements RAW exhaustion - in addition to the existing speed & hp max decreases, the appropriate rolls will receive disadvantage at certain exhaustion levels
   - Ability Checks (including skill checks) will receive disadvantage if at exhaustion 1 or above

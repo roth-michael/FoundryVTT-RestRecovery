@@ -1110,9 +1110,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     customSettingsDialog: true,
     config: false,
     type: Boolean,
-    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS],
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER, CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS],
     validate: (settings) => {
-      return settings.get(CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS).value === CONSTANTS.FRACTIONS.NONE
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value || settings.get(CONSTANTS.SETTINGS.EXTERNAL_FOOD_ACCESS).value === CONSTANTS.FRACTIONS.NONE
     },
     default: false
   },
@@ -1205,9 +1205,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     customSettingsDialog: true,
     config: false,
     type: Boolean,
-    dependsOn: [CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS],
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER, CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS],
     validate: (settings) => {
-      return settings.get(CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS).value === CONSTANTS.FRACTIONS.NONE
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value || settings.get(CONSTANTS.SETTINGS.EXTERNAL_WATER_ACCESS).value === CONSTANTS.FRACTIONS.NONE
     },
     default: false
   },

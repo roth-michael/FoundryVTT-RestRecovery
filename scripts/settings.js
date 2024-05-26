@@ -5,6 +5,7 @@ import { get, writable } from "svelte/store";
 import plugins from "./plugins.js";
 import { QuickSetupShim } from "./formapplications/quick-setup/quick-setup.js";
 import { configureOneDndExhaustion, configureExhaustionHooks } from "./helpers.js";
+import { registerTraits } from "./sheet-overrides.js";
 
 class RestRecoverySettings {
 
@@ -152,6 +153,7 @@ class RestRecoverySettings {
     await this.setActiveProfile(this.activeProfile, true);
     await configureOneDndExhaustion();
     await configureExhaustionHooks();
+    registerTraits();
   }
 
   cleanup() {
