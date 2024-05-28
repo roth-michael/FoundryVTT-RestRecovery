@@ -461,6 +461,10 @@
           "Title": "Disable hit dice rolls during short rests",
           "Hint": "This prevents characters from rolling hit dice during short rests."
         },
+        "HDRecoveryFraction": {
+          "Title": "Hit Die recovery fraction",
+          "Hint": "The fraction of a hit die roll to actually recover as hit points each time a hit die is rolled."
+        },
         "ResourcesRecoveryFraction": {
           "Title": "Resources recovery fraction",
           "Hint": "The fraction of resources to recover on a short rest."
