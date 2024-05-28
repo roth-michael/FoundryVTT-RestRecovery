@@ -113,6 +113,8 @@ export default class RestWorkflow {
 
       const forceMaxRoll = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
 
+      const hdMult = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_REST_HD_MULTIPLIER);
+
       let formula = !forceMaxRoll ? "1" + denomination : denomination.slice(1);
 
       if (hasBlackBlood) {
@@ -121,6 +123,10 @@ export default class RestWorkflow {
 
       if (hasWoundClosure && !multiplyTotal) {
         formula = "(" + formula + "*2)";
+      }
+
+      if (hdMult !== 1) {
+        formula = `floor(${formula}*${hdMult})`;
       }
 
       formula += "+@abilities.con.mod";

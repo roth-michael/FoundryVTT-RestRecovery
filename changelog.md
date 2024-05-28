@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.10.0
+- Added an option for fractional hp recovery from hit die rolls (e.g. all HD rolls are halved, quartered, or auto-zero; bonuses - like CON mod - are not multiplied)
+
 ## Version 1.9.1
 - Fixed a bug where food/water-related special traits wouldn't show up unless world was reloaded
 

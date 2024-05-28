@@ -38,6 +38,7 @@ const CONSTANTS = {
     MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
     MAX_HIT_DICE_SPEND: "maximum-hit-die-spend",
     DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
+    SHORT_REST_HD_MULTIPLIER: "short-rest-recovery-hd",
     SHORT_RESOURCES_MULTIPLIER: "short-rest-recovery-resources",
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
@@ -365,12 +366,27 @@ CONSTANTS.DEFAULT_SETTINGS = {
     type: String,
     default: "@details.level",
   },
+  [CONSTANTS.SETTINGS.SHORT_REST_HD_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.ShortRest.HDRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.HDRecoveryFraction.Hint",
+    scope: "world",
+    group: "shortrest",
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full"
+    },
+    default: CONSTANTS.FRACTIONS.FULL,
+  },
   [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",
     hint: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Hint",
     scope: "world",
     group: "shortrest",
-    customFormula: CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA,
+    customFormula: CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER_FORMULA,
     config: false,
     type: String,
     choices: {
