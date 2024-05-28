@@ -1,6 +1,5 @@
 import "../styles/style.scss";
 
-import registerLibwrappers from "./libwrapper.js";
 import registerHooks from "./hooks.js";
 import migrate from "./migrations.js";
 import registerSheetOverrides from "./sheet-overrides.js";
@@ -16,7 +15,6 @@ Hooks.once("init", () => {
   SocketHandler.initialize();
   gameSettings.initialize();
   configureOneDndExhaustion();
-  registerLibwrappers();
   registerSheetOverrides();
   RestWorkflow.initialize();
   registerHooks();
