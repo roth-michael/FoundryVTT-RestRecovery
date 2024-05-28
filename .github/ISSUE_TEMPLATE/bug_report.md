@@ -31,7 +31,6 @@ If applicable, add screenshots to help explain your problem.
 
 **Active modules:**
  - Rest Recovery
- - libwrapper
  - [insert more modules here]
 
 **Additional context**

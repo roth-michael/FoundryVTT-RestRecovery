@@ -279,7 +279,10 @@ export default class RestWorkflow {
           await actor.updateEmbeddedDocuments("Item", results.updateItems, { isRest: true });
 
           if (config.advanceTime && (config.duration > 0) && game.user.isGM) await game.time.advance(60 * config.duration);
-          if (config.chat) await actor._displayRestResultMessage(results, config.type == "long");
+          if (config.chat) {
+            const result = await actor._displayRestResultMessage(results, config.type == "long")
+            await workflow._displayRestResultMessage(result);
+          };
           Hooks.callAll("dnd5e.restCompleted", actor, results, config);
         })
       }
