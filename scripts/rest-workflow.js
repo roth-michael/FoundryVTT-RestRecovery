@@ -437,11 +437,11 @@ export default class RestWorkflow {
     if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY)) {
       const actorSpecificFormula = this.actor.getFlag("dnd5e", "longRestSpellPointsFormula") || false;
       const formula = actorSpecificFormula || lib.getSetting(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA);
-      this.spellData.pointsTotal = await lib.evaluateFormula(
+      this.spellData.pointsTotal = (await lib.evaluateFormula(
         formula || "ceil(min(17, @details.level+1)/2)*2",
         this.actor.getRollData(),
         false
-      )?.total + (this.actor.getFlag("dnd5e", "longRestSpellPointsBonus") ?? 0);
+      ))?.total + (this.actor.getFlag("dnd5e", "longRestSpellPointsBonus") ?? 0);
       return;
     }
 
@@ -466,14 +466,14 @@ export default class RestWorkflow {
       this.spellData.has_feature_use = wizardFeatureUse;
       this.spellData.feature = wizardFeature;
       this.spellData.pointsTotal = wizardFeature
-        ? await lib.evaluateFormula(wizardFeature.system.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData())?.total
+        ? (await lib.evaluateFormula(wizardFeature.system.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData()))?.total
         : 0;
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
     } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
       this.spellData.has_feature_use = druidFeatureUse;
       this.spellData.feature = druidFeature;
       this.spellData.pointsTotal = druidFeature
-        ? await lib.evaluateFormula(druidFeature.system.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData())?.total
+        ? (await lib.evaluateFormula(druidFeature.system.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData()))?.total
         : 0;
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
     }
@@ -577,13 +577,13 @@ export default class RestWorkflow {
     if (this.longRest) {
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
-        ? Math.floor(await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
+        ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
         : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
     } else {
       minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
-        ? Math.floor(await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData())?.total ?? 0)
+        ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
         : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
       maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
     }
@@ -1024,10 +1024,10 @@ export default class RestWorkflow {
 
         let localize = "REST-RECOVERY.Chat.Food"
 
-        let actorExhaustionThreshold = await lib.evaluateFormula(
+        let actorExhaustionThreshold = (await lib.evaluateFormula(
           lib.getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER),
           this.actor.getRollData()
-        )?.total ?? 4;
+        ))?.total ?? 4;
 
         if (this.consumableData.hasAccessToFood) {
 
@@ -1237,7 +1237,7 @@ export default class RestWorkflow {
     const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
 
     results.hitPointsToRegainFromRest = typeof multiplier === "string"
-      ? Math.floor(await lib.evaluateFormula(multiplier, this.actor.getRollData())?.total)
+      ? Math.floor((await lib.evaluateFormula(multiplier, this.actor.getRollData()))?.total)
       : Math.floor(maxHP * multiplier);
 
     results.updateData["system.attributes.hp.value"] = Math.min(maxHP, currentHP + results.hitPointsToRegainFromRest);
@@ -1267,7 +1267,7 @@ export default class RestWorkflow {
 
     if (typeof multiplier === "string") {
 
-      const customRegain = await lib.evaluateFormula(multiplier, this.actor.getRollData())?.total;
+      const customRegain = (await lib.evaluateFormula(multiplier, this.actor.getRollData()))?.total;
       maxHitDice = Math.clamped(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
 
     } else {
@@ -1333,7 +1333,7 @@ export default class RestWorkflow {
         results.updateData[`system.resources.${key}.value`] = Number(resource.max);
       } else if (recoverLongRestResources && resource.lr) {
         const recoverResources = typeof multiplier === "string"
-          ? await lib.evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) })?.total
+          ? (await lib.evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) }))?.total
           : Math.max(Math.floor(resource.max * multiplier), 1);
 
         results.updateData[`system.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
@@ -1361,7 +1361,7 @@ export default class RestWorkflow {
         }
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof multiplier === "string"
-          ? Math.max(await lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
+          ? Math.max((await lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) }))?.total, 1)
           : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
         results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }
@@ -1375,7 +1375,7 @@ export default class RestWorkflow {
         if (!slot.override && !slot.max || level !== "pact") continue;
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof pactMultiplier === "string"
-          ? Math.max(await lib.evaluateFormula(pactMultiplier, { slot: foundry.utils.deepClone(slot) })?.total, 1)
+          ? Math.max((await lib.evaluateFormula(pactMultiplier, { slot: foundry.utils.deepClone(slot) }))?.total, 1)
           : Math.max(Math.floor(spellMax * pactMultiplier), pactMultiplier ? 1 : pactMultiplier);
         results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }
@@ -1500,7 +1500,7 @@ export default class RestWorkflow {
       })}</li>`])
     } else {
       recoverValue = typeof multiplier === "string"
-        ? await lib.evaluateFormula(multiplier, foundry.utils.deepClone(item.system))?.total
+        ? (await lib.evaluateFormula(multiplier, foundry.utils.deepClone(item.system)))?.total
         : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
       recoverValue = Math.max(0, Math.min(usesCur + recoverValue, usesMax));
     }

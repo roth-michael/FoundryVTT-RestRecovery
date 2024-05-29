@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.10.3
+- Fixed a bunch of small bugs relating to various resource/spell recoveries that were introduced in version 1.8.0
+
 ## Version 1.10.2
 - Updated fractional hp recovery from HD rolls to use the same dropdown as Periapt of Wound Closure's dropdown for how to multiply hit die rolls
 
