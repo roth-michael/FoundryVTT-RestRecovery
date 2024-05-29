@@ -125,7 +125,7 @@ export default class RestWorkflow {
         formula = "(" + formula + "*2)";
       }
 
-      if (hdMult !== 1) {
+      if (hdMult !== 1 && !multiplyTotal) {
         formula = `floor(${formula}*${hdMult})`;
       }
 
@@ -144,6 +144,10 @@ export default class RestWorkflow {
 
       if (hasWoundClosure && multiplyTotal) {
         config.formula = `(${formula})*2`;
+      }
+
+      if (hdMult !== 1 && multiplyTotal) {
+        config.formula = `floor((${formula})*${hdMult})`;
       }
 
     });

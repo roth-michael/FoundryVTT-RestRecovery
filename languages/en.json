@@ -349,8 +349,8 @@
       "RequiresModule": "Requires {module_name}",
       "General": {
         "PeriaptRollMechanics": {
-          "Title": "Periapt of Wound Closure Mechanics",
-          "Hint": "This configures how the item \"Periapt of Wound Closure\" handles the multiplication of the hit die roll.",
+          "Title": "Hit Die Multiplication Mechanics",
+          "Hint": "This configures how hit die multiplying effects such as the item \"Periapt of Wound Closure\" and the \"Hit Die roll multiplier\" setting handle the multiplication of the hit die roll.",
           "Options": {
             "MultiplyRoll": "Multiply dice roll",
             "MultiplyTotal": "Multiply total result"
@@ -462,7 +462,7 @@
           "Hint": "This prevents characters from rolling hit dice during short rests."
         },
         "HDRecoveryFraction": {
-          "Title": "Hit Die recovery fraction",
+          "Title": "Hit Die roll multiplier",
           "Hint": "The fraction of a hit die roll to actually recover as hit points each time a hit die is rolled."
         },
         "ResourcesRecoveryFraction": {

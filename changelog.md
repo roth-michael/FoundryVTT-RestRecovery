@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.10.2
+- Updated fractional hp recovery from HD rolls to use the same dropdown as Periapt of Wound Closure's dropdown for how to multiply hit die rolls
+
 ## Version 1.10.1
 - Removed libwrapper dependency
 - Translation updates (thanks Kharmans!)
