@@ -2,12 +2,17 @@
     "id": "rest-recovery",
     "title": "Rest Recovery for 5E",
     "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
-    "version": "1.5.0",
+    "version": "1.10.4",
     "authors": [
         {
             "name": "Wasp",
             "url": "https://github.com/fantasycalendar",
             "discord": "Wasp#2005"
+        },
+        {
+            "name": "Michael",
+            "url": "https://github.com/roth-michael",
+            "discord": "hi25114"
         }
     ],
     "esmodules": [
@@ -45,25 +50,38 @@
                 "type": "system",
                 "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/latest/system.json",
                 "compatibility": {
-                    "verified": "2.4.0",
-                    "minimum": "2.4.0"
+                    "verified": "3.1.2",
+                    "minimum": "3.1.0"
                 }
-            }
-        ],
-        "requires": [
-            {
-                "id": "lib-wrapper",
-                "type": "module"
             }
         ]
     },
     "compatibility": {
-        "minimum": "10",
+        "minimum": "11",
         "verified": "11",
-        "maximum": "11"
+        "maximum": "12"
     },
+    "packs": [
+        {
+            "name": "exhaustion",
+            "label": "exhaustion",
+            "path": "./packs/exhaustion",
+            "entity": "JournalEntry",
+            "type": "JournalEntry"
+        }
+    ],
+    "packFolders": [
+        {
+            "name": "Rest Recovery 5e",
+            "color": "#200da6",
+            "folders": [],
+            "packs": [
+                "exhaustion"
+            ]
+        }
+    ],
     "socket": true,
-    "url": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery",
-    "manifest": "https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-RestRecovery/next/module.json",
-    "download": "https://github.com/fantasycalendar/FoundryVTT-RestRecovery/releases/download/1.5.0/module.zip"
+    "url": "https://github.com/roth-michael/FoundryVTT-RestRecovery",
+    "manifest": "https://raw.githubusercontent.com/roth-michael/FoundryVTT-RestRecovery/next/module.json",
+    "download": "https://github.com/roth-michael/FoundryVTT-RestRecovery/releases/download/1.10.4/module.zip"
 }
