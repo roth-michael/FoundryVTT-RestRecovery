@@ -4,13 +4,26 @@ import { getSetting } from "./lib/lib.js";
 export async function configureOneDndExhaustion() {
   updateStatusEffects();
   if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
-  let styleSheet = Array.from(document.styleSheets).find(sheet => sheet.href?.includes(game.modules.get(CONSTANTS.MODULE_NAME)?.styles?.first()));
   if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
     if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 10) {
-      if (styleSheet) {
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"] > .pip {width:12px;height:12px}', 0);
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {column-gap:1px;padding-right:6px}', 0);
-        styleSheet.insertRule('.pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {column-gap:1px;padding-left:6px}', 0);
+      if (!document.getElementById(CONSTANTS.STYLE_ELEMENT_ID)) {
+        let styleElement = document.createElement('style');
+        styleElement.setAttribute("id", CONSTANTS.STYLE_ELEMENT_ID);
+        styleElement.innerHTML = `
+          .pips[data-prop="system.attributes.exhaustion"] > .pip {
+            width:12px;
+            height:12px;
+          }
+          .pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {
+            column-gap:1px;
+            padding-right:6px;
+          }
+          .pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {
+            column-gap:1px;
+            padding-left:6px;
+          }
+        `;
+        document.head.appendChild(styleElement);
       }
       CONFIG.DND5E.conditionTypes.exhaustion.levels = 10;
       CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
@@ -29,10 +42,9 @@ export async function configureOneDndExhaustion() {
     }
   } else {
     if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 6) {
-      if (styleSheet) {
-        styleSheet.deleteRule(0);
-        styleSheet.deleteRule(0);
-        styleSheet.deleteRule(0);
+      let styleElement = document.getElementById(CONSTANTS.STYLE_ELEMENT_ID);
+      if (styleElement) {
+        styleElement.remove();
       }
       CONFIG.DND5E.conditionTypes.exhaustion.levels = 6;
       CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_CORE_PATH;
