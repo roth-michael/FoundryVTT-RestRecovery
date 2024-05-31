@@ -3,6 +3,7 @@ const CONSTANTS = {
   FLAG_NAME: "data",
   EXHAUSTION_CORE_PATH: "systems/dnd5e/icons/svg/statuses/exhaustion.svg",
   EXHAUSTION_ONE_DND_PATH: "modules/rest-recovery/assets/exhaustion.svg",
+  STYLE_ELEMENT_ID: "rest-recovery-style-element",
   SETTINGS: {
     
     MIGRATION_VERSION: "migration-version",

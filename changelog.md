@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.10.4
+- Fixed a forge-only bug when enabling One D&D Exhaustion
+
 ## Version 1.10.3
 - Fixed a bunch of small bugs relating to various resource/spell recoveries that were introduced in version 1.8.0
 
