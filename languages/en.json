@@ -44,6 +44,11 @@
       "Full": "Full",
       "Custom": "Custom Formula"
     },
+    "RollFormula": {
+      "Normal": "Normal",
+			"Advantage": "Advantage",
+      "Maximized": "Maximized"
+    },
     "Currencies": {
       "Copper": "cp",
       "Electrum": "ep",
@@ -348,6 +353,10 @@
       },
       "RequiresModule": "Requires {module_name}",
       "General": {
+				"HitDiceRollFormula": {
+						"Title": "Modify how the hit dice rolls are done",
+          "Hint": "This setting causes characters who roll hit dice to have a modified roll formula. Either normal, advantage (which each hit die is rolled twice taking the higher value), or maximized which does not roll the die but applies it highest value."
+				},
         "PeriaptRollMechanics": {
           "Title": "Hit Die Multiplication Mechanics",
           "Hint": "This configures how hit die multiplying effects such as the item \"Periapt of Wound Closure\" and the \"Hit Die roll multiplier\" setting handle the multiplication of the hit die roll.",

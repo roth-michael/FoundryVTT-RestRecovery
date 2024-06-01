@@ -30,6 +30,7 @@ const CONSTANTS = {
     ENABLE_SIMPLE_CALENDAR_NOTES: "enable-simple-calendar-notes",
     PREVENT_USER_REST: "prevent-user-rest",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
+    HIT_DICE_ROLL_FORMULA: "hit-dice-roll-formula",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -155,6 +156,12 @@ const CONSTANTS = {
     GRITTY: "gritty",
     EPIC: "epic",
     CUSTOM: "custom"
+  },
+
+  ROLL_FORMULAS: {
+    NORMAL: "normal",
+    ADVANTAGE: "advantage",
+    MAXIMIZED: "maximized"
   },
 
   CURRENCIES: {
@@ -291,6 +298,20 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_ROLL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyRoll",
       [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_TOTAL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyTotal",
     }
+  },
+  [CONSTANTS.SETTINGS.HIT_DICE_ROLL_FORMULA]: {
+    name: "REST-RECOVERY.Settings.General.HitDiceRollFormula.Title",
+    hint: "REST-RECOVERY.Settings.General.HitDiceRollFormula.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.ROLL_FORMULAS.NORMAL]: "REST-RECOVERY.RollFormula.Normal",
+      [CONSTANTS.ROLL_FORMULAS.ADVANTAGE]: "REST-RECOVERY.RollFormula.Advantage",
+      [CONSTANTS.ROLL_FORMULAS.MAXIMIZED]: "REST-RECOVERY.RollFormula.Maximized",
+    },
+    default: CONSTANTS.ROLL_FORMULAS.NORMAL
   },
   
   /*-------------------------------------------*
