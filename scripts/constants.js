@@ -30,7 +30,8 @@ const CONSTANTS = {
     ENABLE_SIMPLE_CALENDAR_NOTES: "enable-simple-calendar-notes",
     PREVENT_USER_REST: "prevent-user-rest",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
-    HIT_DICE_ROLL_FORMULA: "hit-dice-roll-formula",
+    HIT_DIE_ROLL_FORMULA: "hit-die-roll-formula",
+    HD_EFFECTIVE_MULTIPLIER: "hd-effective-multiplier",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -40,7 +41,6 @@ const CONSTANTS = {
     MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
     MAX_HIT_DICE_SPEND: "maximum-hit-die-spend",
     DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
-    SHORT_REST_HD_MULTIPLIER: "short-rest-recovery-hd",
     SHORT_RESOURCES_MULTIPLIER: "short-rest-recovery-resources",
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
@@ -292,16 +292,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "general",
     config: false,
-    default: "multiply-roll",
+    default: CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_ROLL,
     type: String,
     choices: {
       [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_ROLL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyRoll",
       [CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_TOTAL]: "REST-RECOVERY.Settings.General.PeriaptRollMechanics.Options.MultiplyTotal",
     }
   },
-  [CONSTANTS.SETTINGS.HIT_DICE_ROLL_FORMULA]: {
-    name: "REST-RECOVERY.Settings.General.HitDiceRollFormula.Title",
-    hint: "REST-RECOVERY.Settings.General.HitDiceRollFormula.Hint",
+  [CONSTANTS.SETTINGS.HIT_DIE_ROLL_FORMULA]: {
+    name: "REST-RECOVERY.Settings.General.HitDieRollFormula.Title",
+    hint: "REST-RECOVERY.Settings.General.HitDieRollFormula.Hint",
     scope: "world",
     group: "general",
     config: false,
@@ -312,6 +312,21 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.ROLL_FORMULAS.MAXIMIZED]: "REST-RECOVERY.RollFormula.Maximized",
     },
     default: CONSTANTS.ROLL_FORMULAS.NORMAL
+  },
+  [CONSTANTS.SETTINGS.HD_EFFECTIVE_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.General.HDRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.General.HDRecoveryFraction.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full"
+    },
+    default: CONSTANTS.FRACTIONS.FULL,
   },
   
   /*-------------------------------------------*
@@ -387,21 +402,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hidden: true,
     type: String,
     default: "@details.level",
-  },
-  [CONSTANTS.SETTINGS.SHORT_REST_HD_MULTIPLIER]: {
-    name: "REST-RECOVERY.Settings.ShortRest.HDRecoveryFraction.Title",
-    hint: "REST-RECOVERY.Settings.ShortRest.HDRecoveryFraction.Hint",
-    scope: "world",
-    group: "shortrest",
-    config: false,
-    type: String,
-    choices: {
-      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
-      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
-      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full"
-    },
-    default: CONSTANTS.FRACTIONS.FULL,
   },
   [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",
