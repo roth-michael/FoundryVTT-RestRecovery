@@ -117,7 +117,11 @@
       "HitDiceNoArmor": "They chose to not rest in their armor, and regained the normal amount of hit dice.",
       "PreventedHitDiceRecovery": "Because they spent hit dice during the long rest, they recovered no hit dice.",
       "CouldNotLongRest": "{actorName} could not take a long rest.",
-      "CouldNotShortRest": "{actorName} could not take a short rest."
+      "CouldNotShortRest": "{actorName} could not take a short rest.", 
+      "Flavor": {
+        "ShortRestNormal": "Short Rest ({duration} {units})",
+        "LongRestNormal": "Long Rest ({duration} {units})"
+      }
     },
     "Dialogs": {
       "SaveProfile": {

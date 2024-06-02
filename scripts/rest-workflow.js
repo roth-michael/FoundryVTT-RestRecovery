@@ -204,6 +204,10 @@ export default class RestWorkflow {
         custom_warning("REST-RECOVERY.Warnings.NotPromptedShortRest");
         return false;
       }
+
+      if (getSetting(CONSTANTS.SETTINGS.REST_VARIANT) === "custom") {
+        config.duration = (getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS) ?? 1) * 60;
+      }
       
       if (!config.dialog) return true;
       
@@ -237,6 +241,10 @@ export default class RestWorkflow {
       if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !config.restPrompted) {
         custom_warning("REST-RECOVERY.Warnings.NotPromptedLongRest");
         return false;
+      }
+
+      if (getSetting(CONSTANTS.SETTINGS.REST_VARIANT) === "custom") {
+        config.duration = (getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS) ?? 1) * 60;
       }
 
       if (!config.dialog) return true;
@@ -1207,6 +1215,22 @@ export default class RestWorkflow {
   }
 
   _displayRestResultMessage(chatMessage) {
+    let flavor = chatMessage.flavor;
+    if (!this.config.newDay) {
+      let duration;
+      let units;
+      if (this.config.duration % 1440 === 0) {
+        duration = this.config.duration / 1440;
+        units = duration > 1 ? 'Days' : 'Day';
+      } else if (this.config.duration % 60 === 0) {
+        duration = this.config.duration / 60;
+        units = duration > 1 ? 'Hours' : 'Hour';
+      } else {
+        duration = this.config.duration;
+        units = duration > 1 ? 'Minutes' : 'Minute';
+      }
+      flavor = game.i18n.format(`REST-RECOVERY.Chat.Flavor.${this.config.longRest ? 'Long' : 'Short'}RestNormal`, {duration: duration, units: units});
+    }
 
     let extra = this.spellSlotsRegainedMessage
       + this.itemsRegainedMessages.join("")
@@ -1230,6 +1254,7 @@ export default class RestWorkflow {
     }
 
     chatMessage.update({
+      flavor: flavor,
       content: newChatMessageContent
     }).then(() => {
       ui.chat.scrollBottom();
