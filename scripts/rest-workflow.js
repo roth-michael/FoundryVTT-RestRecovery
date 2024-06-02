@@ -118,10 +118,10 @@ export default class RestWorkflow {
       const hdMult = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_REST_HD_MULTIPLIER);
 
 			let formula = "1" + denomination // for normal
-			if(rollFormula == CONSTANTS.ROLL_FORMULAS.ADVANTAGE){
-				formula = "2" + denomnation + "kh"
+			if(rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE){
+				formula = "2" + denomination + "kh"
 			}
-			if(rollFormula == CONSTANTS.ROLL_FORMULAS.MAXIMIZED || forceMaxRoll){
+			if(rollFormula === CONSTANTS.ROLL_FORMULAS.MAXIMIZED || forceMaxRoll){
 				formula = denomination.slice(1)
 			}
 			
