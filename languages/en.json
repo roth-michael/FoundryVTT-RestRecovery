@@ -353,9 +353,9 @@
       },
       "RequiresModule": "Requires {module_name}",
       "General": {
-				"HitDiceRollFormula": {
-						"Title": "Modify how the hit dice rolls are done",
-          "Hint": "This setting causes characters who roll hit dice to have a modified roll formula. Either normal, advantage (which each hit die is rolled twice taking the higher value), or maximized which does not roll the die but applies it highest value."
+				"HitDieRollFormula": {
+          "Title": "Hit Die formula",
+          "Hint": "This configures the hit die roll formula, allowing for advantage or maximized results."
 				},
         "PeriaptRollMechanics": {
           "Title": "Hit Die Multiplication Mechanics",
@@ -385,6 +385,10 @@
           "Title": "Enable Simple Calendar notes",
           "Hint": "Enabling this will create a Simple Calendar note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest.",
           "Hint2": "Note: Players must have \"Create Journal Entries\" permissions & \"Add Notes\" Simple Calendar permissions enabled if resting while online."
+        },
+        "HDRecoveryFraction": {
+          "Title": "Hit Die roll multiplier",
+          "Hint": "The fraction of a hit die roll to actually recover as hit points each time a hit die is rolled."
         }
       },
       "FoodAndWater": {
@@ -469,10 +473,6 @@
         "NoHitDice": {
           "Title": "Disable hit dice rolls during short rests",
           "Hint": "This prevents characters from rolling hit dice during short rests."
-        },
-        "HDRecoveryFraction": {
-          "Title": "Hit Die roll multiplier",
-          "Hint": "The fraction of a hit die roll to actually recover as hit points each time a hit die is rolled."
         },
         "ResourcesRecoveryFraction": {
           "Title": "Resources recovery fraction",

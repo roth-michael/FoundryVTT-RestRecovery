@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.11.0
+- Added a the ability to configure hit die rolls to be done with advantage, or automatically maxed (thanks f4hy on github!)
+- Moved the fractional hp recovery from HD rolls to the general tab, as it effects all hit die rolls, not only those taken during short rests
+
 ## Version 1.10.4
 - Fixed a forge-only bug when enabling One D&D Exhaustion
 

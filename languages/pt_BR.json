@@ -376,6 +376,10 @@
           "Title": "Habilitar Notas do Simple Calendar",
           "Hint": "Ativar isso criará uma nota do Simple Calendar para cada descanso longo/curto dos jogadores. O conteúdo de cada nota será idêntico à mensagem de chat enviada no fim do descanso.",
           "Hint2": "Nota: Jogadores devem possuir as permissões \"Criar Diário\" e \"Adicionar Notas\" habilitadas no Simple Calendar se descansarem enquanto estiverem online."
+        },
+        "HDRecoveryFraction": {
+          "Title": "Fração de Recuperação do Dado de Vida",
+          "Hint": "A fração de um dado de vida que será realmente recuperada como pontos de vida cada vez que um dado de vida for rolado."
         }
       },
       "FoodAndWater": {
@@ -460,10 +464,6 @@
         "NoHitDice": {
           "Title": "Desabilitar Rolagens de Dados de Vida Durante Descansos Curtos",
           "Hint": "Isso evita que os personagens joguem dados de vida durante descansos curtos."
-        },
-          "HDRecoveryFraction": {
-          "Title": "Fração de Recuperação do Dado de Vida",
-          "Hint": "A fração de um dado de vida que será realmente recuperada como pontos de vida cada vez que um dado de vida for rolado."
         },
         "ResourcesRecoveryFraction": {
           "Title": "Fração de Recuperação de Recursos",

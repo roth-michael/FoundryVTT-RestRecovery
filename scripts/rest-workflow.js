@@ -112,22 +112,29 @@ export default class RestWorkflow {
       const durableMod = Math.max(2, conMod * 2);
 
       const forceMaxRoll = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
-      const rollFormula = getSetting(CONSTANTS.SETTINGS.HIT_DICE_ROLL_FORMULA);
+      const rollFormula = getSetting(CONSTANTS.SETTINGS.HIT_DIE_ROLL_FORMULA);
+      const isMaxed = (rollFormula === CONSTANTS.ROLL_FORMULAS.MAXIMIZED) || forceMaxRoll;
 
 				
-      const hdMult = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_REST_HD_MULTIPLIER);
+      const hdMult = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_EFFECTIVE_MULTIPLIER);
 
-			let formula = "1" + denomination // for normal
-			if(rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE){
-				formula = "2" + denomination + "kh"
+			let formula = "1" + denomination;
+
+			if (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE) {
+				formula = "2" + denomination;
 			}
-			if(rollFormula === CONSTANTS.ROLL_FORMULAS.MAXIMIZED || forceMaxRoll){
-				formula = denomination.slice(1)
+
+			if (isMaxed) {
+				formula = denomination.slice(1);
 			}
 			
-      if (hasBlackBlood) {
+      if (hasBlackBlood && !isMaxed) {
         formula += "r<3";
       }
+
+      if (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE) {
+				formula = formula + "kh"
+			}
 
       if (hasWoundClosure && !multiplyTotal) {
         formula = "(" + formula + "*2)";
@@ -145,7 +152,7 @@ export default class RestWorkflow {
       }
 
       if (isDurable) {
-        formula = `{${formula},${durableMod}}kh`
+        formula = `max(${formula},${durableMod})`
       }
 
       config.formula = `max(0, ${formula})`;

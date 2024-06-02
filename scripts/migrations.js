@@ -48,6 +48,13 @@ const migrations = {
       await setSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION, true);
     }
 
+  },
+
+  "1.11.0": async () => {
+    let oldSetting = findOldSettingValue("short-rest-recovery-hd");
+    if (oldSetting) {
+      await setSetting(CONSTANTS.SETTINGS.HD_EFFECTIVE_MULTIPLIER, oldSetting);
+    }
   }
 
 }
