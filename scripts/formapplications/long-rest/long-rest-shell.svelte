@@ -55,7 +55,7 @@
       maxSpendHitDice = Math.floor(res?.total ?? 0);
     });
   } else {
-    maxSpendHitDice = Math.floor(actor.system.details.level * maxHitDiceSpendMultiplier);
+    maxSpendHitDice = Math.floor((actor.type === "npc" ? actor.system.attributes.hd.max : actor.system.details.level) * maxHitDiceSpendMultiplier);
   }
   // const maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
   //   ? Math.floor(lib.evaluateFormula(maxHitDiceSpendMultiplier, actor.getRollData())?.total ?? 0)

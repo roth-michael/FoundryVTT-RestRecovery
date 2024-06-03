@@ -57,7 +57,7 @@ export default class RestWorkflow {
   }
 
   get totalHitDice() {
-    return this.actor.system.attributes.hd;
+    return this.actor.type === 'npc' ? this.actor.system.attributes.hd.value : this.actor.system.attributes.hd;
   }
 
   get recoveredSlots() {
@@ -174,7 +174,7 @@ export default class RestWorkflow {
 
       const denomination = cachedDenomination;
 
-      const hitDice = updates.class["system.hitDiceUsed"] - 1;
+      const hitDice = updates.class?.["system.hitDiceUsed"] - 1;
 
       const clsItem = actor.items.find(i => {
         return i.system.hitDice === denomination && i.system.hitDiceUsed === hitDice;
@@ -210,6 +210,8 @@ export default class RestWorkflow {
       }
       
       if (!config.dialog) return true;
+
+      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
       
       RestWorkflow.make(actor, false, config).then(() => {
   
@@ -220,7 +222,7 @@ export default class RestWorkflow {
   
           config.newDay = newDay;
   
-          const dhd = actor.system.attributes.hd - hd0;
+          const dhd = actor.type === 'npc' ? (actor.system.attributes.hd.value - hd0.value) : (actor.system.attributes.hd - hd0);
           const dhp = actor.system.attributes.hp.value - hp0;
   
           return actor._rest(config, {dhd, dhp});
@@ -248,6 +250,8 @@ export default class RestWorkflow {
       }
 
       if (!config.dialog) return true;
+
+      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
 
       RestWorkflow.make(actor, true, config).then((workflow) => {
         LongRestDialog.show({ ...config, actor }).then(async (newDay) => {
@@ -298,6 +302,7 @@ export default class RestWorkflow {
 
   static ready() {
     Hooks.on("dnd5e.preRestCompleted", (actor, results, config) => {
+      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
       const workflow = RestWorkflow.get(actor);
       if (workflow) {
         workflow.patchRestResults(results).then(async () => {
@@ -372,7 +377,7 @@ export default class RestWorkflow {
     const actorHasNonLightArmor = !!this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped)
 
     this.healthData = {
-      level: this.actor.system.details.level,
+      level: this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level,
       startingHitDice: this.actor.system.attributes.hd,
       startingHealth: this.actor.system.attributes.hp.value,
       hitDiceSpent: 0,
@@ -411,6 +416,12 @@ export default class RestWorkflow {
   }
 
   getHitDice() {
+    if (this.actor.type === "npc") {
+      let denomination = `d${this.actor.system.attributes.hd.denomination}`;
+      return {
+        [denomination]: this.actor.system.attributes.hd.value
+      }
+    }
     return this.actor.items.reduce((hd, item) => {
       if (item.type === "class") {
         const d = item.system;
@@ -601,13 +612,13 @@ export default class RestWorkflow {
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
         ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
-        : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
+        : Math.floor((this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level) * maxHitDiceSpendMultiplier);
     } else {
       minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
         ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
-        : Math.floor(this.actor.system.details.level * maxHitDiceSpendMultiplier);
+        : Math.floor((this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level) * maxHitDiceSpendMultiplier);
       maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
     }
 
@@ -771,7 +782,7 @@ export default class RestWorkflow {
 
     this.preRestRegainHitDice = true;
     const maxHitDice = await this._getMaxHitDiceRecovery();
-    let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+    let { updates=[], actorUpdates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
     this.preRestRegainHitDice = false;
 
     let hitDiceLeftToRecover = Math.max(0, maxHitDice - hitDiceRecovered);
@@ -792,6 +803,9 @@ export default class RestWorkflow {
     }
 
     await this.actor.updateEmbeddedDocuments("Item", updates);
+    if (actorUpdates) {
+      await this.actor.update(actorUpdates);
+    }
 
     this.healthData.availableHitDice = this.getHitDice();
     this.healthData.totalHitDice = this.totalHitDice;
@@ -945,7 +959,7 @@ export default class RestWorkflow {
       }
 
       const maxHitDice = await this._getMaxHitDiceRecovery();
-      let { updates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+      let { updates=[], actorUpdates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
 
       updates.forEach(update => lib.addToUpdates(results.updateItems, update));
 
@@ -966,6 +980,9 @@ export default class RestWorkflow {
             this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceNoArmor");
           }
         }
+      }
+      if (actorUpdates) {
+        await this.actor.update(actorUpdates);
       }
       results.dhd = hitDiceRecovered;
     }
@@ -1229,7 +1246,7 @@ export default class RestWorkflow {
         duration = this.config.duration;
         units = duration > 1 ? 'Minutes' : 'Minute';
       }
-      flavor = game.i18n.format(`REST-RECOVERY.Chat.Flavor.${this.config.longRest ? 'Long' : 'Short'}RestNormal`, {duration: duration, units: units});
+      flavor = game.i18n.format(`REST-RECOVERY.Chat.Flavor.${this.longRest ? 'Long' : 'Short'}RestNormal`, {duration: duration, units: units});
     }
 
     let extra = this.spellSlotsRegainedMessage
@@ -1295,7 +1312,7 @@ export default class RestWorkflow {
 
     let multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
     let roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
-    const actorLevel = this.actor.system.details.level;
+    const actorLevel = this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level;
 
     if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
       const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
