@@ -44,6 +44,11 @@
       "Full": "Inteiro",
       "Custom": "Fórmula Personalizada"
     },
+    "RollFormula": {
+      "Normal": "Normal",
+      "Advantage": "Vantagem",
+      "Maximized": "Maximizado"
+    },
     "Currencies": {
       "Copper": "pb",
       "Electrum": "pe",
@@ -112,7 +117,11 @@
       "HitDiceNoArmor": "Eles decidiram descansar sem armaduras e recuperaram a quantidade normal de dados de vida.",
       "PreventedHitDiceRecovery": "Como eles gastaram dados de vida durante o descanso longo, eles não recuperaram nenhum dado de vida.",
       "CouldNotLongRest": "{actorName} não pôde realizar um descanso longo.",
-      "CouldNotShortRest": "{actorName} não pôde realizar um descanso curto."
+      "CouldNotShortRest": "{actorName} não pôde realizar um descanso curto.",
+      "Flavor": {
+        "ShortRestNormal": "Descanso Curto ({duration} {units})",
+        "LongRestNormal": "Descanso Longo ({duration} {units})"
+      }
     },
     "Dialogs": {
       "SaveProfile": {
@@ -348,6 +357,10 @@
       },
       "RequiresModule": "Requer {module_name}",
       "General": {
+        "HitDieRollFormula": {
+          "Title": "Fórmula de Dado de Vida",
+          "Hint": "Isso configura a fórmula do dado de vida, permitindo vantagem ou resultados maximizados."
+        },
         "PeriaptRollMechanics": {
           "Title": "Mecânicas do Periapto de Cicatrização",
           "Hint": "Isso configura como o item \"Periapto de Cicatrização\" lida com a multiplicação da rolagem dos dados de vida.",
