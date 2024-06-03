@@ -16,7 +16,7 @@
 
   let form;
 
-  const priorityActors = Array.from(game.scenes.get(game.user.viewedScene)?.tokens?.values()).map(currToken => currToken?.actor) ?? [];
+  const priorityActors = Array.from(game.scenes.get(game.user.viewedScene)?.tokens?.values()).map(currToken => currToken?.actor).filter(currActor => !!currActor) ?? [];
   const otherActors = Array.from(game.actors).filter(dirActor => !priorityActors.map(priActor => priActor.id).includes(dirActor.id));
 
   const validActors = [...priorityActors, ...otherActors].reduce((acc, actor) => {

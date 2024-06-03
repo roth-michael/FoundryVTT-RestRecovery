@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.11.4
+- Fixed bug when trying to prompt rest with non-actor tokens on the scene
+
 ## Version 1.11.3
 - Fixed NPC rests when using Tidy (only from their sheet - still don't support adding them in a prompted rest)
   - Due to improvements made to NPC actor data in dnd5e v3.2.0, NPCs should now mostly be able to benefit from the full Rest Recovery workflow; in dnd5e v3.1.x, however, NPC rests will simply use the core rest methods
