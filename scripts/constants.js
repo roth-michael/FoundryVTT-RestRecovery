@@ -1378,6 +1378,7 @@ CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS = baseFlag + "currentShortRests";
 CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG = baseFlag + `hitDiceBuffer`;
 CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG = baseFlag + `-=hitDiceBuffer`;
 
+CONSTANTS.FLAGS.PROMPT_REST_CONFIG = baseFlag + "promptRestConfig";
 
 
 // DAE Flags

@@ -16,7 +16,10 @@
 
   let form;
 
-  const validActors = Array.from(game.actors).reduce((acc, actor) => {
+  const priorityActors = Array.from(game.scenes.get(game.user.viewedScene)?.tokens?.values()).map(currToken => currToken?.actor) ?? [];
+  const otherActors = Array.from(game.actors).filter(dirActor => !priorityActors.map(priActor => priActor.id).includes(dirActor.id));
+
+  const validActors = [...priorityActors, ...otherActors].reduce((acc, actor) => {
     for (const [userId, permissions] of Object.entries(actor.ownership)) {
       if (userId === "default") continue;
       const user = game.users.get(userId);
@@ -50,30 +53,33 @@
   })
 
   cleanConfig.update(() => {
-    return Array.from(lib.getSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG)).filter(entry => {
+    let maybeSavedConfig = foundry.utils.getProperty(game.user, CONSTANTS.FLAGS.PROMPT_REST_CONFIG);
+    let savedConfig = maybeSavedConfig ?? Array.from(lib.getSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG));
+    return savedConfig.filter(entry => {
       return game.users.get(entry.split("-")[0]) && game.actors.get(entry.split("-")[1]);
     });
   })
 
-  function updateRestConfig() {
+  async function updateRestConfig() {
+    await game.user.update({[CONSTANTS.FLAGS.PROMPT_REST_CONFIG]: [...configuration]});
     lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
   }
 
-  function addPlayer() {
+  async function addPlayer() {
     if (!validRemainingIds.length) return;
     cleanConfig.update((values) => {
       values.push(validRemainingIds[0]);
       return values;
     });
-    updateRestConfig();
+    await updateRestConfig();
   }
 
-  function removePlayer(index) {
+  async function removePlayer(index) {
     cleanConfig.update((values) => {
       values.splice(index, 1);
       return values;
     });
-    updateRestConfig();
+    await updateRestConfig();
   }
 
   async function requestSubmit() {
@@ -82,7 +88,7 @@
 
   async function submitPrompt() {
     await game.restrecovery.setActiveProfile(activeProfile);
-    await lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
+    await updateRestConfig();
     const timeChanges = lib.getTimeChanges(restType === "longRest");
 
     if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING)) {
@@ -137,10 +143,10 @@
       <div style="font-size:1rem; margin-bottom:0.25rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.PromptCharactersRest")}</div>
       <div style="text-align: center;">
         <i class="fas fa-plus rest-recovery-clickable-link" style="font-size:1rem;"
-           on:click={() => { addPlayer() }}></i>
+           on:click={async () => { await addPlayer() }}></i>
       </div>
       {#each $cleanConfig as comboId, index}
-        <select bind:value={comboId} on:change={() => { updateRestConfig() }}>
+        <select bind:value={comboId} on:change={async () => { await updateRestConfig() }}>
           {#each validActors.filter(actorEntry => {
             return !configuration.has(actorEntry[0]) || actorEntry[0] === comboId;
           }) as [id, text] (id)}
@@ -148,7 +154,7 @@
           {/each}
         </select>
         <div style="text-align: center;">
-          <i class="fas fa-times rest-recovery-clickable-link-red" on:click={() => { removePlayer(index) }}></i>
+          <i class="fas fa-times rest-recovery-clickable-link-red" on:click={async () => { await removePlayer(index) }}></i>
         </div>
       {/each}
 
