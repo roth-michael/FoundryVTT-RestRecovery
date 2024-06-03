@@ -7,12 +7,12 @@ export default async function migrate() {
   oldSettings = game.settings.storage.get("world").filter(setting => setting.key.includes('rest-recovery'))
 
   const sortedMigrations = Object.entries(migrations).sort((a, b) => {
-    return isNewerVersion(b[0], a[0]) ? -1 : 1;
+    return foundry.utils.isNewerVersion(b[0], a[0]) ? -1 : 1;
   });
 
   for (const [version, migration] of sortedMigrations) {
     const migrationVersion = getSetting(CONSTANTS.SETTINGS.MIGRATION_VERSION);
-    if (!isNewerVersion(version, migrationVersion)) continue;
+    if (!foundry.utils.isNewerVersion(version, migrationVersion)) continue;
     await migration();
   }
 
