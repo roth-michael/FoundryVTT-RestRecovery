@@ -69,7 +69,7 @@ export async function updateTidy5e() {
 
 export function updateStatusEffects() {
   // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
-  if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0"}, CONFIG.DND5E.conditionTypes.exhaustion));
+  if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0", name: 'Exhaustion'}, CONFIG.DND5E.conditionTypes.exhaustion));
 }
 
 export async function configureExhaustionHooks() {

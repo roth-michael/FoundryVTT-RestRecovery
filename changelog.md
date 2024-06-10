@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.11.5
+- Fixed a bug which sometimes prevented Midi QOL from opening its troubleshooter
+
 ## Version 1.11.4
 - Fixed bug when trying to prompt rest with non-actor tokens on the scene
 
