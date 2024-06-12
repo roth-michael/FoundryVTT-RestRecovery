@@ -45,6 +45,7 @@ const CONSTANTS = {
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
     SHORT_PACT_SPELLS_MULTIPLIER: "short-rest-recovery-pact-spells",
+    SONG_OF_REST_MULTIUSE: "song-of-rest-multiuse",
 
     MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
     SHORT_RESOURCES_MULTIPLIER_FORMULA: "short-recovery-resources-formula",
@@ -503,6 +504,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hidden: true,
     type: String,
     default: "@slot.max",
+  },
+  [CONSTANTS.SETTINGS.SONG_OF_REST_MULTIUSE]: {
+    name: "REST-RECOVERY.Settings.ShortRest.SongOfRestMultiuse.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.SongOfRestMultiuse.Hint",
+    scope: "world",
+    group: "shortrest",
+    config: false,
+    type: Boolean,
+    default: false
   },
   
   /*-------------------------------------------*
