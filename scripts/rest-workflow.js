@@ -692,7 +692,7 @@ export default class RestWorkflow {
 
     let hpRegained = 0;
 
-    if (!this.features.usedSongOfRest && this.features.bardFeature) {
+    if (!this.features.usedBardFeature && this.features.bardFeature) {
       const formula = foundry.utils.getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
       const roll = await lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
@@ -706,7 +706,7 @@ export default class RestWorkflow {
         speaker: ChatMessage.getSpeaker({ actor: this.actor })
       });
 
-      this.features.usedSongOfRest = true;
+      if (!getSetting(CONSTANTS.SETTINGS.SONG_OF_REST_MULTIUSE)) this.features.usedBardFeature = true;
     }
 
     if (this.features.chef.length > 0 && !this.features.usedChef) {

@@ -493,6 +493,10 @@
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Pact spell slots recovery fraction",
           "Hint": "The fraction of Warlock pact spell slots to recover on a short rest."
+        },
+        "SongOfRestMultiuse": {
+          "Title": "Song of Rest rolls for every hit die spent",
+          "Hint": "Enabling this will allow Song of Rest to roll & add a bonus to every hit die rolled during a rest, rather than only the first."
         }
       },
       "LongRest": {
