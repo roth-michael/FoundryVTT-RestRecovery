@@ -492,8 +492,8 @@
         },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Fração de Recuperação de Magias de Pacto",
-          "Hint": "A fração de espaços de magias de pacto de Bruxo para recuperar em um descanso curto.",
-        }
+          "Hint": "A fração de espaços de magias de pacto de Bruxo para recuperar em um descanso curto."
+        },
         "SongOfRestMultiuse": {
           "Title": "Canção do Descanso em Cada Dado de Vida",
           "Hint": "Ativar isso permitirá que Canção do Descanso role e adicione um bônus a cada dado de vida rolado durante um descanso, em vez de apenas ao primeiro."
