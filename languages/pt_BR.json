@@ -349,7 +349,7 @@
       },
       "ShowPlayerListRestButton": {
         "Title": "Mostrar Botão de Solicitação de Descanso",
-        "Hint": "Configure se o botão de requisição de descanso é exibido aos jogadores no canto inferior esquerdo da lista de jogadores (requer que o mundo seja reiniciado)"
+        "Hint": "Configure se o botão de requisição de descanso é exibido aos jogadores no canto inferior esquerdo da lista de jogadores (requer que o mundo seja reiniciado)."
       },
       "Debug": {
         "Title": "Ativar depuração",
