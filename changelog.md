@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.12.1
+- Translation updates (thanks Kharmans & VirusNik21)
+  - Now includes Russian translation
+
 ## Version 1.12.0
 - Added option to allow Song of Rest to roll with _every_ short rest hit die rolled, rather than only the first
 
