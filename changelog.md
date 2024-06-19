@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.12.2
+- "Configure Resource Recovery" option now only shows up on default sheet if sheet is in edit mode
+
 ## Version 1.12.1
 - Translation updates (thanks Kharmans & VirusNik21)
   - Now includes Russian translation

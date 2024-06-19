@@ -91,6 +91,7 @@ function patch_actorSheet(app, html, data) {
       ResourceConfig.show({ actor });
     });
   } else if (app.options.classes.includes("dnd5e2")) {
+    if (!html.hasClass("editable")) return;
     let targetElem = html.find(".favorites")[0];
     if (!targetElem) return;
     let border = false;
