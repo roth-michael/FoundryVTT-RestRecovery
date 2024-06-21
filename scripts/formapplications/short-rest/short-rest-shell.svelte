@@ -99,7 +99,7 @@
       if (!doContinue) return false;
       await rollHitDice();
     }
-    if (workflow.healthPercentage <= 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0) {
+    if (workflow.healthPercentage <= 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0 && enableRollHitDice) {
       const doContinue = await TJSDialog.confirm({
         title: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
         content: {
