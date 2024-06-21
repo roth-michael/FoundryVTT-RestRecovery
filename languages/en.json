@@ -121,7 +121,8 @@
       "Flavor": {
         "ShortRestNormal": "Short Rest ({duration} {units})",
         "LongRestNormal": "Long Rest ({duration} {units})"
-      }
+      },
+      "AlternateShortRestResult": "{name} takes a short rest and recovers {health} Hit Points."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -186,8 +187,8 @@
         "FinishRest": "Finish Short Rest"
       },
       "RestHealthWarning": {
-        "Title": "Finish Long Rest?",
-        "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your long rest?"
+        "Title": "Finish Rest?",
+        "Content": "You haven't spent any hit dice to regain hit points, are you sure you want to finish your rest?"
       },
       "RestSpendHitDice": {
         "Title": "Spend Hit Dice?",
@@ -497,6 +498,10 @@
         "SongOfRestMultiuse": {
           "Title": "Song of Rest rolls for every hit die spent",
           "Hint": "Enabling this will allow Song of Rest to roll & add a bonus to every hit die rolled during a rest, rather than only the first."
+        },
+        "HitPointsRecoveryFraction": {
+          "Title": "Hit points recovery fraction",
+          "Hint": "The fraction of hit points to recover on a short rest (in addition to hit dice rolls)."
         }
       },
       "LongRest": {

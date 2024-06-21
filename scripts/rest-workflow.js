@@ -1232,6 +1232,9 @@ export default class RestWorkflow {
   }
 
   _displayRestResultMessage(chatMessage) {
+    if (!this.longRest && lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER) && !this.healthData.hitDiceSpent) {
+      chatMessage.content = game.i18n.format('REST-RECOVERY.Chat.AlternateShortRestResult', {name: this.actor.name, health: this.healthData.hitPointsToRegainFromRest});
+    }
     let flavor = chatMessage.flavor;
     if (!this.config.newDay) {
       let duration;
@@ -1285,13 +1288,7 @@ export default class RestWorkflow {
     const maxHP = this.actor.system.attributes.hp.max;
     const currentHP = this.actor.system.attributes.hp.value;
 
-    if (!this.longRest) {
-      results.hitPointsRecovered = currentHP - this.healthData.startingHealth;
-      results.hitPointsToRegainFromRest = 0;
-      return results.hitPointsToRegainFromRest;
-    }
-
-    const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HP_MULTIPLIER);
+    const multiplier = lib.determineMultiplier(this.longRest ? CONSTANTS.SETTINGS.HP_MULTIPLIER : CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER);
 
     results.hitPointsToRegainFromRest = typeof multiplier === "string"
       ? Math.floor((await lib.evaluateFormula(multiplier, this.actor.getRollData()))?.total)

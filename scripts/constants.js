@@ -46,12 +46,14 @@ const CONSTANTS = {
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
     SHORT_PACT_SPELLS_MULTIPLIER: "short-rest-recovery-pact-spells",
     SONG_OF_REST_MULTIUSE: "song-of-rest-multiuse",
+    SHORT_HP_MULTIPLIER: "short-recovery-hitpoints",
 
     MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
     SHORT_RESOURCES_MULTIPLIER_FORMULA: "short-recovery-resources-formula",
     SHORT_USES_OTHERS_MULTIPLIER_FORMULA: "short-recovery-uses-others-formula",
     SHORT_USES_FEATS_MULTIPLIER_FORMULA: "short-recovery-uses-feats-formula",
     SHORT_PACT_SPELLS_MULTIPLIER_FORMULA: "short-recovery-pact-spells-formula",
+    SHORT_HP_MULTIPLIER_FORMULA: "short-recovery-hitpoints-formula",
 
     /*-------------------------------------------*
      *             Long Rest Settings            *
@@ -513,6 +515,32 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     type: Boolean,
     default: false
+  },
+  [CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.ShortRest.HitPointsRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.HitPointsRecoveryFraction.Hint",
+    scope: "world",
+    group: "shortrest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+    },
+    default: CONSTANTS.FRACTIONS.NONE,
+  },
+  [CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "shortrest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "floor(@attributes.hp.max / 2)",
   },
   
   /*-------------------------------------------*
