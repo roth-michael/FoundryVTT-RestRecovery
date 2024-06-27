@@ -286,6 +286,13 @@ export default class RestWorkflow {
     Hooks.on("dnd5e.restCompleted", async (actor, results) => {
       await actor.deleteEmbeddedDocuments("Item", results?.deleteItems ?? [], { isRest: true });
       await actor.createEmbeddedDocuments("Item", results?.createItems ?? [], { isRest: true });
+      if (game.modules.get('magicitems')?.api && game.modules.get('magicitems').api.execActorLongRest) {
+        if (results.longRest) {
+          game.modules.get('magicitems').api.execActorLongRest(actor, results.newDay);
+        } else {
+          game.modules.get('magicitems').api.execActorShortRest(actor, results.newDay);
+        }
+      }
     });
 
     this._setupFoodListeners();
@@ -1232,8 +1239,8 @@ export default class RestWorkflow {
   }
 
   _displayRestResultMessage(chatMessage) {
-    if (!this.longRest && lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER) && !this.healthData.hitDiceSpent) {
-      chatMessage.content = game.i18n.format('REST-RECOVERY.Chat.AlternateShortRestResult', {name: this.actor.name, health: this.healthData.hitPointsToRegainFromRest});
+    if (!this.longRest && lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER) && !this.healthData.hitDiceSpent && this.healthRegained > 0) {
+      chatMessage.content = game.i18n.format('REST-RECOVERY.Chat.AlternateShortRestResult', {name: this.actor.name, health: this.healthRegained});
     }
     let flavor = chatMessage.flavor;
     if (!this.config.newDay) {
@@ -1265,7 +1272,7 @@ export default class RestWorkflow {
 
     let newChatMessageContent = `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra;
 
-    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES)) {
+    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES) && (this.config.restPrompted || !lib.getSetting(CONSTANTS.SETTINGS.SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED))) {
       let endDateTime = SimpleCalendar.api.currentDateTime();
       let restDuration = this.config.duration;
       let startDateTime = (this.config.restPrompted || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;

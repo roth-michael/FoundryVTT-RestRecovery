@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 1.14.0
+- Added compatibility with [Magic Items](https://foundryvtt.com/packages/magicitems) module (resting should now recharge magic items as appropriate)
+  - This relies on Magic Items version 4.1.7 or later
+- Added an option to only log Simple Calendar notes if coming from a GM-prompted rest (i.e. not from a rest starting on a character sheet)
+- Fixed a bug with chat messages for hp regain on short rests displaying incorrect recovery amount
+
 ## Version 1.13.0
 - Added option for hp regain on short rests (in addition to hit dice rolls)
 - A couple of dialog fixes
