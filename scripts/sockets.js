@@ -35,6 +35,7 @@ export default class SocketHandler {
     const sender = game.users.get(senderId);
     const actorsToRest = [];
     const offlineResters = [];
+    const otherResters = [];
     const isLongRest = data.restType === "longRest";
     for(const userActorPair of data.userActors){
       const [userId, actorId] = userActorPair.split('-');
@@ -56,13 +57,17 @@ export default class SocketHandler {
         }
       }else if(user === game.user){
         actorsToRest.push(actor);
-      } else if (actor && !user.active && sender === game.user) {
-        offlineResters.push(actor);
+      } else if (!user.active) {
+        if (sender === game.user) {
+          offlineResters.push(actor);
+        } else {
+          otherResters.push(actor);
+        }
       }
 
     }
 
-		const allActorsResting = actorsToRest.concat(offlineResters);
+		const allActorsResting = actorsToRest.concat(offlineResters).concat(otherResters);
 
     const width = 425;
     const midPoint = window.innerWidth / actorsToRest.length;

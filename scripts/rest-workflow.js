@@ -208,12 +208,14 @@ export default class RestWorkflow {
       if (getSetting(CONSTANTS.SETTINGS.REST_VARIANT) === "custom") {
         config.duration = (getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS) ?? 1) * 60;
       }
+
+      let workflow = RestWorkflow.make(actor, false, config);
       
       if (!config.dialog) return true;
 
       if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
       
-      RestWorkflow.make(actor, false, config).then(() => {
+      workflow.then(() => {
   
         const hd0 = actor.system.attributes.hd;
         const hp0 = actor.system.attributes.hp.value;
@@ -249,11 +251,13 @@ export default class RestWorkflow {
         config.duration = (getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS) ?? 1) * 60;
       }
 
+      let workflow = RestWorkflow.make(actor, true, config);
+
       if (!config.dialog) return true;
 
       if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
 
-      RestWorkflow.make(actor, true, config).then((workflow) => {
+      workflow.then((workflow) => {
         LongRestDialog.show({ ...config, actor }).then(async (newDay) => {
   
           config.newDay = newDay;
@@ -708,7 +712,8 @@ export default class RestWorkflow {
       await roll.toMessage({
         flavor: game.i18n.format("REST-RECOVERY.Chat.SongOfRest" + (isOwnBard ? "Self" : ""), {
           name: this.actor.name,
-          bard: this.features.bard.name
+          bard: this.features.bard.name,
+          songOfRestName: lib.getSetting(CONSTANTS.SETTINGS.SONG_OF_REST, true)
         }),
         speaker: ChatMessage.getSpeaker({ actor: this.actor })
       });
@@ -1052,7 +1057,7 @@ export default class RestWorkflow {
     let exhaustionSave = false;
     let exhaustionToRemove = 1;
 
-    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
+    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && this.config.dialog) {
 
       let {
         actorRequiredFood,
@@ -1405,7 +1410,8 @@ export default class RestWorkflow {
 
   async _getRestSpellRecovery(results, { recoverSpells = true } = {}) {
 
-    const customSpellRecovery = lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY);
+    const customSpellRecovery = lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY) && this.config.dialog;
+    let actorRollData = this.actor.getRollData();
 
     // Long rest
     if (recoverSpells) {
@@ -1422,7 +1428,7 @@ export default class RestWorkflow {
         }
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof multiplier === "string"
-          ? Math.max((await lib.evaluateFormula(multiplier, { slot: foundry.utils.deepClone(slot) }))?.total, 1)
+          ? Math.max((await lib.evaluateFormula(multiplier, { ...actorRollData, slot: foundry.utils.deepClone(slot) }))?.total, 1)
           : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
         results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }
@@ -1436,7 +1442,7 @@ export default class RestWorkflow {
         if (!slot.override && !slot.max || level !== "pact") continue;
         let spellMax = slot.override || slot.max;
         let recoverSpells = typeof pactMultiplier === "string"
-          ? Math.max((await lib.evaluateFormula(pactMultiplier, { slot: foundry.utils.deepClone(slot) }))?.total, 1)
+          ? Math.max((await lib.evaluateFormula(pactMultiplier, { ...actorRollData, slot: foundry.utils.deepClone(slot) }))?.total, 1)
           : Math.max(Math.floor(spellMax * pactMultiplier), pactMultiplier ? 1 : pactMultiplier);
         results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
       }

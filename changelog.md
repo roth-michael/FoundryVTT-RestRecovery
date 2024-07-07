@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 1.14.1
+- Fixed a bug where regular exhaustion rules were applied still when Alternative Exhaustion 5e was active
+- Fixed a bug where Song of Rest wasn't being applied to players' actors unless the player also owned the bard
+- Fixed the chat message displayed for Song of Rest to properly use whatever the configured "Song of Rest" name is
+- Fixed a bug where rests called through a macro with `{dialog: false}` would not recover any resources
+  - Now such a rest will complete as if there were no food/water restrictions as no player input can be collected without a dialog
+  - Similarly, if "spell slot point-like recovery rule" is enabled and a no-dialog rest is prompted via macro, spell slots will be recovered according to the custom formula
+
 ## Version 1.14.0
 - Added compatibility with [Magic Items](https://foundryvtt.com/packages/magicitems) module (resting should now recharge magic items as appropriate)
   - This relies on Magic Items version 4.1.7 or later
