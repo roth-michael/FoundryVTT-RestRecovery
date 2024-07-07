@@ -74,7 +74,8 @@ export function updateStatusEffects() {
 
 export async function configureExhaustionHooks() {
   let ac5eShouldControl = game.modules.get("automated-conditions-5e")?.active && game.settings.get("automated-conditions-5e", "autoExhaustion");
-  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl) {
+  let alternativeExhaustionActive = game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
+  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive) {
     if (Hooks.events["dnd5e.preRollAbilityTest"]) Hooks.off("dnd5e.preRollAbilityTest", _preAbilityCheck);
     if (Hooks.events["dnd5e.preRollSkill"]) Hooks.off("dnd5e.preRollSkill", _preSkill);
     if (Hooks.events["dnd5e.preRollAbilitySave"]) Hooks.off("dnd5e.preRollAbilitySave", _preAbilitySaveOrConcentration);
