@@ -132,6 +132,7 @@ const CONSTANTS = {
     AUTOMATE_FOODWATER_EXHAUSTION: "automate-foodwater-exhaustion",
     NO_FOOD_DURATION_MODIFIER: "no-food-duration-modifier",
     HALF_WATER_SAVE_DC: "half-water-save-dc",
+    FOODWATER_PROMPT_NEWDAY: "foodwater-prompt-newday",
   },
   
   FRACTIONS: {
@@ -1403,7 +1404,21 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     default: 15,
     type: Number
-  }
+  },
+  [CONSTANTS.SETTINGS.FOODWATER_PROMPT_NEWDAY]: {
+    name: "REST-RECOVERY.Settings.FoodAndWater.FoodWaterPromptNewDay.Title",
+    hint: "REST-RECOVERY.Settings.FoodAndWater.FoodWaterPromptNewDay.Hint",
+    scope: "world",
+    group: "foodandwater",
+    customSettingsDialog: true,
+    config: false,
+    type: Boolean,
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    validate: (settings) => {
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value
+    },
+    default: false
+  },
 };
 
 const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.`
