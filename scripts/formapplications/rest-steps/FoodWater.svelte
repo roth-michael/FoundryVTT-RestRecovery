@@ -75,6 +75,7 @@
 
   RestWorkflow.patchAllConsumableItems(actor).then(() => {
     refreshConsumableItems();
+    calculateCanAfford();
   });
 
   function toggleAccessToFood() {
@@ -305,12 +306,12 @@
   function calculateCanAfford() {
     let actorWealth = 0;
     let necessaryWealth = 0;
-    for (let currencyData of Object.values(CONFIG.DND5E.currencies)) {
-      actorWealth += actor.system.currency[currencyData.abbreviation] / currencyData.conversion;
-      if (externalFoodSourceHasCost && foodCurrency == currencyData.abbreviation) {
+    for (let [currencyKey, currencyData] of Object.entries(CONFIG.DND5E.currencies)) {
+      actorWealth += actor.system.currency[currencyKey] / currencyData.conversion;
+      if (externalFoodSourceHasCost && foodCurrency == currencyKey) {
         necessaryWealth += foodCost / currencyData.conversion;
       }
-      if (externalWaterSourceHasCost && waterCurrency == currencyData.abbreviation) {
+      if (externalWaterSourceHasCost && waterCurrency == currencyKey) {
         necessaryWealth += waterCost / currencyData.conversion;
       }
     }

@@ -120,7 +120,8 @@
       "CouldNotShortRest": "{actorName} could not take a short rest.", 
       "Flavor": {
         "ShortRestNormal": "Short Rest ({duration} {units})",
-        "LongRestNormal": "Long Rest ({duration} {units})"
+        "LongRestNormal": "Long Rest ({duration} {units})",
+        "ShortRestNewday": "Short Rest (New Day)"
       },
       "AlternateShortRestResult": "{name} takes a short rest and recovers {health} Hit Points."
     },
@@ -460,6 +461,10 @@
         "HalfWaterSaveDC": {
           "Title": "Half water exhaustion DC",
           "Hint": "This configures the Constitution saving throw DC that characters must make if they drink only half of the required amount of water."
+        },
+        "FoodWaterPromptNewDay": {
+          "Title": "Prompt food & water consumption on new day",
+          "Hint": "If enabled, food & water consumption will be requested only when a rest results in a \"new day\", regardless of whether it is short or long"
         }
       },
       "ShortRest": {

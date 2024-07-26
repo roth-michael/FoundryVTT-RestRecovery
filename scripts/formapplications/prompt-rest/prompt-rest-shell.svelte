@@ -21,7 +21,16 @@
 
   const validActors = [...priorityActors, ...otherActors].reduce((acc, actor) => {
     for (const [userId, permissions] of Object.entries(actor.ownership)) {
-      if (userId === "default") continue;
+      if (userId === "default") {
+        if (permissions < 3) continue;
+        const allPlayers = game.users.filter(user => !user.isGM);
+        if (!allPlayers.length) continue;
+        for (const currPlayer of allPlayers) {
+          const combinedID = currPlayer.id + "-" + actor.id;
+          acc.push([combinedID, `${actor.name} (${currPlayer.name})`]);
+        }
+        break;
+      }
       const user = game.users.get(userId);
       if (!user) continue;
       const combinedID = user.id + "-" + actor.id;
