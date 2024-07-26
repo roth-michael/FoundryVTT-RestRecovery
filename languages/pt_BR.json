@@ -120,7 +120,8 @@
       "CouldNotShortRest": "{actorName} não pôde realizar um descanso curto.",
       "Flavor": {
         "ShortRestNormal": "Descanso Curto ({duration} {units})",
-        "LongRestNormal": "Descanso Longo ({duration} {units})"
+        "LongRestNormal": "Descanso Longo ({duration} {units})",
+        "ShortRestNewday": "Descanso Curto (Novo Dia)"
       },
       "AlternateShortRestResult": "{name} faz um descanso curto e recupera {health} Pontos de Vida."
     },
@@ -460,6 +461,10 @@
         "HalfWaterSaveDC": {
           "Title": "CD de Exaustão de Metade de Água",
           "Hint": "Configura a CD da salvaguarda de Constituição que os personagens devem fazer se beberem apenas metade da quantidade necessária de água."
+        },
+        "FoodWaterPromptNewDay": {
+          "Title": "Avisar Consumo de Comida e Água em Novo Dia",
+          "Hint": "Se habilitado, consumo de comida e água será requisitado apenas se o descanso resultar em um \"novo dia\", independente de ser um descanso curto ou longo."
         }
       },
       "ShortRest": {
