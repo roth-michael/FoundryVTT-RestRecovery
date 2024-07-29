@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.15.1
+- Translation updates (thanks Kharmans)
+
 ## Version 1.15.0
 - Added settings in food & water section to enable or disable food/water requirement according to "new day"
   - If enabled, food & water consumption will be a rest step regardless of short vs long rest, so long as the rest results in a new day
