@@ -123,7 +123,11 @@
         "LongRestNormal": "Long Rest ({duration} {units})",
         "ShortRestNewday": "Short Rest (New Day)"
       },
-      "AlternateShortRestResult": "{name} takes a short rest and recovers {health} Hit Points."
+      "AlternateShortRestResult": "{name} takes a short rest and recovers {health} Hit Points.",
+      "TidyChanged": "Rest Recovery changed Tidy5e Sheet's exhaustion display settings:",
+      "TidyTypeChanged": "Exhaustion type changed from {oldType} to {newType}.",
+      "TidyHintsChanged": "Custom level hints were removed.",
+      "TidyLevelsChanged": "Exhaustion levels changed from {oldLevels} to {newLevels}."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -312,6 +316,10 @@
       "HitDieBonus": {
         "Title": "Hit Die Bonus",
         "Hint": "Whenever this character rolls a hit die, this applies a bonus to that roll. This can be a formula, like \"1d6 + 3\"."
+      },
+      "HitDieAdvantage": {
+        "Title": "Hit Die Advantage",
+        "Hint": "Whenever this character rolls a hit die, they roll with advantage."
       },
       "LongRestSpellPointsBonus": {
         "Title": "Spell slot point-like recovery bonus",

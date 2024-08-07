@@ -2,6 +2,7 @@ import * as lib from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
 import PromptRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
 import { gameSettings } from "./settings.js";
+import RestWorkflow from "./rest-workflow.js";
 
 export default class API {
 
@@ -123,7 +124,7 @@ export default class API {
    * @returns {Promise<boolean>}
    */
   static setActorConsumableValues(actor, { food = null, water = null, starvation } = {}) {
-    if (!(actor instanceof game.dnd5e.entities.Actor5e)) {
+    if (!(actor instanceof game.dnd5e.documents.Actor5e)) {
       throw new Error("actor must instance of Actor5e")
     }
     const update = {};
@@ -140,6 +141,19 @@ export default class API {
       update[CONSTANTS.FLAGS.STARVATION] = starvation;
     }
     return actor.update(update);
+  }
+
+  /**
+   * Creates actorUpdate & message contents as if the item were consumed by the actor. 
+   * Does not consume uses of the item, update the actor, or create a message on its own.
+   * 
+   * @param {Item} item 
+   * @param {Actor} actor 
+   * @returns {[Object, string] | []} - Either an empty array or an array with [actorUpdates, messageString]
+   */
+  static getActorConsumableUpdates(item, actor) {
+    if (!actor) actor = item.parent;
+    return RestWorkflow._consumableItemHelper(item, undefined, undefined, actor)
   }
 
 }
