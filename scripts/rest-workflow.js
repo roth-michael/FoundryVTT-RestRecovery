@@ -112,6 +112,7 @@ export default class RestWorkflow {
       const durableMod = Math.max(2, conMod * 2);
 
       const forceMaxRoll = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.MAXIMISE_HIT_DIE_ROLL);
+      const forceAdvantage = actor.getFlag("dnd5e", "hitDieAdvantage") || false;
       const rollFormula = getSetting(CONSTANTS.SETTINGS.HIT_DIE_ROLL_FORMULA);
       const isMaxed = (rollFormula === CONSTANTS.ROLL_FORMULAS.MAXIMIZED) || forceMaxRoll;
 
@@ -120,7 +121,7 @@ export default class RestWorkflow {
 
 			let formula = "1" + denomination;
 
-			if (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE) {
+			if (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE || forceAdvantage) {
 				formula = "2" + denomination;
 			}
 
@@ -132,7 +133,7 @@ export default class RestWorkflow {
         formula += "r<3";
       }
 
-      if (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE) {
+      if (!isMaxed && (rollFormula === CONSTANTS.ROLL_FORMULAS.ADVANTAGE || forceAdvantage)) {
 				formula = formula + "kh"
 			}
 
@@ -1781,9 +1782,9 @@ export default class RestWorkflow {
     }));
   }
 
-  static _handleConsumableItem(item, data, workflow) {
-
-    if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
+  static _consumableItemHelper(item, data, workflow, consumingActor) {
+    if (!workflow) workflow = this;
+    if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return [];
 
     const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
 
@@ -1794,7 +1795,7 @@ export default class RestWorkflow {
       actorRequiredWater,
       actorFoodSatedValue,
       actorWaterSatedValue
-    } = lib.getActorConsumableValues(item.parent, workflow.restVariant === "gritty" && workflow.longRest);
+    } = lib.getActorConsumableValues(consumingActor, workflow.restVariant === "gritty" && workflow.longRest);
 
     const currCharges = foundry.utils.getProperty(item, "system.uses.value");
     const newCharges = foundry.utils.getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
@@ -1809,7 +1810,7 @@ export default class RestWorkflow {
 
       const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
-        actorName: item.parent.name,
+        actorName: consumingActor.name,
         itemName: item.name,
         charges: chargesUsed
       }) + "</p>";
@@ -1829,7 +1830,7 @@ export default class RestWorkflow {
 
       const localize = "REST-RECOVERY.Chat.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
-        actorName: item.parent.name,
+        actorName: consumingActor.name,
         itemName: item.name,
         charges: chargesUsed
       }) + "</p>";
@@ -1844,7 +1845,7 @@ export default class RestWorkflow {
 
       const localize = "REST-RECOVERY.Chat.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
-        actorName: item.parent.name,
+        actorName: consumingActor.name,
         itemName: item.name,
         charges: chargesUsed
       }) + "</p>";
@@ -1853,17 +1854,24 @@ export default class RestWorkflow {
         ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedWater") + "</p>"
         : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
     }
+    return [actorUpdates, message];
+  }
+
+  static _handleConsumableItem(item, data, workflow, consumingActor) {
+    if (!consumingActor) consumingActor = item.parent;
+
+    let [actorUpdates, message] = this._consumableItemHelper(item, data, workflow, consumingActor);
 
     if (!foundry.utils.isEmpty(actorUpdates)) {
-      item.parent.update(actorUpdates);
+      consumingActor.update(actorUpdates);
     }
 
     if (message) {
       setTimeout(() => {
-        ChatMessage.create({
+        ChatMessage.implementation.create({
           flavor: "Rest Recovery",
           user: game.user.id,
-          speaker: ChatMessage.getSpeaker({ actor: item.parent }),
+          speaker: ChatMessage.getSpeaker({ actor: consumingActor }),
           content: message,
         });
       }, 1000)

@@ -48,6 +48,9 @@ This "Desert" module profile could for example set a higher water consumption pe
 <dt><a href="#setActorConsumableValues">setActorConsumableValues(actor, [food], [water], [starvation])</a> ⇒ <code>Promise.&lt;boolean&gt;</code></dt>
 <dd><p>Sets the food, water, and/or starvation levels of a given actor.</p>
 </dd>
+<dt><a href="#getActorConsumableUpdates">getActorConsumableUpdates(item, actor)</a> ⇒ <code>[Object, string] | []</code></dt>
+<dd><p>Creates actorUpdate & message data as if the item were consumed by the actor. Does not consume uses of the item, update the actor, or create a message on its own.</p>
+</dd>
 </dl>
 
 <a name="getAllProfiles"></a>
@@ -123,4 +126,15 @@ Sets the food, water, and/or starvation levels of a given actor.
 | [food] | <code>number</code> \ <code>null</code> | food |
 | [water] | <code>number</code> \ <code>null</code> | water |
 | [starvation] | <code>number</code> \ <code>null</code> | starvation |
+
+<a name="getActorConsumableUpdates"></a>
+
+## getActorConsumableUpdates(item, actor) ⇒ <code>[Object, string] | []</code>
+Sets the food, water, and/or starvation levels of a given actor.
+
+
+| Param | Type | Description |
+| --- | --- | --- |
+| item | <code>Item</code> | the item which would be consumed
+| actor | <code>Actor</code> | the actor which would consume |
 

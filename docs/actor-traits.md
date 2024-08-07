@@ -12,3 +12,6 @@ This overrides how many units of water this character needs per day.
 
 ## Disable Food & Water Requirement
 If enabled, this character does not require any food or water, similar to the Undying Nature warlock feature.
+
+## Hit Die Advantage
+Whenever this character rolls a hit die, they roll with advantage.

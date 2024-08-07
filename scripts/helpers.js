@@ -62,8 +62,31 @@ export async function configureOneDndExhaustion() {
 
 export async function updateTidy5e() {
   let isOneDnd = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
+  let oldSettings = game.settings.get("tidy5e-sheet", "exhaustionConfig");
   await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({
     totalLevels: isOneDnd ? 10 : 6
+  });
+  let newSettings = game.settings.get("tidy5e-sheet", "exhaustionConfig");
+  let typeChanged = oldSettings.type !== newSettings.type;
+  let hintsChanged = oldSettings.hints?.length !== newSettings.hints?.length;
+  let levelsChanged = oldSettings.levels !== newSettings.levels;
+  if (!typeChanged && !hintsChanged && !levelsChanged) return;
+  let chatMessageContent = "<p>" + game.i18n.localize("REST-RECOVERY.Chat.TidyChanged") + "</p>";
+  if (typeChanged) {
+    chatMessageContent += "<p>" + game.i18n.format("REST-RECOVERY.Chat.TidyTypeChanged", {oldType: oldSettings.type, newType: newSettings.type}) + "</p>";
+  }
+  if (hintsChanged) {
+    chatMessageContent += "<p>" + game.i18n.localize("REST-RECOVERY.Chat.TidyHintsChanged") + "</p>";
+  }
+  if (levelsChanged) {
+    chatMessageContent += "<p>" + game.i18n.format("REST-RECOVERY.Chat.TidyLevelsChanged", {oldLevels: oldSettings.levels, newLevels: newSettings.levels}) + "</p>";
+  }
+  await ChatMessage.implementation.create({
+    flavor: "Rest Recovery",
+    user: game.user.id,
+    speaker: {alias: "Rest Recovery"},
+    content: chatMessageContent,
+    whisper: [game.users.activeGM?.id]
   });
 }
 

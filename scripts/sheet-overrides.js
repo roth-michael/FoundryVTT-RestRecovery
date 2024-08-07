@@ -20,6 +20,14 @@ export function registerTraits() {
     placeholder: "0"
   };
 
+  CONFIG.DND5E.characterFlags.hitDieAdvantage = {
+    section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
+    name: game.i18n.localize("REST-RECOVERY.Traits.HitDieAdvantage.Title"),
+    hint: game.i18n.localize("REST-RECOVERY.Traits.HitDieAdvantage.Hint"),
+    type: Boolean,
+    placeholder: false
+  }
+
   if (getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY)) {
     CONFIG.DND5E.characterFlags.longRestSpellPointsBonus = {
       section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
