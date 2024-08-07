@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.16.1
+- Fixed bug where Tidy5e sheet would be adjusted even if exhaustion automation was disabled in Rest Recovery
+
 ## Version 1.16.0
 - Added a special trait for actors to roll hit dice with advantage
 - Added a whispered chat message to the GM if Rest Recovery changes Tidy5e's exhaustion display settings

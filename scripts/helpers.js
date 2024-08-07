@@ -3,6 +3,7 @@ import { getSetting } from "./lib/lib.js";
 
 export async function configureOneDndExhaustion() {
   updateStatusEffects();
+  if (!getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
   if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
   if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
     if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 10) {
