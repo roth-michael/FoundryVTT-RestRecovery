@@ -123,7 +123,11 @@
         "LongRestNormal": "Descanso Longo ({duration} {units})",
         "ShortRestNewday": "Descanso Curto (Novo Dia)"
       },
-      "AlternateShortRestResult": "{name} faz um descanso curto e recupera {health} Pontos de Vida."
+      "AlternateShortRestResult": "{name} faz um descanso curto e recupera {health} Pontos de Vida.",
+      "TidyChanged": "Rest Recovery mudou a exibição configurações de Exaustão do Tidy5e Sheet:",
+      "TidyTypeChanged": "Tipo de Exaustão alterada de {oldType} para {newType}.",
+      "TidyHintsChanged": "Dicas de níveis personalizados foram removidas.",
+      "TidyLevelsChanged": "Níveis de Exaustão alterados de {oldLevels} para {newLevels}."
     },
     "Dialogs": {
       "SaveProfile": {
@@ -312,6 +316,10 @@
       "HitDieBonus": {
         "Title": "Bônus de Dados de Vida",
         "Hint": "Sempre que esse personagem rolar um dado de vida, isso aplica um bônus a essa rolagem. Pode ser uma fórmula, como \"1d6 + 3\"."
+      },
+      "HitDieAdvantage": {
+        "Title": "Vantagem Dado de Vida",
+        "Hint": "Sempre que esse personagem jogar um dado de vida, ele joga com vantagem."
       },
       "LongRestSpellPointsBonus": {
         "Title": "Bônus de Recuperação de Espaços de Magia",
