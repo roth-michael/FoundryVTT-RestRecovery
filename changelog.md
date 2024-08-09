@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 1.16.2
+- Fixed bug where Rest Recovery would try to access Tidy5e's settings before they were registered
+- Fixed a bug where rolling hit dice on long rest wouldn't update the UI
+- Translation updates (thanks Kharmans)
+
 ## Version 1.16.1
 - Fixed bug where Tidy5e sheet would be adjusted even if exhaustion automation was disabled in Rest Recovery
 

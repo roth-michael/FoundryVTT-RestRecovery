@@ -14,7 +14,6 @@ import { configureOneDndExhaustion, updateTidy5e, updateStatusEffects, configure
 Hooks.once("init", () => {
   SocketHandler.initialize();
   gameSettings.initialize();
-  configureOneDndExhaustion();
   registerSheetOverrides();
   RestWorkflow.initialize();
   registerHooks();
@@ -23,6 +22,7 @@ Hooks.once("init", () => {
 
 Hooks.once("ready", () => {
   migrate();
+  configureOneDndExhaustion();
   game.restrecovery = API;
   gameSettings.cleanup();
   setTimeout(RestWorkflow.ready, 1000);
