@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.16.3
+- Added localization for small version of Item Piles trade button
+- NOTE: Barring any bugs discovered prior to the dnd5e 4.0.0 release, this will likely be the final V11 & dnd5e 3.x compatible release.
+
 ## Version 1.16.2
 - Fixed bug where Rest Recovery would try to access Tidy5e's settings before they were registered
 - Fixed a bug where rolling hit dice on long rest wouldn't update the UI

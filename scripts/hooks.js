@@ -17,7 +17,7 @@ export default function registerHooks(){
     let parent = html;
     const tradeButton = html.find(".item-piles-player-list-trade-button");
     if (itemPiles && tradeButton.length && !minimalUI) {
-      tradeButton.html(`<i class="fas fa-handshake"></i> Trade`);
+      tradeButton.html(`<i class="fas fa-handshake"></i> ${game.i18n.localize("ITEM-PILES.PlayerList.TradeButton")}`);
       tradeButton.addClass(classes);
       parent = $(`<div class="rest-recovery-button-parent"></div>`);
       parent.append(tradeButton);
