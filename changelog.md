@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 1.17.0
+- Added compatibility with group sheet rests (they'll now open the "Prompt Rest" dialog with all actors from the sheet selected by default)
+- This will _actually_ be the last v11/3.x-compatible release
+
 ## Version 1.16.3
 - Added localization for small version of Item Piles trade button
 - NOTE: Barring any bugs discovered prior to the dnd5e 4.0.0 release, this will likely be the final V11 & dnd5e 3.x compatible release.

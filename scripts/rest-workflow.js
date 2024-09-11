@@ -6,6 +6,7 @@ import FoodWater from "./formapplications/rest-steps/FoodWater.svelte";
 import SpellRecovery from "./formapplications/rest-steps/SpellRecovery.svelte";
 import LongRestDialog from "./formapplications/long-rest/long-rest.js";
 import ShortRestDialog from "./formapplications/short-rest/short-rest.js";
+import RestPromptDialog from "./formapplications/prompt-rest/prompt-rest.js";
 
 const rests = new Map();
 
@@ -196,6 +197,44 @@ export default class RestWorkflow {
 
     Hooks.on("dnd5e.preShortRest", (actor, config) => {
 
+      if (actor.type === 'group') {
+        const actors = actor.system.members.map(currMember => currMember.actor);
+        const potentialActors = Object.fromEntries(actors.map(currActor => [currActor.uuid, []]));
+        for (const currActor of actors) {
+          for (const [userId, permissions] of Object.entries(currActor.ownership)) {
+            if (userId === "default") {
+              if (permissions < 3) continue;
+              const allPlayers = game.users.filter(user => !user.isGM);
+              if (!allPlayers.length) continue;
+              potentialActors[currActor.uuid] = allPlayers; 
+              break;
+            }
+            const user = game.users.get(userId);
+            if (!user) continue;
+            if (user.isGM || permissions < 3) continue;
+            potentialActors[currActor.uuid].push(user);
+          }
+        }
+        const trueActors = [];
+        for (const currActor of actors) {
+          const potentialUsers = potentialActors[currActor.uuid];
+          const actualUser = potentialUsers.find(currUser => currUser.active && currUser.character.uuid === currActor.uuid);
+          const firstOnlineUser = potentialUsers.find(currUser => currUser.active);
+          let bestUser;
+          if (actualUser) {
+            bestUser = actualUser;
+          } else if (firstOnlineUser) {
+            bestUser = firstOnlineUser;
+          } else {
+            bestUser = potentialUsers[0];
+          }
+          if (!bestUser) bestUser = game.users.activeGM;
+          if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
+        }
+        RestPromptDialog.show({actorList: trueActors});
+        return false;
+      }
+
       if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedShortRest");
         return false;
@@ -253,6 +292,43 @@ export default class RestWorkflow {
     });
 
     Hooks.on("dnd5e.preLongRest", (actor, config) => {
+      if (actor.type === 'group') {
+        const actors = actor.system.members.map(currMember => currMember.actor);
+        const potentialActors = Object.fromEntries(actors.map(currActor => [currActor.uuid, []]));
+        for (const currActor of actors) {
+          for (const [userId, permissions] of Object.entries(currActor.ownership)) {
+            if (userId === "default") {
+              if (permissions < 3) continue;
+              const allPlayers = game.users.filter(user => !user.isGM);
+              if (!allPlayers.length) continue;
+              potentialActors[currActor.uuid] = allPlayers; 
+              break;
+            }
+            const user = game.users.get(userId);
+            if (!user) continue;
+            if (user.isGM || permissions < 3) continue;
+            potentialActors[currActor.uuid].push(user);
+          }
+        }
+        const trueActors = [];
+        for (const currActor of actors) {
+          const potentialUsers = potentialActors[currActor.uuid];
+          const actualUser = potentialUsers.find(currUser => currUser.active && currUser.character.uuid === currActor.uuid);
+          const firstOnlineUser = potentialUsers.find(currUser => currUser.active);
+          let bestUser;
+          if (actualUser) {
+            bestUser = actualUser;
+          } else if (firstOnlineUser) {
+            bestUser = firstOnlineUser;
+          } else {
+            bestUser = potentialUsers[0];
+          }
+          if (!bestUser) bestUser = game.users.activeGM;
+          if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
+        }
+        RestPromptDialog.show({actorList: trueActors});
+        return false;
+      }
 
       if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedLongRest");

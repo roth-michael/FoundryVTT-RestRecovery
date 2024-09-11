@@ -39,6 +39,9 @@
     }
     return acc;
   }, []);
+  for (const [currCombined, currName] of (application.options?.actorList ?? [])) {
+    if (!validActors.some(curr => curr[0] === currCombined)) validActors.push([currCombined, currName]);
+  }
 
   let configuration = new Set();
   let validRemainingIds = [];
@@ -62,7 +65,7 @@
   })
 
   cleanConfig.update(() => {
-    let maybeSavedConfig = foundry.utils.getProperty(game.user, CONSTANTS.FLAGS.PROMPT_REST_CONFIG);
+    let maybeSavedConfig = application.options?.actorList?.flatMap(curr => curr[0]) ?? foundry.utils.getProperty(game.user, CONSTANTS.FLAGS.PROMPT_REST_CONFIG);
     let savedConfig = maybeSavedConfig ?? Array.from(lib.getSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG));
     return savedConfig.filter(entry => {
       return game.users.get(entry.split("-")[0]) && game.actors.get(entry.split("-")[1]);
@@ -70,6 +73,7 @@
   })
 
   async function updateRestConfig() {
+    if (application.options?.actorList) return;
     await game.user.update({[CONSTANTS.FLAGS.PROMPT_REST_CONFIG]: [...configuration]});
     lib.setSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG, [...configuration]);
   }
