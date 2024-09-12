@@ -2,7 +2,6 @@ import CONSTANTS from "./constants.js";
 import { getSetting } from "./lib/lib.js";
 
 export async function configureOneDndExhaustion() {
-  updateStatusEffects();
   if (!getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
   if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
   if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
@@ -33,7 +32,7 @@ export async function configureOneDndExhaustion() {
       CONFIG.DND5E.conditionEffects.halfMovement.delete("exhaustion-2");
       CONFIG.DND5E.conditionEffects.halfHealth.delete("exhaustion-4");
       CONFIG.DND5E.conditionEffects.noMovement.delete("exhaustion-5");
-      foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
+      delete CONFIG.DND5E.conditionTypes.exhaustion.reduction;
     }
     if (false && getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) { // Temporarily disable integrations, since we're hiding the setting but not getting rid of it
       await plugins.createConvenientEffect();
@@ -53,7 +52,7 @@ export async function configureOneDndExhaustion() {
       CONFIG.DND5E.conditionEffects.halfMovement.add("exhaustion-2");
       CONFIG.DND5E.conditionEffects.halfHealth.add("exhaustion-4");
       CONFIG.DND5E.conditionEffects.noMovement.add("exhaustion-5");
-      foundry.utils.mergeObject(CONFIG.statusEffects.find(e => e.id === "exhaustion"), CONFIG.DND5E.conditionTypes.exhaustion, {insertKeys: false});
+      CONFIG.DND5E.conditionTypes.exhaustion.reduction = {rolls: 2, speed: 5};
     }
     if (game.modules.get("tidy5e-sheet")?.active) {
       await updateTidy5e();
@@ -91,15 +90,11 @@ export async function updateTidy5e() {
   });
 }
 
-export function updateStatusEffects() {
-  // Just in case DFreds installed - can remove once DFreds CE has exhaustion fixed
-  if (!CONFIG.statusEffects.find(eff => eff.id == "exhaustion")) CONFIG.statusEffects.push(foundry.utils.mergeObject({id: 'exhaustion', _id: "dnd5eexhaustion0", name: 'Exhaustion'}, CONFIG.DND5E.conditionTypes.exhaustion));
-}
-
 export async function configureExhaustionHooks() {
   let ac5eShouldControl = game.modules.get("automated-conditions-5e")?.active && game.settings.get("automated-conditions-5e", "autoExhaustion");
   let alternativeExhaustionActive = game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
-  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive) {
+  let modernRules = game.settings.get("dnd5e", "rulesVersion") === "modern";
+  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive || modernRules) {
     if (Hooks.events["dnd5e.preRollAbilityTest"]) Hooks.off("dnd5e.preRollAbilityTest", _preAbilityCheck);
     if (Hooks.events["dnd5e.preRollSkill"]) Hooks.off("dnd5e.preRollSkill", _preSkill);
     if (Hooks.events["dnd5e.preRollAbilitySave"]) Hooks.off("dnd5e.preRollAbilitySave", _preAbilitySaveOrConcentration);

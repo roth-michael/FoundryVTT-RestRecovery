@@ -71,6 +71,12 @@ export default class RestWorkflow {
 
   static initialize() {
 
+    CONFIG.DND5E.consumableTypes.food.subtypes = {
+      food: "REST-RECOVERY.Misc.Food",
+      water: "REST-RECOVERY.Misc.Water",
+      both: "REST-RECOVERY.Misc.Both"
+    }
+
     Hooks.on("dnd5e.restCompleted", (actor) => {
       RestWorkflow.remove(actor);
     });
@@ -84,8 +90,7 @@ export default class RestWorkflow {
     });
 
     let cachedDenomination = false;
-    Hooks.on("dnd5e.preRollHitDie", (actor, config, denomination) => {
-
+    Hooks.on("dnd5e.preRollHitDieV2", ({subject: actor, rolls: [{parts: formulaParts}], denomination}) => {
       if (RestWorkflow.get(actor)) {
         cachedDenomination = denomination;
       }
@@ -157,19 +162,19 @@ export default class RestWorkflow {
         formula = `max(${formula},${durableMod})`
       }
 
-      config.formula = `max(0, ${formula})`;
+      formulaParts[0] = `max(0, ${formula})`;
 
       if (hasWoundClosure && multiplyTotal) {
-        config.formula = `(${formula})*2`;
+        formulaParts[0] = `(${formula})*2`;
       }
 
       if (hdMult !== 1 && multiplyTotal) {
-        config.formula = `floor((${formula})*${hdMult})`;
+        formulaParts[0] = `floor((${formula})*${hdMult})`;
       }
 
     });
 
-    Hooks.on("dnd5e.rollHitDie", (actor, roll, updates) => {
+    Hooks.on("dnd5e.rollHitDieV2", (rolls, {subject: actor, updates}) => {
 
       const workflow = RestWorkflow.get(actor);
       if (!workflow) return;
@@ -252,8 +257,6 @@ export default class RestWorkflow {
       let workflow = RestWorkflow.make(actor, false, config);
       
       if (!config.dialog) return true;
-
-      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
       
       workflow.then((workflow) => {
   
@@ -280,10 +283,10 @@ export default class RestWorkflow {
             }
           }
   
-          const dhd = actor.type === 'npc' ? (actor.system.attributes.hd.value - hd0.value) : (actor.system.attributes.hd - hd0);
-          const dhp = actor.system.attributes.hp.value - hp0;
+          const hitDice = actor.type === 'npc' ? (actor.system.attributes.hd.value - hd0.value) : (actor.system.attributes.hd - hd0);
+          const hitPoints = actor.system.attributes.hp.value - hp0;
   
-          return actor._rest(config, {dhd, dhp});
+          return actor._rest(config, {deltas: {hitDice, hitPoints}});
   
         });
       });
@@ -348,8 +351,6 @@ export default class RestWorkflow {
 
       if (!config.dialog) return true;
 
-      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
-
       workflow.then((workflow) => {
         LongRestDialog.show({ ...config, actor }).then(async (newDay) => {
   
@@ -383,11 +384,11 @@ export default class RestWorkflow {
     Hooks.on("dnd5e.restCompleted", async (actor, results) => {
       await actor.deleteEmbeddedDocuments("Item", results?.deleteItems ?? [], { isRest: true });
       await actor.createEmbeddedDocuments("Item", results?.createItems ?? [], { isRest: true });
-      if (game.modules.get('magicitems')?.api && game.modules.get('magicitems').api.execActorLongRest) {
-        if (results.longRest) {
-          game.modules.get('magicitems').api.execActorLongRest(actor, results.newDay);
+      if (game.modules.get("magicitems")?.api && game.modules.get("magicitems").api.execActorLongRest) {
+        if (results.type === "long") {
+          game.modules.get("magicitems").api.execActorLongRest(actor, results.newDay);
         } else {
-          game.modules.get('magicitems').api.execActorShortRest(actor, results.newDay);
+          game.modules.get("magicitems").api.execActorShortRest(actor, results.newDay);
         }
       }
     });
@@ -406,7 +407,6 @@ export default class RestWorkflow {
 
   static ready() {
     Hooks.on("dnd5e.preRestCompleted", (actor, results, config) => {
-      if (foundry.utils.isNewerVersion('3.2.0', game.system.version) && actor.type === "npc") return true;
       const workflow = RestWorkflow.get(actor);
       if (workflow) {
         workflow.patchRestResults(results).then(async () => {
@@ -619,34 +619,35 @@ export default class RestWorkflow {
   }
 
   patchSpellFeature(feature, className) {
+    // TODO: Does patching need to happen? Feels risky with recovery activities
 
-    if (feature &&
-      (
-        feature.system.activation.type !== "special" ||
-        feature.system.uses.value === null ||
-        feature.system.uses.max === null ||
-        feature.system.uses.per !== "lr" ||
-        feature.system.actionType !== "util" ||
-        feature.system.formula === ""
-      )
-    ) {
-      this.actor.updateEmbeddedDocuments("Item", [{
-        _id: feature.id,
-        "system.activation.type": "special",
-        "system.uses.value": feature.system.uses.value ?? 1,
-        "system.uses.max": 1,
-        "system.uses.per": "lr",
-        "system.actionType": "util",
-        "system.formula": `ceil(@classes.${className.toLowerCase()}.levels/2)`
-      }]);
-      ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedRecovery", {
-        actorName: this.actor.name,
-        recoveryName: this.spellData.feature.name
-      }));
-      return (feature.system.uses.value ?? 1) > 0;
-    }
+    // if (feature &&
+    //   (
+    //     feature.system.activation.type !== "special" ||
+    //     feature.system.uses.value === null ||
+    //     feature.system.uses.max === null ||
+    //     feature.system.uses.per !== "lr" ||
+    //     feature.system.actionType !== "util" ||
+    //     feature.system.formula === ""
+    //   )
+    // ) {
+    //   this.actor.updateEmbeddedDocuments("Item", [{
+    //     _id: feature.id,
+    //     "system.activation.type": "special",
+    //     "system.uses.value": feature.system.uses.value ?? 1,
+    //     "system.uses.max": 1,
+    //     "system.uses.per": "lr",
+    //     "system.actionType": "util",
+    //     "system.formula": `ceil(@classes.${className.toLowerCase()}.levels/2)`
+    //   }]);
+    //   ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedRecovery", {
+    //     actorName: this.actor.name,
+    //     recoveryName: this.spellData.feature.name
+    //   }));
+    //   return (feature.system.uses.value ?? 1) > 0;
+    // }
 
-    return feature.system.uses.value > 0;
+    return feature.system.uses.spent < feature.system.uses.max;
 
   }
 
@@ -786,7 +787,7 @@ export default class RestWorkflow {
   }
 
   async rollHitDice(hitDice, dialog) {
-    const roll = await this.actor.rollHitDie(hitDice, { dialog });
+    const roll = await this.actor.rollHitDie({denomination: hitDice}, { dialog });
     if (!roll) return;
     this.healthData.availableHitDice = this.getHitDice();
     this.healthData.totalHitDice = this.totalHitDice;
@@ -857,19 +858,20 @@ export default class RestWorkflow {
 
     results.deleteItems = [];
     results.createItems = [];
+    const longRest = results.type === "long";
 
     await this._finishedRest(results);
     await this._getRestHitPointRecovery(results);
     await this._handleExhaustion(results);
     await this._getRestResourceRecovery(results, {
-      recoverShortRestResources: !results.longRest,
-      recoverLongRestResources: results.longRest,
+      recoverShortRestResources: !longRest,
+      recoverLongRestResources: longRest,
     });
     await this._getRestSpellRecovery(results, {
-      recoverSpells: results.longRest,
+      recoverSpells: longRest,
     });
     await this._getRestItemUsesRecovery(results, {
-      recoverLongRestUses: results.longRest,
+      recoverLongRestUses: longRest,
       recoverDailyUses: results.newDay,
       rolls: results.rolls
     });
@@ -887,7 +889,11 @@ export default class RestWorkflow {
 
     this.preRestRegainHitDice = true;
     const maxHitDice = await this._getMaxHitDiceRecovery();
-    let { updates=[], actorUpdates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+    const hdResult = {};
+    this.actor._getRestHitDiceRecovery({ maxHitDice, type: this.longRest ? "long" : "short" }, hdResult);
+    const updates = hdResult.updateItems ?? [];
+    const actorUpdates = hdResult.updateData;
+    const hitDiceRecovered = hdResult.deltas?.hitDice ?? 0;
     this.preRestRegainHitDice = false;
 
     let hitDiceLeftToRecover = Math.max(0, maxHitDice - hitDiceRecovered);
@@ -1064,7 +1070,11 @@ export default class RestWorkflow {
       }
 
       const maxHitDice = await this._getMaxHitDiceRecovery();
-      let { updates=[], actorUpdates, hitDiceRecovered } = this.actor._getRestHitDiceRecovery({ maxHitDice });
+      const hdResult = {};
+      this.actor._getRestHitDiceRecovery({ maxHitDice, type: "long" }, hdResult);
+      const updates = hdResult.updateItems ?? [];
+      const actorUpdates = hdResult.updateData;
+      const hitDiceRecovered = hdResult.deltas?.hitDice ?? 0;
 
       updates.forEach(update => lib.addToUpdates(results.updateItems, update));
 
@@ -1089,7 +1099,9 @@ export default class RestWorkflow {
       if (actorUpdates) {
         await this.actor.update(actorUpdates);
       }
-      results.dhd = hitDiceRecovered;
+      foundry.utils.setProperty(results, 'deltas.hitDice', hitDiceRecovered);
+      // TODO: remove this when system stops looking for it
+      foundry.utils.setProperty(results, 'dhd', hitDiceRecovered);
     }
 
 
@@ -1404,7 +1416,7 @@ export default class RestWorkflow {
     return chatMessage;
   }
 
-  async _getRestHitPointRecovery(results = { updateData: {}, dhp: 0 }) {
+  async _getRestHitPointRecovery(results = { updateData: {}, deltas: {hitPoints: 0} }) {
 
     const maxHP = this.actor.system.attributes.hp.max;
     const currentHP = this.actor.system.attributes.hp.value;
@@ -1418,7 +1430,9 @@ export default class RestWorkflow {
     results.updateData["system.attributes.hp.value"] = Math.min(maxHP, currentHP + results.hitPointsToRegainFromRest);
     results.hitPointsRecovered = results.updateData["system.attributes.hp.value"] - this.healthData.startingHealth;
 
-    results.dhp = results.hitPointsRecovered;
+    foundry.utils.setProperty(results, 'deltas.hitPoints', results.hitPointsRecovered);
+    // TODO: remove this when system stops looking for it
+    foundry.utils.setProperty(results, 'dhp', results.hitPointsRecovered);
 
     return results.hitPointsToRegainFromRest;
 
@@ -1443,11 +1457,11 @@ export default class RestWorkflow {
     if (typeof multiplier === "string") {
 
       const customRegain = (await lib.evaluateFormula(multiplier, this.actor.getRollData()))?.total;
-      maxHitDice = Math.clamped(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
+      maxHitDice = Math.clamp(roundingMethod(customRegain), 0, maxHitDice ?? actorLevel);
 
     } else {
 
-      maxHitDice = Math.clamped(
+      maxHitDice = Math.clamp(
         roundingMethod(actorLevel * multiplier),
         multiplier ? 1 : 0,
         maxHitDice ?? actorLevel
@@ -1592,7 +1606,7 @@ export default class RestWorkflow {
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
       lib.addToUpdates(results.updateItems, {
         _id: this.spellData.feature.id,
-        "system.uses.value": 0
+        "system.uses.spent": this.spellData.feature.system.uses.max
       })
     }
 
@@ -1623,18 +1637,20 @@ export default class RestWorkflow {
 
     const longRestItemNameHandlers = RestWorkflow.LongRestItemNameHandlers;
 
+    const trueFeatsMultiplier = recoverLongRestUses ? longFeatsMultiplier : shortFeatsMultiplier;
+    const trueOthersMultiplier = recoverLongRestUses ? longOthersMultiplier : shortOthersMultiplier;
+
+    const recoveryPeriods = ["sr"];
+    if (recoverLongRestUses) recoveryPeriods.unshift("lr");
+    if (recoverDailyUses) recoveryPeriods.unshift("day", "dawn", "dusk"); // TODO: see about dawn/dusk SC integration
+
     for (const item of this.actor.items) {
       const itemHandlerFn = longRestItemNameHandlers[item.name];
       if (recoverLongRestUses && itemHandlerFn) {
         this[itemHandlerFn](actorRollData, results.updateItems, item, rolls);
       } else if (item.system.uses) {
-        if (recoverDailyUses && item.system.uses.per === "day") {
-          await this._recoverItemUse(actorRollData, results.updateItems, item, dailyMultiplier, rolls);
-        } else if (recoverLongRestUses && item.system.uses.per === "lr") {
-          await this._recoverItemUse(actorRollData, results.updateItems, item, item.type === "feat" ? longFeatsMultiplier : longOthersMultiplier, rolls);
-        } else if (item.system.uses.per === "sr") {
-          await this._recoverItemUse(actorRollData, results.updateItems, item, item.type === "feat" ? shortFeatsMultiplier : shortOthersMultiplier, rolls);
-        }
+        const recoveryActivities = item.system.uses.recovery.map(act => act.period);
+        await this._recoverItemUse(actorRollData, recoveryPeriods, results.updateItems, item, recoveryActivities.includes("day") ? dailyMultiplier : (item.type === "feat" ? trueFeatsMultiplier : trueOthersMultiplier), rolls);
       } else if (recoverLongRestUses && item.system.recharge && item.system.recharge.value) {
         lib.addToUpdates(results.updateItems, { _id: item.id, "system.recharge.charged": true });
       }
@@ -1651,52 +1667,36 @@ export default class RestWorkflow {
 
   }
 
-  async _recoverItemUse(actorRollData, updateItems, item, multiplier = 1.0, rolls) {
+  async _recoverItemUse(actorRollData, recoveryPeriods, updateItems, item, multiplier = 1.0, rolls) {
 
     const usesMax = item.system.uses.max;
-    const usesCur = item.system.uses.value;
+    const oldSpent = item.system.uses.spent;
 
-    if (usesCur === usesMax) return;
+    if (foundry.utils.getType(item.system.recoverUses) !== "function") return;
+    actorRollData.item = {...item.system}
+    const {updates: itemUpdates, rolls: itemRolls} = await item.system.recoverUses(recoveryPeriods, actorRollData);
 
-    const customRecovery = foundry.utils.getProperty(item, CONSTANTS.FLAGS.RECOVERY_ENABLED);
-    const customFormula = foundry.utils.getProperty(item, CONSTANTS.FLAGS.RECOVERY_FORMULA);
-
-    let recoverValue;
-    if (customRecovery && customFormula) {
-      const customRoll = await lib.evaluateFormula(customFormula, {
-        actor: actorRollData,
-        item: foundry.utils.deepClone(item.system)
-      });
-      rolls.push(customRoll)
-      recoverValue = Math.max(0, Math.min(usesCur + customRoll.total, usesMax));
-      const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(usesMax - usesCur, customRoll.total)}</a>`;
-      this.itemsRegainedMessages.push([item.type, `<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
-        name: item.name,
-        number: chargeText
-      })}</li>`])
-    } else {
-      recoverValue = typeof multiplier === "string"
-        ? (await lib.evaluateFormula(multiplier, foundry.utils.deepClone(item.system)))?.total
-        : Math.max(Math.floor(usesMax * multiplier), multiplier ? 1 : 0);
-      recoverValue = Math.max(0, Math.min(usesCur + recoverValue, usesMax));
-    }
+    const newSpent = itemUpdates?.system?.uses?.spent ?? oldSpent;
+    let recoverValue = oldSpent - newSpent;
+    recoverValue = Math.floor(multiplier * recoverValue);
+    const adjustedSpent = Math.clamp(oldSpent - recoverValue, 0, usesMax);
+    if (newSpent !== oldSpent) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": adjustedSpent});
 
     lib.addToUpdates(updateItems, {
       _id: item.id,
-      "system.uses.value": recoverValue
-    })
+      ...itemUpdates
+    });
 
   }
 
   _handlePowerSurgeFeature(actorRollData, updateItems, item) {
 
-    const numSurges = foundry.utils.getProperty(item, "system.uses.value");
-    if (numSurges === 1) return;
+    const maxSurges = foundry.utils.getProperty(item, "system.uses.max");
 
     lib.addToUpdates(updateItems, {
       _id: item.id,
-      "system.uses.value": 1
-    })
+      "system.uses.spent": maxSurges - 1
+    });
 
   }
 
@@ -1729,13 +1729,13 @@ export default class RestWorkflow {
       };
 
       const maxUses = foundry.utils.getProperty(update, "system.uses.max") ?? foundry.utils.getProperty(item, "system.uses.max") ?? 1;
-      const currentUses = foundry.utils.getProperty(update, "system.uses.value") ?? foundry.utils.getProperty(item, "system.uses.value") ?? 1;
+      const currentSpent = foundry.utils.getProperty(update, "system.uses.spent") ?? foundry.utils.getProperty(item, "system.uses.spent") ?? 0;
       const currentQuantity = foundry.utils.getProperty(update, "system.quantity") ?? foundry.utils.getProperty(item, "system.quantity");
       const consumeQuantity = foundry.utils.getProperty(item, 'system.uses.autoDestroy') ?? false;
 
       if(consumeQuantity) {
 
-        const currentTotalUses = ((maxUses * currentQuantity) - (maxUses - currentUses));
+        const currentTotalUses = ((maxUses * currentQuantity) - currentSpent);
         const newTotalUses = currentTotalUses - consumableData.amount;
 
         const totalQuantityLeft = newTotalUses / maxUses;
@@ -1754,13 +1754,13 @@ export default class RestWorkflow {
         } else {
 
           update["system.quantity"] = Math.ceil(totalQuantityLeft);
-          update["system.uses.value"] = usesLeft;
+          update["system.uses.spent"] = maxUses - usesLeft;
 
         }
 
       }else{
 
-        update["system.uses.value"] = Math.max(0, currentUses - consumableData.amount);
+        update["system.uses.spent"] = Math.min(maxUses, currentSpent + consumableData.amount);
 
       }
 
@@ -1775,17 +1775,16 @@ export default class RestWorkflow {
 
   static _setupFoodListeners() {
 
-    Hooks.on("closeApplication", (app) => {
+    Hooks.on("dnd5e.activityConsumption", (activity) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-      if (!app?.item) return;
-      const item = app.item;
-      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
-      if (!consumable?.enabled) return;
+      if (!activity?.item) return;
+      const item = activity.item;
+      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
       let consumeFull = true;
-      const element = app.element.find('input[name="consumeAmount"]:checked');
-      if (element.length) {
-        consumeFull = element.val() === "full";
-      }
+      // const element = app.element.find('input[name="consumeAmount"]:checked');
+      // if (element.length) {
+      //   consumeFull = element.val() === "full";
+      // }
       this.itemsListened.set(item.id, consumeFull);
       setTimeout(() => {
         this.itemsListened.delete(item.id)
@@ -1794,20 +1793,18 @@ export default class RestWorkflow {
 
     Hooks.on('preUpdateItem', (item, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-      if (foundry.utils.getProperty(data, CONSTANTS.FLAGS.CONSUMABLE)?.enabled && !lib.isRealNumber(foundry.utils.getProperty(item, "system.uses.max"))) {
+      if (CONSTANTS.CONSUMABLE_TYPES.includes(data.system?.type?.subtype) && !lib.isRealNumber(foundry.utils.getProperty(item, "system.uses.max"))) {
         return this._patchConsumableItem(item, data);
       }
       if (!this.itemsListened.has(item.id)) return;
-      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
-      if (!consumable?.enabled) return;
+      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
       return this._handleConsumableItem(item, data, this);
     });
 
     Hooks.on('deleteItem', (item, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
       if (!this.itemsListened.has(item.id)) return;
-      const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
-      if (!consumable?.enabled) return;
+      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
       return this._handleConsumableItem(item, data, this);
     })
   }
@@ -1820,21 +1817,16 @@ export default class RestWorkflow {
       if (item.name.startsWith("Rations")) {
         return {
           "_id": item.id,
-          "system.uses.value": foundry.utils.getProperty(item, "system.uses.value") ?? 1,
+          "system.uses.spent": foundry.utils.getProperty(item, "system.uses.spent") ?? 0,
           "system.uses.max": foundry.utils.getProperty(item, "system.uses.max") ?? 1,
-          "system.uses.per": foundry.utils.getProperty(item, "system.uses.per") ?? "charges",
-          [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
-          [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
+          "system.type.subtype": CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
         }
       }
 
       return {
         "_id": item.id,
-        "system.uses.value": 1,
-        "system.uses.max": 1,
-        "system.uses.per": "charges",
-        [CONSTANTS.FLAGS.CONSUMABLE_ENABLED]: true,
-        [CONSTANTS.FLAGS.CONSUMABLE_TYPE]: CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER
+        "system.uses.spent": 0,
+        "system.uses.max": 1
       }
     });
 
@@ -1850,9 +1842,8 @@ export default class RestWorkflow {
 
   static _patchConsumableItem(item, updates) {
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-    updates["system.uses.value"] = 1;
+    updates["system.uses.spent"] = 0;
     updates["system.uses.max"] = 1;
-    updates["system.uses.per"] = "charges";
     ui.notifications.info("Rest Recovery for 5e | " + game.i18n.format("REST-RECOVERY.PatchedConsumable", {
       itemName: item.name
     }));
@@ -1873,13 +1864,15 @@ export default class RestWorkflow {
       actorWaterSatedValue
     } = lib.getActorConsumableValues(consumingActor, workflow.restVariant === "gritty" && workflow.longRest);
 
-    const currCharges = foundry.utils.getProperty(item, "system.uses.value");
-    const newCharges = foundry.utils.getProperty(data, "system.uses.value") ?? (currCharges - 1.0);
-    const chargesUsed = currCharges < newCharges ? currCharges : currCharges - newCharges;
+    const oldSpent = foundry.utils.getProperty(item, "system.uses.spent");
+    const newSpent = foundry.utils.getProperty(data, "system.uses.spent") ?? (currCharges + 1);
+    const oldQuantity = foundry.utils.getProperty(item, "system.quantity");
+    const newQuantity = foundry.utils.getProperty(data, "system.uses.quantity");
+    const chargesUsed = newSpent > oldSpent ? newSpent - oldSpent : oldQuantity - newQuantity;
 
     let message;
 
-    if (consumable.type === "both") {
+    if (item.system.type?.subtype === "both") {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorFoodSatedValue : actorFoodSatedValue + chargesUsed;
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorWaterSatedValue : actorWaterSatedValue + chargesUsed;
@@ -1900,7 +1893,7 @@ export default class RestWorkflow {
           : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
       }
 
-    } else if (consumable.type === "food") {
+    } else if (item.system.type?.subtype === "food") {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
 
@@ -1915,7 +1908,7 @@ export default class RestWorkflow {
         ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedFood") + "</p>"
         : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
 
-    } else if (consumable.type === "water") {
+    } else if (item.system.type?.subtype === "water") {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
 

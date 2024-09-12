@@ -35,9 +35,6 @@ const migrations = {
       await setSetting(CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA, findOldSettingValue("recovery-hitdice-formula"));
       await setSetting(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA, findOldSettingValue("recovery-resources-formula"));
       await setSetting(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER_FORMULA, findOldSettingValue("recovery-spells-formula"));
-      await setSetting(CONSTANTS.SETTINGS.LONG_USES_OTHERS_MULTIPLIER_FORMULA, findOldSettingValue("recovery-uses-others-formula"));
-      await setSetting(CONSTANTS.SETTINGS.LONG_USES_FEATS_MULTIPLIER_FORMULA, findOldSettingValue("recovery-uses-feats-formula"));
-      await setSetting(CONSTANTS.SETTINGS.LONG_USES_DAILY_MULTIPLIER_FORMULA, findOldSettingValue("recovery-day-formula"));
     }
 
   },

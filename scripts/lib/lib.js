@@ -87,19 +87,18 @@ export function getConsumableItemsFromActor(actor) {
   return actor.items.map(item => {
     const consumableUses = getConsumableItemDayUses(item);
     if (!consumableUses > 0) return false;
-    const consumableData = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
     return {
       id: item.id,
-      name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumableData.type)) + ")",
+      name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(item.system.type?.subtype)) + ")",
     };
   }).filter(Boolean);
 
 }
 
 export function getConsumableItemDayUses(item) {
-  const consumableData = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
-  if (!consumableData?.enabled) return 0;
-  return (foundry.utils.getProperty(item, "system.uses.value") ?? 1);
+  if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return 0;
+  const uses = foundry.utils.getProperty(item, "system.uses");
+  return ((uses.max ?? 1) - (uses.spent ?? 0));
 }
 
 export function isRealNumber(inNumber) {
