@@ -43,11 +43,11 @@
           <option value="{hitDice}">{hitDice} ({num} {localize("DND5E.available")})</option>
         {/each}
       </select>
-      <button type="button" disabled={!enableRollButton} on:click={(event) => { onHitDiceFunction(event) }}>
+      <button type="button" style="flex:1" disabled={!enableRollButton} on:click={(event) => { onHitDiceFunction(event) }}>
         <i class="fas fa-dice-d20"></i> {localize("DND5E.Roll")}
       </button>
       {#if autoRollEnabled}
-        <button type="button" disabled="{disableAutoButton || !enableRollButton}"
+        <button type="button" style="flex:1" disabled="{disableAutoButton || !enableRollButton}"
                 on:click={(event) => { onAutoFunction(event) }}>
           <i class="fas fa-redo"></i> {localize("REST-RECOVERY.Dialogs.ShortRest.AutoRoll")}
         </button>

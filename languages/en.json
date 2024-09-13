@@ -294,7 +294,7 @@
         "Enabled": "Enabled",
         "Formula": "Formula:",
         "IsConsumable": "Item is consumable",
-        "DayWorth": "One charge worth entire day worth",
+        "DayWorth": "One charge is an entire day's worth",
         "ChargesDescription": "Rest Recovery's food and water system requires the item to have charges to be used - one charge equals one unit of food or water."
       },
       "AbilityUse": {

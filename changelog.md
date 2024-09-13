@@ -1,5 +1,14 @@
 # Rest Recovery Changelog
 
+## Version 2.0.0
+- Now compatible with dnd5e 4.0.0
+- No longer compatible with v11 or dnd5e 3.x
+- Consumption options for food & water are now more streamlined; Rest Recovery will add subtypes to the "food" consumable type for "food", "water", or "both." There is no longer a "Is Consumable" checkbox - if a "food" type consumable shouldn't be considered as such by Rest Recovery, simply do not give it a subtype
+- "One D&D Exhaustion" remains an option. If unchecked, debuffs from exhaustion will continue to be handled by a combination of Rest Recovery and the system in the case of the "Legacy" ruleset, or will be handled entirely by the system with the "Modern" ruleset
+- Recovery options in the system have been greatly improved in 4.0, leading to the removal of the following features from Rest Recovery:
+  - Item/Feat/Daily "uses recovery fraction" settings no longer accept custom formulae. The system allows for this on a per-item basis. They still accept multipliers, which are applied on whatever the system's calculation would be. For example, if an item has a custom recovery formula of `@item.uses.max / 2` on a Short Rest in its details tab, and you set "Item uses recovery fraction" to "Half" on a given rest profile, that item will regain 1/4 of its maximum uses on a short rest
+  - There is no more "Custom Recovery Formula" input on items, the system handles this fully
+
 ## Version 1.17.0
 - Added compatibility with group sheet rests (they'll now open the "Prompt Rest" dialog with all actors from the sheet selected by default)
 - This will _actually_ be the last v11/3.x-compatible release

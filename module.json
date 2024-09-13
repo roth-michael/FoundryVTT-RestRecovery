@@ -2,7 +2,7 @@
   "id": "rest-recovery",
   "title": "Rest Recovery for 5E",
   "description": "Adds 5e long and short rest mechanics and variant rules, such as feats, class features, and hit-dice healing.",
-  "version": "1.17.0",
+  "version": "2.0.0",
   "authors": [
     {
       "name": "Wasp",
@@ -54,15 +54,15 @@
       "type": "system",
       "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/latest/system.json",
       "compatibility": {
-        "verified": "3.3.1",
-        "minimum": "3.1.0",
-        "maximum": "4"
+        "verified": "4.0.0",
+        "minimum": "4.0.0",
+        "maximum": "4.0.99"
       }
     }]
   },
   "compatibility": {
-    "minimum": "11",
-    "verified": "12.330",
+    "minimum": "12",
+    "verified": "12.331",
     "maximum": "12.999"
   },
   "packs": [

@@ -118,10 +118,9 @@ function patch_actorSheet(app, html, data) {
 
 function patch_itemSheet(app, html, { item } = {}) {
   if (!app.options.classes.includes("tidy5e-sheet")) {
-    if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable") {
+    if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable" && item.system.type?.value === "food") {
       patch_itemConsumableInputs(app, html, item);
     }
-    patch_itemCustomRecovery(app, html, item);
   }
 }
 
@@ -129,7 +128,6 @@ function patch_tidyItemSheet(app, element, { item }, forced) {
   if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable") {
     patch_tidyItemConsumableInputs(element, item);
   }
-  patch_tidyItemCustomRecovery(element, item)
 }
 
 function getConsumableInputsHtml(item) {
@@ -141,61 +139,30 @@ function getConsumableInputsHtml(item) {
   let idealDayWorthWidth = game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth").length;
 
   return `
-    <div class="form-header">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Title")}</div>
     <div class="form-group">
-        <div class="form-fields" style="margin-right:0.5rem;">
-            <label class="checkbox" style="font-size:13px;width:${idealIsConsumableWidth ?? 21}ch">
-                <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_ENABLED}" ${customConsumable.enabled ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable")}
-            </label>
-        </div>
-        <div class="form-fields" style="margin-right:0.5rem;">
-            <label style="flex:0 1 auto;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Type")}</label>
-            <select name="${CONSTANTS.FLAGS.CONSUMABLE_TYPE}" ${!customConsumable.enabled ? "disabled" : ""}>
-                <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD}">${game.i18n.localize("REST-RECOVERY.Misc.Food")}</option>
-                <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER}">${game.i18n.localize("REST-RECOVERY.Misc.Water")}</option>
-                <option ${customConsumable.type === CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH ? "selected" : ""} value="${CONSTANTS.FLAGS.CONSUMABLE_TYPE_BOTH}">${game.i18n.localize("REST-RECOVERY.Misc.Both")}</option>
-            </select>
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <div class="form-fields" style="margin-right:0.5rem;">
-            <label class="checkbox" style="font-size:13px;width:${idealDayWorthWidth ?? 33}ch">
-                <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
-            </label>
-        </div>
-    </div>
-    
-    <small style="display:${customConsumable.enabled && !validUses ? "block" : "none"}; margin: 0.5rem 0;">
-        <i class="fas fa-info-circle" style="color:rgb(217, 49, 49);"></i> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.ChargesDescription")}
-    </small>
-  `
-}
-
-function getCustomRecoveryHtml(item) {
-  const customRecovery = foundry.utils.getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_ENABLED}`) ?? false;
-  const customFormula = foundry.utils.getProperty(item, `${CONSTANTS.FLAGS.RECOVERY_FORMULA}`) ?? "";
-  let idealWidth = Math.ceil((1.2 * game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Enabled").length) + 3);
-  return `
-    <div class="form-group" title="Module: Rest Recovery for 5e">
-      <label>${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.UsesCustomRecovery")} <i class="fas fa-info-circle"></i></label>
-      <div class="form-fields">
-          <label class="checkbox" style="width: ${idealWidth ?? 12}ch;">
-              <input type="checkbox" name="${CONSTANTS.FLAGS.RECOVERY_ENABLED}" ${customRecovery ? "checked" : ""}>
-              ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Enabled")}
-          </label>
-          <span style="flex: 0 0 auto; margin: 0 0.25rem;">|</span>
-          <span class="sep" style="flex: 0 0 auto; margin-right: 0.25rem;">${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.Formula")}</span>
-          <input type="text" name="${CONSTANTS.FLAGS.RECOVERY_FORMULA}" ${!customRecovery ? "disabled" : ""} value="${customRecovery ? customFormula : ""}">
+      <div class="form-fields" style="margin-right:0.5rem;">
+        <label class="checkbox"">
+          <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+        </label>
       </div>
     </div>
   `
 }
 
 function patch_itemConsumableInputs(app, html, item) {
-  let targetElem = html.find(".form-header")?.[1];
+  let targetElem = html.find(".form-group:has(select[name='system.type.subtype'])")?.[0]
   if (!targetElem) return;
-  $(getConsumableInputsHtml(item)).insertBefore(targetElem);
+  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+  const fullDay = dnd5e.applications.fields.createCheckboxInput(undefined, {
+    name: CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH,
+    value: customConsumable.dayWorth
+  });
+  const fullDayGroup = foundry.applications.fields.createFormGroup({
+    label: "REST-RECOVERY.Dialogs.ItemOverrides.DayWorth",
+    localize: true,
+    input: fullDay
+  });
+  $(fullDayGroup).insertAfter(targetElem);
 }
 
 function patch_tidyItemConsumableInputs(element, item) {
@@ -208,26 +175,4 @@ function patch_tidyItemConsumableInputs(element, item) {
   let targetElem = html.find(".form-header")?.[1];
   if (!targetElem) return;
   $(markupToInject).insertBefore(targetElem);
-}
-
-function patch_itemCustomRecovery(app, html, item) {
-  let usesElem = html.find('[name="system.uses.per"]')?.[0];
-  if (!usesElem || !['sr', 'lr', 'day'].includes(usesElem.value)) return;
-  let targetElem = html.find(".uses-per")?.[0];
-  if (!targetElem) return;
-  $(getCustomRecoveryHtml(item)).insertAfter(targetElem);
-}
-
-function patch_tidyItemCustomRecovery(element, item) {
-  const html = $(element);
-  const markupToInject = `
-    <div style="display: contents;" data-tidy-render-scheme="handlebars">
-      ${getCustomRecoveryHtml(item)}
-    </div>
-  `;
-  let usesElem = html.find('[data-tidy-field="system.uses.per"]')?.[0];
-  if (!usesElem || !['sr', 'lr', 'day'].includes(usesElem.value)) return;
-  let targetElem = html.find(".uses-per")?.[0];
-  if (!targetElem) return;
-  $(markupToInject).insertAfter(targetElem);
 }

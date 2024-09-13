@@ -161,7 +161,7 @@
 
     const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
 
-    if (!consumable?.enabled) return;
+    if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
 
     const foodRequired = Math.max(0.5, actorRequiredFood - newFoodSatedValue);
     const waterRequired = Math.max(0.5, actorRequiredWater - newWaterSatedValue);
@@ -169,11 +169,11 @@
     const consumeQuantity = foundry.utils.getProperty(item, 'system.uses.autoDestroy') ?? false;
 
     const maxUses = foundry.utils.getProperty(item, "system.uses.max") ?? 1;
-    const usesLeft = foundry.utils.getProperty(item, "system.uses.value") ?? 1;
+    const usesSpent = foundry.utils.getProperty(item, "system.uses.spent") ?? 1;
     const quantity = foundry.utils.getProperty(item, "system.quantity") ?? 1;
     let countsAs = 1;
     if(consumable.dayWorth){
-      switch (consumable.type) {
+      switch (item.system.type.subtype) {
         case "both":
           countsAs = Math.ceil(maxBothRequired / (workflow.restVariant === "gritty" ? 7 : 1));
           break;
@@ -186,7 +186,7 @@
       }
 		}
 
-    const totalUsesLeft = consumeQuantity ? ((maxUses * quantity) - (maxUses - usesLeft)) : usesLeft;
+    const totalUsesLeft = consumeQuantity ? ((maxUses * quantity) - usesSpent) : (maxUses - usesSpent);
 
     if (totalUsesLeft <= 0) {
       ui.notifications.warn(localize("REST-RECOVERY.Warnings.ItemNoUses", { item: item.name }));
@@ -206,16 +206,17 @@
     const consumableItem = {
       id: item.id,
       item: item,
-      index: typeIndex[consumable.type],
-      fullName: `${item.name} (${localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(consumable.type))}) - ${totalUsesLeft} left`,
+      index: typeIndex[item.system.type.subtype],
+      fullName: `${item.name} (${localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(item.system.type.subtype))}) - ${totalUsesLeft} left`,
       amount: 0,
 			countsAs,
       totalUsesLeft,
       quantity,
-      consumable
+      consumable,
+      type: item.system.type.subtype
     };
 
-		switch (consumable.type) {
+		switch (item.system.type.subtype) {
 			case "both":
 				consumableItem['amount'] = Math.ceil(maxBothRequired / countsAs);
 				break;
@@ -260,10 +261,10 @@
     }
 
     for (const item of $consumableItems) {
-      if (!hasAccessToFood && (item.consumable.type === "food" || item.consumable.type === "both")) {
+      if (!hasAccessToFood && (item.type === "food" || item.type === "both")) {
         newFoodSatedValue += item.countsAs * item.amount;
       }
-      if (!hasAccessToWater && (item.consumable.type === "water" || item.consumable.type === "both")) {
+      if (!hasAccessToWater && (item.type === "water" || item.type === "both")) {
         newWaterSatedValue += item.countsAs * item.amount;
       }
     }
@@ -411,7 +412,7 @@
 							{#if !item.consumable.dayWorth}
 								{localize("REST-RECOVERY.Dialogs.RestSteps.FoodWater.AmountToConsume")}
 							{:else}
-								{localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.consumable.type))}
+								{localize("REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" + capitalizeFirstLetter(item.type))}
 							{/if}
 						</label>
 					</div>
