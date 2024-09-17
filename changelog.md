@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.0.1
+- Fixed food/water consumption during rests not properly registering
+
 ## Version 2.0.0
 - Now compatible with dnd5e 4.0.0
 - No longer compatible with v11 or dnd5e 3.x

@@ -1139,7 +1139,7 @@ export default class RestWorkflow {
     } else {
 
       const items = this.consumableData.items.filter(item => item.amount);
-      let waterItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "water");
+      let waterItems = items.filter(item => item.type === "both" || item.type === "water");
 
       actorWaterSatedValue = waterItems.reduce((acc, item) => {
         acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
@@ -1188,8 +1188,8 @@ export default class RestWorkflow {
       let actorDaysWithoutFood = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
       const items = this.consumableData.items.filter(item => item.amount);
-      let foodItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "food");
-      let waterItems = items.filter(item => item.consumable.type === "both" || item.consumable.type === "water");
+      let foodItems = items.filter(item => item.type === "both" || item.type === "food");
+      let waterItems = items.filter(item => item.type === "both" || item.type === "water");
 
       if (actorRequiredFood) {
 
