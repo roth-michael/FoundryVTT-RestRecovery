@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.0.2
+- Fixed attunement check for periapt of wound closure (in 4.x)
+
 ## Version 2.0.1
 - Fixed food/water consumption during rests not properly registering
 
@@ -11,6 +14,9 @@
 - Recovery options in the system have been greatly improved in 4.0, leading to the removal of the following features from Rest Recovery:
   - Item/Feat/Daily "uses recovery fraction" settings no longer accept custom formulae. The system allows for this on a per-item basis. They still accept multipliers, which are applied on whatever the system's calculation would be. For example, if an item has a custom recovery formula of `@item.uses.max / 2` on a Short Rest in its details tab, and you set "Item uses recovery fraction" to "Half" on a given rest profile, that item will regain 1/4 of its maximum uses on a short rest
   - There is no more "Custom Recovery Formula" input on items, the system handles this fully
+
+## Version 1.17.1
+- Fixed attunement check for periapt of wound closure
 
 ## Version 1.17.0
 - Added compatibility with group sheet rests (they'll now open the "Prompt Rest" dialog with all actors from the sheet selected by default)
