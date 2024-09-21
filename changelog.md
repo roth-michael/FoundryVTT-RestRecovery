@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.17.1
+- Fixed attunement check for periapt of wound closure
+
 ## Version 1.17.0
 - Added compatibility with group sheet rests (they'll now open the "Prompt Rest" dialog with all actors from the sheet selected by default)
 - This will _actually_ be the last v11/3.x-compatible release

@@ -96,7 +96,7 @@ export default class RestWorkflow {
       const blessing = getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
         ? actor.items.getName(getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
         : false;
-      const hasWoundClosure = (periapt && periapt?.system?.attunement === 2) || (blessing && blessing?.type === "feat");
+      const hasWoundClosure = (periapt && (foundry.utils.isNewerVersion("3.2.0", game.system.version) ? (periapt?.system?.attunement === 2) : periapt?.system?.attuned)) || (blessing && blessing?.type === "feat");
       const multiplyTotal = getSetting(CONSTANTS.SETTINGS.PERIAPT_ROLL_MECHANICS) === CONSTANTS.PERIAPT_MECHANICS.MULTIPLY_TOTAL;
 
       const durable = getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
@@ -750,7 +750,7 @@ export default class RestWorkflow {
     const blessing = lib.getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING)
       ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.WOUND_CLOSURE_BLESSING, true))
       : false;
-    const periapt_mod = (periapt && periapt?.system?.attunement === 2) || (blessing && blessing?.type === "feat") ? 3 : 1
+    const periapt_mod = (periapt && (foundry.utils.isNewerVersion("3.2.0", game.system.version) ? (periapt?.system?.attunement === 2) : periapt?.system?.attuned)) || (blessing && blessing?.type === "feat") ? 3 : 1
 
     let durable = lib.getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT)
       ? this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.DURABLE_FEAT, true))
