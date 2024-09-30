@@ -54,7 +54,7 @@
       "type": "system",
       "manifest": "https://github.com/foundryvtt/dnd5e/releases/download/latest/system.json",
       "compatibility": {
-        "verified": "4.0.2",
+        "verified": "4.0.4",
         "minimum": "4.0.0",
         "maximum": "4.0.99"
       }

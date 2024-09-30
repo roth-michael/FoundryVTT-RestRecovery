@@ -34,9 +34,6 @@ export async function configureOneDndExhaustion() {
       CONFIG.DND5E.conditionEffects.noMovement.delete("exhaustion-5");
       delete CONFIG.DND5E.conditionTypes.exhaustion.reduction;
     }
-    if (false && getSetting(CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION).value === CONSTANTS.MODULES.DFREDS) { // Temporarily disable integrations, since we're hiding the setting but not getting rid of it
-      await plugins.createConvenientEffect();
-    }
     if (game.modules.get("tidy5e-sheet")?.active) {
       await updateTidy5e();
     }

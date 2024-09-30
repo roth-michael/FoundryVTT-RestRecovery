@@ -2,16 +2,6 @@
 
 This makes it so that exhaustion is subtracted by 1 every long rest.
 
-## Exhaustion Module Integration
-
-This setting allows you to use other modules in order to apply their respective exhaustion active effects on characters.
-
-Currently supported modules are:
-* [DFred's Convenient Effects](https://foundryvtt.com/packages/dfreds-convenient-effects)
-* [Combat Utility Belt](https://foundryvtt.com/packages/combat-utility-belt)
-
-You may also choose none of the above.
-
 ## Enable long rest hit dice rolls
 
 Enables the hit dice roll UI in the Long Rest dialog. This enables the "slow natural healing" alternative rule.

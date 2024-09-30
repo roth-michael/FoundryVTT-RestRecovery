@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 2.1.0
+- Tidy5e integration
+- Changed currency conversion to (hopefully) be currency-customization friendly
+
 ## Version 2.0.2
 - Fixed attunement check for periapt of wound closure (in 4.x)
 
