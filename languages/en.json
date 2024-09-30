@@ -33,10 +33,6 @@
     },
     "PatchedRecovery": "{actorName}'s {recoveryName} has been patched.",
     "PatchedConsumable": "Updated {itemName} with uses.",
-    "Modules": {
-      "DFreds": "DFreds Convenient Effects",
-      "CUB": "Combat Utility Belt"
-    },
     "Fractions": {
       "None": "None",
       "Quarter": "Quarter",

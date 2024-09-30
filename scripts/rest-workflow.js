@@ -925,127 +925,38 @@ export default class RestWorkflow {
 
   async updateActorCurrency() {
     if (this.foodAndWaterCost == 0) return;
-    let remainingCost = this.foodAndWaterCost.toFixed(2);
+    let remainingCost = this.foodAndWaterCost;
     let actorCurrency = foundry.utils.deepClone(this.actor.system.currency);
-    let ppRequired = Math.floor(remainingCost * 0.1);
-    remainingCost = (remainingCost - (ppRequired / 0.1)).toFixed(2);
-    let gpRequired = Math.floor(remainingCost);
-    remainingCost = (remainingCost - (gpRequired)).toFixed(2);
-    let epRequired = Math.floor(remainingCost * 2);
-    remainingCost = (remainingCost - (epRequired / 2)).toFixed(2);
-    let spRequired = Math.floor(remainingCost * 10);
-    remainingCost = (remainingCost - (spRequired / 10)).toFixed(2);
-    let cpRequired = Math.floor(remainingCost * 100);
-    remainingCost = (remainingCost - (cpRequired / 100)).toFixed(2);
+    let currencyArray = Object.entries(CONFIG.DND5E.currencies).map(i => ({abbr: i[0], conv: i[1].conversion})).filter(i => i.conv).sort((a,b) => b.conv - a.conv)
+    let requiredCurrency = []
+    for (let i = currencyArray.length - 1; i >= 0; i--) {
+      requiredCurrency.unshift(Math.floor(remainingCost * currencyArray[i].conv));
+      remainingCost = (remainingCost - (requiredCurrency[0] / currencyArray[i].conv));
+    }
 
-    // Break higher into lower
-    if (actorCurrency.cp < cpRequired) {
-      if (actorCurrency.sp > 0) {
-        actorCurrency.sp -= 1;
-        actorCurrency.cp += 10;
-      } else if (actorCurrency.ep > 0) {
-        actorCurrency.ep -= 1;
-        actorCurrency.sp += 4;
-        actorCurrency.cp += 10;
-      } else if (actorCurrency.gp > 0) {
-        actorCurrency.gp -= 1;
-        actorCurrency.ep += 1;
-        actorCurrency.sp += 4;
-        actorCurrency.cp += 10;
-      } else {
-        actorCurrency.pp -= 1;
-        actorCurrency.gp += 9;
-        actorCurrency.ep += 1;
-        actorCurrency.sp += 4;
-        actorCurrency.cp += 10;
+    for (let i = 0; i < currencyArray.length; i++) {
+      while (actorCurrency[currencyArray[i].abbr] < requiredCurrency[i] && (currencyArray.slice(0,i).reduce((acc,currCurrency) => acc + actorCurrency[currCurrency.abbr] / currCurrency.conv, 0) >= (1/currencyArray[i].conv))) {
+        for (let j = i - 1; j >= 0; j--) {
+          if (actorCurrency[currencyArray[j].abbr] / currencyArray[j].conv >= (1 / currencyArray[j + 1].conv)) {
+            actorCurrency[currencyArray[j].abbr] -= (currencyArray[j].conv / currencyArray[j + 1].conv);
+            actorCurrency[currencyArray[j + 1].abbr] += 1;
+            break;
+          }
+        }
       }
-    }
-    actorCurrency.cp -= cpRequired;
-
-    // Combine lower into higher
-    while (actorCurrency.sp < spRequired && actorCurrency.cp >= 10) {
-      actorCurrency.cp -= 10;
-      actorCurrency.sp += 1;
-    }
-    // Break higher into lower
-    if (actorCurrency.sp < spRequired) {
-      if (actorCurrency.ep > 0) {
-        actorCurrency.ep -= 1;
-        actorCurrency.sp += 5;
-      } else if (actorCurrency.gp > 0) {
-        actorCurrency.gp -= 1;
-        actorCurrency.ep += 1;
-        actorCurrency.sp += 5;
-      } else {
-        actorCurrency.pp -= 1;
-        actorCurrency.gp += 9;
-        actorCurrency.ep += 1;
-        actorCurrency.sp += 5;
+      if (actorCurrency[currencyArray[i].abbr] < requiredCurrency[i]) {
+        for (let j = i + 1; j < currencyArray.length; j++) {
+          if (actorCurrency[currencyArray[j].abbr]) {
+            for (let k = j; k > i; k--) {
+              actorCurrency[currencyArray[k].abbr] -= 1;
+              actorCurrency[currencyArray[k - 1].abbr] += currencyArray[k - 1].conv / currencyArray[k].conv;
+            }
+            break;
+          }
+        }
       }
+      actorCurrency[currencyArray[i].abbr] -= requiredCurrency[i];
     }
-    actorCurrency.sp -= spRequired;
-
-    // Combine lower into higher
-    while (actorCurrency.ep < epRequired && (actorCurrency.cp / 10) + actorCurrency.sp >= 5) {
-      if (actorCurrency.sp >= 5) {
-        actorCurrency.sp -= 5;
-        actorCurrency.ep += 1;
-      } else if (actorCurrency.cp >= 10) {
-        actorCurrency.cp -= 10;
-        actorCurrency.sp += 1;
-      }
-    }
-    // Break higher into lower
-    if (actorCurrency.ep < epRequired) {
-      if (actorCurrency.gp > 0) {
-        actorCurrency.gp -= 1;
-        actorCurrency.ep += 2;
-      } else {
-        actorCurrency.pp -= 1;
-        actorCurrency.gp += 9;
-        actorCurrency.ep += 2;
-      }
-    }
-    actorCurrency.ep -= epRequired;
-
-    // Combine lower into higher
-    while (actorCurrency.gp < gpRequired && (actorCurrency.cp / 50) + (actorCurrency.sp / 5) + actorCurrency.gp >= 2) {
-      if (actorCurrency.ep >= 2) {
-        actorCurrency.ep -= 2;
-        actorCurrency.gp += 1;
-      } else if (actorCurrency.sp >= 5) {
-        actorCurrency.sp -= 5;
-        actorCurrency.ep += 1;
-      } else if (actorCurrency.cp >= 10) {
-        actorCurrency.cp -= 10;
-        actorCurrency.sp += 1;
-      }
-    }
-    // Break higher into lower
-    if (actorCurrency.gp < gpRequired) {
-      actorCurrency.pp -= 1;
-      actorCurrency.gp += 10;
-    }
-    actorCurrency.gp -= gpRequired;
-
-    // Combine lower into higher - the second part of this check shouldn't be necessary but will keep it just in case somehow there's a math error or something
-    while (actorCurrency.pp < ppRequired && (actorCurrency.cp / 100) + (actorCurrency.sp / 10) + (actorCurrency.ep / 2) + actorCurrency.gp >= 10) {
-      if (actorCurrency.gp >= 10) {
-        actorCurrency.gp -= 10;
-        actorCurrency.pp += 1;
-      } else if (actorCurrency.ep >= 2) {
-        actorCurrency.ep -= 2;
-        actorCurrency.gp += 1;
-      } else if (actorCurrency.sp >= 5) {
-        actorCurrency.sp -= 5;
-        actorCurrency.ep += 1;
-      } else if (actorCurrency.cp >= 10) {
-        actorCurrency.cp -= 10;
-        actorCurrency.sp += 1;
-      }
-    }
-    actorCurrency.pp -= ppRequired;
-
     return await this.actor.update({"system.currency": actorCurrency});
   }
 

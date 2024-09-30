@@ -1,11 +1,9 @@
 import CONSTANTS from "./constants.js";
 import ResourceConfig from "./formapplications/resource-config/resource-config.js";
-import * as lib from "./lib/lib.js";
 import { getSetting } from "./lib/lib.js";
 
 export default function registerSheetOverrides() {
-  Hooks.on("renderItemSheet5e", patch_itemSheet);
-  Hooks.on("tidy5e-sheet.renderItemSheet", patch_tidyItemSheet);
+  Hooks.on("renderItemSheetV2", patch_itemSheet);
   Hooks.on("renderActorSheet5e", patch_actorSheet);
   registerTraits();
 }
@@ -76,8 +74,6 @@ export function registerTraits() {
 
 }
 
-let styleTag = false;
-
 function patch_actorSheet(app, html, data) {
   let actor = game.actors.get(data.actor._id);
   if (app.options.classes.includes("dnd5e")) {
@@ -116,40 +112,18 @@ function patch_actorSheet(app, html, data) {
   }
 }
 
-function patch_itemSheet(app, html, { item } = {}) {
+function patch_itemSheet(app, html) {
+  const item = app.item;
+  if (!item) return;
+  if (!getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) || item.type !== "consumable" || item.system.type?.value !== "food") return;
   if (!app.options.classes.includes("tidy5e-sheet")) {
-    if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable" && item.system.type?.value === "food") {
-      patch_itemConsumableInputs(app, html, item);
-    }
+    patch_itemConsumableInputs(html, item);
+  } else {
+    patch_tidyItemConsumableInputs(html, item);
   }
 }
 
-function patch_tidyItemSheet(app, element, { item }, forced) {
-  if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && item.type === "consumable") {
-    patch_tidyItemConsumableInputs(element, item);
-  }
-}
-
-function getConsumableInputsHtml(item) {
-  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
-  const uses = Number(foundry.utils.getProperty(item, "system.uses.max"));
-  const per = foundry.utils.getProperty(item, "system.uses.per");
-  const validUses = uses && uses > 0 && per;
-  let idealIsConsumableWidth = game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.IsConsumable").length + 3;
-  let idealDayWorthWidth = game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth").length;
-
-  return `
-    <div class="form-group">
-      <div class="form-fields" style="margin-right:0.5rem;">
-        <label class="checkbox"">
-          <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
-        </label>
-      </div>
-    </div>
-  `
-}
-
-function patch_itemConsumableInputs(app, html, item) {
+function patch_itemConsumableInputs(html, item) {
   let targetElem = html.find(".form-group:has(select[name='system.type.subtype'])")?.[0]
   if (!targetElem) return;
   const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
@@ -167,12 +141,19 @@ function patch_itemConsumableInputs(app, html, item) {
 
 function patch_tidyItemConsumableInputs(element, item) {
   const html = $(element);
+  let targetElem = html.find(".form-group:has(select[data-tidy-field='system.type.subtype'])")?.[0];
+  if (!targetElem) return;
+  let existingElem = html.find(`input[name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}"]`)?.[0];
+  if (existingElem) return;
+  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
   const markupToInject = `
-    <div style="display: contents;" data-tidy-render-scheme="handlebars">
-      ${getConsumableInputsHtml(item)}
+    <div class="form-group">
+      <div class="form-fields">
+        <label class="checkbox"">
+          <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+        </label>
+      </div>
     </div>
   `;
-  let targetElem = html.find(".form-header")?.[1];
-  if (!targetElem) return;
-  $(markupToInject).insertBefore(targetElem);
+  $(markupToInject).insertAfter(targetElem);
 }

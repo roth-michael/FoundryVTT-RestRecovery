@@ -142,7 +142,6 @@ const CONSTANTS = {
   },
   
   MODULES: {
-    DFREDS: "dfreds-convenient-effects",
     ALTERNATIVE_EXHAUSTION: "alternative-exhaustion-5e"
   },
 
@@ -546,24 +545,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     default: false,
     type: Boolean
-  },
-  [CONSTANTS.SETTINGS.EXHAUSTION_INTEGRATION]: {
-    name: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Title",
-    hint: "REST-RECOVERY.Settings.LongRest.ExhaustionIntegration.Hint",
-    scope: "world",
-    group: "longrest",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION],
-    validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value || settings.get(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION).value
-    },
-    config: false,
-    type: String,
-    choices: {
-      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
-      [CONSTANTS.MODULES.DFREDS]: "REST-RECOVERY.Modules.DFreds"
-    },
-    default: CONSTANTS.FRACTIONS.NONE,
-    hidden: true // For now, since was only DFreds CE and that's not currently compatible with any type of exhaustion automation
   },
   [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",

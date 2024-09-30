@@ -22,10 +22,6 @@
     },
     "PatchedRecovery": "L'objet {recoveryName} sur l'acteur {actorName} a été patché.",
     "PatchedConsumable": "Utilisations de l'objet {itemName} mises à jour.",
-    "Modules": {
-      "DFreds": "DFreds Convenient Effects",
-      "CUB": "Combat Utility Belt"
-    },
     "Fractions": {
       "None": "Aucun",
       "Quarter": "Quart",

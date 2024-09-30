@@ -33,10 +33,6 @@
     },
     "PatchedRecovery": "{actorName}'s был излечен при помощи {recoveryName}.",
     "PatchedConsumable": "Обновление количества использований {itemName}.",
-    "Modules": {
-      "DFreds": "DFreds Convenient Effects",
-      "CUB": "Combat Utility Belt"
-    },
     "Fractions": {
       "None": "Нет",
       "Quarter": "Четверть",
