@@ -623,7 +623,7 @@
         },
         "BardClassName": {
           "Title": "Bard class name",
-          "Hint": "Here you can configure what the Bard class is called in your game. This is used to determine who's Song of Rest to use. This can be a localized string."
+          "Hint": "Here you can configure what the Bard class is called in your game. This is used to determine whose Song of Rest to use. This can be a localized string."
         },
         "ArcaneRecovery": {
           "Title": "Arcane Recovery name",
