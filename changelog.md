@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 2.1.1
+- One D&D Exhaustion now properly removes normal system exhaustion behavior
+- Water item provided in PHB now recognized and patches as a Rest Recovery-compatible water item automatically
+
 ## Version 2.1.0
 - Tidy5e integration
 - Changed currency conversion to (hopefully) be currency-customization friendly

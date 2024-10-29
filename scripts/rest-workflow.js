@@ -1721,24 +1721,24 @@ export default class RestWorkflow {
   }
 
   static patchAllConsumableItems(actor) {
-
-    const items = actor.items.filter(item => (item.name === "Rations" || item.name === "Rations (1 day)" || item.name === "Waterskin") && foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) === undefined);
+    const potentialItems = ["Rations", "Rations (1 day)", "Waterskin", "Water (Pint)"]
+    const items = actor.items.filter(item => potentialItems.includes(item.name) && item.type !== "container" && !CONSTANTS.CONSUMABLE_TYPES.includes(foundry.utils.getProperty(item, "system.type.subtype")));
 
     const updates = items.map(item => {
+      const currUpdates = {
+        "_id": item.id,
+        "system.uses.spent": foundry.utils.getProperty(item, "system.uses.spent") ?? 0,
+        "system.uses.max": foundry.utils.getProperty(item, "system.uses.max") ?? 1,
+        "system.type.value": "food",
+        [CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH]: false
+      }
       if (item.name.startsWith("Rations")) {
-        return {
-          "_id": item.id,
-          "system.uses.spent": foundry.utils.getProperty(item, "system.uses.spent") ?? 0,
-          "system.uses.max": foundry.utils.getProperty(item, "system.uses.max") ?? 1,
-          "system.type.subtype": CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD
-        }
+        currUpdates["system.type.subtype"] = CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD;
+      } else {
+        currUpdates["system.type.subtype"] = CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER;
       }
 
-      return {
-        "_id": item.id,
-        "system.uses.spent": 0,
-        "system.uses.max": 1
-      }
+      return currUpdates;
     });
 
     if (updates.length) {

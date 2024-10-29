@@ -17,6 +17,7 @@ Hooks.once("init", () => {
   registerSheetOverrides();
   RestWorkflow.initialize();
   registerHooks();
+  configureOneDndExhaustion();
   console.log("Rest Recovery 5e | Initialized");
 });
 
@@ -28,7 +29,6 @@ Hooks.once("i18nInit", () => {
 
 Hooks.once("ready", () => {
   migrate();
-  configureOneDndExhaustion();
   game.restrecovery = API;
   gameSettings.cleanup();
   setTimeout(RestWorkflow.ready, 1000);
