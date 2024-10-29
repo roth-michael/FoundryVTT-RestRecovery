@@ -6,7 +6,7 @@ export async function configureOneDndExhaustion() {
   if (!getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
   if (game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active) return;
   if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION)) {
-    if (CONFIG.DND5E.conditionTypes.exhaustion.levels !== 10) {
+    if (CONFIG.DND5E.conditionEffects.halfMovement.has("exhaustion-2")) {
       if (!document.getElementById(CONSTANTS.STYLE_ELEMENT_ID)) {
         let styleElement = document.createElement('style');
         styleElement.setAttribute("id", CONSTANTS.STYLE_ELEMENT_ID);
