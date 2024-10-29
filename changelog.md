@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 1.17.2
+- One D&D Exhaustion now properly removes normal system exhaustion behavior
+
 ## Version 1.17.1
 - Fixed attunement check for periapt of wound closure
 
