@@ -623,7 +623,7 @@
         },
         "BardClassName": {
           "Title": "Bard class name",
-          "Hint": "Here you can configure what the Bard class is called in your game. This is used to determine who's Song of Rest to use. This can be a localized string."
+          "Hint": "Here you can configure what the Bard class is called in your game. This is used to determine whose Song of Rest to use. This can be a localized string."
         },
         "ArcaneRecovery": {
           "Title": "Arcane Recovery name",
@@ -655,11 +655,11 @@
         },
         "PeriaptItem": {
           "Title": "Periapt of Wound Closure name",
-          "Hint": "Here you can configure what the Periapt of Would Closure item is called in your game. This can be a localized string."
+          "Hint": "Here you can configure what the Periapt of Wound Closure item is called in your game. This can be a localized string."
         },
         "WoundClosureBlessing": {
           "Title": "Blessing of Wound Closure name",
-          "Hint": "Here you can configure what the Blessing of Would Closure feature is called in your game. This can be a localized string."
+          "Hint": "Here you can configure what the Blessing of Wound Closure feature is called in your game. This can be a localized string."
         },
         "BlackBloodFeature": {
           "Title": "Black Blood Healing name",
