@@ -646,8 +646,10 @@ export default class RestWorkflow {
     //   }));
     //   return (feature.system.uses.value ?? 1) > 0;
     // }
+    let max = feature.system.uses.max;
+    if (typeof max === 'string') max = new Roll(max, feature.getRollData()).evaluateSync().total;
 
-    return feature.system.uses.spent < feature.system.uses.max;
+    return feature.system.uses.spent < max;
 
   }
 
@@ -1515,9 +1517,11 @@ export default class RestWorkflow {
     await this._recoverItemsUses(results, args);
 
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
+      let max = this.spellData.feature.system.uses.max;
+      if (typeof max === 'string' && max.length) max = new Roll(max, this.spellData.feature.getRollData()).evaluateSync().total;
       lib.addToUpdates(results.updateItems, {
         _id: this.spellData.feature.id,
-        "system.uses.spent": this.spellData.feature.system.uses.max
+        "system.uses.spent": max
       })
     }
 
@@ -1580,7 +1584,11 @@ export default class RestWorkflow {
 
   async _recoverItemUse(actorRollData, recoveryPeriods, updateItems, item, multiplier = 1.0, rolls) {
 
-    const usesMax = item.system.uses.max;
+    let usesMax = item.system.uses.max;
+    if (typeof usesMax === 'string') {
+      if (!usesMax.length) return;
+      usesMax = new Roll(usesMax, item.getRollData()).evaluateSync().total;
+    }
     const oldSpent = item.system.uses.spent;
 
     if (foundry.utils.getType(item.system.recoverUses) !== "function") return;
@@ -1602,7 +1610,8 @@ export default class RestWorkflow {
 
   _handlePowerSurgeFeature(actorRollData, updateItems, item) {
 
-    const maxSurges = foundry.utils.getProperty(item, "system.uses.max");
+    let maxSurges = foundry.utils.getProperty(item, "system.uses.max");
+    if (typeof maxSurges === 'string') maxSurges = new Roll(maxSurges, feature.getRollData()).evaluateSync().total;
 
     lib.addToUpdates(updateItems, {
       _id: item.id,
@@ -1639,6 +1648,7 @@ export default class RestWorkflow {
         _id: item.id
       };
 
+      // TOOD: Does this need accounting for a dynamic max uses? Can't think of when food/water would have dynamic maxes...
       const maxUses = foundry.utils.getProperty(update, "system.uses.max") ?? foundry.utils.getProperty(item, "system.uses.max") ?? 1;
       const currentSpent = foundry.utils.getProperty(update, "system.uses.spent") ?? foundry.utils.getProperty(item, "system.uses.spent") ?? 0;
       const currentQuantity = foundry.utils.getProperty(update, "system.quantity") ?? foundry.utils.getProperty(item, "system.quantity");
