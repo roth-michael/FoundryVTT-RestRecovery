@@ -98,7 +98,7 @@ export function getConsumableItemsFromActor(actor) {
 export function getConsumableItemDayUses(item) {
   if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return 0;
   const uses = foundry.utils.getProperty(item, "system.uses");
-  return ((uses.max ?? 1) - (uses.spent ?? 0));
+  return (((typeof uses.max === 'string' ? new Roll(uses.max, item.getRollData()).evaluateSync().total : uses.max) ?? 1) - (uses.spent ?? 0));
 }
 
 export function isRealNumber(inNumber) {
