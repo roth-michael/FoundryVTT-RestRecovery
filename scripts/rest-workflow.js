@@ -1788,7 +1788,7 @@ export default class RestWorkflow {
     const oldSpent = foundry.utils.getProperty(item, "system.uses.spent");
     const newSpent = foundry.utils.getProperty(data, "system.uses.spent") ?? (currCharges + 1);
     const oldQuantity = foundry.utils.getProperty(item, "system.quantity");
-    const newQuantity = foundry.utils.getProperty(data, "system.uses.quantity");
+    const newQuantity = foundry.utils.getProperty(data, "system.quantity");
     const chargesUsed = newSpent > oldSpent ? newSpent - oldSpent : oldQuantity - newQuantity;
 
     let message;
