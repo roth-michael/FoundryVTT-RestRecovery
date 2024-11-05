@@ -25,6 +25,7 @@ Hooks.once("i18nInit", () => {
   for (const [key, value] of Object.entries(CONFIG.DND5E.consumableTypes.food.subtypes)) {
     CONFIG.DND5E.consumableTypes.food.subtypes[key] = game.i18n.localize(value);
   }
+  CONFIG.DND5E.conditionTypes.exhaustion.reference = game.i18n.localize(CONFIG.DND5E.conditionTypes.exhaustion.reference);
 })
 
 Hooks.once("ready", () => {

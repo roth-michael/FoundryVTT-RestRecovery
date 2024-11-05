@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.1.3
+- Fixed an error with One D&D Exhaustion not properly setting its reference journal
+
 ## Version 2.1.2
 - Fixed an error with dynamic maximum uses
 - Fixed some typos (thanks SagaTympana!)
