@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.1.5
+- Version bump and css fix for One D&D Exhaustion
+
 ## Version 2.1.4
 - Fixed an error when consuming food/water which has only a quantity, rather than limited uses
 
