@@ -16,11 +16,11 @@ export async function configureOneDndExhaustion() {
           }
           .pips[data-prop="system.attributes.exhaustion"]:nth-child(1) {
             column-gap:1px;
-            padding-right:6px;
+            padding-right:6px !important;
           }
           .pips[data-prop="system.attributes.exhaustion"]:nth-child(3) {
             column-gap:1px;
-            padding-left:6px;
+            padding-left:6px !important;
           }
         `;
         document.head.appendChild(styleElement);
