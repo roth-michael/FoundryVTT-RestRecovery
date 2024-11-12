@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.2.0
+- Updated to use new 4.1+ roll hooks (this means 4.1.0 is the new minimum version for this and future updates)
+
 ## Version 2.1.5
 - Version bump and css fix for One D&D Exhaustion
 
