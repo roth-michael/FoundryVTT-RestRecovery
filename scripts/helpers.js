@@ -92,91 +92,45 @@ export async function configureExhaustionHooks() {
   let alternativeExhaustionActive = game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
   let modernRules = game.settings.get("dnd5e", "rulesVersion") === "modern";
   if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive || modernRules) {
-    if (Hooks.events["dnd5e.preRollAbilityTest"]) Hooks.off("dnd5e.preRollAbilityTest", _preAbilityCheck);
-    if (Hooks.events["dnd5e.preRollSkill"]) Hooks.off("dnd5e.preRollSkill", _preSkill);
-    if (Hooks.events["dnd5e.preRollAbilitySave"]) Hooks.off("dnd5e.preRollAbilitySave", _preAbilitySaveOrConcentration);
-    if (Hooks.events["dnd5e.preRollConcentration"]) Hooks.off("dnd5e.preRollConcentration", _preAbilitySaveOrConcentration);
-    if (Hooks.events["dnd5e.preRollDeathSave"]) Hooks.off("dnd5e.preRollDeathSave", _preDeathSave);
-    if (Hooks.events["dnd5e.preRollAttack"]) Hooks.off("dnd5e.preRollAttack", _preAttack);
+    if (Hooks.events["dnd5e.preRollAbilityCheckV2"]) Hooks.off("dnd5e.preRollAbilityCheckV2", _preAbilityCheck);
+    if (Hooks.events["dnd5e.preRollSavingThrowV2"]) Hooks.off("dnd5e.preRollSavingThrowV2", _preAbilitySave);
+    if (Hooks.events["dnd5e.preRollDeathSaveV2"]) Hooks.off("dnd5e.preRollDeathSaveV2", _preDeathSave);
+    if (Hooks.events["dnd5e.preRollAttackV2"]) Hooks.off("dnd5e.preRollAttackV2", _preAttack);
   } else {
     // Take em off first just in case, that way we're always last
-    if (Hooks.events["dnd5e.preRollAbilityTest"]) Hooks.off("dnd5e.preRollAbilityTest", _preAbilityCheck);
-    if (Hooks.events["dnd5e.preRollSkill"]) Hooks.off("dnd5e.preRollSkill", _preSkill);
-    if (Hooks.events["dnd5e.preRollAbilitySave"]) Hooks.off("dnd5e.preRollAbilitySave", _preAbilitySaveOrConcentration);
-    if (Hooks.events["dnd5e.preRollConcentration"]) Hooks.off("dnd5e.preRollConcentration", _preAbilitySaveOrConcentration);
-    if (Hooks.events["dnd5e.preRollDeathSave"]) Hooks.off("dnd5e.preRollDeathSave", _preDeathSave);
-    if (Hooks.events["dnd5e.preRollAttack"]) Hooks.off("dnd5e.preRollAttack", _preAttack);
+    if (Hooks.events["dnd5e.preRollAbilityCheckV2"]) Hooks.off("dnd5e.preRollAbilityCheckV2", _preAbilityCheck);
+    if (Hooks.events["dnd5e.preRollSavingThrowV2"]) Hooks.off("dnd5e.preRollSavingThrowV2", _preAbilitySave);
+    if (Hooks.events["dnd5e.preRollDeathSaveV2"]) Hooks.off("dnd5e.preRollDeathSaveV2", _preDeathSave);
+    if (Hooks.events["dnd5e.preRollAttackV2"]) Hooks.off("dnd5e.preRollAttackV2", _preAttack);
 
-    Hooks.on("dnd5e.preRollAbilityTest", _preAbilityCheck);
-    Hooks.on("dnd5e.preRollSkill", _preSkill);
-    Hooks.on("dnd5e.preRollAbilitySave", _preAbilitySaveOrConcentration);
-    Hooks.on("dnd5e.preRollConcentration", _preAbilitySaveOrConcentration);
-    Hooks.on("dnd5e.preRollDeathSave", _preDeathSave);
-    Hooks.on("dnd5e.preRollAttack", _preAttack);
+    Hooks.on("dnd5e.preRollAbilityCheckV2", _preAbilityCheck);
+    Hooks.on("dnd5e.preRollSavingThrowV2", _preAbilitySave);
+    Hooks.on("dnd5e.preRollDeathSaveV2", _preDeathSave);
+    Hooks.on("dnd5e.preRollAttackV2", _preAttack);
   }
 }
 
-function _handleGivingDisadvantage(rollType, config) {
-  let shouldUseSpecialKeys = 
-    game.modules.get("ready-set-roll-5e")?.active &&
-    config.event &&
-    game.settings.get("ready-set-roll-5e", `enable${rollType}QuickRoll`);
-
-  // If not getting the jQuery-normalized event (which has setters for xKey parameters), change it accordingly 
-  if (config.event instanceof PointerEvent) config.event = $.event.fix(config.event);
-    
-  if (!shouldUseSpecialKeys) {
-    config.fastForward = config.fastForward || 
-                         config.event?.shiftKey ||
-                         config.event?.altKey ||
-                         config.event?.metaKey ||
-                         config.event?.ctrlKey;
-    config.advantage = config.advantage ||
-                       config.event?.altKey;
-  }
-  if (config.event) {
-    foundry.utils.mergeObject(config.event, {
-      shiftKey: false,
-      altKey: false,
-      metaKey: false,
-      ctrlKey: false
-    });
-  }
-  config.disadvantage = true;
-  if (config.advantage && config.disadvantage) {
-    config.advantage = false;
-    config.disadvantage = false;
-  }
+function _preAbilityCheck(config) {
+  if (!config.subject?.statuses.has("exhaustion")) return;
+  config.rolls[0].options.disadvantage = true;
 }
 
-function _preSkill(actor, config) {
-  if (!actor.statuses.has("exhaustion")) return;
-  _handleGivingDisadvantage("Skill", config);
+function _preAbilitySave(config) {
+  if (!config.subject?.statuses?.has("exhaustion")) return;
+  if (!(config.subject?.system?.attributes?.exhaustion >= 3)) return;
+  config.rolls[0].options.disadvantage = true;
 }
 
-function _preAbilityCheck(actor, config) {
-  if (!actor.statuses.has("exhaustion")) return;
-  _handleGivingDisadvantage("Ability", config);
+function _preDeathSave(config) {
+  if (!config.subject?.statuses?.has("exhaustion")) return;
+  if (!(config.subject?.system?.attributes?.exhaustion >= 3)) return;
+  config.rolls[0].options.disadvantage = true;
 }
 
-function _preAbilitySaveOrConcentration(actor, config) {
-  if (!actor?.statuses?.has("exhaustion")) return;
-  if (!(actor?.system?.attributes?.exhaustion >= 3)) return;
-  _handleGivingDisadvantage("Ability", config);
-}
-
-function _preDeathSave(actor, config) {
-  if (!actor?.statuses?.has("exhaustion")) return;
-  if (!(actor?.system?.attributes?.exhaustion >= 3)) return;
-  _handleGivingDisadvantage("Death", config);
-}
-
-function _preAttack(item, config) {
-  let actor = config.sourceActor ?? config.actor;
+function _preAttack(config) {
+  let actor = config.subject?.actor;
   if (!actor) return;
   if (!actor?.statuses?.has("exhaustion")) return;
   if (!(actor?.system?.attributes?.exhaustion >= 3)) return;
-  // First arg only matters if config.event is defined, which is only the case in RSR
-  // if vanilla quickrolls are enabled and that's how this is being rolled
-  _handleGivingDisadvantage("Vanilla", config);
+  config.rolls[0].options.disadvantage = true;
 }
