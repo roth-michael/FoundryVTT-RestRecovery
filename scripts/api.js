@@ -3,6 +3,7 @@ import CONSTANTS from "./constants.js";
 import PromptRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
 import { gameSettings } from "./settings.js";
 import RestWorkflow from "./rest-workflow.js";
+import SocketHandler from "./sockets.js";
 
 export default class API {
 
@@ -156,4 +157,23 @@ export default class API {
     return RestWorkflow._consumableItemHelper(item, undefined, undefined, actor)
   }
 
+  /**
+   * Prompts specified users for a rest, just as if the "prompt rest" button had been fully used.
+   * 
+   * @param {string[]} userActors - A list of hyphen-separated values of the format "userId-actorId" representing the user to be prompted & the actor to prompt the rest for
+   * @param {boolean} longRest - Whether this should be a long rest
+   * @param {boolean} newDay - Whether this should be a new day
+   * @returns {boolean} - true if prompted, false otherwise
+   */
+  static promptRest(userActors, longRest, newDay = false) {
+    if (!game.user.isGM) return false;
+    if (!userActors?.length) return false;
+    SocketHandler.emit(SocketHandler.PROMPT_REST, {
+      userActors,
+      restType: longRest ? 'longRest' : 'shortRest',
+      newDay,
+      promptNewDay: false
+    });
+    return true;
+  }
 }

@@ -21,7 +21,9 @@ This "Desert" module profile could for example set a higher water consumption pe
 # Functions
 
 <dl>
-<dt><a href="#getAllProfiles">getAllProfiles()</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
+<dt><a href="#renderPromptRestInterface">renderPromptRestInterface()</a> ⇒ <code>Promise.&lt;SvelteApplication&gt; | boolean</code></dt>
+<dd><p>Renders the prompt rest UI</p>
+</dd><dt><a href="#getAllProfiles">getAllProfiles()</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
 <dd><p>Returns an array containing all the module profile names</p>
 </dd>
 <dt><a href="#getAllProfilesData">getAllProfilesData()</a> ⇒ <code>object</code></dt>
@@ -51,7 +53,15 @@ This "Desert" module profile could for example set a higher water consumption pe
 <dt><a href="#getActorConsumableUpdates">getActorConsumableUpdates(item, actor)</a> ⇒ <code>[Object, string] | []</code></dt>
 <dd><p>Creates actorUpdate & message data as if the item were consumed by the actor. Does not consume uses of the item, update the actor, or create a message on its own.</p>
 </dd>
+<dt><a href="#promptRest">promptRest(userActors, longRest, newDay)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Prompts specified users for a rest, just as if the "prompt rest" button had been fully used</p>
+</dd>
 </dl>
+
+<a name="renderPromptRestInterface"></a>
+
+## renderPromptRestInterface() ⇒ <code>Promise.&lt;SvelteApplication&gt; | boolean</code>
+Renders the prompt rest UI
 
 <a name="getAllProfiles"></a>
 
@@ -138,3 +148,13 @@ Sets the food, water, and/or starvation levels of a given actor.
 | item | <code>Item</code> | the item which would be consumed
 | actor | <code>Actor</code> | the actor which would consume |
 
+<a name="promptRest"></a>
+
+## promptRest(userActors, longRest, newDay) ⇒ <code>boolean</code>
+Prompts specified users for a rest, just as if the "prompt rest" button had been fully used
+
+| Param | Type | Description |
+| --- | --- | --- |
+| userActors | <code>string[]</code> | A list of hyphen-separated values of the format "userId-actorId" representing the user to be prompted & the actor to prompt the rest for |
+| longRest | <code>boolean</code> | Whether this should be a long rest |
+| newDay | <code>boolean</code> | Whether this should be a new day |
