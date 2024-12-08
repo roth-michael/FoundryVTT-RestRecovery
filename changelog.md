@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 2.3.0
+- Added `promptRest(userActors, restType, newDay)` to API and updated API docs
+- Fixed Song of Rest referring to the 3.x version of the damage field for custom healing - in 4.x, should have a "Heal" activity with the desired formula as the healing formula
+- Fixed Arcane Recovery and Natural Recovery referring to the 3.x version of the "other formula" field - in 4.x, should have a "Utility" activity with the desired formula as the roll formula
+
 ## Version 2.2.0
 - Updated to use new 4.1+ roll hooks (this means 4.1.0 is the new minimum version for this and future updates)
 

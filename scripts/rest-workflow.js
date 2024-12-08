@@ -604,14 +604,14 @@ export default class RestWorkflow {
       this.spellData.has_feature_use = wizardFeatureUse;
       this.spellData.feature = wizardFeature;
       this.spellData.pointsTotal = wizardFeature
-        ? (await lib.evaluateFormula(wizardFeature.system.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData()))?.total
+        ? (await lib.evaluateFormula(wizardFeature.system.activities.contents[0]?.roll.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData()))?.total
         : 0;
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
     } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
       this.spellData.has_feature_use = druidFeatureUse;
       this.spellData.feature = druidFeature;
       this.spellData.pointsTotal = druidFeature
-        ? (await lib.evaluateFormula(druidFeature.system.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData()))?.total
+        ? (await lib.evaluateFormula(druidFeature.system.activities.contents[0]?.roll.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData()))?.total
         : 0;
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
     }
@@ -800,7 +800,7 @@ export default class RestWorkflow {
     let hpRegained = 0;
 
     if (!this.features.usedBardFeature && this.features.bardFeature) {
-      const formula = foundry.utils.getProperty(this.features.bardFeature, "system.damage.parts")?.[0]?.[0] ?? "1@scale.bard.song-of-rest";
+      const formula = this.features.bardFeature.system.activities.contents[0]?.healing.formula ?? "1@scale.bard.song-of-rest";
       const roll = await lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
 
