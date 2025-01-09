@@ -98,6 +98,7 @@ const CONSTANTS = {
     ARCANE_RECOVERY: "arcane-recovery-feature-name",
     POWER_SURGE: "power-surge-feature-name",
     NATURAL_RECOVERY: "natural-recovery-feature-name",
+    NATURAL_RECOVERY_ACTIVITY: "natural-recovery-activity-name",
     SONG_OF_REST: "song-of-rest-name",
     CHEF_FEAT: "chef-feat-name",
     CHEF_TOOLS: "chef-tools-name",
@@ -986,6 +987,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     localize: true,
     default: "REST-RECOVERY.FeatureNames.NaturalRecovery",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.NATURAL_RECOVERY_ACTIVITY]: {
+    name: "REST-RECOVERY.Settings.ItemNames.NaturalRecoveryActivity.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.NaturalRecoveryActivity.Hint",
+    scope: "world",
+    group: "itemnames",
+    config: false,
+    localize: true,
+    default: "REST-RECOVERY.FeatureNames.NaturalRecoveryActivity",
     type: String
   },
   [CONSTANTS.SETTINGS.SONG_OF_REST]: {

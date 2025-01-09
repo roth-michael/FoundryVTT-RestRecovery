@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.3.1
+- Amendment to previous fix of Natural Recovery; since the 2024 version also allows a free casting, there may be multiple activities. To specify which represents the spell recovery, a new localization option has been added in the "Feature Names" section of settings for the Activity name in question. This will only be checked if the main "Natural Recovery" item does _not_ itself have limited uses
+
 ## Version 2.3.0
 - Added `promptRest(userActors, longRest, newDay)` to API and updated API docs
 - Fixed Song of Rest referring to the 3.x version of the damage field for custom healing - in 4.x, should have a "Heal" activity with the desired formula as the healing formula
