@@ -647,9 +647,19 @@ export default class RestWorkflow {
     //   return (feature.system.uses.value ?? 1) > 0;
     // }
     let max = feature.system.uses.max;
+    let spent = feature.system.uses.spent;
+    if (!max) {
+      // If not natural recovery, misconfigured
+      if (feature.name !== lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY, true)) return false;
+      // If natural recovery, grab appropriate activity name
+      let activity = feature.system.activities.getName(lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY_ACTIVITY, true));
+      max = activity?.uses.max;
+      if (!max) return false;
+      spent = activity.uses.spent;
+    }
     if (typeof max === 'string') max = new Roll(max, feature.getRollData()).evaluateSync().total;
 
-    return feature.system.uses.spent < max;
+    return spent < max;
 
   }
 
@@ -1518,10 +1528,18 @@ export default class RestWorkflow {
 
     if (!this.longRest && this.spellData.pointsSpent && this.spellData.feature) {
       let max = this.spellData.feature.system.uses.max;
+      let updateString = "system.uses.spent";
+      if (!max) {
+        if (this.spellData.feature.name === lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY, true)) {
+          let activity = this.spellData.feature.system.activities.getName(lib.getSetting(CONSTANTS.SETTINGS.NATURAL_RECOVERY_ACTIVITY, true));
+          max = activity?.uses.max;
+          updateString = `system.activities.${activity.id}.uses.spent`;
+        }
+      }
       if (typeof max === 'string' && max.length) max = new Roll(max, this.spellData.feature.getRollData()).evaluateSync().total;
       lib.addToUpdates(results.updateItems, {
         _id: this.spellData.feature.id,
-        "system.uses.spent": max
+        [updateString]: max
       })
     }
 
