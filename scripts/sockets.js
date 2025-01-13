@@ -57,12 +57,10 @@ export default class SocketHandler {
         }
       }else if(user === game.user){
         actorsToRest.push(actor);
-      } else if (!user.active) {
-        if (sender === game.user) {
-          offlineResters.push(actor);
-        } else {
-          otherResters.push(actor);
-        }
+      } else if (!user.active && sender === game.user) {
+        offlineResters.push(actor);
+      } else {
+        otherResters.push(actor);
       }
 
     }
