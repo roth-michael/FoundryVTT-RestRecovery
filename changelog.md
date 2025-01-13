@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 2.3.2
+- Fixed other resters sometimes not being picked up for effects like Song of Rest or Chef
+
 ## Version 2.3.1
 - Amendment to previous fix of Natural Recovery; since the 2024 version also allows a free casting, there may be multiple activities. To specify which represents the spell recovery, a new localization option has been added in the "Feature Names" section of settings for the Activity name in question. This will only be checked if the main "Natural Recovery" item does _not_ itself have limited uses
 
