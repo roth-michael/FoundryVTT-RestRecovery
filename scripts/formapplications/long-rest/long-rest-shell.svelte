@@ -43,6 +43,7 @@
   let promptNewDay = !simpleCalendarActive && workflow.restVariant !== "gritty" && application.options.promptNewDay;
 
   let usingDefaultSettings = CONSTANTS.USING_DEFAULT_LONG_REST_SETTINGS();
+  let legacyRules = game.settings.get("dnd5e", "rulesVersion") === "legacy";
   let enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
   let showHealthBar = enableRollHitDice || getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
   let showStartLongRestButton = getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
@@ -212,7 +213,11 @@
     {#if activeStep === 0}
 
       {#if usingDefaultSettings}
-        <p>{localize("DND5E.LongRestHint")}</p>
+        {#if legacyRules}
+          <p>{localize("DND5E.REST.Long.Hint.NormalLegacy")}</p>
+        {:else}
+          <p>{localize("DND5E.REST.Long.Hint.Normal")}</p>
+        {/if}
       {:else}
         <p>{localize("REST-RECOVERY.Dialogs.LongRest.CustomRules")}</p>
         <p class="notes">
@@ -238,13 +243,13 @@
         {#if promptNewDay || newDay}
           <div class="form-group">
             <label>
-              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayTitle" : "DND5E.NewDay")}
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayTitle" : "DND5E.REST.NewDay.Label")}
             </label>
             {#if promptNewDay}
               <input type="checkbox" bind:checked={newDay}/>
             {/if}
             <p class="hint">
-              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayHint" : "DND5E.NewDayHint")}
+              {localize(!promptNewDay && newDay ? "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayHint" : "DND5E.REST.NewDay.Hint")}
             </p>
           </div>
         {/if}

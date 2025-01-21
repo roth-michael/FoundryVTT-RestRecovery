@@ -14,7 +14,6 @@
     "FeatureNames": {
       "ArcaneRecovery": "Arkane Erholung",
       "NaturalRecovery": "Natürliche Erholung",
-      "PowerSurge": "Magieschub",
       "SongOfRest": "Lied der Erholung",
       "ChefFeat": "Koch",
       "ChefTools": "Kochutensilien",
@@ -519,10 +518,6 @@
         "ArcaneRecovery": {
           "Title": "Name von Arkane Erholung",
           "Hint": "Hier kann festgelegt werden, wie die Arkane Erholung vom Magier in diesem Spiel heißt. Kann ein Locale-String sein."
-        },
-        "PowerSurge": {
-          "Title": "Name von Magieschub",
-          "Hint": "Hier kann festgelegt werden, wie der Magieschub vom Magier in diesem Spiel heißt. Kann ein Locale-String sein."
         },
         "NaturalRecovery": {
           "Title": "Name von Natürliche Erholung",

@@ -19,7 +19,6 @@
       "ArcaneRecovery": "Arcane Recovery",
       "NaturalRecovery": "Natural Recovery",
       "NaturalRecoveryActivity": "Recover Spell Slots",
-      "PowerSurge": "Power Surge",
       "SongOfRest": "Song of Rest",
       "ChefFeat": "Chef",
       "ChefTools": "Cook's Utensils",
@@ -60,7 +59,7 @@
     "Misc": {
       "Food": "Food",
       "Water": "Water",
-      "Both": "Both"
+      "Both": "Food & Water"
     },
     "NumberToText": {
       "1": "One",
@@ -629,10 +628,6 @@
         "ArcaneRecovery": {
           "Title": "Arcane Recovery name",
           "Hint": "Here you can configure what a wizard's Arcane Recovery feature is called in your game. This can be a localized string."
-        },
-        "PowerSurge": {
-          "Title": "Power Surge name",
-          "Hint": "Here you can configure what a wizard's Power Surge feature is called in your game. This can be a localized string."
         },
         "NaturalRecovery": {
           "Title": "Natural Recovery name",

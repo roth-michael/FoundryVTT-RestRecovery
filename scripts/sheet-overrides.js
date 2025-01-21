@@ -84,14 +84,18 @@ function patch_actorSheet(app, html, data) {
       targetElem = html.find(".center-pane .resources")[0];
       if (!targetElem) return;
     }
-    const elem = $(`<div class="form-group" style="${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;"  title="Module: Rest Recovery for 5e">
-          <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
-          <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
-              <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
-          </a>
-      </div>`);
-    elem.insertAfter(targetElem);
-    elem.find(".config-button").on("click", function () {
+    const elem = document.createElement("div");
+    elem.classList.add("form-group");
+    elem.setAttribute("style", `${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;`);
+    elem.setAttribute("title", "Module: Rest Recovery for 5e");
+    elem.innerHTML = `
+      <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
+      <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
+          <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
+      </a>
+    `;
+    targetElem.after(elem);
+    elem.querySelector(".config-button").addEventListener("click", () => {
       ResourceConfig.show({ actor });
     });
   } else if (app.options.classes.includes("dnd5e2")) {
@@ -99,14 +103,18 @@ function patch_actorSheet(app, html, data) {
     let targetElem = html.find(".favorites")[0];
     if (!targetElem) return;
     let border = false;
-    const elem = $(`<div class="form-group" style="${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;"  title="Module: Rest Recovery for 5e">
-          <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
-          <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
-              <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
-          </a>
-      </div>`);
-    elem.insertBefore(targetElem);
-    elem.find(".config-button").on("click", function () {
+    const elem = document.createElement("div");
+    elem.classList.add("form-group");
+    elem.setAttribute("style", `${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;`);
+    elem.setAttribute("title", "Module: Rest Recovery for 5e");
+    elem.innerHTML = `
+      <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
+      <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
+          <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
+      </a>
+    `;
+    targetElem.before(elem);
+    elem.querySelector(".config-button").addEventListener("click", () => {
       ResourceConfig.show({ actor });
     });
   }
@@ -136,24 +144,23 @@ function patch_itemConsumableInputs(html, item) {
     localize: true,
     input: fullDay
   });
-  $(fullDayGroup).insertAfter(targetElem);
+  targetElem.after(fullDayGroup);
 }
 
 function patch_tidyItemConsumableInputs(element, item) {
-  const html = $(element);
-  let targetElem = html.find(".form-group:has(select[data-tidy-field='system.type.subtype'])")?.[0];
+  let targetElem = element.querySelector(".form-group:has(select[data-tidy-field='system.type.subtype'])");
   if (!targetElem) return;
-  let existingElem = html.find(`input[name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}"]`)?.[0];
+  let existingElem = element.querySelector(`input[name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}"]`);
   if (existingElem) return;
   const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
-  const markupToInject = `
-    <div class="form-group">
-      <div class="form-fields">
-        <label class="checkbox"">
-          <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
-        </label>
-      </div>
+  const elemToInject = document.createElement("div");
+  elemToInject.classList.add("form-group");
+  elemToInject.innerHTML = `
+    <div class="form-fields">
+      <label class="checkbox"">
+        <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+      </label>
     </div>
   `;
-  $(markupToInject).insertAfter(targetElem);
+  targetElem.after(elemToInject);
 }

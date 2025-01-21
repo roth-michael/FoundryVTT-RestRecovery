@@ -5,7 +5,7 @@ export default class LongRestDialog extends CustomSvelteApplication {
 
   constructor(options = {}, dialogData = {}) {
     super({
-      title: `${game.i18n.localize("DND5E.LongRest")}: ${options.actor.name}`,
+      title: `${game.i18n.localize("DND5E.REST.Long.Label")}: ${options.actor.name}`,
       zIndex: 102,
       svelte: {
         class: LongRestShell,
