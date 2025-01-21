@@ -5,7 +5,7 @@ export default class ShortRestDialog extends CustomSvelteApplication {
 
   constructor(options = {}, dialogData = {}) {
     super({
-      title: `${game.i18n.localize("DND5E.ShortRest")}: ${options.actor.name}`,
+      title: `${game.i18n.localize("DND5E.REST.Short.Label")}: ${options.actor.name}`,
       zIndex: 102,
       svelte: {
         class: ShortRestShell,

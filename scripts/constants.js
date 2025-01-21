@@ -174,15 +174,25 @@ const CONSTANTS = {
   
   USING_DEFAULT_LONG_REST_SETTINGS() {
     const settings = this.GET_DEFAULT_SETTINGS();
+    const legacyRules = game.settings.get("dnd5e", "rulesVersion") === "legacy";
     for (const [key, setting] of Object.entries(settings)) {
       if (setting.group !== "longrest") continue;
-      if (game.settings.get(this.MODULE_NAME, key) !== setting.default) return false;
+      const currSettingValue = game.settings.get(this.MODULE_NAME, key);
+      if (key === CONSTANTS.SETTINGS.HD_MULTIPLIER) {
+        if (legacyRules && currSettingValue !== CONSTANTS.FRACTIONS.HALF) return false;
+        if (!legacyRules && currSettingValue !== CONSTANTS.FRACTIONS.FULL) return false;
+        continue;
+      }
+      if (currSettingValue !== setting.default) return false;
     }
     return true;
   },
   
   GET_DEFAULT_SETTINGS() {
-    return foundry.utils.deepClone(CONSTANTS.DEFAULT_SETTINGS)
+    const settings = foundry.utils.deepClone(CONSTANTS.DEFAULT_SETTINGS);
+    const legacyRules = game.settings.get("dnd5e", "rulesVersion") === "legacy";
+    if (legacyRules) settings[CONSTANTS.SETTINGS.HD_MULTIPLIER].default = CONSTANTS.FRACTIONS.HALF;
+    return settings;
   }
 }
 
@@ -696,7 +706,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
       [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
     },
-    default: CONSTANTS.FRACTIONS.HALF,
+    default: CONSTANTS.FRACTIONS.FULL,
   },
   [CONSTANTS.SETTINGS.HD_MULTIPLIER_FORMULA]: {
     scope: "world",
@@ -967,16 +977,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     localize: true,
     default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
-    type: String
-  },
-  [CONSTANTS.SETTINGS.POWER_SURGE]: {
-    name: "REST-RECOVERY.Settings.ItemNames.PowerSurge.Title",
-    hint: "REST-RECOVERY.Settings.ItemNames.PowerSurge.Hint",
-    scope: "world",
-    group: "itemnames",
-    config: false,
-    localize: true,
-    default: "REST-RECOVERY.FeatureNames.PowerSurge",
     type: String
   },
   [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {

@@ -18,7 +18,6 @@
     "FeatureNames": {
       "ArcaneRecovery": "Recuperação Arcana",
       "NaturalRecovery": "Recuperação Natural",
-      "PowerSurge": "Surto de Poder",
       "SongOfRest": "Canção do Descanso",
       "ChefFeat": "Chefe",
       "ChefTools": "Utensílios de Cozinheiro",
@@ -628,10 +627,6 @@
         "ArcaneRecovery": {
           "Title": "Nome da Recuperação Arcana",
           "Hint": "Aqui você pode configurar como a característica Recuperação Arcana de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
-        },
-        "PowerSurge": {
-          "Title": "Nome do Surto de Poder",
-          "Hint": "Aqui você pode configurar como a característica Surto de Poder de um Mago da Guerra é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecovery": {
           "Title": "Nome da Recuperação Natural",

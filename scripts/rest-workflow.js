@@ -22,10 +22,7 @@ export default class RestWorkflow {
     this.newExhaustionValue = false;
     this.restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT);
 
-    this.spellSlotsRegainedMessage = "";
     this.hitDiceMessage = "";
-    this.itemsRegainedMessages = [];
-    this.resourcesRegainedMessages = [];
     this.foodAndWaterMessage = [];
     this.steps = [];
     this.config = config;
@@ -33,12 +30,6 @@ export default class RestWorkflow {
 
     this.consumableData = { items: [] };
     this.foodAndWaterCost = 0;
-  }
-
-  static get LongRestItemNameHandlers() {
-    return {
-      [lib.getSetting(CONSTANTS.SETTINGS.POWER_SURGE, true)]: "_handlePowerSurgeFeature"
-    }
   }
 
   get maxHP() {
@@ -58,7 +49,7 @@ export default class RestWorkflow {
   }
 
   get totalHitDice() {
-    return this.actor.type === 'npc' ? this.actor.system.attributes.hd.value : this.actor.system.attributes.hd;
+    return this.actor.system.attributes.hd.value;
   }
 
   get recoveredSlots() {
@@ -181,10 +172,10 @@ export default class RestWorkflow {
 
       const denomination = cachedDenomination;
 
-      const hitDice = updates.class?.["system.hitDiceUsed"] - 1;
+      const hitDice = updates.class?.["system.hd.spent"] - 1;
 
-      const clsItem = actor.items.find(i => {
-        return i.system.hitDice === denomination && i.system.hitDiceUsed === hitDice;
+      const clsItem = actor.itemTypes.class.find(i => {
+        return i.system.hd?.denomination === denomination && i.system.hd?.spent === hitDice;
       });
 
       if (!clsItem) return;
@@ -260,7 +251,7 @@ export default class RestWorkflow {
       
       workflow.then((workflow) => {
   
-        const hd0 = actor.system.attributes.hd;
+        const hd0 = actor.system.attributes.hd.value;
         const hp0 = actor.system.attributes.hp.value;
   
         ShortRestDialog.show({ ...config, actor }).then(async (newDay) => {
@@ -283,7 +274,7 @@ export default class RestWorkflow {
             }
           }
   
-          const hitDice = actor.type === 'npc' ? (actor.system.attributes.hd.value - hd0.value) : (actor.system.attributes.hd - hd0);
+          const hitDice = actor.system.attributes.hd.value - hd0;
           const hitPoints = actor.system.attributes.hp.value - hp0;
   
           return actor._rest(config, {deltas: {hitDice, hitPoints}});
@@ -416,7 +407,7 @@ export default class RestWorkflow {
 
           if (config.advanceTime && (config.duration > 0) && game.user.isGM) await game.time.advance(60 * config.duration);
           if (config.chat) {
-            const result = await actor._displayRestResultMessage(results, config.type == "long")
+            const result = await actor._displayRestResultMessage(config, results);
             await workflow._displayRestResultMessage(result);
           };
           Hooks.callAll("dnd5e.restCompleted", actor, results, config);
@@ -526,17 +517,15 @@ export default class RestWorkflow {
         [denomination]: this.actor.system.attributes.hd.value
       }
     }
-    return this.actor.items.reduce((hd, item) => {
-      if (item.type === "class") {
-        const d = item.system;
-        const denom = d.hitDice || "d6";
-        let available = parseInt(d.levels || 1) - parseInt(d.hitDiceUsed || 0);
-        if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
-          const hitDiceBuffer = foundry.utils.getProperty(item, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG) ?? 0;
-          available += hitDiceBuffer;
-        }
-        hd[denom] = denom in hd ? hd[denom] + available : available;
+    return this.actor.system.attributes.hd.classes.reduce((hd, item) => {
+      const d = item.system.hd;
+      const denom = d.denomination;
+      let available = d.value;
+      if (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
+        const hitDiceBuffer = foundry.utils.getProperty(item, CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG) ?? 0;
+        available += hitDiceBuffer;
       }
+      hd[denom] = (hd[denom] ?? 0) + available;
       return hd;
     }, {});
   }
@@ -729,13 +718,13 @@ export default class RestWorkflow {
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
         ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
-        : Math.floor((this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level) * maxHitDiceSpendMultiplier);
+        : Math.floor(this.actor.system.attributes.hd.max * maxHitDiceSpendMultiplier);
     } else {
       minSpendHitDice = getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0;
       const maxHitDiceSpendMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
       maxSpendHitDice = typeof maxHitDiceSpendMultiplier === "string"
         ? Math.floor((await lib.evaluateFormula(maxHitDiceSpendMultiplier, this.actor.getRollData()))?.total ?? 0)
-        : Math.floor((this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level) * maxHitDiceSpendMultiplier);
+        : Math.floor(this.actor.system.attributes.hd.max * maxHitDiceSpendMultiplier);
       maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
     }
 
@@ -913,7 +902,7 @@ export default class RestWorkflow {
     if (hitDiceLeftToRecover > 0) {
 
       const sortedClasses = Object.values(this.actor.classes).sort((a, b) => {
-        return (parseInt(b.system.hitDice.slice(1)) || 0) - (parseInt(a.system.hitDice.slice(1)) || 0);
+        return (parseInt(b.system.hd.denomination.slice(1)) || 0) - (parseInt(a.system.hd.denomination.slice(1)) || 0);
       });
 
       const biggestClass = sortedClasses[0];
@@ -987,7 +976,7 @@ export default class RestWorkflow {
     if (this.longRest) {
 
       for(let i = results.updateItems.length-1; i >= 0; i--){
-        if(Object.keys(results.updateItems[i]).includes("system.hitDiceUsed")){
+        if(Object.keys(results.updateItems[i]).includes("system.hd.spent")){
           results.updateItems.splice(i, 1);
         }
       }
@@ -1308,13 +1297,7 @@ export default class RestWorkflow {
       flavor = game.i18n.localize("REST-RECOVERY.Chat.Flavor.ShortRestNewday");
     }
 
-    let extra = this.spellSlotsRegainedMessage
-      + this.itemsRegainedMessages.join("")
-      + this.resourcesRegainedMessages.join("")
-    if (extra.length) {
-      extra = `<p>${game.i18n.localize('REST-RECOVERY.Chat.RegainedUses')}</p>` + extra;
-    }
-
+    let extra = '';
     if (this.foodAndWaterMessage.length) {
       extra += this.foodAndWaterMessage.join("");
     }
@@ -1367,7 +1350,7 @@ export default class RestWorkflow {
 
     let multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.HD_MULTIPLIER);
     let roundingMethod = lib.determineRoundingMethod(CONSTANTS.SETTINGS.HD_ROUNDING);
-    const actorLevel = this.actor.type === "npc" ? this.actor.system.attributes.hd.max : this.actor.system.details.level;
+    const actorLevel = this.actor.system.attributes.hd.max;
 
     if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_HIT_DICE)) {
       const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
@@ -1394,7 +1377,7 @@ export default class RestWorkflow {
 
     if (!lib.getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_BUFFER)) {
       const maximumHitDiceToRecover = Number(Object.values(this.actor.classes).reduce((acc, cls) => {
-        acc += cls.system?.hitDiceUsed ?? 0;
+        acc += cls.system?.hd?.spent ?? 0;
         return acc;
       }, 0));
       maxHitDice = Math.min(maximumHitDiceToRecover, maxHitDice);
@@ -1425,16 +1408,7 @@ export default class RestWorkflow {
         results.updateData[`system.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
 
         const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
-        this.resourcesRegainedMessages.push(`<li>${game.i18n.format("REST-RECOVERY.Chat.RecoveryNameNum", {
-          name: resource.label,
-          number: chargeText
-        })}</li>`)
       }
-    }
-
-    if (this.resourcesRegainedMessages.length) {
-      this.resourcesRegainedMessages.unshift('<ul>')
-      this.resourcesRegainedMessages.push('</ul>');
     }
 
     const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
@@ -1503,19 +1477,6 @@ export default class RestWorkflow {
           const prop = `system.spells.spell${slot}.value`;
           results.updateData[prop] = (results.updateData[prop] || foundry.utils.getProperty(this.actor, prop) || 0) + num;
         }
-
-        this.spellSlotsRegainedMessage = "<ul>";
-        for (const [level, num] of Object.entries(this.recoveredSlots)) {
-          const numText = game.i18n.localize("REST-RECOVERY.NumberToText." + num);
-          const levelText = lib.ordinalSuffixOf(level);
-          const localization = "REST-RECOVERY.Chat.SpellSlotList" + (num > 1 ? "Plural" : "");
-          this.spellSlotsRegainedMessage += `<li>${game.i18n.format(localization, {
-            number: numText,
-            level: levelText
-          })}</li>`
-        }
-        this.spellSlotsRegainedMessage += "</ul>";
-
       }
 
     }
@@ -1568,34 +1529,18 @@ export default class RestWorkflow {
 
     const actorRollData = this.actor.getRollData();
 
-    const longRestItemNameHandlers = RestWorkflow.LongRestItemNameHandlers;
-
     const trueFeatsMultiplier = recoverLongRestUses ? longFeatsMultiplier : shortFeatsMultiplier;
     const trueOthersMultiplier = recoverLongRestUses ? longOthersMultiplier : shortOthersMultiplier;
 
-    const recoveryPeriods = ["sr"];
+    const recoveryPeriods = ["sr", "recharge"];
     if (recoverLongRestUses) recoveryPeriods.unshift("lr");
     if (recoverDailyUses) recoveryPeriods.unshift("day", "dawn", "dusk"); // TODO: see about dawn/dusk SC integration
 
     for (const item of this.actor.items) {
-      const itemHandlerFn = longRestItemNameHandlers[item.name];
-      if (recoverLongRestUses && itemHandlerFn) {
-        this[itemHandlerFn](actorRollData, results.updateItems, item, rolls);
-      } else if (item.system.uses) {
+      if (item.system.uses) {
         const recoveryActivities = item.system.uses.recovery.map(act => act.period);
         await this._recoverItemUse(actorRollData, recoveryPeriods, results.updateItems, item, recoveryActivities.includes("day") ? dailyMultiplier : (item.type === "feat" ? trueFeatsMultiplier : trueOthersMultiplier), rolls);
-      } else if (recoverLongRestUses && item.system.recharge && item.system.recharge.value) {
-        lib.addToUpdates(results.updateItems, { _id: item.id, "system.recharge.charged": true });
       }
-    }
-
-    if (this.itemsRegainedMessages.length) {
-      this.itemsRegainedMessages.sort((a, b) => {
-        return a[0] > b[0] || a[1] > b[1] ? -1 : 1;
-      });
-      this.itemsRegainedMessages = this.itemsRegainedMessages.map(line => line[1]);
-      this.itemsRegainedMessages.unshift(`<ul>`)
-      this.itemsRegainedMessages.push('</ul>');
     }
 
   }
@@ -1622,18 +1567,6 @@ export default class RestWorkflow {
     lib.addToUpdates(updateItems, {
       _id: item.id,
       ...itemUpdates
-    });
-
-  }
-
-  _handlePowerSurgeFeature(actorRollData, updateItems, item) {
-
-    let maxSurges = foundry.utils.getProperty(item, "system.uses.max");
-    if (typeof maxSurges === 'string') maxSurges = new Roll(maxSurges, feature.getRollData()).evaluateSync().total;
-
-    lib.addToUpdates(updateItems, {
-      _id: item.id,
-      "system.uses.spent": maxSurges - 1
     });
 
   }

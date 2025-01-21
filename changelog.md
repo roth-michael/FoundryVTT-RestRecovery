@@ -1,5 +1,15 @@
 # Rest Recovery Changelog
 
+## Version 3.0.0
+- Updated to make use of 4.2.0's changes (this means 4.2.0 is the new minimum version for this and future updates)
+- Updated to be compatible with V13 (probably); obviously does not _require_ V13 as it is not yet a stable release
+- Removed much custom rest message handling, as the system now automatically reports all recovery/spending during rests
+- Removed handling for "Power Surge," as (technically as of 4.0.0) this can be handled strictly by the system
+- Fixed "Recharge" items not recharging on rest
+- Fixed bug where non-GM users could sometimes automatically try (& fail) to set a tidy5e setting on login
+- Changed the default HD recovery fraction to be "Full" to line up with the modern 5e ruleset. This should not impact any existing settings
+- Added recognition for using the non-standard HD recovery fraction (comparing with the system's rules version setting), and displaying the "You're using custom settings" message accordingly
+
 ## Version 2.3.2
 - Fixed other resters sometimes not being picked up for effects like Song of Rest or Chef
 

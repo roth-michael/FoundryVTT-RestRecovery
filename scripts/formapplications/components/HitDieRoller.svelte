@@ -35,7 +35,7 @@
 <div class="form-group">
   <div class="flexcol">
     <div>
-      <label>{localize("DND5E.ShortRestSelect")}</label>
+      <label>{localize("DND5E.REST.HitDice.Select")}</label>
     </div>
     <div class="form-fields">
       <select name="hd" bind:value={selectedHitDice} style="height:26px;">
@@ -54,7 +54,7 @@
       {/if}
     </div>
     {#if healthData.totalHitDice === 0}
-      <p class="notes">{localize("DND5E.ShortRestNoHD")}</p>
+      <p class="notes">{localize("DND5E.REST.HitDice.None")}</p>
     {/if}
   </div>
 </div>
