@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.0.1
+- Fixed bug where setting item/feat recovery to anything except "Full" would sometimes result in unexpected recovery amounts
+
 ## Version 3.0.0
 - Updated to make use of 4.2.0's changes (this means 4.2.0 is the new minimum version for this and future updates)
 - Updated to be compatible with V13 (probably); obviously does not _require_ V13 as it is not yet a stable release
