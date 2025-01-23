@@ -1556,13 +1556,37 @@ export default class RestWorkflow {
 
     if (foundry.utils.getType(item.system.recoverUses) !== "function") return;
     actorRollData.item = {...item.system}
-    const {updates: itemUpdates, rolls: itemRolls} = await item.system.recoverUses(recoveryPeriods, actorRollData);
+    let profile;
+    findPeriod: {
+      for (const period of recoveryPeriods) {
+        for (const recovery of item.system.uses.recovery) {
+          if (recovery.period === period) {
+            profile = recovery;
+            break findPeriod;
+          }
+        }
+      }
+    }
+    if (!profile) return;
 
-    const newSpent = itemUpdates?.system?.uses?.spent ?? oldSpent;
-    let recoverValue = oldSpent - newSpent;
-    recoverValue = Math.floor(multiplier * recoverValue);
-    const adjustedSpent = Math.clamp(oldSpent - recoverValue, 0, usesMax);
-    if (newSpent !== oldSpent) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": adjustedSpent});
+    let itemUpdates = {};
+    let recoverAmount;
+    let numDays = Math.floor(this.config.duration / 1440);
+    let numDaysMult = ["day", "dawn", "dusk"].includes(profile.period) ? Math.max(1, numDays) : 1;
+    let newSpent = oldSpent;
+    if (profile.type === "recoverAll") {
+      recoverAmount = Math.floor(multiplier * usesMax * numDaysMult);
+      newSpent = Math.clamp(oldSpent - recoverAmount, 0, usesMax);
+    } else if (profile.type === "loseAll") {
+      newSpent = usesMax;
+    } else if (profile.formula) {
+      let roll = new Roll(profile.formula, actorRollData);
+      roll.alter(numDaysMult, 0, {multiplyNumeric: true});
+      recoverAmount = Math.floor(multiplier * (await roll.evaluate()).total);
+      newSpent = Math.clamp(oldSpent - recoverAmount, 0, usesMax);
+    }
+
+    if (newSpent !== oldSpent) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": newSpent});
 
     lib.addToUpdates(updateItems, {
       _id: item.id,
