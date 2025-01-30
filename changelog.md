@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.0.2
+- Translation updates (thanks Kharmans)
+
 ## Version 3.0.1
 - Fixed bug where setting item/feat recovery to anything except "Full" would sometimes result in unexpected recovery amounts
 
