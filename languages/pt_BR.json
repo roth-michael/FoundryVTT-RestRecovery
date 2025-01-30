@@ -59,7 +59,7 @@
     "Misc": {
       "Food": "Comida",
       "Water": "Água",
-      "Both": "Ambos"
+      "Both": "Comida & Água"
     },
     "NumberToText": {
       "1": "Um",
