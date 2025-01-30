@@ -18,6 +18,7 @@
     "FeatureNames": {
       "ArcaneRecovery": "Recuperação Arcana",
       "NaturalRecovery": "Recuperação Natural",
+      "NaturalRecoveryActivity": "Recuperar Espaços de Magia",
       "SongOfRest": "Canção do Descanso",
       "ChefFeat": "Chefe",
       "ChefTools": "Utensílios de Cozinheiro",
@@ -630,7 +631,11 @@
         },
         "NaturalRecovery": {
           "Title": "Nome da Recuperação Natural",
-          "Hint": "Aqui você pode configurar como a característica Recuperação Natural de um Druida da Terra é chamada em seu jogo. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como a característica Recuperação Natural de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
+        },
+        "NaturalRecoveryActivity": {
+          "Title": "Nome da Atividade Recuperação Natural",
+          "Hint": "Aqui você pode configurar como a atividade da característica Recuperação Natural de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "SongOfRest": {
           "Title": "Nome da Canção do Descanso",
