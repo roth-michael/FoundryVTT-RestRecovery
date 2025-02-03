@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.0.3
+- Fixed certain flags showing up in recovery message (food/water sated flags, short rests remaining, etc)
+
 ## Version 3.0.2
 - Translation updates (thanks Kharmans)
 

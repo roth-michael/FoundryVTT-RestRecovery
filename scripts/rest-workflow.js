@@ -1274,9 +1274,13 @@ export default class RestWorkflow {
 
   }
 
-  _displayRestResultMessage(chatMessage) {
+  async _displayRestResultMessage(chatMessage) {
     if (!this.longRest && lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER) && !this.healthData.hitDiceSpent && this.healthRegained > 0) {
       chatMessage.content = game.i18n.format('REST-RECOVERY.Chat.AlternateShortRestResult', {name: this.actor.name, health: this.healthRegained});
+    }
+    const newDeltas = chatMessage.system.deltas;
+    if (newDeltas.actor?.length) {
+      newDeltas.actor = newDeltas.actor.filter(d => !d.keyPath?.startsWith(`flags.${CONSTANTS.MODULE_NAME}`));
     }
     let flavor = chatMessage.flavor;
     if (!this.config.newDay) {
@@ -1312,9 +1316,12 @@ export default class RestWorkflow {
       SimpleCalendar.api.addNote(`${this.longRest ? 'Long' : 'Short'} rest: ${this.actor.name}`, newChatMessageContent, startDateTime, endDateTime, false, 0, [], "active", null, ['default']);
     }
 
-    chatMessage.update({
+    await chatMessage.update({
       flavor: flavor,
-      content: newChatMessageContent
+      content: newChatMessageContent,
+      system: {
+        deltas: newDeltas
+      }
     }).then(() => {
       ui.chat.scrollBottom();
     });
