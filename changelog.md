@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.0.5
+- Version bump for 4.3.x
+
 ## Version 3.0.4
 - Fixed hit die buffer not working properly
 - Fixed Arcane Recovery, Natural Recovery, and Song of Rest sometimes not working properly
