@@ -59,12 +59,12 @@
 
 		<div class="rest-recovery-flex-col">
 
-			<h2>{localize("SETTINGS.5eRestN")}</h2>
+			<h2>{localize("SETTINGS.DND5E.VARIANT.Rest.Name")}</h2>
 
 			<select bind:value={restVariant}>
-				<option value="normal">{localize("SETTINGS.5eRestPHB")}</option>
-				<option value="gritty">{localize("SETTINGS.5eRestGritty")}</option>
-				<option value="epic">{localize("SETTINGS.5eRestEpic")}</option>
+				<option value="normal">{localize("SETTINGS.DND5E.VARIANT.Rest.Normal")}</option>
+				<option value="gritty">{localize("SETTINGS.DND5E.VARIANT.Rest.Gritty")}</option>
+				<option value="epic">{localize("SETTINGS.DND5E.VARIANT.Rest.Epic")}</option>
         <option value="custom">{localize("REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.Title")}</option>
 			</select>
 
