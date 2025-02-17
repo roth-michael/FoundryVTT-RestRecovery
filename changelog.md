@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 3.0.6
+- Fixed some broken localization
+- Fixed `game.user.isGM` being called too early in some cases
+
 ## Version 3.0.5
 - Version bump for 4.3.x
 
