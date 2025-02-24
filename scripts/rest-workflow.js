@@ -799,7 +799,7 @@ export default class RestWorkflow {
     let hpRegained = 0;
 
     if (!this.features.usedBardFeature && this.features.bardFeature) {
-      const formula = this.features.bardFeature.system.activities.getByType("heal")[0]?.healing.formula ?? "1@scale.bard.song-of-rest";
+      const formula = this.features.bardFeature.system.activities.getByType("heal")[0]?.healing.formula ?? "@scale.bard.song-of-rest";
       const roll = await lib.evaluateFormula(formula, this.features.bard.getRollData());
       hpRegained += roll.total;
 

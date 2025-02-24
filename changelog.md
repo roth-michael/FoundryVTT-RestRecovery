@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.0.7
+- Fixed song of rest sometimes rolling 11 dice instead of 1 die
+
 ## Version 3.0.6
 - Fixed some broken localization
 - Fixed `game.user.isGM` being called too early in some cases
