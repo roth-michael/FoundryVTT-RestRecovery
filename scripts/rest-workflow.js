@@ -1313,7 +1313,21 @@ export default class RestWorkflow {
       let restDuration = this.config.duration;
       let startDateTime = (this.config.restPrompted || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;
 
-      SimpleCalendar.api.addNote(`${this.longRest ? 'Long' : 'Short'} rest: ${this.actor.name}`, newChatMessageContent, startDateTime, endDateTime, false, 0, [], "active", null, ['default']);
+      let deltas = dnd5e.dataModels.chatMessage.fields.ActorDeltasField.processDeltas.call(chatMessage.system.deltas, this.actor, chatMessage.rolls);
+
+      let scNote = newChatMessageContent + `
+        <strong>${game.i18n.localize("DND5E.CHATMESSAGE.Deltas.Recovery")}</strong>
+        <ul class="unlist">
+          ${deltas.map(i => `
+            <li>
+              <span class="label">${i.label}</span>
+              <span class="value">${i.delta}</span>
+            </li>
+          `).join('')}
+        </ul>
+      `
+
+      SimpleCalendar.api.addNote(`${this.longRest ? 'Long' : 'Short'} rest: ${this.actor.name}`, scNote, startDateTime, endDateTime, false, 0, [], "active", null, ['default']);
     }
 
     await chatMessage.update({
