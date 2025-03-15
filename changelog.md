@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.1.0
+- Added recovery details to Simple Calendar notes, pulled from the rest chat card
+
 ## Version 3.0.7
 - Fixed song of rest sometimes rolling 11 dice instead of 1 die
 
