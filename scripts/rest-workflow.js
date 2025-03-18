@@ -1782,10 +1782,11 @@ export default class RestWorkflow {
     } = lib.getActorConsumableValues(consumingActor, workflow.restVariant === "gritty" && workflow.longRest);
 
     const oldSpent = foundry.utils.getProperty(item, "system.uses.spent");
-    const newSpent = foundry.utils.getProperty(data, "system.uses.spent") ?? (currCharges + 1);
+    const newSpent = foundry.utils.getProperty(data, "system.uses.spent");
     const oldQuantity = foundry.utils.getProperty(item, "system.quantity");
     const newQuantity = foundry.utils.getProperty(data, "system.quantity");
-    const chargesUsed = newSpent > oldSpent ? newSpent - oldSpent : oldQuantity - newQuantity;
+    let chargesUsed = newSpent > oldSpent ? newSpent - oldSpent : oldQuantity - newQuantity;
+    if (isNaN(chargesUsed)) chargesUsed = 1;
 
     let message;
 
