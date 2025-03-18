@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.1.1
+- Fixed bug when consuming last food/water item in stack
+
 ## Version 3.1.0
 - Added recovery details to Simple Calendar notes, pulled from the rest chat card
 
