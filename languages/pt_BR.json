@@ -172,7 +172,9 @@
         "PlayerListShort": "Descansar",
         "PlayerListFull": "Solicitar Descanso",
         "PromptCharactersRest": "Personagens de Jogadores para Solicitar Descansos",
-        "RestProfile": "Perfil de Descanso"
+        "RestProfile": "Perfil de Descanso",
+        "BastionTurn": "Avançar Turno do Bastião",
+        "BastionTurnHint": "Isso faz com que todas as instalações do bastião avancem 1 turno (<strong>{days}</strong> dias)."
       },
       "ShortRest": {
         "ForcedNewDayTitle": "Novo Dia",
