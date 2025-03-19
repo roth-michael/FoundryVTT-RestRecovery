@@ -46,12 +46,15 @@
   let configuration = new Set();
   let validRemainingIds = [];
   let forceNewDay = false;
+  let advanceBastionTurn = false;
 
   const cleanConfig = writable([]);
 
   const simpleCalendarActive = lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
   const longRestWouldBeNewDay = lib.getTimeChanges(true).isNewDay;
   const shortRestWouldBeNewDay = lib.getTimeChanges(false).isNewDay;
+
+  const {enabled: bastionsEnabled, duration: bastionDays } = game.settings.get("dnd5e", "bastionConfiguration");
 
   const profiles = game.restrecovery.getAllProfiles();
   let activeProfile = game.restrecovery.getActiveProfile();
@@ -106,6 +109,10 @@
 
     if(lib.getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING)) {
       await game.time.advance(timeChanges.restTime);
+    }
+
+    if (advanceBastionTurn) {
+      await dnd5e.bastion.advanceAllBastions();
     }
 
     const trueNewDay = simpleCalendarActive ? timeChanges.isNewDay : forceNewDay;
@@ -208,7 +215,6 @@
 					<div></div>
         {/if}
 			{:else}
-
 				<div style="margin-top:0.25rem; grid-column: {simpleCalendarActive ? '1 / 3' : '1'};">
 					<span style="font-size: 1rem;">{@html localize(`REST-RECOVERY.Dialogs.PromptRest.${!longRestWouldBeNewDay && !shortRestWouldBeNewDay ? "No" : ""}NewDayTitle`)}</span>
 					<p style="font-size: 0.75rem; color: #4b4a44;">
@@ -216,9 +222,16 @@
 					</p>
 				</div>
 				<div></div>
-
       {/if}
-
+      {#if bastionsEnabled}
+        <div style="margin-top:0.25rem; grid-column: 1;">
+          <span style="font-size: 1rem;">{localize("REST-RECOVERY.Dialogs.PromptRest.BastionTurn")}</span>
+          <p style="font-size: 0.75rem; color: #4b4a44;">
+            {@html localize("REST-RECOVERY.Dialogs.PromptRest.BastionTurnHint", { days: bastionDays })}
+          </p>
+        </div>
+        <input type="checkbox" bind:checked={advanceBastionTurn}/>
+      {/if}
     </div>
 
     <footer class="flexrow" style="margin-top:0.25rem;">

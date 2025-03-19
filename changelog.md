@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.2.0
+- Added handling for bastion turn advancement when prompting rests
+
 ## Version 3.1.1
 - Fixed bug when consuming last food/water item in stack
 
