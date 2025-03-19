@@ -172,7 +172,9 @@
         "PlayerListShort": "Rest",
         "PlayerListFull": "Prompt Rest",
         "PromptCharactersRest": "Player characters to prompt rests for",
-        "RestProfile": "Rest Profile"
+        "RestProfile": "Rest Profile",
+        "BastionTurn": "Advance Bastion Turn",
+        "BastionTurnHint": "This causes all bastion facilities to advance 1 turn (<strong>{days}</strong> days)."
       },
       "ShortRest": {
         "ForcedNewDayTitle": "New Day",
