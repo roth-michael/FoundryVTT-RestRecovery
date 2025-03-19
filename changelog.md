@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.2.1
+- Translation updates (thanks Kharmans)
+
 ## Version 3.2.0
 - Added handling for bastion turn advancement when prompting rests
 
