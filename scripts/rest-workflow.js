@@ -864,10 +864,6 @@ export default class RestWorkflow {
     await this._finishedRest(results);
     await this._getRestHitPointRecovery(results);
     await this._handleExhaustion(results);
-    await this._getRestResourceRecovery(results, {
-      recoverShortRestResources: !longRest,
-      recoverLongRestResources: longRest,
-    });
     await this._getRestSpellRecovery(results, {
       recoverSpells: longRest,
     });
@@ -1409,43 +1405,6 @@ export default class RestWorkflow {
     }
 
     return maxHitDice;
-
-  }
-
-  async _getRestResourceRecovery(results, { recoverShortRestResources = true, recoverLongRestResources = true } = {}) {
-
-    const customRecoveryResources = Object.entries(this.actor.system.resources).filter(entry => {
-      return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && foundry.utils.getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
-    });
-
-    const regularResources = Object.entries(this.actor.system.resources).filter(entry => {
-      return Number.isNumeric(entry[1].max) && entry[1].value !== entry[1].max && !getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${entry[0]}.formula`)
-    });
-
-    for (const [key, resource] of customRecoveryResources) {
-      if ((recoverShortRestResources && resource.sr) || (recoverLongRestResources && resource.lr)) {
-        const customFormula = foundry.utils.getProperty(this.actor, `${CONSTANTS.FLAGS.RESOURCES}.${key}.formula`);
-        const customRoll = await lib.evaluateFormula(customFormula, this.actor.getRollData());
-        results.updateData[`system.resources.${key}.value`] = Math.min(resource.value + customRoll.total, resource.max);
-
-        const chargeText = `<a class="inline-roll roll" onClick="return false;" title="${customRoll.formula} (${customRoll.total})">${Math.min(resource.max - resource.value, customRoll.total)}</a>`;
-      }
-    }
-
-    const multiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER);
-    if (multiplier === 1.0 || !multiplier) return;
-
-    for (const [key, resource] of regularResources) {
-      if (recoverShortRestResources && resource.sr) {
-        results.updateData[`system.resources.${key}.value`] = Number(resource.max);
-      } else if (recoverLongRestResources && resource.lr) {
-        const recoverResources = typeof multiplier === "string"
-          ? (await lib.evaluateFormula(multiplier, { resource: foundry.utils.deepClone(resource) }))?.total
-          : Math.max(Math.floor(resource.max * multiplier), 1);
-
-        results.updateData[`system.resources.${key}.value`] = Math.min(resource.value + recoverResources, resource.max);
-      }
-    }
 
   }
 

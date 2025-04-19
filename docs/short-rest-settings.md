@@ -25,17 +25,6 @@ Available choices for this setting are as follows:
 * Full *(Default)*
 * Custom Formula
 
-## Resources recovery fraction
-
-The fraction of resources to recover on a short rest.
-
-Available choices for this setting are as follows:
-* None
-* Quarter
-* Half
-* Full *(Default)*
-* Custom Formula
-
 ## Item uses recovery fraction
 
 The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest.

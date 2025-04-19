@@ -61,13 +61,14 @@ export function getSetting(key, localize = false) {
       return setting.default;
     }
   }
-
+  if (!game.settings.settings.get(`${CONSTANTS.MODULE_NAME}.${key}`)) return;
   const value = game.settings.get(CONSTANTS.MODULE_NAME, key);
   if (localize) return game.i18n.localize(value);
   return value;
 }
 
 export function setSetting(key, value) {
+  if (!game.settings.settings.get(`${CONSTANTS.MODULE_NAME}.${key}`)) return;
   return game.settings.set(CONSTANTS.MODULE_NAME, key, value);
 }
 

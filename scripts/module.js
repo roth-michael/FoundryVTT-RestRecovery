@@ -7,9 +7,9 @@ import SocketHandler from "./sockets.js";
 import RestWorkflow from "./rest-workflow.js";
 import API from "./api.js";
 import { gameSettings } from "./settings.js";
-import SettingsShim from "./formapplications/settings/settings.js";
-import { QuickSetup } from "./formapplications/quick-setup/quick-setup.js";
 import { configureOneDndExhaustion, updateTidy5e, configureExhaustionHooks } from "./helpers.js";
+import { SvelteApplication } from "#runtime/svelte/application";
+import { TJSPosition } from "#runtime/svelte/store/position";
 
 Hooks.once("init", () => {
   SocketHandler.initialize();
@@ -18,6 +18,32 @@ Hooks.once("init", () => {
   RestWorkflow.initialize();
   registerHooks();
   configureOneDndExhaustion();
+  Object.defineProperty(SvelteApplication, 'defaultOptions', {
+    get: () => {
+      return foundry.utils.mergeObject(Application.defaultOptions, {
+        // Copied directly from TRL except for minWidth and minHeight
+        defaultCloseAnimation: true,
+        draggable: true,
+        focusAuto: true,
+        focusKeep: false,
+        focusSource: void 0,
+        focusTrap: true,
+        headerButtonNoClose: false,
+        headerButtonNoLabel: false,
+        headerIcon: void 0,
+        headerNoTitleMinimized: false,
+        minHeight: 50, // MIN_WINDOW_HEIGHT
+        minWidth: 200, // MIN_WINDOW_WIDTH
+        positionable: true,
+        positionInitial: TJSPosition.Initial.browserCentered,
+        positionOrtho: true,
+        positionValidator: TJSPosition.Validators.transformWindow,
+        sessionStorage: void 0,
+        svelte: void 0,
+        transformOrigin: "top left"
+      }, { inPlace: false });
+    }
+  });
   console.log("Rest Recovery 5e | Initialized");
 });
 

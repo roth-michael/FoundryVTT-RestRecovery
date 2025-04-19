@@ -1,10 +1,8 @@
 import CONSTANTS from "./constants.js";
-import ResourceConfig from "./formapplications/resource-config/resource-config.js";
 import { getSetting } from "./lib/lib.js";
 
 export default function registerSheetOverrides() {
-  Hooks.on("renderItemSheetV2", patch_itemSheet);
-  Hooks.on("renderActorSheet5e", patch_actorSheet);
+  Hooks.on("renderDocumentSheetV2", patch_itemSheet);
   registerTraits();
 }
 
@@ -74,55 +72,11 @@ export function registerTraits() {
 
 }
 
-function patch_actorSheet(app, html, data) {
-  let actor = game.actors.get(data.actor._id);
-  if (app.options.classes.includes("dnd5e")) {
-    let border = true;
-    let targetElem = html.find(".center-pane .attributes")[0];
-    if (!targetElem) {
-      border = false;
-      targetElem = html.find(".center-pane .resources")[0];
-      if (!targetElem) return;
-    }
-    const elem = document.createElement("div");
-    elem.classList.add("form-group");
-    elem.setAttribute("style", `${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;`);
-    elem.setAttribute("title", "Module: Rest Recovery for 5e");
-    elem.innerHTML = `
-      <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
-      <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
-          <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
-      </a>
-    `;
-    targetElem.after(elem);
-    elem.querySelector(".config-button").addEventListener("click", () => {
-      ResourceConfig.show({ actor });
-    });
-  } else if (app.options.classes.includes("dnd5e2")) {
-    if (!html.hasClass("editable")) return;
-    let targetElem = html.find(".favorites")[0];
-    if (!targetElem) return;
-    let border = false;
-    const elem = document.createElement("div");
-    elem.classList.add("form-group");
-    elem.setAttribute("style", `${border ? "border-bottom: 2px groove #eeede0; padding-bottom: 0.25rem;" : "padding-top: 0.25rem;"} flex:0;`);
-    elem.setAttribute("title", "Module: Rest Recovery for 5e");
-    elem.innerHTML = `
-      <label style="flex: none; line-height: 20px; font-weight: bold; margin: 0 10px 0 0;">${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}</label>
-      <a class="config-button" title="${game.i18n.localize("REST-RECOVERY.Dialogs.Resources.Configure")}" style="flex:1;">
-          <i class="fas fa-cog" style="float: right; margin-right: 3px; text-align: right; color: #999;"></i>
-      </a>
-    `;
-    targetElem.before(elem);
-    elem.querySelector(".config-button").addEventListener("click", () => {
-      ResourceConfig.show({ actor });
-    });
-  }
-}
-
 function patch_itemSheet(app, html) {
+  if (app.document?.documentName !== "Item") return;
   const item = app.item;
   if (!item) return;
+  html = html instanceof HTMLElement ? html : html[0];
   if (!getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) || item.type !== "consumable" || item.system.type?.value !== "food") return;
   if (!app.options.classes.includes("tidy5e-sheet")) {
     patch_itemConsumableInputs(html, item);
@@ -132,13 +86,14 @@ function patch_itemSheet(app, html) {
 }
 
 function patch_itemConsumableInputs(html, item) {
-  let targetElem = html.find(".form-group:has(select[name='system.type.subtype'])")?.[0]
+  let targetElem = html.querySelector(".form-group:has(select[name='system.type.subtype'])")
   if (!targetElem) return;
   const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
   const fullDay = dnd5e.applications.fields.createCheckboxInput(undefined, {
     name: CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH,
     value: customConsumable.dayWorth
   });
+  if (!html.classList.contains("editable") && !html.querySelector("form")?.classList.contains("editable")) fullDay.disabled = true;
   const fullDayGroup = foundry.applications.fields.createFormGroup({
     label: "REST-RECOVERY.Dialogs.ItemOverrides.DayWorth",
     localize: true,

@@ -168,15 +168,6 @@
         "Title": "Paramètres de repos long",
         "Content": "Voici la configuration des repos long que votre GM a paramétré pour cette partie."
       },
-      "Resources": {
-        "Configure": "Configuration de la récupération des ressources",
-        "Title": "Configuration des ressources",
-        "Name": "Nom",
-        "Value": "Valeur",
-        "Short": "Court",
-        "Long": "Long",
-        "RecoveryFormula": "Formule de récupération"
-      },
       "ModuleConfig": {
         "Title": "Configuration de Rest Recovery",
         "General": "Paramètres généraux",
@@ -309,10 +300,6 @@
           "Title": "Désactiver les lancés de dés de vie pendant les repos courts",
           "Hint": "Cela empêche les personnages de lancer des dés de vie pendant les repos courts."
         },
-        "ResourcesRecoveryFraction": {
-          "Title": "Fraction des ressources à récupérer",
-          "Hint": "La fraction des ressources à récupérer lors d'un repos court."
-        },
         "ItemUsesRecoveryFraction": {
           "Title": "Fraction des charges d'objet à récupérer",
           "Hint": "La fraction des charges d'objet (objets, consommables, etc.) à récupérer lors d'un repos court."
@@ -354,10 +341,6 @@
         "HitDiceRecoveryRounding": {
           "Title": "Arrondi de la récupération des dés de vie",
           "Hint": "Comment arrondir le nombre de dés de vie récupérés lors d'un repos long."
-        },
-        "ResourcesRecoveryFraction": {
-          "Title": "Fraction des ressources à récupérer",
-          "Hint": "La fraction des ressources à récupérer lors d'un repos long."
         },
         "SpellSlotsRecoveryFraction": {
           "Title": "Fraction des emplacements de sort à récupérer",

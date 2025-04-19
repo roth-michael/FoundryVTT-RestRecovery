@@ -42,7 +42,6 @@ const CONSTANTS = {
     MIN_HIT_DIE_SPEND: "minimum-hit-die-spend",
     MAX_HIT_DICE_SPEND: "maximum-hit-die-spend",
     DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
-    SHORT_RESOURCES_MULTIPLIER: "short-rest-recovery-resources",
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
     SHORT_PACT_SPELLS_MULTIPLIER: "short-rest-recovery-pact-spells",
@@ -50,7 +49,6 @@ const CONSTANTS = {
     SHORT_HP_MULTIPLIER: "short-recovery-hitpoints",
 
     MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
-    SHORT_RESOURCES_MULTIPLIER_FORMULA: "short-recovery-resources-formula",
     SHORT_PACT_SPELLS_MULTIPLIER_FORMULA: "short-recovery-pact-spells-formula",
     SHORT_HP_MULTIPLIER_FORMULA: "short-recovery-hitpoints-formula",
 
@@ -69,7 +67,6 @@ const CONSTANTS = {
     HD_ROUNDING: "recovery-rounding",
     HP_MULTIPLIER: "recovery-hitpoints",
     HD_MULTIPLIER: "recovery-hitdice",
-    LONG_RESOURCES_MULTIPLIER: "recovery-resources",
     LONG_SPELLS_MULTIPLIER: "recovery-spells",
     LONG_CUSTOM_SPELL_RECOVERY: "long-recovery-custom-spell-points",
     LONG_PACT_SPELLS_MULTIPLIER: "long-recovery-pact-spells",
@@ -84,7 +81,6 @@ const CONSTANTS = {
     LONG_MAX_HIT_DICE_SPEND_FORMULA: "long-max-hit-die-spend-formula",
     HP_MULTIPLIER_FORMULA: "long-recovery-hitpoints-formula",
     HD_MULTIPLIER_FORMULA: "long-recovery-hitdice-formula",
-    LONG_RESOURCES_MULTIPLIER_FORMULA: "long-recovery-resources-formula",
     LONG_SPELLS_MULTIPLIER_FORMULA: "long-recovery-spells-formula",
     LONG_PACT_SPELLS_MULTIPLIER_FORMULA: "long-pact-recovery-spells-formula",
     LONG_REST_ARMOR_HIT_DICE_FORMULA: "long-recovery-heavy-armor-hitdice-formula",
@@ -427,31 +423,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     type: String,
     default: "@details.level",
   },
-  [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER]: {
-    name: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Title",
-    hint: "REST-RECOVERY.Settings.ShortRest.ResourcesRecoveryFraction.Hint",
-    scope: "world",
-    group: "shortrest",
-    customFormula: CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER_FORMULA,
-    config: false,
-    type: String,
-    choices: {
-      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
-      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
-      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
-      [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
-    },
-    default: CONSTANTS.FRACTIONS.FULL,
-  },
-  [CONSTANTS.SETTINGS.SHORT_RESOURCES_MULTIPLIER_FORMULA]: {
-    scope: "world",
-    group: "shortrest",
-    config: false,
-    hidden: true,
-    type: String,
-    default: "@resource.max",
-  },
   [CONSTANTS.SETTINGS.SHORT_USES_OTHERS_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.ShortRest.ItemUsesRecoveryFraction.Title",
     hint: "REST-RECOVERY.Settings.ShortRest.ItemUsesRecoveryFraction.Hint",
@@ -729,32 +700,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.FRACTIONS.UP]: "REST-RECOVERY.Rounding.RoundUp",
     },
     default: CONSTANTS.FRACTIONS.DOWN,
-  },
-  [CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER]: {
-    name: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Title",
-    hint: "REST-RECOVERY.Settings.LongRest.ResourcesRecoveryFraction.Hint",
-    scope: "world",
-    group: "longrest",
-    customSettingsDialog: true,
-    customFormula: CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA,
-    config: false,
-    type: String,
-    choices: {
-      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
-      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
-      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
-      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
-      [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
-    },
-    default: CONSTANTS.FRACTIONS.FULL,
-  },
-  [CONSTANTS.SETTINGS.LONG_RESOURCES_MULTIPLIER_FORMULA]: {
-    scope: "world",
-    group: "longrest",
-    config: false,
-    hidden: true,
-    type: String,
-    default: "@resource.max",
   },
   [CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.LongRest.SpellSlotsRecoveryFraction.Title",
@@ -1361,7 +1306,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
 const baseFlag = `flags.${CONSTANTS.MODULE_NAME}.${CONSTANTS.FLAG_NAME}.`
 
 CONSTANTS.FLAGS = {}
-CONSTANTS.FLAGS.RESOURCES = baseFlag + "resources";
 
 CONSTANTS.FLAGS.RECOVERY = baseFlag + "recovery";
 CONSTANTS.FLAGS.RECOVERY_ENABLED = CONSTANTS.FLAGS.RECOVERY + ".enabled";

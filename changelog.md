@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 3.3.0
+- Removed "Resource" recovery customization. Resources have long been deprecated - now they're gone (for Rest Recovery)
+- Fixed bugs that arose in latest V13 build
+- Fixed functionality on the dnd5e 5.0.0 prerelease
+
 ## Version 3.2.1
 - Translation updates (thanks Kharmans)
 

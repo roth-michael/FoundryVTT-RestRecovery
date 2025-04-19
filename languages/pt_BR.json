@@ -259,15 +259,6 @@
         "Title": "Jogadores Offline",
         "Content": "Os jogadores que são donos dos seguintes personagens que você solicitou o descanso, estão offline. Você gostaria de terminar os descansos por eles?"
       },
-      "Resources": {
-        "Configure": "Configurar Recuperação de Recursos",
-        "Title": "Configuração de Recursos",
-        "Name": "Nome",
-        "Value": "Valor",
-        "Short": "Curto",
-        "Long": "Longo",
-        "RecoveryFormula": "Fórmula de Recuperação"
-      },
       "ModuleConfig": {
         "Title": "Configuração do Rest Recovery",
         "General": "Configurações Gerais",
@@ -494,10 +485,6 @@
           "Title": "Desabilitar Rolagens de Dados de Vida Durante Descansos Curtos",
           "Hint": "Isso evita que os personagens joguem dados de vida durante descansos curtos."
         },
-        "ResourcesRecoveryFraction": {
-          "Title": "Fração de Recuperação de Recursos",
-          "Hint": "A fração de recursos para recuperar em um descanso curto."
-        },
         "ItemUsesRecoveryFraction": {
           "Title": "Fração de Recuperação de Itens",
           "Hint": "A fração de usos do item (itens, consumíveis e etc.) para recuperar em um descanso curto, se o item tiver cargas com usos limitados por descanso curto."
@@ -572,10 +559,6 @@
         "HitDiceRecoveryRounding": {
           "Title": "Arredondar Recuperação de Dados de Vida",
           "Hint": "Como arredondar o número de dados de vida recuperados."
-        },
-        "ResourcesRecoveryFraction": {
-          "Title": "Fração de Recuperação de Recursos",
-          "Hint": "A fração de recursos para recuperar em um descanso longo."
         },
         "SpellSlotsRecoveryFraction": {
           "Title": "Fração de Recuperação de Espaços de Magia",

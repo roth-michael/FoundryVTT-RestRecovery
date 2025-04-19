@@ -259,15 +259,6 @@
         "Title": "Character Owners Offline",
         "Content": "The owners of the following characters you prompted to rest are offline, would you like to finish their rest for them?"
       },
-      "Resources": {
-        "Configure": "Configure Resource Recovery",
-        "Title": "Resource Configuration",
-        "Name": "Name",
-        "Value": "Value",
-        "Short": "Short",
-        "Long": "Long",
-        "RecoveryFormula": "Recovery Formula"
-      },
       "ModuleConfig": {
         "Title": "Rest Recovery Configuration",
         "General": "General Settings",
@@ -494,10 +485,6 @@
           "Title": "Disable hit dice rolls during short rests",
           "Hint": "This prevents characters from rolling hit dice during short rests."
         },
-        "ResourcesRecoveryFraction": {
-          "Title": "Resources recovery fraction",
-          "Hint": "The fraction of resources to recover on a short rest."
-        },
         "ItemUsesRecoveryFraction": {
           "Title": "Item uses recovery fraction",
           "Hint": "The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest."
@@ -572,10 +559,6 @@
         "HitDiceRecoveryRounding": {
           "Title": "Hit dice recovery rounding",
           "Hint": "How to round the number of hit dice recovered."
-        },
-        "ResourcesRecoveryFraction": {
-          "Title": "Resources recovery fraction",
-          "Hint": "The fraction of resources to recover on a long rest."
         },
         "SpellSlotsRecoveryFraction": {
           "Title": "Spell slots recovery fraction",

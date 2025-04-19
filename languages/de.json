@@ -220,15 +220,6 @@
         "Title": "Spieler sind offline",
         "Content": "Die Besitzer der folgenden Charaktere sind offline, Rast stattdessen für sie abschließen?"
       },
-      "Resources": {
-        "Configure": "Ressourcen-Rückgewinnung",
-        "Title": "Ressourcenkonfiguration",
-        "Name": "Name",
-        "Value": "Wert",
-        "Short": "Kurz",
-        "Long": "Lang",
-        "RecoveryFormula": "Rückgewinnungsformel"
-      },
       "ModuleConfig": {
         "Title": "Rest Recovery Einstellungen",
         "General": "Allgemeine Einstellungen",
@@ -398,10 +389,6 @@
           "Title": "Trefferwürfel bei kurzer Rast deaktivieren",
           "Hint": "Verhindert, dass Charaktere während kurzen Rasten Trefferwürfel nutzen."
         },
-        "ResourcesRecoveryFraction": {
-          "Title": "Ressourcen-Rückgewinnunsanteil",
-          "Hint": "Der Anteil Ressourcen, der durch eine kurze Rast zurückgewonnen wird."
-        },
         "ItemUsesRecoveryFraction": {
           "Title": "Gegenstandsnutzungen-Rückgewinnung",
           "Hint": "Der Anteil von Itemnutzungen (Gegenstände, Verbrauchsgüter etc.) die durch eine kurze Rast zurückgewonnen werden, falls das jeweilige Item begrenzte Nutzungen pro kurze Rast hat."
@@ -460,10 +447,6 @@
         "HitDiceRecoveryRounding": {
           "Title": "Trefferwürfel-Rückgewinnung-Rundung",
           "Hint": "Wie die Zahl der zurückgewonnenen Trefferwürfel gerundet wird."
-        },
-        "ResourcesRecoveryFraction": {
-          "Title": "Ressourcen-Rückgewinnung",
-          "Hint": "Anteil der Ressource, der durch eine lange Rast zurückgewonnen wird."
         },
         "SpellSlotsRecoveryFraction": {
           "Title": "Zauberplatz-Rückgewinnung",

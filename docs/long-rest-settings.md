@@ -48,17 +48,6 @@ Available choices for this setting are as follows:
 * Down *(default)*
 * Up
 
-## Resources recovery fraction
-
-The fraction of resources to recover on a long rest.
-
-Available choices for this setting are as follows:
-* None
-* Quarter
-* Half
-* Full *(default)*
-* Custom Formula
-
 ## Spell slots recovery fraction
 
 The fraction of spell slots to recover on a long rest (pact slots excluded).
