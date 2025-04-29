@@ -1,9 +1,8 @@
 <script>
 
   import { ApplicationShell } from "#runtime/svelte/component/core";
-  import { localize } from "#runtime/svelte/helper";
 	import { getContext } from "svelte";
-  import { getSetting, setSetting } from "../../lib/lib.js";
+  import { getSetting, setSetting, localize } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
   import SettingsShim from "../settings/settings.js";
 

@@ -1,5 +1,5 @@
 <script>
-  import { localize } from '#runtime/svelte/helper';
+  import { localize } from '../../lib/lib.js';
 
   export let workflow;
 

@@ -1,14 +1,12 @@
 <script>
   import { getContext } from 'svelte';
-  import { localize } from '#runtime/svelte/helper';
   import { writable } from "svelte/store";
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import CONSTANTS from "../../constants.js";
   import * as lib from "../../lib/lib.js";
+  import { localize, settingsDialog } from '../../lib/lib.js';
   import SettingsShim from "../settings/settings.js";
   import SocketHandler from "../../sockets.js";
-  import { TJSDialog } from "#runtime/svelte/application";
-  import CustomSettings from "../custom-settings-dialog/CustomSettingsDialog.svelte";
 
   const { application } = getContext('#external');
 
@@ -131,23 +129,7 @@
   }
 
   function showCustomRulesDialog() {
-    TJSDialog.prompt({
-      title: localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"),
-      content: {
-        class: CustomSettings,
-        props: {
-          settings: game.restrecovery.getProfileData(activeProfile)
-        }
-      },
-      label: "Okay",
-      modal: true,
-      draggable: false,
-      options: {
-        height: "auto",
-        width: "350",
-        headerButtonNoClose: true
-      }
-    })
+    settingsDialog(localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"), game.restrecovery.getProfileData(activeProfile));
   }
 
 </script>

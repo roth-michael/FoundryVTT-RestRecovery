@@ -1,17 +1,14 @@
 <script>
   import { getContext } from 'svelte';
-  import { localize } from '#runtime/svelte/helper';
-  import { TJSDialog } from '#runtime/svelte/application';
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
 
   import HealthBar from "../components/HealthBar.svelte";
-  import Dialog from "../components/Dialog.svelte";
   import HitDieRoller from "../components/HitDieRoller.svelte";
 
   import RestWorkflow from "../../rest-workflow.js";
   import * as lib from "../../lib/lib.js";
-  import { getSetting } from "../../lib/lib.js";
+  import { getSetting, localize, customDialog } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
   import Steps from "../rest-steps/Steps.svelte";
 
@@ -60,63 +57,30 @@
   export async function requestSubmit() {
     if (minSpendHitDice > 0 && healthData.hitDiceSpent < minSpendHitDice) {
       if (workflow.totalHitDice <= 0) {
-        await TJSDialog.prompt({
+        await customDialog({
           title: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Title"),
-          content: {
-            class: Dialog,
-            props: {
-              icon: "fas fa-exclamation-triangle",
-              header: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Title"),
-              content: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
-            }
-          },
-          modal: true,
-          draggable: false,
-          options: {
-            height: "auto",
-            headerButtonNoClose: true
-          }
-        })
+          icon: "fas fa-exclamation-triangle",
+          header: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Title"),
+          content: localize("REST-RECOVERY.Dialogs.RestNoHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+        }, true);
         return false;
       }
-      const doContinue = await TJSDialog.confirm({
+      const doContinue = await customDialog({
         title: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Title"),
-        content: {
-          class: Dialog,
-          props: {
-            icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Title"),
-            content: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
-          }
-        },
-        modal: true,
-        draggable: false,
-        options: {
-          height: "auto",
-          headerButtonNoClose: true
-        }
-      })
+        icon: "fas fa-exclamation-triangle",
+        header: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Title"),
+        content: localize("REST-RECOVERY.Dialogs.RestSpendHitDice.Content", { num_dice: minSpendHitDice - healthData.hitDiceSpent })
+      });
       if (!doContinue) return false;
       await rollHitDice();
     }
     if (workflow.healthPercentage <= 0.75 && workflow.healthRegained === 0 && workflow.totalHitDice > 0 && enableRollHitDice) {
-      const doContinue = await TJSDialog.confirm({
+      const doContinue = await customDialog({
         title: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
-        content: {
-          class: Dialog,
-          props: {
-            icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
-            content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content")
-          }
-        },
-        modal: true,
-        draggable: false,
-        options: {
-          height: "auto",
-          headerButtonNoClose: true
-        }
-      })
+        header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
+        content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content"),
+        icon: "fas fa-exclamation-triangle"
+      });
       if (!doContinue) return false;
     }
 

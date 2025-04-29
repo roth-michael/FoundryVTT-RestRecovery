@@ -1,13 +1,13 @@
 <script>
 
-  import { localize } from '#runtime/svelte/helper';
   import CONSTANTS from "../../constants.js";
   import {
     capitalizeFirstLetter,
     evaluateFormula,
     getConsumableItemsFromActor,
     getSetting,
-    roundHalf
+    roundHalf,
+    localize
   } from "../../lib/lib.js";
   import RestWorkflow from "../../rest-workflow.js";
   import { get, writable } from "svelte/store";

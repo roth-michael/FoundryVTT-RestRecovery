@@ -1,7 +1,7 @@
-import { SvelteApplication, TJSDialog } from '#runtime/svelte/application';
+import { SvelteApplication } from '#runtime/svelte/application';
 import SettingsShell from './settings-shell.svelte';
-import SaveProfileDialog from "./SaveProfileDialog.svelte";
 import { gameSettings } from "../../settings.js";
+import { SaveProfileApplication } from '../../apps/saveProfile.js';
 
 class SettingsApp extends SvelteApplication {
 
@@ -62,22 +62,10 @@ class SettingsApp extends SvelteApplication {
             try {
 
               const newProfileName = await new Promise(resolve => {
-                let options = { resolve };
-                new TJSDialog({
-                  title: game.i18n.localize("REST-RECOVERY.Dialogs.SaveProfile.Title"),
-                  content: {
-                    class: SaveProfileDialog,
-                    props: {
-                      existingProfiles: Object.keys(profiles),
-                      profileName: fileName.split(".")[0]
-                    }
-                  },
-                  label: "Okay",
-                  modal: true,
-                  draggable: false,
-                  autoClose: true,
-                  close: () => options.resolve?.(null)
-                }, options).render(true);
+                new SaveProfileApplication({
+                  profileName: fileName.split(".")[0],
+                  resolve
+                }).render(true);
               });
 
               const newProfile = foundry.utils.duplicate(profiles['Default']);

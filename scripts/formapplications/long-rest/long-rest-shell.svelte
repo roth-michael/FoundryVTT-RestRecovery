@@ -1,18 +1,14 @@
 <script>
-  import { localize } from '#runtime/svelte/helper';
-  import { TJSDialog } from '#runtime/svelte/application';
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { TJSDocument } from '#runtime/svelte/store/fvtt/document';
 
   import { getContext } from 'svelte';
 
   import HealthBar from "../components/HealthBar.svelte";
-  import Dialog from "../components/Dialog.svelte";
-  import CustomSettings from "../custom-settings-dialog/CustomSettingsDialog.svelte";
   import HitDieRoller from "../components/HitDieRoller.svelte";
   import RestWorkflow from "../../rest-workflow.js";
   import * as lib from "../../lib/lib.js";
-  import { getSetting } from "../../lib/lib.js";
+  import { getSetting, localize, customDialog, settingsDialog } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
   import Steps from "../rest-steps/Steps.svelte";
 
@@ -95,23 +91,12 @@
       && workflow.healthRegained === 0
       && workflow.totalHitDice > 0
     ) {
-      const doContinue = await TJSDialog.confirm({
+      const doContinue = await customDialog({
         title: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
-        content: {
-          class: Dialog,
-          props: {
-            icon: "fas fa-exclamation-triangle",
-            header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
-            content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content")
-          }
-        },
-        modal: true,
-        draggable: false,
-        options: {
-          height: "auto",
-          headerButtonNoClose: true
-        }
-      })
+        icon: "fas fa-exclamation-triangle",
+        header: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Title"),
+        content: localize("REST-RECOVERY.Dialogs.RestHealthWarning.Content")
+      });
       if (!doContinue) return false;
     }
 
@@ -181,19 +166,7 @@
   }
 
   function showCustomRulesDialog() {
-    TJSDialog.prompt({
-      title: localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"),
-      content: {
-        class: CustomSettings
-      },
-      label: "Okay",
-      options: {
-        height: "auto",
-        width: "350",
-        headerButtonNoClose: true,
-	      zIndex: 10
-      }
-    })
+    settingsDialog(localize("REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"));
   }
 
   let activeStep = 0;

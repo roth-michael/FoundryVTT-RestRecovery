@@ -1,6 +1,5 @@
 <script>
-  import { localize } from '#runtime/svelte/helper';
-  import { getSetting } from "../../lib/lib.js";
+  import { getSetting, localize } from "../../lib/lib.js";
   import CONSTANTS from "../../constants.js";
 
   export let workflow;

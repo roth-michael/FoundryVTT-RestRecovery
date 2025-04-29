@@ -1,14 +1,13 @@
 <script>
 
   import { getContext } from 'svelte';
-  import { localize } from '#runtime/svelte/helper';
+  import { localize } from '../../lib/lib.js';
   import { ApplicationShell } from '#runtime/svelte/component/core';
   import { gameSettings } from "../../settings.js";
-  import { TJSDialog } from "#runtime/svelte/application";
   import Setting from "./Setting.svelte";
   import Tabs from "../components/Tabs.svelte";
-  import SaveProfileDialog from "./SaveProfileDialog.svelte";
   import { QuickSetup } from "../quick-setup/quick-setup.js";
+  import { SaveProfileApplication } from '../../apps/saveProfile.js';
 
   const { application } = getContext('#external');
 
@@ -20,14 +19,12 @@
 
   async function deleteProfile() {
 
-    const result = await TJSDialog.confirm({
-      title: localize("REST-RECOVERY.Dialogs.DeleteProfile.Title"),
-      content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: gameSettings.activeProfile }),
-      modal: true,
-      draggable: false,
-      autoClose: true,
-      rejectClose: false
-    });
+    const result = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: localize("REST-RECOVERY.Dialogs.DeleteProfile.Title")
+      },
+      content: localize("REST-RECOVERY.Dialogs.DeleteProfile.Content", { profile: gameSettings.activeProfile })
+    })
 
     if (!result) {
       return;
@@ -40,21 +37,9 @@
   async function newProfile() {
 
     const result = await new Promise(resolve => {
-      let options = { resolve };
-      new TJSDialog({
-        title: localize("REST-RECOVERY.Dialogs.SaveProfile.Title"),
-        content: {
-          class: SaveProfileDialog,
-          props: {
-            existingProfiles: Object.keys(gameSettings.profiles)
-          }
-        },
-        label: "Okay",
-        modal: true,
-        draggable: false,
-        autoClose: true,
-        close: () => options.resolve?.(null)
-      }, options).render(true);
+      new SaveProfileApplication({
+        resolve
+      }).render(true);
     });
 
     if (!result) return;
@@ -70,13 +55,11 @@
   }
 
   async function resetDefaultSetting() {
-    const result = await TJSDialog.confirm({
-      title: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Title"),
-      content: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Content"),
-      modal: true,
-      draggable: false,
-      autoClose: true,
-      rejectClose: false
+    const result = await foundry.applications.api.DialogV2.confirm({
+      window: {
+        title: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Title")
+      },
+      content: localize("REST-RECOVERY.Dialogs.ResetDefaultChanges.Content")
     });
     if (!result) return;
 

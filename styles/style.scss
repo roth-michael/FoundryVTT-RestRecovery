@@ -10,6 +10,62 @@
     border-bottom: 1px solid rgba(0,0,0,0.5);
   }
 
+  &-custom-dialog {
+    div {
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      text-align: center;
+
+      .header-icon {
+        font-size: 3rem;
+        margin: 0;
+      }
+
+      .header {
+        margin-bottom: 0.5rem;
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  &-settings-dialog {
+    table {
+      text-align: center;
+      margin: 0px;
+      th:first-child {
+        width: 300px;
+      }
+
+      .fa-info-circle {
+        opacity: 0.25;
+      }
+
+      td:hover .fa-info-circle {
+        opacity: 0.75;
+      }
+    }
+  }
+
+  &-save-profile {
+    .form-control {
+      margin: 0.5rem 0;
+    }
+
+    footer {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+    }
+  }
+
+  &-errors {
+    .notification {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      opacity: 1.0;
+      color: white;
+    }
+  }
+
   &-clickable {
 
     &:hover {
