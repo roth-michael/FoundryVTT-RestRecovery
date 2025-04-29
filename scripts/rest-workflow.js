@@ -836,7 +836,7 @@ export default class RestWorkflow {
 
     if (hpRegained > 0) {
       const curHP = this.actor.system.attributes.hp.value;
-      const maxHP = this.actor.system.attributes.hp.max + ((this.actor.system.attributes.hp.tempmax ?? 0) ?? 0);
+      const maxHP = this.maxHP;
       await this.actor.update({ "system.attributes.hp.value": Math.min(maxHP, curHP + hpRegained) })
     }
 
@@ -1341,7 +1341,7 @@ export default class RestWorkflow {
 
   async _getRestHitPointRecovery(results = { updateData: {}, deltas: {hitPoints: 0} }) {
 
-    const maxHP = this.actor.system.attributes.hp.max;
+    const maxHP = this.maxHP;
     const currentHP = this.actor.system.attributes.hp.value;
 
     const multiplier = lib.determineMultiplier(this.longRest ? CONSTANTS.SETTINGS.HP_MULTIPLIER : CONSTANTS.SETTINGS.SHORT_HP_MULTIPLIER);
