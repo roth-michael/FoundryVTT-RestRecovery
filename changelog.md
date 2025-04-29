@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 3.3.1
+- Fixed bug where hp recovery was capped to `hp.max` even if there was a `hp.tempmax` value
+
 ## Version 3.3.0
 - Removed "Resource" recovery customization. Resources have long been deprecated - now they're gone (for Rest Recovery)
 - Fixed bugs that arose in latest V13 build
