@@ -14,7 +14,7 @@ export default class API {
   /**
    * Renders the prompt rest UI.
    *
-   * @returns {Promise<SvelteApplication>/boolean}
+   * @returns {Promise<HandlebarsApplicationMixin<ApplicationV2>>/boolean}
    */
   static renderPromptRestInterface() {
     if (!game.user.isGM) return false;

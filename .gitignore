@@ -4,4 +4,4 @@ node_modules/*
 .vscode/*
 module.js
 module.js.map
-style.css
+/style.css

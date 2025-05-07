@@ -15,14 +15,14 @@
       }
 
       .progress {
-        @keyframes fade-in-out {
-          50% {opacity: 10%;}
-        }
-
         z-index: 3;
         background: linear-gradient(to right, var(--dnd5e-color-hp-1) 0%, var(--dnd5e-color-hp-2) 100%);
         position: absolute;
 
+        @keyframes fade-in-out {
+          50% {opacity: 10%;}
+        }
+        
         &-potential-max {
           z-index: 1;
           background: linear-gradient(to right, var(--dnd5e-color-hp-1) 0%, var(--dnd5e-color-hp-3) 100%);
@@ -190,7 +190,7 @@
 
       align-items: center;
 
-      label: {
+      label {
         flex: 0 1 auto;
         margin-right: 0.5rem;
       }

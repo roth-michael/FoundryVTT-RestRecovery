@@ -9,19 +9,8 @@
   "contributors": [
     "Fantasy Computerworks (https://github.com/fantasycalendar)"
   ],
-  "imports": {
-    "#runtime/*": "@typhonjs-fvtt/runtime/*"
-  },
-  "dependencies": {
-    "@typhonjs-fvtt/runtime": "^0.1.0",
-    "svelte": "^4.0.0",
-    "fontawesome-free": "^1.0.4"
-  },
   "devDependencies": {
-    "@typhonjs-config/eslint-config": "^0.6.0",
-    "@typhonjs-fvtt/eslint-config-foundry.js": "^0.8.0",
-    "eslint": "^8",
-    "svelte-preprocess": "^5.0.3",
+    "sass": "^1.87.0",
     "vite": "^4"
   },
   "browserslist": [
@@ -30,7 +19,6 @@
   ],
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
-    "eslint": "eslint ."
+    "dev": "vite"
   }
 }
