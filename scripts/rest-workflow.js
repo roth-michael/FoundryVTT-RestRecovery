@@ -593,6 +593,7 @@ export default class RestWorkflow {
         && (item.name === lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true));
     })?.system?.levels || 0;
     const wizardFeature = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.ARCANE_RECOVERY, true)) || false;
+    const wizardBuff = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.ARCANE_GRIMOIRE, true)) || false;
 
     const druidLevel = this.actor.items.find(item => {
       return item.type === "class"
@@ -611,6 +612,7 @@ export default class RestWorkflow {
       this.spellData.pointsTotal = wizardFeature
         ? (await lib.evaluateFormula(wizardFeature.system.activities.getByType("utility")[0]?.roll.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData()))?.total
         : 0;
+      if (wizardBuff?.system?.attuned) this.spellData.pointsTotal += 1;
       this._refreshSlotData();
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
     } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {

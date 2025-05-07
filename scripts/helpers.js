@@ -59,6 +59,7 @@ export async function configureOneDndExhaustion() {
 
 export async function updateTidy5e() {
   if (!game.user?.isGM) return;
+  if (!game.settings.settings.has("tidy5e-sheet.exhaustionConfig")) return;
   let isOneDnd = getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION);
   let oldSettings = game.settings.get("tidy5e-sheet", "exhaustionConfig");
   await game.modules.get("tidy5e-sheet").api?.config?.exhaustion?.useSpecificLevelExhaustion({

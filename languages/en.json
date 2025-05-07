@@ -17,6 +17,7 @@
     },
     "FeatureNames": {
       "ArcaneRecovery": "Arcane Recovery",
+      "ArcaneGrimoire": "Arcane Grimoire",
       "NaturalRecovery": "Natural Recovery",
       "NaturalRecoveryActivity": "Recover Spell Slots",
       "SongOfRest": "Song of Rest",
@@ -615,6 +616,10 @@
         "ArcaneRecovery": {
           "Title": "Arcane Recovery name",
           "Hint": "Here you can configure what a wizard's Arcane Recovery feature is called in your game. This can be a localized string."
+        },
+        "ArcaneGrimoire": {
+          "Title": "Arcane Grimoire name",
+          "Hint": "Here you can configure what the Arcane Grimoire item is called in your game. This can be a localized string."
         },
         "NaturalRecovery": {
           "Title": "Natural Recovery name",

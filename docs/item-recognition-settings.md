@@ -16,6 +16,10 @@ This configures what the Bard class is called in your game. This is used to dete
 
 This configures what a wizard's Arcane Recovery feature is called in your game.
 
+## Arcane Grimoire name
+
+This configures what the Arcane Grimoire item is called in your game.
+
 ## Natural Recovery name
 
 This configures what a druid's Natural Recovery feature is called in your game.

@@ -14,8 +14,6 @@ This module is a wholesale package that covers any and all mechanics relating to
 
 ## You can read more about the module on the [wiki](https://github.com/roth-michael/FoundryVTT-RestRecovery/wiki).
 
-![Image of the Rest Recovery 5e long rest settings](docs/rest-rules.png)
-
 
 # Changelog
 

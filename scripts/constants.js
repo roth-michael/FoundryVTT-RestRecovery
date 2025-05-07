@@ -92,7 +92,7 @@ const CONSTANTS = {
     DRUID_CLASS: "druid-class-name",
     BARD_CLASS: "bard-class-name",
     ARCANE_RECOVERY: "arcane-recovery-feature-name",
-    POWER_SURGE: "power-surge-feature-name",
+    ARCANE_GRIMOIRE: "arcane-grimoire",
     NATURAL_RECOVERY: "natural-recovery-feature-name",
     NATURAL_RECOVERY_ACTIVITY: "natural-recovery-activity-name",
     SONG_OF_REST: "song-of-rest-name",
@@ -926,6 +926,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     localize: true,
     default: "REST-RECOVERY.FeatureNames.ArcaneRecovery",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.ARCANE_GRIMOIRE]: {
+    name: "REST-RECOVERY.Settings.ItemNames.ArcaneGrimoire.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.ArcaneGrimoire.Hint",
+    scope: "world",
+    group: "itemNames",
+    config: false,
+    localize: true,
+    default: "REST-RECOVERY.FeatureNames.ArcaneGrimoire",
     type: String
   },
   [CONSTANTS.SETTINGS.NATURAL_RECOVERY]: {
