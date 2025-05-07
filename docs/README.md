@@ -8,8 +8,6 @@
 * [Food & Water Settings](food-&-water-settings.md)
 * [Item Recognition Settings](item-recognition-settings.md)
 
-![Image of the Rest Recovery 5e long rest settings](https://raw.githubusercontent.com/roth-michael/FoundryVTT-RestRecovery/main/docs/rest-rules.png)
-
 # Short Rest Features
 
 ![Image of a Fighter/Wizard multiclass with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat](https://raw.githubusercontent.com/roth-michael/FoundryVTT-RestRecovery/main/docs/all-together-now.png)
