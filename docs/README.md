@@ -1,15 +1,3 @@
-# Rest Recovery for 5E
-
-<img src="https://app.fantasy-calendar.com/resources/computerworks-logo-full.png" alt="Fantasy Computerworks Logo" width="400"/>
-
-A module made by [Fantasy Computerworks](http://fantasycomputer.works/).
-
-Like what we've done? Buy us a coffee!
-
-<a href='https://ko-fi.com/H2H2LCCQ' target='_blank'><img height='60' style='border:0px;height:36px;' src='https://cdn.ko-fi.com/cdn/kofi1.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
-
-<hr>
-
 ## Table of Contents
 
 * [API & Functions](Rest-Recovery-API.md)
@@ -20,11 +8,11 @@ Like what we've done? Buy us a coffee!
 * [Food & Water Settings](food-&-water-settings.md)
 * [Item Recognition Settings](item-recognition-settings.md)
 
-![Image of the Rest Recovery 5e long rest settings](https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-RestRecovery/main/docs/rest-rules.png)
+![Image of the Rest Recovery 5e long rest settings](https://raw.githubusercontent.com/roth-michael/FoundryVTT-RestRecovery/main/docs/rest-rules.png)
 
 # Short Rest Features
 
-![Image of a Fighter/Wizard multiclass with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat](https://raw.githubusercontent.com/fantasycalendar/FoundryVTT-RestRecovery/main/docs/all-together-now.png)
+![Image of a Fighter/Wizard multiclass with the Durable feat, Periapt of Wound Closure, and Arcane Recovery, in a party with a Bard with Song of Rest and the Chef feat](https://raw.githubusercontent.com/roth-michael/FoundryVTT-RestRecovery/main/docs/all-together-now.png)
 
 ## Class Feature: [Arcane Recovery](https://www.dndbeyond.com/classes/wizard#ArcaneRecovery-411) (Wizards), [Natural Recovery](https://www.dndbeyond.com/classes/druid#CircleoftheLand) (Druids)
 

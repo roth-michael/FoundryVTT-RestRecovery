@@ -20,6 +20,10 @@ This configures what a wizard's Arcane Recovery feature is called in your game.
 
 This configures what a druid's Natural Recovery feature is called in your game.
 
+## Natural Recovery Activity name
+
+This configures what a druid's Natural Recovery activity is called in your game.
+
 ## Song of Rest name
 
 This configures what a bard's Song of Rest feature is called in your game.

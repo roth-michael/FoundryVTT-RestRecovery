@@ -246,7 +246,8 @@
           "Title": "Recuperação Mágica",
           "SpellSlotFeature": "Recuperar Espaços de Magia com {featureName}",
           "SpellSlotRule": "Recuperar Espaços de Magia",
-          "SpellSlotsLeft": "Você tem {spellSlotsLeft} níveis de espaços de magia para recuperar.",
+          "SpellSlotsLeftPlural": "Você tem {spellSlotsLeft} níveis de espaços de magia para recuperar.",
+          "SpellSlotsLeft": "Você tem {spellSlotsLeft} nível de espaços de magia para recuperar.",
           "NoFeatureUse": "Você não tem nenhum uso restante de {featureName}, então você não pode recuperar nenhum espaço de magia durante este descanso curto.",
           "FullSpells": "Você possui todos os espaços de magia, não há necessidade de recuperar nenhum."
         }

@@ -207,7 +207,8 @@
           "Title": "Magie-Rückgewinnung",
           "SpellSlotFeature": "Zauberplätze durch {featureName} zurückerlangen",
           "SpellSlotRule": "Zauberplätze zurückerlangen",
-          "SpellSlotsLeft": "{spellSlotsLeft} Grade von Zauberplätzen können zurückerlangt werden.",
+          "SpellSlotsLeftPlural": "{spellSlotsLeft} Grade von Zauberplätzen können zurückerlangt werden.",
+          "SpellSlotsLeft": "{spellSlotsLeft} Grade von Zauberplatz können zurückerlangt werden.",
           "NoFeatureUse": "Keine Nutzungen von {featureName} verbleiben, daher können keine Zauberplätze während dieser kurzen Rast zurückgewonnen werden.",
           "FullSpells": "Alle Zauberplätze sind voll, also müssen keine zurückgewonnen werden."
         }

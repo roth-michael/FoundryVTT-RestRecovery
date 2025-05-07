@@ -15,7 +15,6 @@
           <div style="margin-right:5px; flex:0 1 auto;">Level {{level}}</div>
           <div style="flex:0 1 auto;">
             {{#each slot}}
-              {{!-- TODO: change --}}
               <input
                 type="checkbox"
                 data-step="spell-recovery"
@@ -30,8 +29,7 @@
       </div>
     {{/each}}
     <p style="font-style: italic;">
-      {{!-- TODO --}}
-      {{localize "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.SpellSlotsLeft" spellSlotsLeft=slotsLeft}}
+      {{localize (concat "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.SpellSlotsLeft" (ifThen (eq slotsLeft 1) "" "Plural")) spellSlotsLeft=slotsLeft}}
     </p>
   {{else}}
     <p class="notes">{{localize "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.FullSpells"}}</p>

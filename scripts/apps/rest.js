@@ -163,6 +163,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     context.autoRollEnabled = this.autoRollEnabled;
     context.disableAutoButton = !this.workflow.healthData.enableAutoRollHitDice;
 
+    context.spellRecoveryText = this.spellRecoveryText;
     context.slotsLeft = (this.workflow.spellData?.pointsTotal ?? 0) - (this.workflow.spellData?.pointsSpent ?? 0);
     
     // Food/Water
@@ -265,6 +266,8 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       item.amount = Math.clamp(target.value, 1, item.totalUsesLeft);
       if (["both", "food"].includes(item.type)) this.calcFood();
       if (["both", "water"].includes(item.type)) this.calcWater();
+    } else if (target?.name === "selectedItem") {
+      this.selectedItem = target.value;
     }
     this.render();
   }

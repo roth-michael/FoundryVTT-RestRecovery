@@ -246,7 +246,8 @@
           "Title": "Magic Recovery",
           "SpellSlotFeature": "Recover Spell Slots with {featureName}",
           "SpellSlotRule": "Recover Spell Slots",
-          "SpellSlotsLeft": "You have {spellSlotsLeft} levels of spell slots left to recover.",
+          "SpellSlotsLeftPlural": "You have {spellSlotsLeft} levels of spell slots left to recover.",
+          "SpellSlotsLeft": "You have {spellSlotsLeft} level of spell slots left to recover.",
           "NoFeatureUse": "You do not have any uses left of your {featureName}, so you cannot regain any spell slots during this short rest.",
           "FullSpells": "You're full on spells, you have no need to regain any spell slots."
         }
@@ -463,7 +464,7 @@
         },
         "FoodWaterPromptNewDay": {
           "Title": "Prompt food & water consumption on new day",
-          "Hint": "If enabled, food & water consumption will be requested only when a rest results in a \"new day\", regardless of whether it is short or long"
+          "Hint": "If enabled, food & water consumption will be requested only when a rest results in a \"new day\", regardless of whether it is short or long."
         }
       },
       "ShortRest": {

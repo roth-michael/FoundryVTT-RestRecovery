@@ -77,12 +77,12 @@
         margin-bottom: 0.5rem;
       }
   
-      .item-container:nth-child(even) {
-        background-color: var(--table-row-color-even);
-      }
-  
-      .item-container:nth-child(odd) {
-        background-color: var(--table-row-color-odd);
+      .item-container {
+        background-color: var(--table-header-bg-color);
+
+        input {
+          background-color: var(--table-row-color-even);
+        }
       }
   
     }

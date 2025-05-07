@@ -12,7 +12,6 @@
         {{#if hasAccessToFood}}
           <p>
             <label class="checkbox">
-              {{!-- TODO: change event --}}
               <input type="radio" value="full" name="halfFood" {{checked (eq halfFood "full")}} {{disabled (eq externalFoodSourceAccess "half")}}/>
               {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodFull"}}
             </label>
@@ -46,7 +45,6 @@
         {{#if hasAccessToWater}}
           <p>
             <label class="checkbox">
-              {{!-- TODO: change event --}}
               <input type="radio" value="full" name="halfWater" {{checked (eq halfWater "full")}} {{disabled (eq externalWaterSourceAccess "half")}}/>
               {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterFull"}}
             </label>
@@ -74,7 +72,6 @@
           <div class="flexcol">
             <span class="item-name">{{fullName}}</span>
             <label>
-              {{!-- TODO: event --}}
               <input type="number" value="{{amount}}" step="0.5" name="consumable-{{id}}"/>
               {{#if consumable.dayWorth}}
                 {{localize (concat "REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" capitalizedType)}}
@@ -111,7 +108,7 @@
       <div>
         <p>{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.DragDrop"}}</p>
         <div class="flexrow">
-          <select value="{{selectedItem}}">
+          <select name="selectedItem" value="{{selectedItem}}">
             {{selectOptions actorConsumableItems selected=selectedItem labelAttr="name" valueAttr="id"}}
           </select>
           <button class="consumable-add-button" type="button" data-action="addConsumable">
