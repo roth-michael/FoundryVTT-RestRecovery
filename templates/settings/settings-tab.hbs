@@ -1,0 +1,59 @@
+<section class="tab scrollable{{#if tab.active}} active{{/if}}" data-group="{{tab.group}}" data-tab="{{tab.id}}">
+  {{#each settings}}
+    <div class="setting">
+      <div class="form-group flexrow">
+        <div class="label-side">
+          <div>
+            <label>
+              {{localize name}}
+              <a>
+                <i title="Reset setting" class="fa-solid fa-undo reset-setting" data-action="resetSetting" data-key={{key}}></i>
+              </a>
+            </label>
+            {{#if moduleIntegration}}
+              <label class="module-integration">
+                {{localize "REST-RECOVERY.Settings.RequiresModule" module_name=moduleIntegration.label}}
+              </label>
+            {{/if}}
+          </div>
+          <p class="notes">{{{localize hint}}}</p>
+          {{#if hint2}}
+            <p class="notes notes-2">{{{localize hint2}}}</p>
+          {{/if}}
+        </div>
+        <div class="form-fields input-side">
+          {{!-- TODO: ensure typechecking is correct --}}
+          {{#if (eq type.name "Boolean")}}
+            <input type="checkbox" name="{{key}}" {{checked value}} {{disabled disabled}}>
+          {{else if numberAndChoiceType}}
+            <div class="choice-container">
+              <input name="{{customFormula}}" type="number" min=0 value="{{customFormulaSetting.value}}" {{disabled disabled}} {{#if (eq customFormulaSetting.value "")}}class="invalid"{{/if}}>
+              <select name="{{key}}" value="{{value}}" {{disabled disabled}}>
+                {{selectOptions choices selected=value localize=true}}
+              </select>
+            </div>
+          {{else if choices}}
+            <div class="choice-container">
+              <select name="{{key}}" value="{{value}}" {{disabled disabled}}>
+                {{selectOptions choices selected=value localize=true}}
+              </select>
+              {{#if (and customFormulaSetting (eq value "custom_formula"))}}
+                <input name="{{customFormula}}" type="text" value="{{customFormulaSetting.value}}" {{disabled disabled}} {{#if (eq customFormulaSetting.value "")}}class="invalid"{{/if}}>
+              {{/if}}
+            </div>
+          {{!-- TODO: ensure typechecking is correct --}}
+          {{else if (eq type.name "Number")}}
+            <input type="number" name="{{key}}" value="{{value}}" {{disabled disabled}} {{#if (and (not value) (ne value 0))}}class="invalid"{{/if}}>
+          {{else}}
+            <div class="setting-container">
+              <input type="text" name="{{key}}" value="{{value}}" {{disabled disabled}}>
+              {{#if localize}}
+                <input type="text" disabled value="{{localize value}}">
+              {{/if}}
+            </div>
+          {{/if}}
+        </div>
+      </div>
+    </div>
+  {{/each}}
+</section>

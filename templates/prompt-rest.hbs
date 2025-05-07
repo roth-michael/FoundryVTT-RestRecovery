@@ -1,0 +1,83 @@
+<form autocomplete=off class="dialog-content">
+  <div class="rest-recovery-grid-table">
+    <div style="font-size:1rem; margin-bottom:0.25rem;">{{localize "REST-RECOVERY.Dialogs.PromptRest.PromptCharactersRest" }}</div>
+    <div style="text-align: center;">
+      <i class="fas fa-plus rest-recovery-clickable-link" data-action="addPlayer" style="font-size:1rem;"></i>
+    </div>
+    {{#each configuration as |comboId|}}
+      <select id="config-actor-{{@index}}" value="{{comboId}}">
+        {{#each @root.validActors as |currActor|}}
+          {{#with (lookup currActor 0) as |currCombo|}}
+          {{#with (lookup currActor 1) as |currName|}}
+          {{#if (or (eq currCombo comboId) (not (rest-recovery-includes @root.configuration currCombo)))}}
+            <option value="{{currCombo}}"{{#if (eq currCombo comboId)}} selected{{/if}}>{{currName}}</option>
+          {{/if}}
+          {{/with}}
+          {{/with}}
+        {{/each}}
+      </select>
+      <div style="text-align: center;">
+        <i class="fas fa-times rest-recovery-clickable-link-red" data-action="removePlayer" data-combo="{{comboId}}"></i>
+      </div>
+    {{/each}}
+
+    <div style="font-size: 1rem; margin-top:0.25rem; margin-bottom:0.25rem;">{{localize "REST-RECOVERY.Dialogs.PromptRest.RestProfile"}}</div>
+    <div></div>
+
+    <select id="active-profile" value="{{activeProfile}}">
+      {{#each profiles}}
+        <option value="{{this}}"{{#if (eq this @root.activeProfile)}} selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+
+    <div style="text-align: center;">
+      <i class="fas fa-info-circle rest-recovery-{{#if (eq activeProfile "Default")}}disabled{{else}}clickable-link{{/if}}"
+          style="margin-right:0.25rem;"
+          data-action="showCustomRules"
+      ></i>
+      <i class="fas fa-cog rest-recovery-clickable-link" data-action="showSettings"></i>
+    </div>
+
+
+    <div style="margin-top: 0.25rem; grid-column: 1{{#if simpleCalendarActive}} / 3{{/if}};">
+      <span style="font-size: 1rem;">{{{newDayTitle}}}</span>
+      <p class="hint" style="font-size: 0.75rem;">
+        {{{newDayHint}}}
+      </p>
+    </div>
+    {{#if simpleCalendarActive}}
+      <div></div>
+    {{else}}
+      {{!-- TODO: BInd this --}}
+      <input name="forceNewDay" type="checkbox" {{checked forceNewDay}}/>
+    {{/if}}
+    {{#if bastionsEnabled}}
+      <div style="margin-top:0.25rem; grid-column: 1;">
+        <span style="font-size: 1rem;">{{localize "REST-RECOVERY.Dialogs.PromptRest.BastionTurn"}}</span>
+        <p style="font-size: 0.75rem; color: #4b4a44;">
+          {{{localize "REST-RECOVERY.Dialogs.PromptRest.BastionTurnHint" days=bastionDays}}}
+        </p>
+      </div>
+      {{!-- TODO: bind this --}}
+      <input name="advanceBastionTurn" type="checkbox" {{checked advanceBastionTurn}}/>
+    {{/if}}
+  </div>
+
+  <footer class="flexrow" style="margin-top:0.25rem;">
+    <button type="button" class="dialog-button" data-action="longRest">
+      <i class="fas fa-bed"></i>
+      {{localize "REST-RECOVERY.Dialogs.PromptRest.Long"}}
+      {{#if (and simpleCalendarActive longRestWouldBeNewDay)}}
+        {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
+      {{/if}}
+    </button>
+    <button type="button" class="dialog-button" data-action="shortRest">
+      <i class="fa-solid fa-hourglass-half"></i>
+      {{localize "REST-RECOVERY.Dialogs.PromptRest.Short"}}
+      {{#if (and simpleCalendarActive shortRestWouldBeNewDay)}}
+        {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
+      {{/if}}
+    </button>
+  </footer>
+
+</form>

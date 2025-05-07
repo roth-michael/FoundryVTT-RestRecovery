@@ -246,7 +246,8 @@
           "Title": "Recuperação Mágica",
           "SpellSlotFeature": "Recuperar Espaços de Magia com {featureName}",
           "SpellSlotRule": "Recuperar Espaços de Magia",
-          "SpellSlotsLeft": "Você tem {spellSlotsLeft} níveis de espaços de magia para recuperar.",
+          "SpellSlotsLeftPlural": "Você tem {spellSlotsLeft} níveis de espaços de magia para recuperar.",
+          "SpellSlotsLeft": "Você tem {spellSlotsLeft} nível de espaços de magia para recuperar.",
           "NoFeatureUse": "Você não tem nenhum uso restante de {featureName}, então você não pode recuperar nenhum espaço de magia durante este descanso curto.",
           "FullSpells": "Você possui todos os espaços de magia, não há necessidade de recuperar nenhum."
         }
@@ -261,11 +262,13 @@
       },
       "ModuleConfig": {
         "Title": "Configuração do Rest Recovery",
-        "General": "Configurações Gerais",
-        "LongRest": "Descanso Longo",
-        "ShortRest": "Descanso Curto",
-        "ItemNames": "Nomes das Características",
-        "FoodAndWater": "Comida e Água",
+        "TABS": {
+          "general": "Configurações Gerais",
+          "longRest": "Descanso Longo",
+          "shortRest": "Descanso Curto",
+          "itemNames": "Nomes das Características",
+          "foodAndWater": "Comida e Água"
+        },
         "Confused": "Confuso? Muitas Opções?",
         "QuickSetup": "Clique aqui para abrir a Configuração Rápida!",
         "Donate": "Se você gosta deste módulo, considere doar para mantê-lo funcionando!",
@@ -517,8 +520,7 @@
         },
         "OneDnDExhaustion": {
           "Title": "Habilitar Exaustão do One D&D",
-          "Hint": "No novo One D&D, Exaustão se acumula até um total de 10 (que você ainda morre) e aplica uma penalidade de -1 em Testes de Atributo, Jogadas de Ataque, Salvaguardas e CD de Salvaguarda de Magia por nível de Exaustão. Apenas mude os níveis de Exaustão no personagem e as penalidades serão aplicadas automaticamente.",
-          "Hint2": "Nota: Isso não é compatível com o módulo <em>Alternative Exhaustion 5e</em>."
+          "Hint": "No novo One D&D, Exaustão se acumula até um total de 10 (que você ainda morre) e aplica uma penalidade de -1 em Testes de Atributo, Jogadas de Ataque, Salvaguardas e CD de Salvaguarda de Magia por nível de Exaustão. Apenas mude os níveis de Exaustão no personagem e as penalidades serão aplicadas automaticamente."
         },
         "OneDnDExhaustionSheetOverride": {
           "Title": "Habilitar Substituição de Exaustão do One D&D na Ficha",

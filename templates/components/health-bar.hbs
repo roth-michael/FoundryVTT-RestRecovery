@@ -1,0 +1,15 @@
+<div class="dnd5e2" style="margin-top: 0.5rem;">
+  <div class="meter hit-points">
+    <div class="label">
+      <span class="value">{{workflow.currHP}}</span>
+      <span class="separator">/</span>
+      <span class="max">{{workflow.maxHP}}</span>
+      {{#if (gt hpToRegain 0)}}
+        <span>(+{{hpToRegain}})</span>
+      {{/if}}
+    </div>
+    {{!-- <div class="progress-potential-max" style="width:{{potentialMax}}%; left:{{maxLeft}}%"></div> --}}
+    <div class="progress-potential-min" style="width:{{potentialMin}}%; left:{{progressBar}}%"></div>
+    <div class="progress" style="width:{{progressBar}}%"></div>
+  </div>
+</div>

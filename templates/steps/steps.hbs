@@ -1,0 +1,12 @@
+<div class="rest-recovery-steps">
+  {{#each workflow.steps}}
+    {{!-- TODO --}}
+    <a data-action="clickStep" data-step={{@index}} {{#if (eq @index ../activeStep)}}class="active"{{/if}}>
+      {{localize title}}
+    </a>
+    {{!-- TODO --}}
+    {{#if (lt @index ../maxIndex)}}
+      <i class="fa-solid fa-arrow-right"></i>
+    {{/if}}
+  {{/each}}
+</div>

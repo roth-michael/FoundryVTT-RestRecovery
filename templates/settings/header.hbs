@@ -1,0 +1,20 @@
+<div>
+  <h2 style="text-align: center; margin-bottom: 1rem;">{{localize "REST-RECOVERY.Dialogs.ModuleConfig.Title"}}</h2>
+  <div class="preset-select">
+    <label>{{localize "REST-RECOVERY.Dialogs.ModuleConfig.ModuleProfile"}}</label>
+    <select id="active-profile" value="{{activeProfile}}">
+      {{selectOptions profiles selected=activeProfile}}
+    </select>
+    <button type="button" data-action="newProfile"><i class="fas fa-plus"></i></button>
+
+    {{#if (eq activeProfile "Default")}}
+      <button type="button" data-action="resetDefault">
+        <i class="fas fa-redo"></i>
+      </button>
+    {{else}}
+      <button type="button" data-action="deleteProfile">
+        <i class="fas fa-trash-alt"></i>
+      </button>
+    {{/if}}
+  </div>
+</div>

@@ -1,9 +1,9 @@
 import * as lib from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
-import PromptRestDialog from "./formapplications/prompt-rest/prompt-rest.js";
 import { gameSettings } from "./settings.js";
 import RestWorkflow from "./rest-workflow.js";
 import SocketHandler from "./sockets.js";
+import { PromptRestApplication } from "./apps/promptRest.js";
 
 export default class API {
 
@@ -14,11 +14,11 @@ export default class API {
   /**
    * Renders the prompt rest UI.
    *
-   * @returns {Promise<SvelteApplication>/boolean}
+   * @returns {Promise<HandlebarsApplicationMixin<ApplicationV2>>/boolean}
    */
   static renderPromptRestInterface() {
     if (!game.user.isGM) return false;
-    return PromptRestDialog.show();
+    return new PromptRestApplication().render(true);
   }
 
   /**

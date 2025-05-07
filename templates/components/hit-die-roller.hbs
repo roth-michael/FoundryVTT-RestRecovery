@@ -1,0 +1,27 @@
+<div class="form-group">
+  <div class="flexcol">
+    <div>
+      <label>{{localize "DND5E.REST.HitDice.Select"}}</label>
+    </div>
+    <div class="form-fields">
+      <select name="hd" value="{{selectedHitDice}}" style="height:26px;">
+        {{#each workflow.healthData.availableHitDice}}
+          <option value="{{@key}}"{{#if (eq @key ../selectedHitDice)}} selected{{/if}}>
+            {{@key}} ({{this}} {{localize "DND5E.available"}})
+          </option>
+        {{/each}}
+      </select>
+      <button type="button" style="flex:1;" {{disabled (not enableRollButton)}} data-action="rollHitDie">
+        <i class="fa-solid fa-dice-d20"></i> {{localize "DND5E.Roll"}}
+      </button>
+      {{#if autoRollEnabled}}
+        <button type="button" style="flex: 1;" {{disabled (or disableAutoButton (not enableRollButton))}} data-action="autoRollHitDice">
+          <i class="fa-solid fa-redo"></i> {{localize "REST-RECOVERY.Dialogs.ShortRest.AutoRoll"}}
+        </button>
+      {{/if}}
+    </div>
+    {{#if (eq workflow.healthData.totalHitDice 0)}}
+      <p class="notes">{{localize "DND5E.REST.HitDice.None"}}</p>
+    {{/if}}
+  </div>
+</div>

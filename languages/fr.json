@@ -113,7 +113,8 @@
       "ShortRest": {
         "NoHitDiceRest": "Prendre un peu de repos ? Lors d'un repos court, vous pouvez lancer vos dés de vies et récupérer des ressources primaires ou secondaires.",
         "SpellSlotRecovery": "Récupération d'emplacements de sort avec {featureName}",
-        "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
+        "SpellSlotsLeftPlural": "Vous avez {spellSlotsLeft} niveaux d'emplacements de sort à récupérer.",
+        "SpellSlotsLeft": "Vous avez {spellSlotsLeft} niveau d'emplacements de sort à récupérer.",
         "NoFeatureUse": "Vous n'avez plus de charges disponibles de {featureName}, vous ne vous pouvez pas récupérer d'emplacement de sort durant ce repos court.",
         "FullSpells": "Vous avez votre maximum d'emplacements de sort, vous n'avez pas de besoin d'en récupérer.",
         "NoMoreRests": "Aucun repos court restant",
@@ -170,11 +171,13 @@
       },
       "ModuleConfig": {
         "Title": "Configuration de Rest Recovery",
-        "General": "Paramètres généraux",
-        "LongRest": "Repos long",
-        "ShortRest": "Repos court",
-        "ItemNames": "Nommage",
-        "FoodAndWater": "Nourriture & eau",
+        "TABS": {
+          "general": "Paramètres généraux",
+          "longRest": "Repos long",
+          "shortRest": "Repos court",
+          "itemNames": "Nommage",
+          "foodAndWater": "Nourriture & eau"
+        },
         "MoreToCome": "Plus de paramètres à venir !",
         "Request": "Demander une nouvelle fonctionnalité ici.",
         "Submit": "Soumettre les paramètres",

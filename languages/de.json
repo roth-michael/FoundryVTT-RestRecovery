@@ -207,7 +207,8 @@
           "Title": "Magie-Rückgewinnung",
           "SpellSlotFeature": "Zauberplätze durch {featureName} zurückerlangen",
           "SpellSlotRule": "Zauberplätze zurückerlangen",
-          "SpellSlotsLeft": "{spellSlotsLeft} Grade von Zauberplätzen können zurückerlangt werden.",
+          "SpellSlotsLeftPlural": "{spellSlotsLeft} Grade von Zauberplätzen können zurückerlangt werden.",
+          "SpellSlotsLeft": "{spellSlotsLeft} Grade von Zauberplatz können zurückerlangt werden.",
           "NoFeatureUse": "Keine Nutzungen von {featureName} verbleiben, daher können keine Zauberplätze während dieser kurzen Rast zurückgewonnen werden.",
           "FullSpells": "Alle Zauberplätze sind voll, also müssen keine zurückgewonnen werden."
         }
@@ -222,11 +223,13 @@
       },
       "ModuleConfig": {
         "Title": "Rest Recovery Einstellungen",
-        "General": "Allgemeine Einstellungen",
-        "LongRest": "Lange Rast",
-        "ShortRest": "Kurze Rast",
-        "ItemNames": "Merkmalnamen",
-        "FoodAndWater": "Nahrung & Wasser",
+        "TABS": {
+          "general": "Allgemeine Einstellungen",
+          "longRest": "Lange Rast",
+          "shortRest": "Kurze Rast",
+          "itemNames": "Merkmalnamen",
+          "foodAndWater": "Nahrung & Wasser"
+        },
         "Confused": "Verwirrt? Zu viele Optionen?",
         "QuickSetup": "Hier klicken für Schnell-Setup!",
         "Donate": "Falls das Modul gefällt, hilft eine Spende, es am Laufen zu halten!",
@@ -413,8 +416,7 @@
         },
         "OneDnDExhaustion": {
           "Title": "One D&D Erschöpfung",
-          "Hint": "Nutzt die Regeln von One D&D, wo Erschöpfung bis 10 stapelbar ist (wobei 10 wie gehabt zum Tod für), und ein Malus von -1 pro Stufe Erschöpfung auf Attributs-, Angriffs- und Rettungswürfe sowie den Zauber-SG fällig wird. Einfach die Erschöpfung vom Charakter ändern und der Malus wird automatisch angewandt.",
-          "Hint2": "Hinweis: Dies ist nicht mit der Erschöpfung-Modulintegration oben kompatibel."
+          "Hint": "Nutzt die Regeln von One D&D, wo Erschöpfung bis 10 stapelbar ist (wobei 10 wie gehabt zum Tod für), und ein Malus von -1 pro Stufe Erschöpfung auf Attributs-, Angriffs- und Rettungswürfe sowie den Zauber-SG fällig wird. Einfach die Erschöpfung vom Charakter ändern und der Malus wird automatisch angewandt."
         },
         "RollHitDice": {
           "Title": "Trefferwürfel bei langer Rast",

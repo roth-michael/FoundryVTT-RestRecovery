@@ -8,3 +8,4 @@ styles/
 templates/
 scripts/**/*.svelte
 dist/
+vite.config.mjs

@@ -23,9 +23,9 @@ export default class plugins {
 }
 
 const oneDndExhaustionEffectData = {
-  "label": "Exhaustion (One D&D)",
+  "name": "Exhaustion (One D&D)",
   "description": "With One D&D exhaustion, a creature suffers cumulative -1 penalties per level of exhaustion to all d20 rolls (attack rolls, ability checks, skill checks, and saving throws) and spell DCs. When a creature reaches 10 levels of exhaustion, they die.",
-  "icon": "icons/svg/downgrade.svg",
+  "img": "icons/svg/downgrade.svg",
   "tint": null,
   "seconds": null,
   "rounds": null,

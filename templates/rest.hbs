@@ -1,0 +1,49 @@
+<form autocomplete=off class="dialog-content">
+  {{#if (gt workflow.steps.length 1)}}
+    {{> "rest-recovery.steps" }}
+  {{/if}}
+
+  {{#if (or workflow.longRest enableShortRest)}}
+    {{> (concat "rest-recovery." activeStepPartial)}}
+  {{/if}}
+  
+  {{#if showStartLongRestButton}}
+    <div class="form-group" style="margin: 0.5rem 0;">
+      <p class="notes">{{localize "REST-RECOVERY.Dialogs.LongRest.BeginExplanation"}}</p>
+    </div>
+  {{/if}}
+
+  {{#if (not (or enableShortRest workflow.longRest))}}
+    <div class="form-group">
+      <label>{{{localize "REST-RECOVERY.Dialogs.ShortRest.NoMoreRests"}}}</label>
+    </div>
+    <p class="notes">
+      {{{localize "REST-RECOVERY.Dialogs.ShortRest.NoMoreRestsSmall" max_short_rests=maxShortRests}}}
+    </p>
+  {{/if}}
+
+  <footer class="flexrow" style="margin-top:0.5rem;">
+    {{#if showStartLongRestButton}}
+      <button type="button" class="dialog-button" data-action="startLongRest">
+        <i class="fa-solid fa-bed"></i> {{localize "REST-RECOVERY.Dialogs.LongRest.Begin"}}
+      </button>
+    {{else}}
+      {{#if (gt workflow.steps.length 1)}}
+        <button type="button" class="dialog-button" {{disabled (eq activeStep 0)}} data-action="prevStep">
+          <i class="fa-solid fa-chevron-left"></i> {{localize "REST-RECOVERY.Dialogs.RestSteps.Prev"}}
+        </button>
+      {{/if}}
+
+      {{#if (eq activeStep maxIndex)}}
+        <button {{disabled (or (eq canAfford false) (not (or enableShortRest workflow.longRest)))}} type="button" class="dialog-button" data-action="finish">
+          <i class="fa-solid fa-bed"></i>
+          {{localize (ifThen workflow.longRest "REST-RECOVERY.Dialogs.LongRest.FinishRest" "REST-RECOVERY.Dialogs.ShortRest.FinishRest")}}
+        </button>
+      {{else}}
+        <button {{disabled (eq canAfford false)}} type="button" class="dialog-button" data-action="nextStep">
+          {{localize "REST-RECOVERY.Dialogs.RestSteps.Next"}} <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      {{/if}}
+    {{/if}}
+  </footer>
+</form>

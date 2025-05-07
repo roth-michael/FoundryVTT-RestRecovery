@@ -1,0 +1,50 @@
+<div>
+  {{#if usingDefaultSettings}}
+    <p>{{localize (concat "DND5E.REST.Long.Hint.Normal" (ifThen legacyRules "Legacy" ""))}}</p>
+  {{else}}
+    <p>{{localize "REST-RECOVERY.Dialogs.LongRest.CustomRules"}}</p>
+    <p class="notes">
+      <a style="color: var(--color-text-hyperlink);" data-action="showCustomRulesDialog">
+        {{localize "REST-RECOVERY.Dialogs.LongRest.CustomRulesLink"}}
+      </a>
+    </p>
+  {{/if}}
+
+  {{#if (not showStartLongRestButton)}}
+    {{#if enableRollHitDice}}
+      {{> "rest-recovery.hit-die-roller" }}
+    {{/if}}
+
+    {{#if (or promptNewDay newDay)}}
+      <div class="form-group">
+      <label>
+        {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayTitle" "DND5E.REST.NewDay.Label")}}
+      </label>
+      {{#if promptNewDay}}
+        <input type="checkbox" {{checked newDay}}/>
+      {{/if}}
+      <p class="hint">
+        {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayHint" "DND5E.REST.NewDay.Hint")}}
+      </p>
+    </div>
+    {{/if}}
+  {{/if}}
+
+  {{#if showHealthBar}}
+    {{> "rest-recovery.health-bar" }}
+  {{/if}}
+
+  {{#if (and enableRollHitDice (gt maxSpendHitDice 0) (ne maxSpendHitDice workflow.healthData.level))}}
+    <p>
+      {{{localize "REST-RECOVERY.Dialogs.LongRest.MaxHitDiceSpend" max_spend=maxSpendHitDice current=remainMaxSpend}}}
+    </p>
+  {{/if}}
+
+  {{#if showArmorCheckbox}}
+    <div class="form-group">
+      <label>{{localize "REST-RECOVERY.Dialogs.LongRest.ArmorRecovery"}}</label>
+      <input name="removeNonLightArmor" type="checkbox" {{checked workflow.healthData.removeNonLightArmor}}/>
+      <p class="hint">{{localize "REST-RECOVERY.Dialogs.LongRest.ArmorRecoveryHint"}}</p>
+    </div>
+  {{/if}}
+</div>

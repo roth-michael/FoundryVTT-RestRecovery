@@ -1,0 +1,7 @@
+<div>
+  {{#if (eq profileName "")}}
+    <div class="notification error">{{localize "REST-RECOVERY.Dialogs.SaveProfile.Empty"}}</div>
+  {{else if duplicateProfileName}}
+    <div class="notification error">{{localize "REST-RECOVERY.Dialogs.SaveProfile.OverrideProfile"}}</div>
+  {{/if}}
+</div>

@@ -21,7 +21,7 @@ This "Desert" module profile could for example set a higher water consumption pe
 # Functions
 
 <dl>
-<dt><a href="#renderPromptRestInterface">renderPromptRestInterface()</a> ⇒ <code>Promise.&lt;SvelteApplication&gt; | boolean</code></dt>
+<dt><a href="#renderPromptRestInterface">renderPromptRestInterface()</a> ⇒ <code>Promise.&lt;HandlebarsApplicationMixin&lt;ApplicationV2&gt;&gt; | boolean</code></dt>
 <dd><p>Renders the prompt rest UI</p>
 </dd><dt><a href="#getAllProfiles">getAllProfiles()</a> ⇒ <code>Array.&lt;string&gt;</code></dt>
 <dd><p>Returns an array containing all the module profile names</p>
@@ -60,7 +60,7 @@ This "Desert" module profile could for example set a higher water consumption pe
 
 <a name="renderPromptRestInterface"></a>
 
-## renderPromptRestInterface() ⇒ <code>Promise.&lt;SvelteApplication&gt; | boolean</code>
+## renderPromptRestInterface() ⇒ <code>Promise.&lt;HandlebarsApplicationMixin&lt;ApplicationV2&gt;&gt; | boolean</code>
 Renders the prompt rest UI
 
 <a name="getAllProfiles"></a>

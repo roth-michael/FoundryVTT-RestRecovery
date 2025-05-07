@@ -1,7 +1,4 @@
-import { TJSDialog } from "#runtime/svelte/application";
-import CustomDialog from "./formapplications/components/Dialog.svelte";
-import { wait } from "./lib/lib.js";
-import { localize } from "#runtime/svelte/helper";
+import { wait, localize, customDialog } from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
 
 export default class SocketHandler {
@@ -86,23 +83,12 @@ export default class SocketHandler {
 
     await wait(250);
 
-    const doContinue = await TJSDialog.confirm({
-      title: game.i18n.localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Title"),
-      content: {
-        class: CustomDialog,
-        props: {
-          icon: "fas fa-exclamation-triangle",
-          header: game.i18n.localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Title"),
-          content: game.i18n.localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Content"),
-          extraContent: offlineResters.map(actor => actor.name).join(', ')
-        }
-      },
-      modal: true,
-      draggable: false,
-      options: {
-        height: "auto",
-        headerButtonNoClose: true
-      }
+    const doContinue = await customDialog({
+      title: localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Title"),
+      header: localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Title"),
+      content: localize("REST-RECOVERY.Dialogs.CharacterOwnersOffline.Content"),
+      extraContent: offlineResters.map(actor => actor.name).join(', '),
+      icon: "fa-solid fa-exclamation-triangle"
     });
 
     if (!doContinue) {
