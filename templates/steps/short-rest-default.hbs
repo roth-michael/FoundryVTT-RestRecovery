@@ -1,0 +1,45 @@
+<div>
+  {{#if (and (gt maxShortRests 0) (gt maxShortRests currentShortRests))}}
+    <div class="form-group">
+      <p>
+        {{{localize "REST-RECOVERY.Dialogs.ShortRest.ShortRestLimit" num_short_rests=remainingShortRests}}}
+      </p>
+    </div>
+    <p class="Notes">
+      {{{localize "REST-RECOVERY.Dialogs.ShortRest.ShortRestLimitSmall" max_short_rests=maxShortRests}}}
+    </p>
+  {{/if}}
+
+  {{#if enableRollHitDice}}
+    <p>{{localize "DND5E.REST.Short.Hint.Normal"}}</p>
+    {{> "rest-recovery.hit-die-roller" }}
+  {{else}}
+    <p>{{localize "REST-RECOVERY.Dialogs.ShortRest.NoHitDiceRest"}}</p>
+  {{/if}}
+
+  {{#if (or promptNewDay newDay)}}
+    <div class="form-group">
+      <label>
+        {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" "DND5E.REST.NewDay.Label")}}
+      </label>
+      <input type="checkbox" {{checked newDay}} {{disabled (not promptNewDay)}}/>
+      <p class="hint">
+        {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" "DND5E.REST.NewDay.Hint")}}
+      </p>
+    </div>
+  {{/if}}
+
+  {{> "rest-recovery.health-bar" }}
+
+  {{#if (and (gt minSpendHitDice 0) (gt minSpendHitDice workflow.healthData.hitDiceSpent))}}
+    <p>
+      {{{localize "REST-RECOVERY.Dialogs.ShortRest.MinHitDiceSpend" min_spend=remainMinSpend}}}
+    </p>
+  {{/if}}
+
+  {{#if (and (gt maxSpendHitDice 0) (ne maxSpendHitDice workflow.healthData.level))}}
+    <p>
+      {{{localize "REST-RECOVERY.Dialogs.ShortRest.MaxHitDiceSpend" max_spend=maxSpendHitDice current=remainMaxSpend}}}
+    </p>
+  {{/if}}
+</div>

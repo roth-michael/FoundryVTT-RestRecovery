@@ -1,0 +1,42 @@
+<div class="rest-recovery-flex-col">
+  <h2>{{localize "SETTINGS.DND5E.VARIANT.Rest.Name"}}</h2>
+
+  <select name="restVariant" value="{{restVariant}}">
+    {{selectOptions variants selected=restVariant localize=true}}
+  </select>
+
+  {{#if (eq restVariant "custom")}}
+    <div>
+      <input id="long-rest-custom-length" name="longRestCustomLength" type="number" step="0.05" min="0" value="{{longRestCustomLength}}"/>
+      <label for="long-rest-custom-length">
+        {{localize "REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.LongRestCustomTitle"}}
+      </label>
+    </div>
+    <div>
+      <input id="short-rest-custom-length" name="shortRestCustomLength" type="number" step="0.05" min="0" value="{{shortRestCustomLength}}"/>
+      <label for="short-rest-custom-length">
+        {{localize "REST-RECOVERY.Dialogs.QuickSetup.5eRestCustom.ShortRestCustomTitle"}}
+      </label>
+    </div>
+  {{/if}}
+
+  <div>
+    <div class="form-control">
+      <input id="slow-natural-healing" name="slowHealingEnabled" type="checkbox" {{checked slowHealingEnabled}}/>
+      <label for="slow-natural-healing">
+        {{localize "REST-RECOVERY.Dialogs.QuickSetup.SlowNaturalHealingTitle"}}
+      </label>
+    </div>
+    <div class="small-text">{{localize "REST-RECOVERY.Dialogs.QuickSetup.SlowNaturalHealingLabel"}}</div>
+  </div>
+
+  <div>
+    <div class="form-control">
+      <input id="recover-before-starting-rest" name="bufferEnabled" type="checkbox" {{checked bufferEnabled}}/>
+      <label for="recover-before-starting-rest">
+        {{localize "REST-RECOVERY.Dialogs.QuickSetup.RecoverHitDiceTitle"}}
+      </label>
+    </div>
+    <div class="small-text">{{localize "REST-RECOVERY.Dialogs.QuickSetup.RecoverHitDiceLabel"}}</div>
+  </div>
+</div>

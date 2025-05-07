@@ -1,0 +1,153 @@
+<div class="flex">
+  {{#if workflow.foodWaterRequirement.actorRequiredFood}}
+    {{#if (gt remainingFood 0)}}
+      <p>{{{foodRequirementText}}}</p>
+
+      {{#if (or (eq externalFoodSourceAccess "half") (eq externalFoodSourceAccess "full"))}}
+        <label class="checkbox">
+          <input type="checkbox" {{checked hasAccessToFood}} name="hasAccessToFood"/>
+          {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFood"}}
+        </label>
+
+        {{#if hasAccessToFood}}
+          <p>
+            <label class="checkbox">
+              {{!-- TODO: change event --}}
+              <input type="radio" value="full" name="halfFood" {{checked (eq halfFood "full")}} {{disabled (eq externalFoodSourceAccess "half")}}/>
+              {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodFull"}}
+            </label>
+            <label class="checkbox">
+              <input type="radio" value="half" name="halfFood" {{checked (eq halfFood "half")}}/>
+              {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalFoodHalf"}}
+            </label>
+            {{#if (and externalFoodSourceHasCost (gt foodCost 0))}}
+              <p class="notes">
+                {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalCost" cost=foodCost currency=foodCurrency}}}
+              </p>
+            {{/if}}
+          </p>
+        {{/if}}
+      {{/if}}
+    {{else}}
+      <p>{{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodSated"}}}</p>
+    {{/if}}
+  {{/if}}
+
+  {{#if workflow.foodWaterRequirement.actorRequiredWater}}
+    {{#if (gt remainingWater 0)}}
+      <p>{{{waterRequirementText}}}</p>
+
+      {{#if (or (eq externalWaterSourceAccess "half") (eq externalWaterSourceAccess "full"))}}
+        <label class="checkbox">
+          <input type="checkbox" {{checked hasAccessToWater}} name="hasAccessToWater"/>
+          {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWater"}}
+        </label>
+
+        {{#if hasAccessToWater}}
+          <p>
+            <label class="checkbox">
+              {{!-- TODO: change event --}}
+              <input type="radio" value="full" name="halfWater" {{checked (eq halfWater "full")}} {{disabled (eq externalWaterSourceAccess "half")}}/>
+              {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterFull"}}
+            </label>
+            <label class="checkbox">
+              <input type="radio" value="half" name="halfWater" {{checked (eq halfWater "half")}}/>
+              {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalWaterHalf"}}
+            </label>
+            {{#if (and externalWaterSourceHasCost (gt waterCost 0))}}
+              <p class="notes">
+                {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.ExternalCost" cost=waterCost currency=waterCurrency}}}
+              </p>
+            {{/if}}
+          </p>
+        {{/if}}
+      {{/if}}
+    {{else}}
+      <p>{{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.WaterSated"}}}</p>
+    {{/if}}
+  {{/if}}
+
+  {{#if (and (or (not hasAccessToFood) (not hasAccessToWater)) (gt consumableItems.length 0))}}
+    <div class="items-container">
+      {{#each consumableItems}}
+        <div class="item-container">
+          <div class="flexcol">
+            <span class="item-name">{{fullName}}</span>
+            <label>
+              {{!-- TODO: event --}}
+              <input type="number" value="{{amount}}" step="0.5" name="consumable-{{id}}"/>
+              {{#if consumable.dayWorth}}
+                {{localize (concat "REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" capitalizedType)}}
+              {{else}}
+                {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.AmountToConsume"}}
+              {{/if}}
+            </label>
+          </div>
+
+          <button type="button" data-id="{{id}}" data-action="removeConsumable">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if (and 
+    (gt actorConsumableItems.length 0) 
+    (or 
+      (and
+        workflow.foodWaterRequirement.actorRequiredFood 
+        (gt workflow.foodWaterRequirement.actorRequiredFood workflow.foodWaterRequirement.actorFoodSatedValue)
+        (not hasAccessToFood)
+      )
+      (and
+        workflow.foodWaterRequirement.actorRequiredWater
+        (gt workflow.foodWaterRequirement.actorRequiredWater workflow.foodWaterRequirement.actorWaterSatedValue)
+        (not hasAccessToWater)
+      )
+    )
+  )}}
+    <div class="dragDropBox">
+      <div>
+        <p>{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.DragDrop"}}</p>
+        <div class="flexrow">
+          <select value="{{selectedItem}}">
+            {{selectOptions actorConsumableItems selected=selectedItem labelAttr="name" valueAttr="id"}}
+          </select>
+          <button class="consumable-add-button" type="button" data-action="addConsumable">
+            <i class="fa-solid fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  {{/if}}
+
+  {{#if enableAutomatedExhaustion}}
+    {{#if (and workflow.foodWaterRequirement.actorRequiredFood (gt workflow.foodWaterRequirement.actorRequiredFood newFoodSatedValue))}}
+      {{#if (gt actorExhaustionThreshold actorDaysWithoutFood)}}
+        <p>
+          {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodAlmostExhaustion" days=foodAlmostExhaustionDays}}}
+        </p>
+      {{else}}
+        <p>
+          {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.FoodExhaustion"}}}
+        </p>
+      {{/if}}
+    {{/if}}
+
+    {{#if workflow.foodWaterRequirement.actorRequiredWater}}
+      {{#if (and (gt newWaterSatedValue 0) (gte halfRequiredWater newWaterSatedValue))}}
+        <p>
+          {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.HalfWater" dc=halfWaterSaveDC exhaustion=(ifThen (gt actorExhaustion 0) 2 1)}}}
+        </p>
+      {{else if (eq newWaterSatedValue 0)}}
+        <p>
+          {{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.NoWater" exhaustion=(ifThen (gt actorExhaustion 0) 2 1)}}}
+        </p>
+      {{/if}}
+    {{/if}}
+  {{/if}}
+  {{#if (not canAfford)}}
+    <p>{{{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.CantAfford"}}}</p>
+  {{/if}}
+</div>

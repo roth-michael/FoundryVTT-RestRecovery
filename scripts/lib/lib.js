@@ -1,4 +1,5 @@
 import CONSTANTS from "../constants.js";
+import { gameSettings } from "../settings.js";
 
 export function custom_warning(message, console = true){
   ui.notifications.warn("Rest Recovery | " + game.i18n.localize(message), { console })

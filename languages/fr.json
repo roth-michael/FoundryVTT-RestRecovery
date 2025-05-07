@@ -170,11 +170,13 @@
       },
       "ModuleConfig": {
         "Title": "Configuration de Rest Recovery",
-        "General": "Paramètres généraux",
-        "LongRest": "Repos long",
-        "ShortRest": "Repos court",
-        "ItemNames": "Nommage",
-        "FoodAndWater": "Nourriture & eau",
+        "TABS": {
+          "general": "Paramètres généraux",
+          "longRest": "Repos long",
+          "shortRest": "Repos court",
+          "itemNames": "Nommage",
+          "foodAndWater": "Nourriture & eau"
+        },
         "MoreToCome": "Plus de paramètres à venir !",
         "Request": "Demander une nouvelle fonctionnalité ici.",
         "Submit": "Soumettre les paramètres",

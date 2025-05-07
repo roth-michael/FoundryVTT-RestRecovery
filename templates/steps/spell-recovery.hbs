@@ -1,0 +1,39 @@
+<div class="rest-recovery-spell-recovery">
+  <div class="form-group">
+    <label>
+      {{spellRecoveryText}}
+    </label>
+  </div>
+  {{#if (and workflow.spellData.missingSlots workflow.spellData.feature (not workflow.spellData.hasFeatureUse))}}
+    <p class="notes">
+      {{localize "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.NoFeatureUse" featureName=workflow.spellData.feature.name}}
+    </p>
+  {{else if workflow.spellData.missingSlots}}
+    {{#each workflow.spellData.slots as |slot level|}}
+      <div class="form-group">
+        <div class="form-fields" style="justify-content: flex-start;">
+          <div style="margin-right:5px; flex:0 1 auto;">Level {{level}}</div>
+          <div style="flex:0 1 auto;">
+            {{#each slot}}
+              {{!-- TODO: change --}}
+              <input
+                type="checkbox"
+                data-step="spell-recovery"
+                data-level={{level}}
+                data-index={{@index}}
+                {{disabled (or disabled alwaysDisabled)}}
+                {{checked checked}}
+              >
+            {{/each}}
+          </div>
+        </div>
+      </div>
+    {{/each}}
+    <p style="font-style: italic;">
+      {{!-- TODO --}}
+      {{localize "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.SpellSlotsLeft" spellSlotsLeft=slotsLeft}}
+    </p>
+  {{else}}
+    <p class="notes">{{localize "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.FullSpells"}}</p>
+  {{/if}}
+</div>

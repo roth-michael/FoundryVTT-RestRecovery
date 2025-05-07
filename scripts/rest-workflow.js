@@ -2,11 +2,8 @@ import CONSTANTS from "./constants.js";
 import * as lib from "./lib/lib.js";
 import { custom_warning, getSetting } from "./lib/lib.js";
 import plugins from "./plugins.js";
-import FoodWater from "./formapplications/rest-steps/FoodWater.svelte";
-import SpellRecovery from "./formapplications/rest-steps/SpellRecovery.svelte";
-import LongRestDialog from "./formapplications/long-rest/long-rest.js";
-import ShortRestDialog from "./formapplications/short-rest/short-rest.js";
-import RestPromptDialog from "./formapplications/prompt-rest/prompt-rest.js";
+import { PromptRestApplication } from "./apps/promptRest.js";
+import { RestApplication } from "./apps/rest.js";
 
 const rests = new Map();
 
@@ -227,7 +224,7 @@ export default class RestWorkflow {
           if (!bestUser) bestUser = game.users.activeGM;
           if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
         }
-        RestPromptDialog.show({actorList: trueActors});
+        new PromptRestApplication({actorList: trueActors}).render(true);
         return false;
       }
 
@@ -253,8 +250,12 @@ export default class RestWorkflow {
   
         const hd0 = actor.system.attributes.hd.value;
         const hp0 = actor.system.attributes.hp.value;
+
+        const shortRestPromise = new Promise((resolve, reject) => {
+          new RestApplication({ ...config, actor, workflow, resolve, reject}).render(true)
+        });
   
-        ShortRestDialog.show({ ...config, actor }).then(async (newDay) => {
+        shortRestPromise.then(async (newDay) => {
   
           config.newDay = newDay;
 
@@ -262,15 +263,15 @@ export default class RestWorkflow {
   
             const halfWaterSaveDC = lib.getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
   
-            workflow.exhaustionRoll = await actor.rollAbilitySave("con", {
-              targetValue: halfWaterSaveDC,
-              fastForward: false
-            });
+            [workflow.exhaustionRoll] = await actor.rollSavingThrow({
+              ability: "con",
+              target: halfWaterSaveDC
+            }) ?? [];
             if (!workflow.exhaustionRoll) {
-              workflow.exhaustionRoll = await actor.rollAbilitySave("con", {
-                targetValue: halfWaterSaveDC,
-                fastForward: true
-              });
+              [workflow.exhaustionRoll] = await actor.rollSavingThrow({
+                ability: "con",
+                target: halfWaterSaveDC
+              }, { configure: false}) ?? [];
             }
           }
   
@@ -279,7 +280,7 @@ export default class RestWorkflow {
   
           return actor._rest(config, {deltas: {hitDice, hitPoints}});
   
-        });
+        }, () => {});
       });
       return false;
 
@@ -320,7 +321,7 @@ export default class RestWorkflow {
           if (!bestUser) bestUser = game.users.activeGM;
           if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
         }
-        RestPromptDialog.show({actorList: trueActors});
+        new PromptRestApplication({actorList: trueActors}).render(true);
         return false;
       }
 
@@ -343,29 +344,32 @@ export default class RestWorkflow {
       if (!config.dialog) return true;
 
       workflow.then((workflow) => {
-        LongRestDialog.show({ ...config, actor }).then(async (newDay) => {
+        const longRestPromise = new Promise((resolve, reject) => {
+          new RestApplication({ ...config, actor, workflow, resolve, reject}).render(true)
+        });
+        longRestPromise.then(async (newDay) => {
   
           config.newDay = newDay;
   
           if (workflow._shouldRollForFoodWaterExhaustion()) {
   
             const halfWaterSaveDC = lib.getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
-  
-            workflow.exhaustionRoll = await actor.rollAbilitySave("con", {
-              targetValue: halfWaterSaveDC,
-              fastForward: false
-            });
+
+            [workflow.exhaustionRoll] = await actor.rollSavingThrow({
+              ability: "con",
+              target: halfWaterSaveDC
+            }) ?? [];
             if (!workflow.exhaustionRoll) {
-              workflow.exhaustionRoll = await actor.rollAbilitySave("con", {
-                targetValue: halfWaterSaveDC,
-                fastForward: true
-              });
+              [workflow.exhaustionRoll] = await actor.rollSavingThrow({
+                ability: "con",
+                target: halfWaterSaveDC
+              }, { configure: false}) ?? [];
             }
           }
   
           return actor._rest(config);
   
-        });
+        }, () => {});
       });
 
       return false;
@@ -445,24 +449,25 @@ export default class RestWorkflow {
     this.steps = [
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.Rest.Title",
+        partial: this.longRest ? "long-rest-default" : "short-rest-default",
         required: true,
       },
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.FoodWater.Title",
+        partial: "food-water",
         required: lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)
           && (this.foodWaterRequirement.actorRequiredFood > 0 || this.foodWaterRequirement.actorRequiredWater > 0)
-          && (lib.getSetting(CONSTANTS.SETTINGS.FOODWATER_PROMPT_NEWDAY) ? this.config.newDay : (this.longRest || this.restVariant === "gritty")),
-        component: FoodWater
+          && (lib.getSetting(CONSTANTS.SETTINGS.FOODWATER_PROMPT_NEWDAY) ? this.config.newDay : (this.longRest || this.restVariant === "gritty"))
       },
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.SpellRecovery.Title",
+        partial: "spell-recovery",
         required: hasSpells && this.spellData.missingSlots
           && (
             (!this.longRest && this.spellData.feature)
             ||
             (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY))
-          ),
-        component: SpellRecovery
+          )
       }
     ].filter(step => step.required);
   }
@@ -530,6 +535,16 @@ export default class RestWorkflow {
     }, {});
   }
 
+  _refreshSlotData() {
+    const pointsLeft = this.spellData.pointsTotal - this.spellData.pointsSpent;
+    for (let level of Object.keys(this.spellData.slots)) {
+      for (let i = 0; i < this.spellData.slots[level].length; i++) {
+        const slot = this.spellData.slots[level][i];
+        this.spellData.slots[level][i].disabled = slot.alwaysDisabled || (Number(level) > pointsLeft && !slot.checked);
+      }
+    }
+  }
+
   async fetchSpellData() {
 
     this.spellData = {
@@ -545,7 +560,7 @@ export default class RestWorkflow {
       if ((!slot.max && !slot.override) || level === "pact") {
         continue;
       }
-      let levelNum = Number(level.substr(5))
+      let levelNum = Number(level.slice(5))
       if (!this.longRest && Number(levelNum) > 5) {
         break;
       }
@@ -569,6 +584,7 @@ export default class RestWorkflow {
         this.actor.getRollData(),
         false
       ))?.total + (this.actor.getFlag("dnd5e", "longRestSpellPointsBonus") ?? 0);
+      this._refreshSlotData();
       return;
     }
 
@@ -590,18 +606,20 @@ export default class RestWorkflow {
     const druidFeatureUse = druidLevel && druidFeature && this.patchSpellFeature(druidFeature, "druid");
 
     if (wizardFeature && (wizardLevel > druidLevel || (druidLevel > wizardLevel && !druidFeatureUse))) {
-      this.spellData.has_feature_use = wizardFeatureUse;
+      this.spellData.hasFeatureUse = wizardFeatureUse;
       this.spellData.feature = wizardFeature;
       this.spellData.pointsTotal = wizardFeature
         ? (await lib.evaluateFormula(wizardFeature.system.activities.getByType("utility")[0]?.roll.formula || "ceil(@classes.wizard.levels/2)", this.actor.getRollData()))?.total
         : 0;
+      this._refreshSlotData();
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.WIZARD_CLASS, true);
     } else if (druidFeature && (druidLevel > wizardLevel || (wizardLevel > druidLevel && !wizardFeatureUse))) {
-      this.spellData.has_feature_use = druidFeatureUse;
+      this.spellData.hasFeatureUse = druidFeatureUse;
       this.spellData.feature = druidFeature;
       this.spellData.pointsTotal = druidFeature
         ? (await lib.evaluateFormula(druidFeature.system.activities.getByType("utility")[0]?.roll.formula || "ceil(@classes.druid.levels/2)", this.actor.getRollData()))?.total
         : 0;
+      this._refreshSlotData();
       this.spellData.className = lib.getSetting(CONSTANTS.SETTINGS.DRUID_CLASS, true);
     }
 
@@ -844,15 +862,10 @@ export default class RestWorkflow {
 
   }
 
-  spendSpellPoint(level, add) {
+  spendSpellPoint(level, index, add) {
     this.spellData.pointsSpent += Number(level) * (add ? 1 : -1);
-    const pointsLeft = this.spellData.pointsTotal - this.spellData.pointsSpent;
-    for (let level of Object.keys(this.spellData.slots)) {
-      for (let i = 0; i < this.spellData.slots[level].length; i++) {
-        const slot = this.spellData.slots[level][i];
-        this.spellData.slots[level][i].disabled = slot.alwaysDisabled || (Number(level) > pointsLeft && !slot.checked);
-      }
-    }
+    this.spellData.slots[level][index].checked = add;
+    this._refreshSlotData();
   }
 
   async patchRestResults(results) {
