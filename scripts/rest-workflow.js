@@ -445,7 +445,7 @@ export default class RestWorkflow {
   }
 
   determineSteps() {
-    const hasSpells = Object.values(this.actor.classes).some(cls => !['none', 'pact'].includes(cls.system.spellcasting.progression));
+    const hasSpells = Object.values({...this.actor.classes, ...this.actor.subclasses}).some(cls => !['none', 'pact'].includes(cls.system.spellcasting.progression));
     this.steps = [
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.Rest.Title",

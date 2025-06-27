@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 4.0.1
+- Fixed bug where subclasses which granted spellcasting progression didn't allow for "arcane recovery"-style slot recovery
+- Changed style of Prompt Rest button to look nice next to the Item Piles trade request button
+
 ## Version 4.0.0
 - This version is _only_ compatible with V13+ (and therefore system version 5.0.0+)
 - All UI has been moved from AppV1 Svelte to AppV2 Handlebars. This was a large undertaking, so there may be some issues, which I will endeavor to fix quickly
