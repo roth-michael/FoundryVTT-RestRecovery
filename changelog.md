@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 4.0.2
+- Fixed bug with adding the rest button by the Item Piles trade request button
+
 ## Version 4.0.1
 - Fixed bug where subclasses which granted spellcasting progression didn't allow for "arcane recovery"-style slot recovery
 - Changed style of Prompt Rest button to look nice next to the Item Piles trade request button
