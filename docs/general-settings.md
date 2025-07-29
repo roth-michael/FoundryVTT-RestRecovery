@@ -1,3 +1,6 @@
+## Use Request chat card for prompted rests
+If enabled, uses the system's "Request" chat card, rather than socketing rest requests to connected players.
+
 ## Prevent User Rest
 This prevents users from initiating rests themselves, and must be prompted to rest by the GM.
 

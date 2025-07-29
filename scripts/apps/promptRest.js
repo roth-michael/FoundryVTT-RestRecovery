@@ -1,4 +1,5 @@
 import CONSTANTS from "../constants";
+import { getRestFlavor } from "../helpers";
 import { getSetting, getTimeChanges, localize, setSetting, settingsDialog } from "../lib/lib";
 import { gameSettings } from "../settings";
 import SocketHandler from "../sockets";
@@ -17,7 +18,7 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     }
   }
 
-  static DEFAULT_OPTIONS = foundry.utils.mergeObject(super.DEFAULT_OPTIONS, {
+  static DEFAULT_OPTIONS = {
     tag: "form",
     classes: ["rest-recovery-request-app", "standard-form"],
     window: {
@@ -35,12 +36,13 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
       longRest: PromptRestApplication.#onLongRest,
       showSettings: PromptRestApplication.#onShowSettings
     }
-  }, { inplace: false })
+  };
 
   constructor(options = {}) {
     super(options);
     const maybeSavedConfig = options.actorList?.flatMap(curr => curr[0]) ?? foundry.utils.getProperty(game.user, CONSTANTS.FLAGS.PROMPT_REST_CONFIG);
     const savedConfig = maybeSavedConfig ?? Array.from(getSetting(CONSTANTS.SETTINGS.PROMPT_REST_CONFIG));
+    this.groupActor = options.groupActor;
     this.configuration = new Set(savedConfig.filter(entry => {
       return game.users.get(entry.split("-")[0]) && game.actors.get(entry.split("-")[1]);
     }));
@@ -151,17 +153,17 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
   }
 
   static #onShortRest() {
-    this.doRest("shortRest");
+    this.doRest("short");
   }
   
   static #onLongRest() {
-    this.doRest("longRest");
+    this.doRest("long");
   }
 
   async doRest(restType) {
     await gameSettings.setActiveProfile(this.activeProfile);
     await this.updateRestConfig(false);
-    const timeChanges = getTimeChanges(restType === "longRest");
+    const timeChanges = getTimeChanges(restType === "long");
 
     if (getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING)) {
       await game.time.advance(timeChanges.restTime);
@@ -173,13 +175,39 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
 
     const trueNewDay = this.simpleCalendarActive ? timeChanges.isNewDay : this.forceNewDay;
 
+    const useChatCard = getSetting(CONSTANTS.SETTINGS.USE_CHAT_CARD);
     if (this.configuration.size) {
-      SocketHandler.emit(SocketHandler.PROMPT_REST, {
-        userActors: [...this.configuration],
-        restType,
-        newDay: trueNewDay,
-        promptNewDay: false
-      });
+      if (useChatCard) {
+        const restConfig = CONFIG.DND5E.restTypes[restType];
+        const speaker = this.groupActor
+          ? ChatMessage.getSpeaker({ actor: this.groupActor, alias: this.groupActor.name })
+          : ChatMessage.getSpeaker({ alias: game.user.name });
+        const messageData = {
+          flavor: getRestFlavor(timeChanges.restTime / 60, trueNewDay, restType === "long"),
+          speaker,
+          system: {
+            button: {
+              icon: restConfig?.icon ?? "fa-solid fa-bed",
+              label: restConfig?.label ?? "Rest"
+            },
+            data: {
+              newDay: trueNewDay,
+              type: restType
+            },
+            handler: "rest",
+            targets: Array.from(this.configuration).map(i => ({actor: game.actors.get(i.split("-")[1]) })).filter(i => i.actor),
+          },
+          type: "request"
+        };
+        await ChatMessage.create(messageData);
+      } else {
+        SocketHandler.emit(SocketHandler.PROMPT_REST, {
+          userActors: [...this.configuration],
+          restType: `${restType}Rest`,
+          newDay: trueNewDay,
+          promptNewDay: false
+        });
+      }
     }
 
     this.close();

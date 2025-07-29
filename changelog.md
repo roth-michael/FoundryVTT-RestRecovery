@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 5.0.0
+- Requires system version 5.1.0 at minimum
+- Added a setting to use the system's new "Request" chat cards for prompted rests, rather than socketing a rest call directly to each connected client
+- Removed the "Automate Exhaustion" setting, as the system now handles automatic exhaustion recovery on rest, as well as disadvantage with legacy exhaustion rules (except for Attack disadvantage, which Rest Recovery will still handle)
+- In order to not clobber somebody's custom exhaustion settings, toggling One D&D Exhaustion now requires a restart
+
 ## Version 4.0.3
 - Ensure "automate exhaustion" setting is required for adding disadvantage to rolls
 

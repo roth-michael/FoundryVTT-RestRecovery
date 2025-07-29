@@ -510,10 +510,6 @@
         }
       },
       "LongRest": {
-        "AutomateExhaustion": {
-          "Title": "Habilitar Automação de Exaustão",
-          "Hint": "Isso faz com que a Exaustão seja subtraída por 1 a cada descanso longo."
-        },
         "ExhaustionIntegration": {
           "Title": "Integração do Módulo de Exaustão",
           "Hint": "Esta configuração permite que você use outros módulos para aplicar seus respectivos efeitos ativos de Exaustão nos personagens."

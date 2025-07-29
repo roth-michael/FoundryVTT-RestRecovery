@@ -33,6 +33,7 @@ const CONSTANTS = {
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
     HIT_DIE_ROLL_FORMULA: "hit-die-roll-formula",
     HD_EFFECTIVE_MULTIPLIER: "hd-effective-multiplier",
+    USE_CHAT_CARD: "use-chat-card",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -55,7 +56,6 @@ const CONSTANTS = {
     /*-------------------------------------------*
      *             Long Rest Settings            *
      *-------------------------------------------*/
-    AUTOMATE_EXHAUSTION: "automate-exhaustion",
     EXHAUSTION_INTEGRATION: "exhaustion-integration",
     ONE_DND_EXHAUSTION: "one-dnd-exhaustion",
     PREVENT_LONG_REST_EXHAUSTION_RECOVERY: "long-rest-prevent-exhaustion-recovery",
@@ -237,6 +237,15 @@ CONSTANTS.DEFAULT_SETTINGS = {
   /*-------------------------------------------*
    *           General Rest Settings           *
    *-------------------------------------------*/
+  [CONSTANTS.SETTINGS.USE_CHAT_CARD]: {
+    name: "REST-RECOVERY.Settings.General.UseChatCard.Title",
+    hint: "REST-RECOVERY.Settings.General.UseChatCard.Hint",
+    scope: "world",
+    group: "general",
+    config: false,
+    default: false,
+    type: Boolean
+  },
   [CONSTANTS.SETTINGS.PREVENT_USER_REST]: {
     name: "REST-RECOVERY.Settings.General.PreventUserRest.Title",
     hint: "REST-RECOVERY.Settings.General.PreventUserRest.Hint",
@@ -518,25 +527,11 @@ CONSTANTS.DEFAULT_SETTINGS = {
   /*-------------------------------------------*
    *             Long Rest Settings            *
    *-------------------------------------------*/
-  [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION]: {
-    name: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Title",
-    hint: "REST-RECOVERY.Settings.LongRest.AutomateExhaustion.Hint",
-    scope: "world",
-    group: "longRest",
-    customSettingsDialog: true,
-    config: false,
-    default: false,
-    type: Boolean
-  },
   [CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Title",
     hint: "REST-RECOVERY.Settings.LongRest.OneDnDExhaustion.Hint",
     scope: "world",
     group: "longRest",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
-    validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value || game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
-    },
     customSettingsDialog: true,
     config: false,
     default: false,
@@ -547,10 +542,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.LongRest.PreventLongRestExhaustionRecovery.Hint",
     scope: "world",
     group: "longRest",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION],
-    validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value;
-    },
     customSettingsDialog: true,
     config: false,
     default: false,
@@ -871,10 +862,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
   [CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION]: {
     name: "REST-RECOVERY.Settings.LongRest.AutomateArmorExhaustion.Title",
     hint: "REST-RECOVERY.Settings.LongRest.AutomateArmorExhaustion.Hint",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION],
+    dependsOn: [CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-          || !settings.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
+      return !settings.get(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION).value;
     },
     scope: "world",
     group: "longRest",
@@ -1266,10 +1256,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.FoodAndWater.AutomateFoodWaterExhaustion.Hint",
     scope: "world",
     group: "foodAndWater",
-    dependsOn: [CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION, CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER],
     validate: (settings) => {
-      return !settings.get(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION).value
-        || !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
+      return !settings.get(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER).value;
     },
     config: false,
     default: false,

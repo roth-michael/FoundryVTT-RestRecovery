@@ -118,7 +118,8 @@
       "Flavor": {
         "ShortRestNormal": "Short Rest ({duration} {units})",
         "LongRestNormal": "Long Rest ({duration} {units})",
-        "ShortRestNewday": "Short Rest (New Day)"
+        "ShortRestNewday": "Short Rest ({duration} {units}, New Day)",
+        "LongRestNewday": "Long Rest ({duration} {units}, New Day)"
       },
       "AlternateShortRestResult": "{name} takes a short rest and recovers {health} Hit Points.",
       "TidyChanged": "Rest Recovery changed Tidy5e Sheet's exhaustion display settings:",
@@ -372,6 +373,10 @@
             "MultiplyTotal": "Multiply total result"
           }
         },
+        "UseChatCard": {
+          "Title": "Use Request chat card for prompted rests",
+          "Hint": "If enabled, uses the system's \"Request\" chat card, rather than socketing rest requests to connected players."
+        },
         "PreventUserRest": {
           "Title": "Prevent User Rest",
           "Hint": "This prevents users from initiating rests themselves, and must be prompted to rest by the GM."
@@ -511,17 +516,13 @@
         }
       },
       "LongRest": {
-        "AutomateExhaustion": {
-          "Title": "Enable exhaustion automation",
-          "Hint": "This makes it so that exhaustion is subtracted by 1 every long rest."
-        },
         "ExhaustionIntegration": {
           "Title": "Exhaustion Module Integration",
           "Hint": "This setting allows you to use other modules in order to apply their respective exhaustion active effects on characters."
         },
         "OneDnDExhaustion": {
           "Title": "Enable One D&D Exhaustion",
-          "Hint": "In the new One D&D, exhaustion instead stacks to 10 (upon which you still die), and applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Simply change the exhaustion level on the characters, and the penalty is automatically applied."
+          "Hint": "Requires Restart! In the new One D&D, exhaustion instead stacks to 10 (upon which you still die), and applies a -1 penalty to Ability Checks, Attack Rolls, Saving Throws, and the character's Spell Save DC per exhaustion level. Simply change the exhaustion level on the characters, and the penalty is automatically applied."
         },
         "OneDnDExhaustionSheetOverride": {
           "Title": "Enable One D&D Exhaustion Sheet Override",

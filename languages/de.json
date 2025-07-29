@@ -406,10 +406,6 @@
         }
       },
       "LongRest": {
-        "AutomateExhaustion": {
-          "Title": "Erschöpfung automatisieren",
-          "Hint": "Erschöpfung wird nach einer langen Rast automatisch um 1 gesenkt."
-        },
         "ExhaustionIntegration": {
           "Title": "Erschöpfung-Modulintegration",
           "Hint": "Erlaubt die Nutzung anderer Module für deren jeweilige Erschöpfungseffekte auf Charakteren."

@@ -4,6 +4,7 @@ import { custom_warning, getSetting } from "./lib/lib.js";
 import plugins from "./plugins.js";
 import { PromptRestApplication } from "./apps/promptRest.js";
 import { RestApplication } from "./apps/rest.js";
+import { getRestFlavor } from "./helpers.js";
 
 const rests = new Map();
 
@@ -16,7 +17,6 @@ export default class RestWorkflow {
     this.longRest = longRest;
     this.finished = false;
     this.preRestRegainHitDice = false;
-    this.newExhaustionValue = false;
     this.restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT);
 
     this.hitDiceMessage = "";
@@ -70,9 +70,7 @@ export default class RestWorkflow {
     });
 
     Hooks.on("preUpdateActor", (actor, data) => {
-      if (!lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) return;
-      const rest = RestWorkflow.get(actor);
-      const exhaustion = rest?.newExhaustionValue ?? foundry.utils.getProperty(data, "system.attributes.exhaustion");
+      const exhaustion = foundry.utils.getProperty(data, "system.attributes.exhaustion");
       if (exhaustion === undefined) return;
       return plugins.handleExhaustion(actor, data);
     });
@@ -224,7 +222,7 @@ export default class RestWorkflow {
           if (!bestUser) bestUser = game.users.activeGM;
           if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
         }
-        new PromptRestApplication({actorList: trueActors}).render(true);
+        new PromptRestApplication({actorList: trueActors, groupActor: actor}).render(true);
         return false;
       }
 
@@ -233,7 +231,7 @@ export default class RestWorkflow {
         return false;
       }
 
-      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !config.restPrompted) {
+      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !(config.restPrompted || config.request)) {
         custom_warning("REST-RECOVERY.Warnings.NotPromptedShortRest");
         return false;
       }
@@ -321,7 +319,7 @@ export default class RestWorkflow {
           if (!bestUser) bestUser = game.users.activeGM;
           if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
         }
-        new PromptRestApplication({actorList: trueActors}).render(true);
+        new PromptRestApplication({actorList: trueActors, groupActor: actor}).render(true);
         return false;
       }
 
@@ -330,7 +328,7 @@ export default class RestWorkflow {
         return false;
       }
 
-      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !config.restPrompted) {
+      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !(config.restPrompted || config.request)) {
         custom_warning("REST-RECOVERY.Warnings.NotPromptedLongRest");
         return false;
       }
@@ -412,7 +410,10 @@ export default class RestWorkflow {
           if (config.advanceTime && (config.duration > 0) && game.user.isGM) await game.time.advance(60 * config.duration);
           if (config.chat) {
             const result = await actor._displayRestResultMessage(config, results);
-            await workflow._displayRestResultMessage(result);
+            const chatMessage = await workflow._displayRestResultMessage(result);
+            if (config.request && chatMessage instanceof ChatMessage) {
+              await chatMessage.setFlag("dnd5e", "requestResult", { actorId: actor.id, requestId: config.request.id })
+            }
           };
           Hooks.callAll("dnd5e.restCompleted", actor, results, config);
         })
@@ -889,10 +890,6 @@ export default class RestWorkflow {
     });
     this._handleFoodAndWaterItems(results);
 
-    if(foundry.utils.hasProperty(results.updateData, "system.attributes.exhaustion")) {
-      this.newExhaustionValue = results.updateData['system.attributes.exhaustion'];
-    }
-
   }
 
   async regainHitDice() {
@@ -1097,7 +1094,7 @@ export default class RestWorkflow {
     let actorExhaustion = actorInitialExhaustion;
     let exhaustionGain = false;
     let exhaustionSave = false;
-    let exhaustionToRemove = 1;
+    let exhaustionDelta = CONFIG.DND5E.restTypes[results.type]?.exhaustionDelta ?? 0;
 
     if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) && this.config.dialog && shouldDoFoodWater) {
 
@@ -1160,7 +1157,7 @@ export default class RestWorkflow {
         if (automateFoodwaterExhaustion) {
 
           if (actorFoodSatedValue <= (actorRequiredFood / 2)) {
-            exhaustionToRemove = 0;
+            exhaustionDelta = 0;
             actorDaysWithoutFood += actorFoodSatedValue === 0 ? 1 : 0.5;
           } else {
             actorDaysWithoutFood = 0;
@@ -1220,11 +1217,11 @@ export default class RestWorkflow {
           if (actorWaterSatedValue < (actorRequiredWater / 2)) {
             actorExhaustion += actorExhaustion > 0 ? 2 : 1;
             exhaustionGain = true;
-            exhaustionToRemove = 0;
+            exhaustionDelta = 0;
           } else {
             const halfWaterSaveDC = lib.getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
             if (halfWaterSaveDC) {
-              exhaustionToRemove = 0;
+              exhaustionDelta = 0;
               if (this.exhaustionRoll.total < halfWaterSaveDC) {
                 actorExhaustion += actorExhaustion > 0 ? 2 : 1;
                 exhaustionGain = true;
@@ -1241,22 +1238,22 @@ export default class RestWorkflow {
 
     }
 
-    if ((this.longRest || (shouldDoFoodWater && automateFoodwaterExhaustion)) &&lib.getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)) {
+    if ((this.longRest || (shouldDoFoodWater && automateFoodwaterExhaustion))) {
 
       if (lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION) && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_EXHAUSTION) && actorExhaustion > 0) {
         const armor = this.actor.items.find(item => item.type === "equipment" && ["heavy", "medium"].indexOf(item.system?.type?.value) > -1 && item.system.equipped);
         if (armor && !this.healthData.removeNonLightArmor) {
-          exhaustionToRemove = 0;
+          exhaustionDelta = 0;
           this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.ExhaustionArmor"));
         }
       }
 
       if (lib.getSetting(CONSTANTS.SETTINGS.PREVENT_LONG_REST_EXHAUSTION_RECOVERY)) {
-        exhaustionToRemove = 0;
+        exhaustionDelta = 0;
       }
 
       if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_EXHAUSTION_RECOVERY) && !this.config.ignoreFlags) {
-        exhaustionToRemove = 0;
+        exhaustionDelta = 0;
       }
 
       if (exhaustionGain) {
@@ -1267,9 +1264,9 @@ export default class RestWorkflow {
         this.foodAndWaterMessage.push(game.i18n.localize("REST-RECOVERY.Chat.NoExhaustion"));
       }
 
-      const maxExhaustion = lib.getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) ? 10 : 6;
+      const maxExhaustion = CONFIG.DND5E.conditionTypes.exhaustion.levels ?? 6;
 
-      results.updateData['system.attributes.exhaustion'] = Math.max(0, Math.min(actorExhaustion - exhaustionToRemove, maxExhaustion));
+      results.updateData['system.attributes.exhaustion'] = Math.clamp(actorExhaustion + exhaustionDelta, 0, maxExhaustion);
 
       if (results.updateData['system.attributes.exhaustion'] === maxExhaustion) {
         this.foodAndWaterMessage.push(game.i18n.format("REST-RECOVERY.Chat.ExhaustionDeath", {
@@ -1293,24 +1290,7 @@ export default class RestWorkflow {
     if (newDeltas.actor?.length) {
       newDeltas.actor = newDeltas.actor.filter(d => !d.keyPath?.startsWith(`flags.${CONSTANTS.MODULE_NAME}`));
     }
-    let flavor = chatMessage.flavor;
-    if (!this.config.newDay) {
-      let duration;
-      let units;
-      if (this.config.duration % 1440 === 0) {
-        duration = this.config.duration / 1440;
-        units = duration > 1 ? 'Days' : 'Day';
-      } else if (this.config.duration % 60 === 0) {
-        duration = this.config.duration / 60;
-        units = duration > 1 ? 'Hours' : 'Hour';
-      } else {
-        duration = this.config.duration;
-        units = duration > 1 ? 'Minutes' : 'Minute';
-      }
-      flavor = game.i18n.format(`REST-RECOVERY.Chat.Flavor.${this.longRest ? 'Long' : 'Short'}RestNormal`, {duration: duration, units: units});
-    } else if (!this.longRest) {
-      flavor = game.i18n.localize("REST-RECOVERY.Chat.Flavor.ShortRestNewday");
-    }
+    const flavor = getRestFlavor(this.config.duration, this.config.newDay, this.longRest);
 
     let extra = '';
     if (this.foodAndWaterMessage.length) {
@@ -1342,7 +1322,7 @@ export default class RestWorkflow {
     }
 
     await chatMessage.update({
-      flavor: flavor,
+      flavor,
       content: newChatMessageContent,
       system: {
         deltas: newDeltas

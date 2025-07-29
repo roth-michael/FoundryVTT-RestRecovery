@@ -107,8 +107,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.consumableItems = [];
     this.actorConsumableItems = [];
     this.selectedItem = "";
-    this.enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION)
-      && getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
+    this.enableAutomatedExhaustion = getSetting(CONSTANTS.SETTINGS.AUTOMATE_FOODWATER_EXHAUSTION);
     this.actorDaysWithoutFood = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
     this.actorExhaustionThreshold = new Roll(Roll.replaceFormulaData(getSetting(CONSTANTS.SETTINGS.NO_FOOD_DURATION_MODIFIER), this.actor.getRollData())).evaluateSync({strict: false})?.total ?? 4;
     this.halfRequiredWater = this.workflow.foodWaterRequirement.actorRequiredWater / 2;

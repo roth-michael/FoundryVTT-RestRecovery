@@ -313,10 +313,6 @@
         }
       },
       "LongRest": {
-        "AutomateExhaustion": {
-          "Title": "Activer l'automatisation de l'épuisement",
-          "Hint": "Cela fait en sorte que l'épuisement est réduit de 1 à chaque repos long."
-        },
         "ExhaustionIntegration": {
           "Title": "Gestion de l'épuisement pas un module tiers",
           "Hint": "Ce paramètre permet de sélectionner un module tiers afin d'appliquer automatiquement les niveaux d'épuisement (ainsi que leurs effets actifs) sur les personnages."
