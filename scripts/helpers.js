@@ -93,7 +93,8 @@ export async function configureExhaustionHooks() {
   let ac5eShouldControl = game.modules.get("automated-conditions-5e")?.active && game.settings.get("automated-conditions-5e", "autoExhaustion");
   let alternativeExhaustionActive = game.modules.get(CONSTANTS.MODULES.ALTERNATIVE_EXHAUSTION)?.active;
   let modernRules = game.settings.get("dnd5e", "rulesVersion") === "modern";
-  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive || modernRules) {
+  let disabledAutomation = !getSetting(CONSTANTS.SETTINGS.AUTOMATE_EXHAUSTION);
+  if (getSetting(CONSTANTS.SETTINGS.ONE_DND_EXHAUSTION) || ac5eShouldControl || alternativeExhaustionActive || modernRules || disabledAutomation) {
     if (Hooks.events["dnd5e.preRollAbilityCheckV2"]) Hooks.off("dnd5e.preRollAbilityCheckV2", _preAbilityCheck);
     if (Hooks.events["dnd5e.preRollSavingThrowV2"]) Hooks.off("dnd5e.preRollSavingThrowV2", _preAbilitySave);
     if (Hooks.events["dnd5e.preRollDeathSaveV2"]) Hooks.off("dnd5e.preRollDeathSaveV2", _preDeathSave);

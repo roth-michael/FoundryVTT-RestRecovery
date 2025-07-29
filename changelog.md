@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 4.0.3
+- Ensure "automate exhaustion" setting is required for adding disadvantage to rolls
+
 ## Version 4.0.2
 - Fixed bug with adding the rest button by the Item Piles trade request button
 
