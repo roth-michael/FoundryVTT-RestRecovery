@@ -242,7 +242,7 @@ CONSTANTS.DEFAULT_SETTINGS = {
     scope: "world",
     group: "general",
     config: false,
-    default: false,
+    default: true,
     type: Boolean
   },
   [CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE]: {
