@@ -167,8 +167,8 @@
         "NewDayTitle": "New Day",
         "NoNewDayTitle": "Not A New Day",
         "NewDayHint": "This causes characters who finish the rest to recover abilities that recharge on a \"per day\" basis.",
-        "NewDaySimpleCalendarHint": "Based on the type selected below, characters who finish the rest to recover abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
-        "NoNewDaySimpleCalendarHint": "Neither long nor a short rest would result in a new day, so characters who finish either will <strong>not</strong> recovery abilities that recharge on a \"per day\" basis. This is driven by the <strong>Simple Calendar</strong> module.",
+        "NewDayCalendarHint": "Based on the type selected below, characters who finish the rest to recover abilities that recharge on a \"per day\" basis.",
+        "NoNewDayCalendarHint": "Neither long nor a short rest would result in a new day, so characters who finish either will <strong>not</strong> recovery abilities that recharge on a \"per day\" basis.",
         "NewDay": "(new day)",
         "Submit": "Submit",
         "PlayerListShort": "Rest",
@@ -373,9 +373,9 @@
             "MultiplyTotal": "Multiply total result"
           }
         },
-        "UseChatCard": {
-          "Title": "Use Request chat card for prompted rests",
-          "Hint": "If enabled, uses the system's \"Request\" chat card, rather than socketing rest requests to connected players."
+        "AutoStartRest": {
+          "Title": "Automatically start rest when prompted",
+          "Hint": "If enabled, a GM-prompted rest will automatically start a rest if a user has one of the resting actors selected as their character."
         },
         "PreventUserRest": {
           "Title": "Prevent User Rest",
@@ -389,8 +389,8 @@
           "Title": "Enable automatic time passage on prompt rest",
           "Hint": "This enables time passing whenever players and prompted to rest by a GM. This may cause time-based active effects on characters to expire."
         },
-        "EnableSimpleCalendarIntegration": {
-          "Title": "Enable Simple Calendar integration",
+        "EnableCalendarIntegration": {
+          "Title": "Enable calendar integration",
           "Hint": "Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar."
         },
         "EnableSimpleCalendarNotes": {

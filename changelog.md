@@ -2,7 +2,11 @@
 
 ## Version 5.0.0
 - Requires system version 5.1.0 at minimum
-- Added a setting to use the system's new "Request" chat cards for prompted rests, rather than socketing a rest call directly to each connected client
+- Prompted rests now make use of the system's new "Request" chat cards, rather than socketing a rest call directly to each connected client
+- There is now a setting (on by default, to maintain existing behavior) to auto-start a rest for a user's selected "character" actor when such a chat card is created which contains that actor
+- The rest prompt menu no longer allows you to specify a user for an actor; instead, if the above setting is enabled, the active user with an actor selected as their character will be prompted, otherwise if there are any active non-GM users who are owners of the actor, nobody will be prompted (whoever wishes to perform the rest can do so via the chat card), otherwise the GM is prompted
+- Adjusted the "Enable Simple Calendar integration" setting to be "Enable calendar integration" instead, using the Core calendar implementation to determine whether it is a new day (in theory this should work with any calendar modules)
+- Removed the "Prevent User Rest" setting, as the system now has a "Allow Individual Rests" setting
 - Removed the "Automate Exhaustion" setting, as the system now handles automatic exhaustion recovery on rest, as well as disadvantage with legacy exhaustion rules (except for Attack disadvantage, which Rest Recovery will still handle)
 - In order to not clobber somebody's custom exhaustion settings, toggling One D&D Exhaustion now requires a restart
 

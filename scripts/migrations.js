@@ -39,18 +39,30 @@ const migrations = {
 
   },
 
-  "1.4.4": async () => {
+  // "1.4.4": async () => {
 
-    if(game.modules.get("simple-calendar")?.active){
-      await setSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION, true);
-    }
+  //   if(game.modules.get("simple-calendar")?.active){
+  //     await setSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION, true);
+  //   }
 
-  },
+  // },
 
   "1.11.0": async () => {
     let oldSetting = findOldSettingValue("short-rest-recovery-hd");
     if (oldSetting) {
       await setSetting(CONSTANTS.SETTINGS.HD_EFFECTIVE_MULTIPLIER, oldSetting);
+    }
+  },
+
+  "5.0.0": async () => {
+    const existingConfig = foundry.utils.getProperty(game.user, CONSTANTS.FLAGS.PROMPT_REST_CONFIG);
+    if (existingConfig) {
+      const newConfig = Array.from(new Set(existingConfig.map(i => i.split("-")[1]).filter(i => i)))
+      await game.user.update({[CONSTANTS.FLAGS.PROMPT_REST_CONFIG]: newConfig});
+    }
+    let oldSimpleCalendarSetting = findOldSettingValue("enable-simple-calendar-integration");
+    if (oldSimpleCalendarSetting) {
+      await setSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION, oldSimpleCalendarSetting);
     }
   }
 

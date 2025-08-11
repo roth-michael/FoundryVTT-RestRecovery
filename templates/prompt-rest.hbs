@@ -4,20 +4,20 @@
     <div style="text-align: center;">
       <i class="fas fa-plus rest-recovery-clickable-link" data-action="addPlayer" style="font-size:1rem;"></i>
     </div>
-    {{#each configuration as |comboId|}}
-      <select id="config-actor-{{@index}}" value="{{comboId}}">
+    {{#each configuration as |actorId|}}
+      <select id="config-actor-{{@index}}" value="{{actorId}}">
         {{#each @root.validActors as |currActor|}}
-          {{#with (lookup currActor 0) as |currCombo|}}
+          {{#with (lookup currActor 0) as |currId|}}
           {{#with (lookup currActor 1) as |currName|}}
-          {{#if (or (eq currCombo comboId) (not (rest-recovery-includes @root.configuration currCombo)))}}
-            <option value="{{currCombo}}"{{#if (eq currCombo comboId)}} selected{{/if}}>{{currName}}</option>
+          {{#if (or (eq currId actorId) (not (rest-recovery-includes @root.configuration currId)))}}
+            <option value="{{currId}}"{{#if (eq currId actorId)}} selected{{/if}}>{{currName}}</option>
           {{/if}}
           {{/with}}
           {{/with}}
         {{/each}}
       </select>
       <div style="text-align: center;">
-        <i class="fas fa-times rest-recovery-clickable-link-red" data-action="removePlayer" data-combo="{{comboId}}"></i>
+        <i class="fas fa-times rest-recovery-clickable-link-red" data-action="removePlayer" data-actor-id="{{actorId}}"></i>
       </div>
     {{/each}}
 
@@ -39,13 +39,13 @@
     </div>
 
 
-    <div style="margin-top: 0.25rem; grid-column: 1{{#if simpleCalendarActive}} / 3{{/if}};">
+    <div style="margin-top: 0.25rem; grid-column: 1{{#if useCalendar}} / 3{{/if}};">
       <span style="font-size: 1rem;">{{{newDayTitle}}}</span>
       <p class="hint" style="font-size: 0.75rem;">
         {{{newDayHint}}}
       </p>
     </div>
-    {{#if simpleCalendarActive}}
+    {{#if useCalendar}}
       <div></div>
     {{else}}
       {{!-- TODO: BInd this --}}
@@ -64,20 +64,24 @@
   </div>
 
   <footer class="flexrow" style="margin-top:0.25rem;">
-    <button type="button" class="dialog-button" data-action="longRest">
-      <i class="fas fa-bed"></i>
-      {{localize "REST-RECOVERY.Dialogs.PromptRest.Long"}}
-      {{#if (and simpleCalendarActive longRestWouldBeNewDay)}}
-        {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
-      {{/if}}
-    </button>
-    <button type="button" class="dialog-button" data-action="shortRest">
-      <i class="fa-solid fa-hourglass-half"></i>
-      {{localize "REST-RECOVERY.Dialogs.PromptRest.Short"}}
-      {{#if (and simpleCalendarActive shortRestWouldBeNewDay)}}
-        {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
-      {{/if}}
-    </button>
+    {{#unless (eq forcedType "short")}}
+      <button type="button" class="dialog-button" data-action="longRest">
+        <i class="fas fa-bed"></i>
+        {{localize "REST-RECOVERY.Dialogs.PromptRest.Long"}}
+        {{#if (and useCalendar longRestWouldBeNewDay)}}
+          {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
+        {{/if}}
+      </button>
+    {{/unless}}
+    {{#unless (eq forcedType "long")}}
+      <button type="button" class="dialog-button" data-action="shortRest">
+        <i class="fa-solid fa-hourglass-half"></i>
+        {{localize "REST-RECOVERY.Dialogs.PromptRest.Short"}}
+        {{#if (and useCalendar shortRestWouldBeNewDay)}}
+          {{localize "REST-RECOVERY.Dialogs.PromptRest.NewDay"}}
+        {{/if}}
+      </button>
+    {{/unless}}
   </footer>
 
 </form>

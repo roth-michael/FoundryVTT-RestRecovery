@@ -53,8 +53,8 @@ This "Desert" module profile could for example set a higher water consumption pe
 <dt><a href="#getActorConsumableUpdates">getActorConsumableUpdates(item, actor)</a> ⇒ <code>[Object, string] | []</code></dt>
 <dd><p>Creates actorUpdate & message data as if the item were consumed by the actor. Does not consume uses of the item, update the actor, or create a message on its own.</p>
 </dd>
-<dt><a href="#promptRest">promptRest(userActors, longRest, newDay)</a> ⇒ <code>boolean</code></dt>
-<dd><p>Prompts specified users for a rest, just as if the "prompt rest" button had been fully used</p>
+<dt><a href="#promptRest">promptRest(actorIds, longRest, newDay)</a> ⇒ <code>boolean</code></dt>
+<dd><p>Outputs chat card for specified actors to rest, just as if the "prompt rest" button had been fully used</p>
 </dd>
 </dl>
 
@@ -150,11 +150,11 @@ Sets the food, water, and/or starvation levels of a given actor.
 
 <a name="promptRest"></a>
 
-## promptRest(userActors, longRest, newDay) ⇒ <code>boolean</code>
-Prompts specified users for a rest, just as if the "prompt rest" button had been fully used
+## promptRest(actorIds, longRest, newDay) ⇒ <code>boolean</code>
+Outputs chat card for specified actors to rest, just as if the "prompt rest" button had been fully used
 
 | Param | Type | Description |
 | --- | --- | --- |
-| userActors | <code>string[]</code> | A list of hyphen-separated values of the format "userId-actorId" representing the user to be prompted & the actor to prompt the rest for |
+| actorIds | <code>string[]</code> | A list of actor ids to prompt the rest for |
 | longRest | <code>boolean</code> | Whether this should be a long rest |
 | newDay | <code>boolean</code> | Whether this should be a new day |

@@ -1,8 +1,5 @@
-## Use Request chat card for prompted rests
-If enabled, uses the system's "Request" chat card, rather than socketing rest requests to connected players.
-
-## Prevent User Rest
-This prevents users from initiating rests themselves, and must be prompted to rest by the GM.
+## Automatically start rest when prompted
+If enabled, a GM-prompted rest will automatically start a rest if a user has one of the resting actors selected as their character.
 
 ## Enable hit dice auto roll button
 This adds a button to the long and short rest UI so that players can auto-roll hit dice until their HP is almost full.
@@ -10,8 +7,8 @@ This adds a button to the long and short rest UI so that players can auto-roll h
 ## Enable automatic time passage on prompt rest
 This enables time passing whenever players and prompted to rest by a GM. This may cause time-based active effects on characters to expire.
 
-## Enable Simple Calendar integration
-Enabling this makes the "New Day" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar. Requires the [Simple Calendar](https://foundryvtt.com/packages/foundryvtt-simple-calendar) module.
+## Enable calendar integration
+Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar.
 
 ## Enable Simple Calendar notes
 Enabling this will create a Simple Calendar note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest. Requires the [Simple Calendar](https://foundryvtt.com/packages/foundryvtt-simple-calendar) module.

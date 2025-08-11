@@ -37,4 +37,28 @@ export default function registerHooks(){
     targetElement.after(button);
 
   });
+
+  Hooks.on("createChatMessage", (chatMessage) => {
+    if (chatMessage.type !== "request" || chatMessage.system.handler !== "rest") return;
+    if (getSetting(CONSTANTS.SETTINGS.AUTO_START_REST)) {
+      const actors = chatMessage.system.targets.map(i => i.actor);
+      for (const actor of actors) {
+        if (game.user.character === actor) {
+          CONFIG.DND5E.requests.rest(actor, chatMessage, chatMessage.system.data).then(result => {
+            if ((result instanceof ChatMessage) && !result.getFlag("dnd5e", "requestResult")) {
+              result.setFlag("dnd5e", "requestResult", { actorId: actor.id, requestId: chatMessage.id });
+            }
+          });
+        } else if (game.user.isActiveGM) {
+          if (!game.users.players.some(u => u.active && actor.testUserPermission(u, "OWNER"))) {
+            CONFIG.DND5E.requests.rest(actor, chatMessage, chatMessage.system.data).then(result => {
+              if ((result instanceof ChatMessage) && !result.getFlag("dnd5e", "requestResult")) {
+                result.setFlag("dnd5e", "requestResult", { actorId: actor.id, requestId: chatMessage.id });
+              }
+            });
+          }
+        }
+      }
+    }
+  });
 }

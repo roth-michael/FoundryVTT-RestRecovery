@@ -26,14 +26,13 @@ const CONSTANTS = {
     SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
-    ENABLE_SIMPLE_CALENDAR_INTEGRATION: "enable-simple-calendar-integration",
+    ENABLE_CALENDAR_INTEGRATION: "enable-calendar-integration",
     ENABLE_SIMPLE_CALENDAR_NOTES: "enable-simple-calendar-notes",
     SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED: "simple-calendar-notes-only-prompted",
-    PREVENT_USER_REST: "prevent-user-rest",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
     HIT_DIE_ROLL_FORMULA: "hit-die-roll-formula",
     HD_EFFECTIVE_MULTIPLIER: "hd-effective-multiplier",
-    USE_CHAT_CARD: "use-chat-card",
+    AUTO_START_REST: "auto-start-rest",
 
     /*-------------------------------------------*
      *            Short Rest Settings            *
@@ -237,18 +236,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
   /*-------------------------------------------*
    *           General Rest Settings           *
    *-------------------------------------------*/
-  [CONSTANTS.SETTINGS.USE_CHAT_CARD]: {
-    name: "REST-RECOVERY.Settings.General.UseChatCard.Title",
-    hint: "REST-RECOVERY.Settings.General.UseChatCard.Hint",
-    scope: "world",
-    group: "general",
-    config: false,
-    default: false,
-    type: Boolean
-  },
-  [CONSTANTS.SETTINGS.PREVENT_USER_REST]: {
-    name: "REST-RECOVERY.Settings.General.PreventUserRest.Title",
-    hint: "REST-RECOVERY.Settings.General.PreventUserRest.Hint",
+  [CONSTANTS.SETTINGS.AUTO_START_REST]: {
+    name: "REST-RECOVERY.Settings.General.AutoStartRest.Title",
+    hint: "REST-RECOVERY.Settings.General.AutoStartRest.Hint",
     scope: "world",
     group: "general",
     config: false,
@@ -273,18 +263,14 @@ CONSTANTS.DEFAULT_SETTINGS = {
     default: true,
     type: Boolean
   },
-  [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION]: {
-    name: "REST-RECOVERY.Settings.General.EnableSimpleCalendarIntegration.Title",
-    hint: "REST-RECOVERY.Settings.General.EnableSimpleCalendarIntegration.Hint",
+  [CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION]: {
+    name: "REST-RECOVERY.Settings.General.EnableCalendarIntegration.Title",
+    hint: "REST-RECOVERY.Settings.General.EnableCalendarIntegration.Hint",
     scope: "world",
     group: "general",
     config: false,
     default: false,
-    type: Boolean,
-    moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
-    validate: () => {
-      return !game.modules.get("foundryvtt-simple-calendar")?.active;
-    },
+    type: Boolean
   },
   [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES]: {
     name: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Title",
@@ -292,10 +278,9 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint2: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Hint2",
     scope: "world",
     group: "general",
-    dependsOn: [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION],
     moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
     validate: (settings) => {
-      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION).value && game.modules.get("foundryvtt-simple-calendar")?.active);
+      return !game.modules.get("foundryvtt-simple-calendar")?.active;
     },
     config: false,
     default: false,
@@ -306,10 +291,10 @@ CONSTANTS.DEFAULT_SETTINGS = {
     hint: "REST-RECOVERY.Settings.General.SimpleCalendarNotesOnlyPrompted.Hint",
     scope: "world",
     group: "general",
-    dependsOn: [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION, CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES],
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES],
     moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
     validate: (settings) => {
-      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION).value && settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES).value && game.modules.get("foundryvtt-simple-calendar")?.active);
+      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES).value && game.modules.get("foundryvtt-simple-calendar")?.active);
     },
     config: false,
     default: false,

@@ -40,14 +40,14 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.reject = options.reject;
     this.actor = options.actor;
     this.workflow = RestWorkflow.get(this.actor);
-    const simpleCalendarActive = getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
+    const useCalendar = getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION);
     const timeChanges = getTimeChanges(!!this.workflow.longRest);
     this.maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
     this.currentShortRests = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
     this.enableShortRest = !this.workflow.longRest && ((this.maxShortRests === 0) || (this.currentShortRests < this.maxShortRests));
     this.activeStep = 0;
     this.showStartLongRestButton = this.workflow.longRest && getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
-    this.promptNewDay = !simpleCalendarActive
+    this.promptNewDay = !useCalendar
       && options.promptNewDay
       && (
         (this.workflow.longRest && (this.workflow.restVariant !== "gritty")) || 
@@ -58,7 +58,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     } else {
       this.enableRollHitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
     }
-    this.newDay = options.restPrompted ? options.newDay : (simpleCalendarActive ? timeChanges.isNewDay : (options.newDay ?? true));
+    this.newDay = options.request ? options.newDay : (useCalendar ? timeChanges.isNewDay : (options.newDay ?? true));
     this.minSpendHitDice = this.enableRollHitDice ? (getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0) : 0;
     let maxSpendHitDice;
     const maxHitDiceSpendMultiplier = determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);

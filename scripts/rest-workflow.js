@@ -188,51 +188,14 @@ export default class RestWorkflow {
 
     Hooks.on("dnd5e.preShortRest", (actor, config) => {
 
-      if (actor.type === 'group') {
-        const actors = actor.system.members.map(currMember => currMember.actor);
-        const potentialActors = Object.fromEntries(actors.map(currActor => [currActor.uuid, []]));
-        for (const currActor of actors) {
-          for (const [userId, permissions] of Object.entries(currActor.ownership)) {
-            if (userId === "default") {
-              if (permissions < 3) continue;
-              const allPlayers = game.users.filter(user => !user.isGM);
-              if (!allPlayers.length) continue;
-              potentialActors[currActor.uuid] = allPlayers; 
-              break;
-            }
-            const user = game.users.get(userId);
-            if (!user) continue;
-            if (user.isGM || permissions < 3) continue;
-            potentialActors[currActor.uuid].push(user);
-          }
-        }
-        const trueActors = [];
-        for (const currActor of actors) {
-          const potentialUsers = potentialActors[currActor.uuid];
-          const actualUser = potentialUsers.find(currUser => currUser.active && currUser.character.uuid === currActor.uuid);
-          const firstOnlineUser = potentialUsers.find(currUser => currUser.active);
-          let bestUser;
-          if (actualUser) {
-            bestUser = actualUser;
-          } else if (firstOnlineUser) {
-            bestUser = firstOnlineUser;
-          } else {
-            bestUser = potentialUsers[0];
-          }
-          if (!bestUser) bestUser = game.users.activeGM;
-          if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
-        }
-        new PromptRestApplication({actorList: trueActors, groupActor: actor}).render(true);
+      if (actor.type === "group") {
+        const actorList = actor.system.members.map(currMember => [currMember.actor.id, currMember.actor.name]);
+        new PromptRestApplication({actorList, groupActor: actor, forcedType: config.type}).render(true);
         return false;
       }
 
       if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_SHORT_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedShortRest");
-        return false;
-      }
-
-      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !(config.restPrompted || config.request)) {
-        custom_warning("REST-RECOVERY.Warnings.NotPromptedShortRest");
         return false;
       }
 
@@ -285,51 +248,14 @@ export default class RestWorkflow {
     });
 
     Hooks.on("dnd5e.preLongRest", (actor, config) => {
-      if (actor.type === 'group') {
-        const actors = actor.system.members.map(currMember => currMember.actor);
-        const potentialActors = Object.fromEntries(actors.map(currActor => [currActor.uuid, []]));
-        for (const currActor of actors) {
-          for (const [userId, permissions] of Object.entries(currActor.ownership)) {
-            if (userId === "default") {
-              if (permissions < 3) continue;
-              const allPlayers = game.users.filter(user => !user.isGM);
-              if (!allPlayers.length) continue;
-              potentialActors[currActor.uuid] = allPlayers; 
-              break;
-            }
-            const user = game.users.get(userId);
-            if (!user) continue;
-            if (user.isGM || permissions < 3) continue;
-            potentialActors[currActor.uuid].push(user);
-          }
-        }
-        const trueActors = [];
-        for (const currActor of actors) {
-          const potentialUsers = potentialActors[currActor.uuid];
-          const actualUser = potentialUsers.find(currUser => currUser.active && currUser.character.uuid === currActor.uuid);
-          const firstOnlineUser = potentialUsers.find(currUser => currUser.active);
-          let bestUser;
-          if (actualUser) {
-            bestUser = actualUser;
-          } else if (firstOnlineUser) {
-            bestUser = firstOnlineUser;
-          } else {
-            bestUser = potentialUsers[0];
-          }
-          if (!bestUser) bestUser = game.users.activeGM;
-          if (bestUser) trueActors.push([bestUser.id + "-" + currActor.id, `${currActor.name} (${bestUser.name})`]);
-        }
-        new PromptRestApplication({actorList: trueActors, groupActor: actor}).render(true);
+      if (actor.type === "group") {
+        const actorList = actor.system.members.map(currMember => [currMember.actor.id, currMember.actor.name]);
+        new PromptRestApplication({actorList, groupActor: actor, forcedType: config.type}).render(true);
         return false;
       }
 
       if (foundry.utils.getProperty(this, CONSTANTS.FLAGS.DAE.PREVENT_LONG_REST) && !config.ignoreFlags) {
         custom_warning("REST-RECOVERY.Warnings.PreventedLongRest");
-        return false;
-      }
-
-      if (getSetting(CONSTANTS.SETTINGS.PREVENT_USER_REST) && !game.user.isGM && !(config.restPrompted || config.request)) {
-        custom_warning("REST-RECOVERY.Warnings.NotPromptedLongRest");
         return false;
       }
 
@@ -1299,10 +1225,10 @@ export default class RestWorkflow {
 
     let newChatMessageContent = `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra;
 
-    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES) && (this.config.restPrompted || !lib.getSetting(CONSTANTS.SETTINGS.SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED))) {
+    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES) && (this.config.request || !lib.getSetting(CONSTANTS.SETTINGS.SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED))) {
       let endDateTime = SimpleCalendar.api.currentDateTime();
       let restDuration = this.config.duration;
-      let startDateTime = (this.config.restPrompted || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;
+      let startDateTime = (this.config.request || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;
 
       let deltas = dnd5e.dataModels.chatMessage.fields.ActorDeltasField.processDeltas.call(chatMessage.system.deltas, this.actor, chatMessage.rolls);
 

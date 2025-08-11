@@ -133,8 +133,8 @@
         "NewDayTitle": "Neuer Tag",
         "NoNewDayTitle": "Kein neuer Tag",
         "NewDayHint": "Fähigkeiten, die pro \"pro Tag\" nutzbar sind werden zurückerlangt.",
-        "NewDaySimpleCalendarHint": "Basierend auf der Auswahl unten erlangen Charaktere am Ende der Rast Fähigkeiten zurück, die \"pro Tag\" nutzbar sind. Gesteuert durch das Modul <strong>Simple Calendar</strong>.",
-        "NoNewDaySimpleCalendarHint": "Weder kurze noch lange Rast enden in einem neuen Tag, Charaktere erhalten also <strong>keine</strong> Fähigkeiten zurück, die \"pro Tag\" nutzbar sind. Gesteuert durch das Modul <strong>Simple Calendar</strong>.",
+        "NewDayCalendarHint": "Basierend auf der Auswahl unten erlangen Charaktere am Ende der Rast Fähigkeiten zurück, die \"pro Tag\" nutzbar sind.",
+        "NoNewDayCalendarHint": "Weder kurze noch lange Rast enden in einem neuen Tag, Charaktere erhalten also <strong>keine</strong> Fähigkeiten zurück, die \"pro Tag\" nutzbar sind.",
         "NewDay": "(neuer Tag)",
         "Submit": "Speichern",
         "PlayerListShort": "Rasten"
@@ -328,8 +328,8 @@
           "Title": "Zeit vergeht bei Rastaufforderung",
           "Hint": "Zeit vergeht durch Rasten automatisch, wenn die Spieler durch die SL zur Rast aufgefordert wurden. Dadurch laufen gegebenenfalls zeitabhängige Effekte auf Akteuren ab."
         },
-        "EnableSimpleCalendarIntegration": {
-          "Title": "Integration mit Simple Calendar",
+        "EnableCalendarIntegration": {
+          "Title": "Integration mit Kalender",
           "Hint": "Sorgt dafür, dass die \"Neuer Tag\"-Auswahl in Rastdialogen automatisch anhand der Zeit und dem Kalender erfolgt."
         }
       },

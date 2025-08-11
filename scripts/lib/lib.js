@@ -255,43 +255,35 @@ export function roundHalf(num) {
 
 export function getTimeChanges(isLongRest) {
 
-  const simpleCalendarActive = getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_INTEGRATION);
-  const timeConfig = simpleCalendarActive
-    ? SimpleCalendar.api.getTimeConfiguration()
-    : { hoursInDay: 24, minutesInHour: 60, secondsInMinute: 60 };
+  const useCalendar = getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION);
+  const { secondsPerMinute, minutesPerHour, hoursPerDay } = game.time.calendar.days;
+  const secondsPerHour = minutesPerHour * secondsPerMinute;
+  const secondsPerDay = hoursPerDay * secondsPerHour;
 
-  timeConfig.secondsInDay = timeConfig.hoursInDay * timeConfig.minutesInHour * timeConfig.secondsInMinute;
-
-  const hourInSeconds = timeConfig.minutesInHour * timeConfig.secondsInMinute;
-
-  const { hour, minute, seconds } = simpleCalendarActive ? SimpleCalendar.api.currentDateTime() : {
-    hour: 0,
-    minute: 0,
-    seconds: 0
-  };
-  const currentTime = (hour * hourInSeconds) + (minute * timeConfig.secondsInMinute) + seconds;
+  const { hour, minute, second } = game.time.components;
+  const currentTime = (hour * secondsPerHour) + (minute * secondsPerMinute) + second;
 
   let restTime;
   const restVariant = getSetting(CONSTANTS.SETTINGS.REST_VARIANT);
   switch (restVariant) {
     case "epic":
-      restTime = isLongRest ? hourInSeconds : timeConfig.secondsInMinute;
+      restTime = isLongRest ? secondsPerHour : secondsPerMinute;
       break;
     case "gritty":
-      restTime = isLongRest ? timeConfig.hoursInDay * hourInSeconds * 7 : hourInSeconds * 8;
+      restTime = isLongRest ? secondsPerDay * 7 : secondsPerHour * 8;
       break;
     case "custom":
-      restTime = isLongRest ? getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS) * hourInSeconds : getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS) * hourInSeconds;
+      restTime = isLongRest ? getSetting(CONSTANTS.SETTINGS.CUSTOM_LONG_REST_DURATION_HOURS) * secondsPerHour : getSetting(CONSTANTS.SETTINGS.CUSTOM_SHORT_REST_DURATION_HOURS) * secondsPerHour;
       break;
     default:
-      restTime = isLongRest ? hourInSeconds * 8 : hourInSeconds;
+      restTime = isLongRest ? secondsPerHour * 8 : secondsPerHour;
       break;
   }
 
   return {
     restTime,
-    isNewDay: simpleCalendarActive
-      ? (currentTime + restTime) >= timeConfig.secondsInDay
+    isNewDay: useCalendar
+      ? (currentTime + restTime) >= secondsPerDay
       : restVariant === "gritty" || (restVariant !== "epic" && isLongRest)
   };
 

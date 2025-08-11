@@ -165,8 +165,8 @@
         "NewDayTitle": "Novo Dia",
         "NoNewDayTitle": "Não é um Novo Dia",
         "NewDayHint": "Isso faz com que os personagens que terminarem o descanso recuperem habilidades que recarreguem \"por dia\".",
-        "NewDaySimpleCalendarHint": "Baseado no tipo selecionado abaixo, personagens que terminarem o descanso recuperam habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
-        "NoNewDaySimpleCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\". Isso é definido pelo módulo <strong>Simple Calendar</strong>.",
+        "NewDayCalendarHint": "Baseado no tipo selecionado abaixo, personagens que terminarem o descanso recuperam habilidades que recarreguem \"por dia\".",
+        "NoNewDayCalendarHint": "Descanso longo ou curto não resulta em um novo dia, fazendo com que personagens que terminarem o descanso <strong>não</strong> recuperem habilidades que recarreguem \"por dia\".",
         "NewDay": "(novo dia)",
         "Submit": "Enviar",
         "PlayerListShort": "Descansar",
@@ -383,8 +383,8 @@
           "Title": "Habilitar Passagem Automática do Tempo",
           "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
         },
-        "EnableSimpleCalendarIntegration": {
-          "Title": "Habilitar Integração com Simple Calendar",
+        "EnableCalendarIntegration": {
+          "Title": "Habilitar Integração com calendário",
           "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na UI de solicitação de descanso e na UI de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
         },
         "EnableSimpleCalendarNotes": {

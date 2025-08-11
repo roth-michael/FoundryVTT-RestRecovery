@@ -2,8 +2,8 @@ import * as lib from "./lib/lib.js";
 import CONSTANTS from "./constants.js";
 import { gameSettings } from "./settings.js";
 import RestWorkflow from "./rest-workflow.js";
-import SocketHandler from "./sockets.js";
 import { PromptRestApplication } from "./apps/promptRest.js";
+import { getRestFlavor } from "./helpers.js";
 
 export default class API {
 
@@ -158,22 +158,37 @@ export default class API {
   }
 
   /**
-   * Prompts specified users for a rest, just as if the "prompt rest" button had been fully used.
+   * Outputs chat card for specified actors to rest, just as if the "prompt rest" button had been fully used.
    * 
-   * @param {string[]} userActors - A list of hyphen-separated values of the format "userId-actorId" representing the user to be prompted & the actor to prompt the rest for
+   * @param {string[]} actorIds - A list of actor ids to prompt the rest for
    * @param {boolean} longRest - Whether this should be a long rest
    * @param {boolean} newDay - Whether this should be a new day
    * @returns {boolean} - true if prompted, false otherwise
    */
-  static promptRest(userActors, longRest, newDay = false) {
+  static promptRest(actorIds, longRest, newDay = false) {
     if (!game.user.isGM) return false;
-    if (!userActors?.length) return false;
-    SocketHandler.emit(SocketHandler.PROMPT_REST, {
-      userActors,
-      restType: longRest ? 'longRest' : 'shortRest',
-      newDay,
-      promptNewDay: false
-    });
+    if (!actorIds?.length) return false;
+    const timeChanges = lib.getTimeChanges(longRest);
+    const restConfig = CONFIG.DND5E.restTypes[longRest ? "long" : "short"];
+    const speaker = ChatMessage.getSpeaker({ alias: game.user.name });
+    const messageData = {
+      flavor: getRestFlavor(timeChanges.restTime / 60, newDay, longRest),
+      speaker,
+      system: {
+        button: {
+          icon: restConfig?.icon ?? "fa-solid fa-bed",
+          label: restConfig?.label ?? "Rest"
+        },
+        data: {
+          newDay,
+          type: longRest ? "long" : "short"
+        },
+        handler: "rest",
+        targets: actorIds.map(i => ({ actor: game.actors.get(i) })).filter(i => i.actor)
+      },
+      type: "request"
+    };
+    ChatMessage.create(messageData);
     return true;
   }
 }
