@@ -9,6 +9,7 @@
 - Removed the "Prevent User Rest" setting, as the system now has a "Allow Individual Rests" setting
 - Removed the "Automate Exhaustion" setting, as the system now handles automatic exhaustion recovery on rest, as well as disadvantage with legacy exhaustion rules (except for Attack disadvantage, which Rest Recovery will still handle)
 - In order to not clobber somebody's custom exhaustion settings, toggling One D&D Exhaustion now requires a restart
+- Restore food/water-patching behavior
 
 ## Version 4.0.3
 - Ensure "automate exhaustion" setting is required for adding disadvantage to rolls

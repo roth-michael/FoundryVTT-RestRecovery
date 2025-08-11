@@ -1606,7 +1606,7 @@ export default class RestWorkflow {
     })
   }
 
-  static patchAllConsumableItems(actor) {
+  static async patchAllConsumableItems(actor) {
     const potentialItems = ["Rations", "Rations (1 day)", "Waterskin", "Water (Pint)"]
     const items = actor.items.filter(item => potentialItems.includes(item.name) && item.type !== "container" && !CONSTANTS.CONSUMABLE_TYPES.includes(foundry.utils.getProperty(item, "system.type.subtype")));
 

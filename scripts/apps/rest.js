@@ -114,8 +114,12 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.halfWaterSaveDC = getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
     this.actorExhaustion = foundry.utils.getProperty(this.actor, "system.attributes.exhaustion") ?? 0;
 
-    this.refreshConsumableItems();
-    this.calculateCanAfford();
+    if (getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) {
+      RestWorkflow.patchAllConsumableItems(this.actor).then(() => {
+        this.refreshConsumableItems();
+        this.calculateCanAfford();
+      });
+    }
   }
 
   get title() {
