@@ -173,7 +173,7 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
             type: restType
           },
           handler: "rest",
-          targets: Array.from(this.configuration).map(i => ({ actor: game.actors.get(i) })).filter(i => i.actor),
+          targets: Array.from(this.configuration).map(i => ({ actor: game.actors.get(i)?.uuid })).filter(i => i.actor),
         },
         type: "request"
       };

@@ -184,7 +184,7 @@ export default class API {
           type: longRest ? "long" : "short"
         },
         handler: "rest",
-        targets: actorIds.map(i => ({ actor: game.actors.get(i) })).filter(i => i.actor)
+        targets: actorIds.map(i => ({ actor: game.actors.get(i)?.uuid })).filter(i => i.actor)
       },
       type: "request"
     };

@@ -41,7 +41,7 @@ export default function registerHooks(){
   Hooks.on("createChatMessage", (chatMessage) => {
     if (chatMessage.type !== "request" || chatMessage.system.handler !== "rest") return;
     if (getSetting(CONSTANTS.SETTINGS.AUTO_START_REST)) {
-      const actors = chatMessage.system.targets.map(i => i.actor);
+      const actors = chatMessage.system.targets.map(i => fromUuidSync(i.actor));
       for (const actor of actors) {
         if (game.user.character === actor) {
           CONFIG.DND5E.requests.rest(actor, chatMessage, chatMessage.system.data).then(result => {
