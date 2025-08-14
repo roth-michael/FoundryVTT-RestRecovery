@@ -384,7 +384,7 @@
           "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
         },
         "EnableCalendarIntegration": {
-          "Title": "Habilitar Integração com calendário",
+          "Title": "Habilitar Integração com Calendário",
           "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na UI de solicitação de descanso e na UI de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
         },
         "EnableSimpleCalendarNotes": {
