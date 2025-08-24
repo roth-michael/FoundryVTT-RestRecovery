@@ -17,6 +17,7 @@
     },
     "FeatureNames": {
       "ArcaneRecovery": "Recuperação Arcana",
+        "ArcaneGrimoire": "Grimório Arcano",
       "NaturalRecovery": "Recuperação Natural",
       "NaturalRecoveryActivity": "Recuperar Espaços de Magia",
       "SongOfRest": "Canção do Descanso",
@@ -117,7 +118,8 @@
       "Flavor": {
         "ShortRestNormal": "Descanso Curto ({duration} {units})",
         "LongRestNormal": "Descanso Longo ({duration} {units})",
-        "ShortRestNewday": "Descanso Curto (Novo Dia)"
+        "ShortRestNewday": "Descanso Curto (Novo Dia)",
+        "LongRestNewday": "Descanso Longo ({duration} {units}, Novo Dia)"
       },
       "AlternateShortRestResult": "{name} faz um descanso curto e recupera {health} Pontos de Vida.",
       "TidyChanged": "Rest Recovery mudou a exibição configurações de Exaustão do Tidy5e Sheet:",
@@ -371,6 +373,10 @@
             "MultiplyTotal": "Multiplicar resultado total"
           }
         },
+        "AutoStartRest": {
+          "Title": "Iniciar Descanso Automaticamente Se Solicitado",
+          "Hint": "Se habilitado, um descanso solicitado pelo Mestre iniciará automaticamente o descanso se um usuário tiver um dos atores em descanso selecionado como seu personagem."
+        },
         "PreventUserRest": {
           "Title": "Impedir Descanso de Usuário",
           "Hint": "Isso previne que usuários iniciem descansos por si mesmos, devendo ser solicitados pelo MJ para descansarem."
@@ -611,6 +617,10 @@
         "ArcaneRecovery": {
           "Title": "Nome da Recuperação Arcana",
           "Hint": "Aqui você pode configurar como a característica Recuperação Arcana de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
+        },
+        "ArcaneGrimoire": {
+          "Title": "Nome do Grimório Arcano",
+          "Hint": "Aqui você pode configurar como o item Grimório Arcano é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecovery": {
           "Title": "Nome da Recuperação Natural",
