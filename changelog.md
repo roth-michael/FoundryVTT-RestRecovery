@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.0.1
+- Translation updates (thanks Kharmans)
+
 ## Version 5.0.0
 - Requires system version 5.1.0 at minimum
 - Prompted rests now make use of the system's new "Request" chat cards, rather than socketing a rest call directly to each connected client
