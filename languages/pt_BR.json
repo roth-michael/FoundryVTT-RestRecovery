@@ -17,6 +17,7 @@
     },
     "FeatureNames": {
       "ArcaneRecovery": "Recuperação Arcana",
+        "ArcaneGrimoire": "Grimório Arcano",
       "NaturalRecovery": "Recuperação Natural",
       "NaturalRecoveryActivity": "Recuperar Espaços de Magia",
       "SongOfRest": "Canção do Descanso",
@@ -117,7 +118,8 @@
       "Flavor": {
         "ShortRestNormal": "Descanso Curto ({duration} {units})",
         "LongRestNormal": "Descanso Longo ({duration} {units})",
-        "ShortRestNewday": "Descanso Curto (Novo Dia)"
+        "ShortRestNewday": "Descanso Curto (Novo Dia)",
+        "LongRestNewday": "Descanso Longo ({duration} {units}, Novo Dia)"
       },
       "AlternateShortRestResult": "{name} faz um descanso curto e recupera {health} Pontos de Vida.",
       "TidyChanged": "Rest Recovery mudou a exibição configurações de Exaustão do Tidy5e Sheet:",
@@ -254,7 +256,7 @@
       },
       "LongRestSettingsDialog": {
         "Title": "Configurações de Descanso Longo",
-        "Content": "Estas são as configurações que o MJ configurou para descansos longos neste jogo."
+        "Content": "Estas são as configurações que o Mestre configurou para descansos longos neste jogo."
       },
       "CharacterOwnersOffline": {
         "Title": "Jogadores Offline",
@@ -338,7 +340,7 @@
       "QuickSetup": {
         "Title": "Configuração Rápida",
         "Label": "Abrir Configuração Rápida",
-        "Hint": "Uma UI simples para uma rápida configuração das configurações comuns de descansos."
+        "Hint": "Uma interface simples para uma rápida definição das configurações comuns de descansos."
       },
       "Configure": {
         "Title": "Configuração do Módulo",
@@ -371,21 +373,25 @@
             "MultiplyTotal": "Multiplicar resultado total"
           }
         },
+        "AutoStartRest": {
+          "Title": "Iniciar Descanso Automaticamente Se Solicitado",
+          "Hint": "Se habilitado, um descanso solicitado pelo Mestre iniciará automaticamente o descanso se um usuário tiver um dos atores em descanso selecionado como seu personagem."
+        },
         "PreventUserRest": {
           "Title": "Impedir Descanso de Usuário",
-          "Hint": "Isso previne que usuários iniciem descansos por si mesmos, devendo ser solicitados pelo MJ para descansarem."
+          "Hint": "Isso previne que usuários iniciem descansos por si mesmos, devendo ser solicitados pelo Mestre para descansarem."
         },
         "EnableAutoRollButton": {
           "Title": "Habilitar Botão de Rolagem Automática de Dados de Vida",
-          "Hint": "Isso adiciona um botão à UI de descanso longo e curto para que os jogadores possam rolar automaticamente os dados de vida até que seus PVs esteja quase cheio."
+          "Hint": "Isso adiciona um botão à interface de descanso longo e curto para que os jogadores possam rolar automaticamente os dados de vida até que seus PVs esteja quase cheio."
         },
         "EnablePromptRestTimePassing": {
           "Title": "Habilitar Passagem Automática do Tempo",
-          "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo MJ a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
+          "Hint": "Isso ativa a passagem do tempo sempre que um jogador é solicitado pelo Mestre a descansar. Isso pode fazer com que alguns efeitos ativos baseados em tempo se expirem nos personagens."
         },
         "EnableCalendarIntegration": {
-          "Title": "Habilitar Integração com calendário",
-          "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na UI de solicitação de descanso e na UI de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
+          "Title": "Habilitar Integração com Calendário",
+          "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na interface de solicitação de descanso e na interface de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
         },
         "EnableSimpleCalendarNotes": {
           "Title": "Habilitar Notas do Simple Calendar",
@@ -394,7 +400,7 @@
         },
         "SimpleCalendarNotesOnlyPrompted": {
           "Title": "Habilitar Notas Apenas em Descansos Solicitados",
-          "Hint": "Ativar isso irá criar uma nota do Simple Calendar apenas quando o descanso for solicitado pelo MJ."
+          "Hint": "Ativar isso irá criar uma nota do Simple Calendar apenas quando o descanso for solicitado pelo Mestre."
         },
         "HDRecoveryFraction": {
           "Title": "Fração de Recuperação do Dado de Vida",
@@ -528,7 +534,7 @@
         },
         "RollHitDice": {
           "Title": "Habilitar Rolagem de Dados de Vida em Descanso Longo",
-          "Hint": "Ativa a UI de rolagem de dados de vida na caixa de diálogo do Descanso Longo."
+          "Hint": "Ativa a interface de rolagem de dados de vida na caixa de diálogo do Descanso Longo."
         },
         "PreRegainHitDice": {
           "Title": "Habilitar Recuperação de Dados de Vida Antes de Terminar um Descanso Longo",
@@ -611,6 +617,10 @@
         "ArcaneRecovery": {
           "Title": "Nome da Recuperação Arcana",
           "Hint": "Aqui você pode configurar como a característica Recuperação Arcana de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
+        },
+        "ArcaneGrimoire": {
+          "Title": "Nome do Grimório Arcano",
+          "Hint": "Aqui você pode configurar como o item Grimório Arcano é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecovery": {
           "Title": "Nome da Recuperação Natural",
