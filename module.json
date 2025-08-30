@@ -23,6 +23,11 @@
   ],
   "languages": [
     {
+      "lang": "cs",
+      "name": "Čeština",
+      "path": "/languages/cs.json"
+    }, 
+    {
       "lang": "de",
       "name": "Deutsch",
       "path": "/languages/de.json"
@@ -87,3 +92,4 @@
   "manifest": "AUTOMATIC",
   "download": "AUTOMATIC"
 }
+
