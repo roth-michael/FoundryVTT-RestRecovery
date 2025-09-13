@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 5.0.2
+- Fixed higher-level exhaustion icons not showing with One D&D Exhaustion enabled
+- Added Czech translation (thanks Lethrendis)
+
 ## Version 5.0.1
 - Translation updates (thanks Kharmans)
 

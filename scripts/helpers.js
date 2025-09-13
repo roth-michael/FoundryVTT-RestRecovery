@@ -24,7 +24,7 @@ export async function configureOneDndExhaustion() {
         document.head.appendChild(styleElement);
       }
       CONFIG.DND5E.conditionTypes.exhaustion.levels = 10;
-      CONFIG.DND5E.conditionTypes.exhaustion.icon = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
+      CONFIG.DND5E.conditionTypes.exhaustion.img = CONSTANTS.EXHAUSTION_ONE_DND_PATH;
       CONFIG.DND5E.conditionTypes.exhaustion.oldReference = CONFIG.DND5E.conditionTypes.exhaustion.oldReference ?? CONFIG.DND5E.conditionTypes.exhaustion.reference;
       CONFIG.DND5E.conditionTypes.exhaustion.reference = game.i18n.localize("REST-RECOVERY.JournalUuids.Exhaustion");
       CONFIG.DND5E.conditionEffects.halfMovement.delete("exhaustion-2");
