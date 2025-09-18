@@ -6,7 +6,7 @@
   - Actors with Player owners (Character or NPC)
   - Actors without Player owners, but with tokens on scene (Character or NPC)
   - Actors without Player owners and without tokens on scene (Character only)
-  - Actors without Player owners and without tokens on scene (Character only)
+  - Actors without Player owners and without tokens on scene (NPC only)
 
 ## Version 5.0.2
 - Fixed higher-level exhaustion icons not showing with One D&D Exhaustion enabled
