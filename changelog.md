@@ -2,11 +2,11 @@
 
 ## Version 5.0.3
 - Fixed bug where hit die couldn't be selected during short rest
-- Reordered prompt rest menu; the new order (rather than simply alphabetical is):
+- Reordered prompt rest menu; the new order (rather than simply alphabetical) is:
   - Actors with Player owners (Character or NPC)
   - Actors without Player owners, but with tokens on scene (Character or NPC)
   - Actors without Player owners and without tokens on scene (Character only)
-  - Actors without Player owners and witohut tokens on scene (Character only)
+  - Actors without Player owners and without tokens on scene (Character only)
 
 ## Version 5.0.2
 - Fixed higher-level exhaustion icons not showing with One D&D Exhaustion enabled
