@@ -46,9 +46,17 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     this.profiles = Object.keys(gameSettings.profiles);
     this.activeProfile = gameSettings.activeProfile;
     this.actorList = options.actorList ?? [];
-    this.priorityActors = Array.from(game.scenes.get(game.user.viewedScene)?.tokens?.values()).map(t => t?.actor).filter(a => !!a) ?? [];
-    this.otherActors = Array.from(game.actors).filter(a => !this.priorityActors.some(priActor => priActor.id === a.id));
-    this.validActors = [...this.priorityActors, ...this.otherActors].map(a => [a.id, a.name]);
+    const actorsOnScene = new Set(canvas.scene?.tokens?.map(i => i.actor?.id))
+    const allActors = Array.from(game.actors).filter(a => ["character", "npc"].includes(a.type)).toSorted((a, b) => {
+      if (a.hasPlayerOwner && !b.hasPlayerOwner) return -1;
+      if (b.hasPlayerOwner && !a.hasPlayerOwner) return 1;
+      if (actorsOnScene.has(a.id) && !actorsOnScene.has(b.id)) return -1;
+      if (actorsOnScene.has(b.id) && !actorsOnScene.has(a.id)) return 1;
+      if (a.type === "character" && b.type !== "character") return -1;
+      if (b.type === "character" && a.type !== "character") return -1;
+      return b.name.localeCompare(a.name);
+    });
+    this.validActors = allActors.map(a => [a.id, a.name]);
     for (const [currId, currName] of this.actorList) {
       if (!this.validActors.some(curr => curr[0] === currId)) this.validActors.push([currId, currName]);
     }

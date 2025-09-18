@@ -271,6 +271,8 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       if (["both", "water"].includes(item.type)) this.calcWater();
     } else if (target?.name === "selectedItem") {
       this.selectedItem = target.value;
+    } else if (target?.name === "hd") {
+      this.selectedHitDice = target.value;
     }
     this.render();
   }
