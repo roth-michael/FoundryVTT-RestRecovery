@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.0.4
+- Fixed a bug where custom hit dice formulae wouldn't work (thanks aljames-arctic!)
+
 ## Version 5.0.3
 - Fixed bug where hit die couldn't be selected during short rest
 - Reordered prompt rest menu; the new order (rather than simply alphabetical) is:
