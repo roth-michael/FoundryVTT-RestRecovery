@@ -63,7 +63,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     let maxSpendHitDice;
     const maxHitDiceSpendMultiplier = determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
     if (typeof maxHitDiceSpendMultiplier === "string") {
-      const rollFormula = Roll.replaceFormulaData(maxHitDiceSpendMultiplier, data, { warn: true });
+      const rollFormula = Roll.replaceFormulaData(maxHitDiceSpendMultiplier, this.actor.getRollData(), { warn: true });
       maxSpendHitDice = Math.floor(new Roll(rollFormula).evaluateSync({ strict: false }).total);
     } else {
       maxSpendHitDice = Math.floor(this.actor.system.attributes.hd.max * maxHitDiceSpendMultiplier);
