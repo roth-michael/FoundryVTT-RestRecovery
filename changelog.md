@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 5.0.5
+- Fixed a bug where actors wouldn't heal past their effective max, even if that max was being lowered by a `tempmax` change which would expire on resting
+- Now properly call `dnd5e.shortRest` and `dnd5e.longRest` (forgot to do that previously)
+
 ## Version 5.0.4
 - Fixed a bug where custom hit dice formulae wouldn't work (thanks aljames-arctic!)
 

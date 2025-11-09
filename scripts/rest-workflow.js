@@ -29,6 +29,10 @@ export default class RestWorkflow {
     this.foodAndWaterCost = 0;
   }
 
+  get maxPossibleHP() {
+    return this.actor.system.attributes.hp.max + Math.max(0, this.actor.system.attributes.hp.tempmax ?? 0);
+  }
+
   get maxHP() {
     return this.actor.system.attributes.hp.max + (this.actor.system.attributes.hp.tempmax ?? 0)
   }
@@ -238,6 +242,8 @@ export default class RestWorkflow {
   
           const hitDice = actor.system.attributes.hd.value - hd0;
           const hitPoints = actor.system.attributes.hp.value - hp0;
+
+          if (Hooks.call("dnd5e.shortRest", actor, config) === false) return;
   
           return actor._rest(config, {deltas: {hitDice, hitPoints}});
   
@@ -290,6 +296,8 @@ export default class RestWorkflow {
               }, { configure: false}) ?? [];
             }
           }
+
+          if (Hooks.call("dnd5e.longRest", actor, config) === false) return;
   
           return actor._rest(config);
   
@@ -1271,7 +1279,7 @@ export default class RestWorkflow {
       ? Math.floor((await lib.evaluateFormula(multiplier, this.actor.getRollData()))?.total)
       : Math.floor(maxHP * multiplier);
 
-    results.updateData["system.attributes.hp.value"] = Math.min(maxHP, currentHP + results.hitPointsToRegainFromRest);
+    results.updateData["system.attributes.hp.value"] = Math.min(this.maxPossibleHP, currentHP + results.hitPointsToRegainFromRest);
     results.hitPointsRecovered = results.updateData["system.attributes.hp.value"] - this.healthData.startingHealth;
 
     foundry.utils.setProperty(results, 'deltas.hitPoints', results.hitPointsRecovered);
