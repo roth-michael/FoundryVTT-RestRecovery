@@ -3,6 +3,7 @@
 ## Version 5.1.0
 - Updated to be compatible with system version 5.2.x
 - Allowed required food/water units to be a formula rather than purely numerical
+  - This involved changing the flags from `Number` to `String` - if you want to increase the flag via active effect, ensure you prepend `+` to the value
 - Fixed a bug where the "maximum long rest hit die spend" setting was not respected
 
 ## Version 5.0.5
