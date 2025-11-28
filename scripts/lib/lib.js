@@ -216,17 +216,21 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   const actorNeedsNoFood = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_FOOD);
   const actorNeedsNoWater = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.NEEDS_NO_WATER);
 
+  const rollData = actor.getRollData();
+
   const foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
-  const actorRequiredFoodUnits = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
+  const actorRequiredFoodUnitsAmt = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
     ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_FOOD);
-  let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && foodUnitsSetting !== 0
+  const actorRequiredFoodUnits = new Roll(`${actorRequiredFoodUnitsAmt ?? 0}`, rollData).evaluateSync().total
+  let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && (actorRequiredFoodUnits > 0) && (foodUnitsSetting !== 0)
     ? actorRequiredFoodUnits
     : foodUnitsSetting;
 
   const waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
-  const actorRequiredWaterUnits = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
+  const actorRequiredWaterUnitsAmt = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
     ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_WATER);
-  let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && waterUnitsSetting !== 0
+  const actorRequiredWaterUnits = new Roll(`${actorRequiredWaterUnitsAmt ?? 0}`, rollData).evaluateSync().total;
+  let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && (actorRequiredWaterUnits > 0) && (waterUnitsSetting !== 0)
     ? actorRequiredWaterUnits
     : waterUnitsSetting;
 

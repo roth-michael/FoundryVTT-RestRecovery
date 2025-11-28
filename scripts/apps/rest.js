@@ -61,7 +61,8 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.newDay = options.request ? options.newDay : (useCalendar ? timeChanges.isNewDay : (options.newDay ?? true));
     this.minSpendHitDice = this.enableRollHitDice ? (getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0) : 0;
     let maxSpendHitDice;
-    const maxHitDiceSpendMultiplier = determineMultiplier(CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND);
+    const maxHitDiceSetting = this.workflow.longRest ? CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND : CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND;
+    const maxHitDiceSpendMultiplier = determineMultiplier(maxHitDiceSetting);
     if (typeof maxHitDiceSpendMultiplier === "string") {
       const rollFormula = Roll.replaceFormulaData(maxHitDiceSpendMultiplier, this.actor.getRollData(), { warn: true });
       maxSpendHitDice = Math.floor(new Roll(rollFormula).evaluateSync({ strict: false }).total);

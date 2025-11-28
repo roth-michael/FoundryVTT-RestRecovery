@@ -807,8 +807,8 @@ export default class RestWorkflow {
 
   async patchRestResults(results) {
 
-    results.deleteItems = [];
-    results.createItems = [];
+    results.deleteItems ??= [];
+    results.createItems ??= [];
     const longRest = results.type === "long";
 
     await this._finishedRest(results);

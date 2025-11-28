@@ -48,7 +48,7 @@ export function registerTraits() {
       section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
       name: game.i18n.localize("REST-RECOVERY.Traits.FoodUnitsPerDay.Title"),
       hint: game.i18n.localize("REST-RECOVERY.Traits.FoodUnitsPerDay.Hint"),
-      type: Number,
+      type: String,
       placeholder: getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY)
     };
 
@@ -56,7 +56,7 @@ export function registerTraits() {
       section: game.i18n.localize("REST-RECOVERY.Traits.Title"),
       name: game.i18n.localize("REST-RECOVERY.Traits.WaterUnitsPerDay.Title"),
       hint: game.i18n.localize("REST-RECOVERY.Traits.WaterUnitsPerDay.Hint"),
-      type: Number,
+      type: String,
       placeholder: getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY)
     };
 
