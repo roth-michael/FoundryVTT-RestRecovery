@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.1.1
+- Minimum hp recovery when rolling hit dice will now be dependent on rules version setting, as it is in the base system (legacy: minimum of 0, modern: minimum of 1)
+
 ## Version 5.1.0
 - Updated to be compatible with system version 5.2.x
 - Allowed required food/water units to be a formula rather than purely numerical

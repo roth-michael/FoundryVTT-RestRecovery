@@ -152,7 +152,9 @@ export default class RestWorkflow {
         formula = `max(${formula},${durableMod})`
       }
 
-      formulaParts[0] = `max(0, ${formula})`;
+      const minHpRecovery = game.settings.get("dnd5e", "rulesVersion") === "modern" ? 1 : 0;
+
+      formulaParts[0] = `max(${minHpRecovery}, ${formula})`;
 
       if (hasWoundClosure && multiplyTotal) {
         formulaParts[0] = `(${formula})*2`;
