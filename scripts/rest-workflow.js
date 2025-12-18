@@ -1491,10 +1491,16 @@ export default class RestWorkflow {
     } else if (profile.type === "loseAll") {
       newSpent = usesMax;
     } else if (profile.formula) {
-      let roll = new Roll(profile.formula, actorRollData);
+      let roll = new dnd5e.dice.BasicRoll(profile.formula, actorRollData);
+      roll.options.delta = {
+        item: item.id,
+        keyPath: "system.uses.spent"
+      };
       roll.alter(numDaysMult, 0, {multiplyNumeric: true});
       recoverAmount = Math.floor(multiplier * (await roll.evaluate()).total);
       newSpent = Math.clamp(oldSpent - recoverAmount, 0, usesMax);
+      if (rolls.length) rolls[0] = roll;
+      else rolls.push(roll);
     }
 
     if (newSpent !== oldSpent) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": newSpent});

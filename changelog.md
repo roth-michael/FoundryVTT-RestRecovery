@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.1.2
+- Fixed incorrect delta appearing in chat card for custom formula item use recoveries
+
 ## Version 5.1.1
 - Minimum hp recovery when rolling hit dice will now be dependent on rules version setting, as it is in the base system (legacy: minimum of 0, modern: minimum of 1)
 
