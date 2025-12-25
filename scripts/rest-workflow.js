@@ -186,8 +186,6 @@ export default class RestWorkflow {
       if ((bufferDice ?? 0) > 0) {
         delete updates.class["system.hd.spent"];
         updates.class[CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG] = bufferDice - 1;
-      } else if (bufferDice === 0) {
-        updates.class[`-=${CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG}`] = null;
       }
 
     });
