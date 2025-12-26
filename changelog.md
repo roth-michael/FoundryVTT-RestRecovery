@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.1.3
+- Fixed issue where rolling buffered hit dice in long rest didn't work properly
+
 ## Version 5.1.2
 - Fixed incorrect delta appearing in chat card for custom formula item use recoveries
 
