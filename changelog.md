@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.1.4
+- Fixed issue where having a blank number for units of food/water required could sometimes throw errors during rest
+
 ## Version 5.1.3
 - Fixed issue where rolling buffered hit dice in long rest didn't work properly
 

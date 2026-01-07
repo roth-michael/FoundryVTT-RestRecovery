@@ -221,7 +221,7 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   const foodUnitsSetting = getSetting(CONSTANTS.SETTINGS.FOOD_UNITS_PER_DAY);
   const actorRequiredFoodUnitsAmt = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_FOOD)
     ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_FOOD);
-  const actorRequiredFoodUnits = new Roll(`${actorRequiredFoodUnitsAmt ?? 0}`, rollData).evaluateSync().total
+  const actorRequiredFoodUnits = new Roll(`${actorRequiredFoodUnitsAmt || 0}`, rollData).evaluateSync().total
   let actorRequiredFood = isRealNumber(actorRequiredFoodUnits) && (actorRequiredFoodUnits > 0) && (foodUnitsSetting !== 0)
     ? actorRequiredFoodUnits
     : foodUnitsSetting;
@@ -229,7 +229,7 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   const waterUnitsSetting = getSetting(CONSTANTS.SETTINGS.WATER_UNITS_PER_DAY);
   const actorRequiredWaterUnitsAmt = foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DAE.REQUIRED_WATER)
     ?? foundry.utils.getProperty(actor, CONSTANTS.FLAGS.DND.REQUIRED_WATER);
-  const actorRequiredWaterUnits = new Roll(`${actorRequiredWaterUnitsAmt ?? 0}`, rollData).evaluateSync().total;
+  const actorRequiredWaterUnits = new Roll(`${actorRequiredWaterUnitsAmt || 0}`, rollData).evaluateSync().total;
   let actorRequiredWater = isRealNumber(actorRequiredWaterUnits) && (actorRequiredWaterUnits > 0) && (waterUnitsSetting !== 0)
     ? actorRequiredWaterUnits
     : waterUnitsSetting;
@@ -237,8 +237,8 @@ export function getActorConsumableValues(actor, grittyLongRest) {
   actorRequiredFood *= grittyLongRest ? 7 : 1;
   actorRequiredWater *= grittyLongRest ? 7 : 1;
 
-  actorRequiredFood = actorNeedsNoFoodWater || actorNeedsNoFood ? 0 : actorRequiredFood;
-  actorRequiredWater = actorNeedsNoFoodWater || actorNeedsNoWater ? 0 : actorRequiredWater;
+  actorRequiredFood = (actorNeedsNoFoodWater || actorNeedsNoFood) ? 0 : actorRequiredFood;
+  actorRequiredWater = (actorNeedsNoFoodWater || actorNeedsNoWater) ? 0 : actorRequiredWater;
 
   return {
     actorRequiredFood,
