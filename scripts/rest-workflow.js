@@ -851,11 +851,12 @@ export default class RestWorkflow {
 
       const biggestClass = sortedClasses[0];
 
-      lib.addToUpdates(updates, {
-        _id: biggestClass.id,
-        [CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG]: hitDiceLeftToRecover
-      })
-
+      if (biggestClass) {
+        lib.addToUpdates(updates, {
+          _id: biggestClass.id,
+          [CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG]: hitDiceLeftToRecover
+        });
+      }
     }
 
     await this.actor.updateEmbeddedDocuments("Item", updates);

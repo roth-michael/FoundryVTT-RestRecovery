@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.1.5
+- Fixed an issue where long resting with hit die rolling & buffered hit dice enabled threw errors for classless NPCs (such NPCs simply will not benefit from the buffered hit dice setting now)
+
 ## Version 5.1.4
 - Fixed issue where having a blank number for units of food/water required could sometimes throw errors during rest
 
