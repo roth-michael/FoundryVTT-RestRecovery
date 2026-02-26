@@ -24,6 +24,7 @@
       "ChefFeat": "Chef",
       "ChefTools": "Cook's Utensils",
       "PeriaptItem": "Periapt of Wound Closure",
+      "Resourceful": "Resourceful",
       "WoundClosureBlessing": "Blessing of Wound Closure",
       "DurableFeat": "Durable",
       "BlackBloodFeature": "Black Blood Healing"
@@ -393,14 +394,13 @@
           "Title": "Enable calendar integration",
           "Hint": "Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar."
         },
-        "EnableSimpleCalendarNotes": {
-          "Title": "Enable Simple Calendar notes",
-          "Hint": "Enabling this will create a Simple Calendar note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest.",
-          "Hint2": "Note: Players must have \"Create Journal Entries\" permissions & \"Add Notes\" Simple Calendar permissions enabled if resting while online."
+        "EnableCalendariaNotes": {
+          "Title": "Enable Calendaria notes",
+          "Hint": "Enabling this will create a Calendaria note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest."
         },
-        "SimpleCalendarNotesOnlyPrompted": {
+        "CalendariaNotesOnlyPrompted": {
           "Title": "Enable notes only on prompted rests",
-          "Hint": "Enabling this will create Simple Calendar notes only when a rest has been prompted by the GM."
+          "Hint": "Enabling this will create Calendaria notes only when a rest has been prompted by the GM."
         },
         "HDRecoveryFraction": {
           "Title": "Hit Die roll multiplier",
@@ -501,6 +501,10 @@
         "FeatUsesRecoveryFraction": {
           "Title": "Feat uses recovery fraction",
           "Hint": "The fraction of feat uses to recover on a short rest, if the feature has charges with limited uses per short rest."
+        },
+        "SpellSlotsShortRecoveryFraction": {
+          "Title": "Spell slots recovery fraction",
+          "Hint": "The fraction of spell slots to recover on a short rest."
         },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Pact spell slots recovery fraction",
@@ -645,6 +649,10 @@
         "DurableFeat": {
           "Title": "Durable feat name",
           "Hint": "Here you can configure what the Durable feat is called in your game. This can be a localized string."
+        },
+        "Resourceful": {
+          "Title": "Resourceful name",
+          "Hint": "Here you can configure what a human's Resourceful feature is called in your game. This can be a localized string."
         },
         "PeriaptItem": {
           "Title": "Periapt of Wound Closure name",

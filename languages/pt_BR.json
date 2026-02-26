@@ -393,14 +393,13 @@
           "Title": "Habilitar Integração com Calendário",
           "Hint": "Ativar isso faz com que o botão \"Novo Dia\" na interface de solicitação de descanso e na interface de um descanso longo/curto para jogadores, seja automatizada baseada no atual tempo do calendário."
         },
-        "EnableSimpleCalendarNotes": {
-          "Title": "Habilitar Notas do Simple Calendar",
-          "Hint": "Ativar isso criará uma nota do Simple Calendar para cada descanso longo/curto dos jogadores. O conteúdo de cada nota será idêntico à mensagem de chat enviada no fim do descanso.",
-          "Hint2": "Nota: Jogadores devem possuir as permissões \"Criar Diário\" e \"Adicionar Notas\" habilitadas no Simple Calendar se descansarem enquanto estiverem online."
+        "EnableCalendariaNotes": {
+          "Title": "Habilitar Notas do Calendaria",
+          "Hint": "Ativar isso criará uma nota do Calendaria para cada descanso longo/curto dos jogadores. O conteúdo de cada nota será idêntico à mensagem de chat enviada no fim do descanso."
         },
-        "SimpleCalendarNotesOnlyPrompted": {
+        "CalendariaNotesOnlyPrompted": {
           "Title": "Habilitar Notas Apenas em Descansos Solicitados",
-          "Hint": "Ativar isso irá criar uma nota do Simple Calendar apenas quando o descanso for solicitado pelo Mestre."
+          "Hint": "Ativar isso irá criar uma nota do Calendaria apenas quando o descanso for solicitado pelo Mestre."
         },
         "HDRecoveryFraction": {
           "Title": "Fração de Recuperação do Dado de Vida",

@@ -41,3 +41,7 @@ If a character is **attuned** to this item, any hit die rolled is doubled. Accor
 ## Feature: [Blessing of Wound Closure](https://www.dndbeyond.com/sources/dmg/other-rewards#BlessingOfWoundClosure)
 
 Similar to above, but as a feature.
+
+## Species Feature: [Resourceful](https://www.dndbeyond.com/species/1751441-human#HumanTraits)
+
+If a character has the Resourceful feature, they regain Heroic Inspiration after each long rest.

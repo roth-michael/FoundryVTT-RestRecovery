@@ -25,6 +25,17 @@ Available choices for this setting are as follows:
 * Full *(Default)*
 * Custom Formula
 
+## Spell slots recovery fraction
+
+The fraction of spell slots to recover on a short rest (pact slots excluded).
+
+Available choices for this setting are as follows:
+* None *(default)*
+* Quarter
+* Half
+* Full
+* Custom Formula
+
 ## Item uses recovery fraction
 
 The fraction of item uses (items, consumables, etc.) to recover on a short rest, if the item has charges with limited uses per short rest.

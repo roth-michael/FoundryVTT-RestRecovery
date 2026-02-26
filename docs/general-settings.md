@@ -10,13 +10,11 @@ This enables time passing whenever players and prompted to rest by a GM. This ma
 ## Enable calendar integration
 Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar.
 
-## Enable Simple Calendar notes
-Enabling this will create a Simple Calendar note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest. Requires the [Simple Calendar](https://foundryvtt.com/packages/foundryvtt-simple-calendar) module.
-
-**Note: Players must have "Create Journal Entries" permissions & "Add Notes" Simple Calendar permissions enabled if resting while online.**
+## Enable Calendaria notes
+Enabling this will create a Calendaria note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest. Requires the [Calendaria](https://github.com/Sayshal/Calendaria) module.
 
 ## Enable notes only on prompted rests
-Enabling this will create Simple Calendar notes only when a rest has been prompted by the GM. Requires the above setting to be enabled.
+Enabling this will create Calendaria notes only when a rest has been prompted by the GM. Requires the above setting to be enabled.
 
 ## Hit Die Multiplication Mechanics
 This configures how hit die multiplying effects such as the item "Periapt of Wound Closure" and the "Hit Die roll multiplier" setting below handle the multiplication of the hit die roll.

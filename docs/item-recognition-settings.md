@@ -46,6 +46,10 @@ Leave this setting blank if you want to disable chef requiring tools to use the 
 
 This configures what the Durable feat is called in your game.
 
+## Resourceful name
+
+This configures what a human's Resourceful feature is called in your game.
+
 ## Periapt of Wound Closure name
 
 This configures what the Periapt of Would Closure item is called in your game.

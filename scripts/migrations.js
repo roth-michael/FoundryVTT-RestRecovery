@@ -64,6 +64,15 @@ const migrations = {
     if (oldSimpleCalendarSetting) {
       await setSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION, oldSimpleCalendarSetting);
     }
+  },
+
+  "5.2.0": async () => {
+    if (findOldSettingValue("enable-simple-calendar-notes")) {
+      await setSetting(CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES, findOldSettingValue("enable-simple-calendar-notes"));
+    }
+    if (findOldSettingValue("simple-calendar-notes-only-prompted")) {
+      await setSetting(CONSTANTS.SETTINGS.CALENDARIA_NOTES_ONLY_PROMPTED, findOldSettingValue("simple-calendar-notes-only-prompted"));
+    }
   }
 
 }

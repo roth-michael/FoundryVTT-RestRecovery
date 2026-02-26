@@ -27,8 +27,8 @@ const CONSTANTS = {
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
     ENABLE_CALENDAR_INTEGRATION: "enable-calendar-integration",
-    ENABLE_SIMPLE_CALENDAR_NOTES: "enable-simple-calendar-notes",
-    SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED: "simple-calendar-notes-only-prompted",
+    ENABLE_CALENDARIA_NOTES: "enable-calendaria-notes",
+    CALENDARIA_NOTES_ONLY_PROMPTED: "calendaria-notes-only-prompted",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
     HIT_DIE_ROLL_FORMULA: "hit-die-roll-formula",
     HD_EFFECTIVE_MULTIPLIER: "hd-effective-multiplier",
@@ -44,11 +44,13 @@ const CONSTANTS = {
     DISABLE_SHORT_REST_HIT_DICE: "disable-short-rest-hit-dice",
     SHORT_USES_OTHERS_MULTIPLIER: "short-rest-recovery-uses-others",
     SHORT_USES_FEATS_MULTIPLIER: "short-rest-recovery-uses-feats",
+    SHORT_SPELLS_MULTIPLIER: "short-recovery-spells",
     SHORT_PACT_SPELLS_MULTIPLIER: "short-rest-recovery-pact-spells",
     SONG_OF_REST_MULTIUSE: "song-of-rest-multiuse",
     SHORT_HP_MULTIPLIER: "short-recovery-hitpoints",
 
     MAX_HIT_DICE_SPEND_FORMULA: "max-hit-die-spend-formula",
+    SHORT_SPELLS_MULTIPLIER_FORMULA: "short-recovery-spells-formula",
     SHORT_PACT_SPELLS_MULTIPLIER_FORMULA: "short-recovery-pact-spells-formula",
     SHORT_HP_MULTIPLIER_FORMULA: "short-recovery-hitpoints-formula",
 
@@ -98,6 +100,7 @@ const CONSTANTS = {
     CHEF_FEAT: "chef-feat-name",
     CHEF_TOOLS: "chef-tools-name",
     DURABLE_FEAT: "durable-feat-name",
+    RESOURCEFUL: "resourceful-feature-name",
     PERIAPT_ITEM: "periapt-item-name",
     WOUND_CLOSURE_BLESSING: "wound-closure-blessing-name",
     BLACK_BLOOD_FEATURE: "black-blood-feature-name",
@@ -272,29 +275,28 @@ CONSTANTS.DEFAULT_SETTINGS = {
     default: false,
     type: Boolean
   },
-  [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES]: {
-    name: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Title",
-    hint: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Hint",
-    hint2: "REST-RECOVERY.Settings.General.EnableSimpleCalendarNotes.Hint2",
+  [CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES]: {
+    name: "REST-RECOVERY.Settings.General.EnableCalendariaNotes.Title",
+    hint: "REST-RECOVERY.Settings.General.EnableCalendariaNotes.Hint",
     scope: "world",
     group: "general",
-    moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
+    moduleIntegration: { label: "Calendaria", key: "calendaria" },
     validate: (settings) => {
-      return !game.modules.get("foundryvtt-simple-calendar")?.active;
+      return !game.modules.get("calendaria")?.active;
     },
     config: false,
     default: false,
     type: Boolean
   },
-  [CONSTANTS.SETTINGS.SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED]: {
-    name: "REST-RECOVERY.Settings.General.SimpleCalendarNotesOnlyPrompted.Title",
-    hint: "REST-RECOVERY.Settings.General.SimpleCalendarNotesOnlyPrompted.Hint",
+  [CONSTANTS.SETTINGS.CALENDARIA_NOTES_ONLY_PROMPTED]: {
+    name: "REST-RECOVERY.Settings.General.CalendariaNotesOnlyPrompted.Title",
+    hint: "REST-RECOVERY.Settings.General.CalendariaNotesOnlyPrompted.Hint",
     scope: "world",
     group: "general",
-    dependsOn: [CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES],
-    moduleIntegration: { label: "Simple Calendar", key: "foundryvtt-simple-calendar" },
+    dependsOn: [CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES],
+    moduleIntegration: { label: "Calendaria", key: "calendaria" },
     validate: (settings) => {
-      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES).value && game.modules.get("foundryvtt-simple-calendar")?.active);
+      return !(settings.get(CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES).value && game.modules.get("calendaria")?.active);
     },
     config: false,
     default: false,
@@ -446,6 +448,32 @@ CONSTANTS.DEFAULT_SETTINGS = {
       [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
     },
     default: CONSTANTS.FRACTIONS.FULL,
+  },
+  [CONSTANTS.SETTINGS.SHORT_SPELLS_MULTIPLIER]: {
+    name: "REST-RECOVERY.Settings.ShortRest.SpellSlotsShortRecoveryFraction.Title",
+    hint: "REST-RECOVERY.Settings.ShortRest.SpellSlotsShortRecoveryFraction.Hint",
+    scope: "world",
+    group: "shortRest",
+    customSettingsDialog: true,
+    customFormula: CONSTANTS.SETTINGS.SHORT_SPELLS_MULTIPLIER_FORMULA,
+    config: false,
+    type: String,
+    choices: {
+      [CONSTANTS.FRACTIONS.NONE]: "REST-RECOVERY.Fractions.None",
+      [CONSTANTS.FRACTIONS.QUARTER]: "REST-RECOVERY.Fractions.Quarter",
+      [CONSTANTS.FRACTIONS.HALF]: "REST-RECOVERY.Fractions.Half",
+      [CONSTANTS.FRACTIONS.FULL]: "REST-RECOVERY.Fractions.Full",
+      [CONSTANTS.FRACTIONS.CUSTOM]: "REST-RECOVERY.Fractions.Custom",
+    },
+    default: CONSTANTS.FRACTIONS.NONE,
+  },
+  [CONSTANTS.SETTINGS.SHORT_SPELLS_MULTIPLIER_FORMULA]: {
+    scope: "world",
+    group: "shortRest",
+    config: false,
+    hidden: true,
+    type: String,
+    default: "@slot.max",
   },
   [CONSTANTS.SETTINGS.SHORT_PACT_SPELLS_MULTIPLIER]: {
     name: "REST-RECOVERY.Settings.ShortRest.PactSpellSlotsLongRecoveryFraction.Title",
@@ -971,6 +999,16 @@ CONSTANTS.DEFAULT_SETTINGS = {
     config: false,
     localize: true,
     default: "REST-RECOVERY.FeatureNames.DurableFeat",
+    type: String
+  },
+  [CONSTANTS.SETTINGS.RESOURCEFUL]: {
+    name: "REST-RECOVERY.Settings.ItemNames.Resourceful.Title",
+    hint: "REST-RECOVERY.Settings.ItemNames.Resourceful.Hint",
+    scope: "world",
+    group: "itemNames",
+    config: false,
+    localize: true,
+    default: "REST-RECOVERY.FeatureNames.Resourceful",
     type: String
   },
   [CONSTANTS.SETTINGS.PERIAPT_ITEM]: {

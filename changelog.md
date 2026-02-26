@@ -1,5 +1,13 @@
 # Rest Recovery Changelog
 
+## Version 5.2.0
+- Added support for Calendaria notes
+- Removed support for Simple Calendar notes, as it does not appear that it will be reaching v13 in any official capacity
+- Added support for "Resourceful" human feature (regain inspiration on long rest)
+- If using the 5e spell points module, and an actor with Arcane Recovery has the spell points item, that step of resting will be skipped, as it does not make sense in that use case
+- Added an option to specify non-pact spell slot recovery during short rests
+- Fixed item/feature uses recovery fraction not being respected when set to "None"
+
 ## Version 5.1.5
 - Fixed an issue where long resting with hit die rolling & buffered hit dice enabled threw errors for classless NPCs (such NPCs simply will not benefit from the buffered hit dice setting now)
 

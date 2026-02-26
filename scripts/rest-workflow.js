@@ -405,6 +405,7 @@ export default class RestWorkflow {
             ||
             (this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY))
           )
+          && !globalThis.getSpellPointsItem?.(this.actor)
       }
     ].filter(step => step.required);
   }
@@ -816,16 +817,13 @@ export default class RestWorkflow {
     await this._finishedRest(results);
     await this._getRestHitPointRecovery(results);
     await this._handleExhaustion(results);
-    await this._getRestSpellRecovery(results, {
-      recoverSpells: longRest,
-    });
+    await this._getRestSpellRecovery(results, {longRest});
     await this._getRestItemUsesRecovery(results, {
       recoverLongRestUses: longRest,
       recoverDailyUses: results.newDay,
       rolls: results.rolls
     });
     this._handleFoodAndWaterItems(results);
-
   }
 
   async regainHitDice() {
@@ -952,6 +950,11 @@ export default class RestWorkflow {
             this.hitDiceMessage = game.i18n.localize("REST-RECOVERY.Chat.HitDiceNoArmor");
           }
         }
+      }
+      // Resourceful
+      const resourceful = this.actor.items.getName(lib.getSetting(CONSTANTS.SETTINGS.RESOURCEFUL, true)) || false;
+      if (resourceful && this.actor.type === "character" && !this.actor.system.attributes.inspiration) {
+        foundry.utils.setProperty(results, "updateData.system.attributes.inspiration", true);
       }
       if (actorUpdates) {
         await this.actor.update(actorUpdates);
@@ -1236,26 +1239,36 @@ export default class RestWorkflow {
 
     let newChatMessageContent = `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra;
 
-    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_SIMPLE_CALENDAR_NOTES) && (this.config.request || !lib.getSetting(CONSTANTS.SETTINGS.SIMPLE_CALENDAR_NOTES_ONLY_PROMPTED))) {
-      let endDateTime = SimpleCalendar.api.currentDateTime();
-      let restDuration = this.config.duration;
-      let startDateTime = (this.config.request || this.config.advanceTime) ? SimpleCalendar.api.timestampToDate(SimpleCalendar.api.timestamp() - (restDuration * 60)) : endDateTime;
+    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES) && (this.config.request || lib.getSetting(CONSTANTS.SETTINGS.CALENDARIA_NOTES_ONLY_PROMPTED)) && CALENDARIA) {
+      const endDateTimestamp = game.time.worldTime;
+      const restDuration = this.config.duration;
+      const startDateTimestamp = (this.config.request || this.config.advanceTime) ? endDateTimestamp - (restDuration * 60) : endDateTimestamp;
 
       let deltas = dnd5e.dataModels.chatMessage.fields.ActorDeltasField.processDeltas.call(chatMessage.system.deltas, this.actor, chatMessage.rolls);
 
-      let scNote = newChatMessageContent + `
-        <strong>${game.i18n.localize("DND5E.CHATMESSAGE.Deltas.Recovery")}</strong>
-        <ul class="unlist">
-          ${deltas.map(i => `
-            <li>
-              <span class="label">${i.label}</span>
-              <span class="value">${i.delta}</span>
-            </li>
-          `).join('')}
-        </ul>
-      `
+      let noteContent = newChatMessageContent;
+      if (deltas.length) {
+        noteContent += `
+          <strong>${game.i18n.localize("DND5E.CHATMESSAGE.Deltas.Recovery")}</strong>
+          <ul class="unlist">
+            ${deltas.map(i => `
+              <li>
+                <span class="label">${i.label}</span>
+                <span class="value">${i.delta}</span>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      }
 
-      SimpleCalendar.api.addNote(`${this.longRest ? 'Long' : 'Short'} rest: ${this.actor.name}`, scNote, startDateTime, endDateTime, false, 0, [], "active", null, ['default']);
+      await CALENDARIA.api.createNote({
+        name: `${game.i18n.localize(`REST-RECOVERY.Dialogs.PromptRest.${this.longRest ? 'Long' : 'Short'}`)}: ${this.actor.name}`,
+        content: noteContent,
+        startDate: CALENDARIA.api.timestampToDate(startDateTimestamp),
+        endDate: CALENDARIA.api.timestampToDate(endDateTimestamp),
+        allDay: false,
+        openSheet: false
+      });
     }
 
     await chatMessage.update({
@@ -1340,45 +1353,26 @@ export default class RestWorkflow {
 
   }
 
-  async _getRestSpellRecovery(results, { recoverSpells = true } = {}) {
+  async _getRestSpellRecovery(results, { longRest = true } = {}) {
 
     const customSpellRecovery = lib.getSetting(CONSTANTS.SETTINGS.LONG_CUSTOM_SPELL_RECOVERY) && this.config.dialog;
     let actorRollData = this.actor.getRollData();
 
-    // Long rest
-    if (recoverSpells) {
+    const spellMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS[`${longRest ? "LONG" : "SHORT"}_SPELLS_MULTIPLIER`]);
+    const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS[`${longRest ? "LONG" : "SHORT"}_PACT_SPELLS_MULTIPLIER`])
 
-      const spellMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_SPELLS_MULTIPLIER);
-      const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.LONG_PACT_SPELLS_MULTIPLIER);
-
-      for (let [level, slot] of Object.entries(this.actor.system.spells)) {
-        if (!slot.override && !slot.max) continue;
-        let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
-        if (level !== "pact" && customSpellRecovery) {
-          results.updateData[`system.spells.${level}.value`] = slot.value;
-          continue;
-        }
-        let spellMax = slot.override || slot.max;
-        let recoverSpells = typeof multiplier === "string"
-          ? Math.max((await lib.evaluateFormula(multiplier, { ...actorRollData, slot: foundry.utils.deepClone(slot) }))?.total, 1)
-          : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
-        results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
+    for (let [level, slot] of Object.entries(this.actor.system.spells)) {
+      if (!slot.override && !slot.max) continue;
+      let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
+      if (level !== "pact" && customSpellRecovery) {
+        results.updateData[`system.spells.${level}.value`] = slot.value;
+        continue;
       }
-
-      // Short rest
-    } else {
-
-      const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS.SHORT_PACT_SPELLS_MULTIPLIER);
-
-      for (let [level, slot] of Object.entries(this.actor.system.spells)) {
-        if (!slot.override && !slot.max || level !== "pact") continue;
-        let spellMax = slot.override || slot.max;
-        let recoverSpells = typeof pactMultiplier === "string"
-          ? Math.max((await lib.evaluateFormula(pactMultiplier, { ...actorRollData, slot: foundry.utils.deepClone(slot) }))?.total, 1)
-          : Math.max(Math.floor(spellMax * pactMultiplier), pactMultiplier ? 1 : pactMultiplier);
-        results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
-      }
-
+      let spellMax = slot.override || slot.max;
+      let recoverSpells = typeof multiplier === "string"
+        ? Math.max((await lib.evaluateFormula(multiplier, { ...actorRollData, slot: foundry.utils.deepClone(slot) }))?.total, 1)
+        : Math.max(Math.floor(spellMax * multiplier), multiplier ? 1 : multiplier);
+      results.updateData[`system.spells.${level}.value`] = Math.min(slot.value + recoverSpells, spellMax);
     }
 
     if ((!this.longRest && this.spellData.feature) || (this.longRest && customSpellRecovery)) {
@@ -1504,7 +1498,7 @@ export default class RestWorkflow {
       else rolls.push(roll);
     }
 
-    if (newSpent !== oldSpent) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": newSpent});
+    if ((newSpent !== oldSpent) || updateItems.find((i => i._id === item.id))) foundry.utils.mergeObject(itemUpdates, {"system.uses.spent": newSpent});
 
     lib.addToUpdates(updateItems, {
       _id: item.id,
