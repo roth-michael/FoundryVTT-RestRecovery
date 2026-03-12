@@ -16,17 +16,18 @@
       "ItemNoUses": "\"{item}\" não possue mais usos, então você não pode consumí-lo."
     },
     "FeatureNames": {
-      "ArcaneRecovery": "Recuperação Arcana",
-        "ArcaneGrimoire": "Grimório Arcano",
-      "NaturalRecovery": "Recuperação Natural",
+      "ArcaneRecovery": "Arcane Recovery",
+      "ArcaneGrimoire": "Arcane Grimoire",
+      "NaturalRecovery": "Natural Recovery",
       "NaturalRecoveryActivity": "Recuperar Espaços de Magia",
-      "SongOfRest": "Canção do Descanso",
-      "ChefFeat": "Chefe",
+      "SongOfRest": "Song of Rest",
+      "ChefFeat": "Chef",
       "ChefTools": "Utensílios de Cozinheiro",
-      "PeriaptItem": "Periapto da Cicatrização",
-      "WoundClosureBlessing": "Benção da Cicatrização",
-      "DurableFeat": "Resistente",
-      "BlackBloodFeature": "Cura do Sangue Negro"
+      "PeriaptItem": "Periapt of Wound Closure",
+      "Resourceful": "Resourceful",
+      "WoundClosureBlessing": "Blessing of Wound Closure",
+      "DurableFeat": "Durable",
+      "BlackBloodFeature": "Black Blood Healing"
     },
     "OneDnDExhaustionEffect": {
       "Name": "Exaustão (One D&D)",
@@ -79,8 +80,8 @@
       "SpellSlotList": "{number} espaço de magia de {level}º círculo.",
       "SpellSlotListPlural": "{number} espaços de magia de {level}º círculo.",
       "RecoveryNameNum": "{name} recuperou {number} uso(s).",
-      "SongOfRest": "{name} desfruta a {songOfRestName} de {bard}.",
-      "SongOfRestSelf": "{name} desfruta de sua própria {songOfRestName}.",
+      "SongOfRest": "{name} desfruta do {songOfRestName} de {bard}.",
+      "SongOfRestSelf": "{name} desfruta de seu próprio {songOfRestName}.",
       "Chef": "{name} desfruta de uma deliciosa comida de {chef}.",
       "ChefSelf": "{name} desfruta de sua própria deliciosa comida.",
       "ConsumedBothDayWorth": "{actorName} consumiu {itemName} para suprir um dia inteiro de comida e água.",
@@ -475,7 +476,7 @@
       "ShortRest": {
         "IgnoreInactive": {
           "Title": "Ignorar Personagens de Jogadores Inativos",
-          "Hint": "Se você tiver um Bardo com Canção do Descanso ou um Chefe em seu grupo, essas características só serão consideradas se o jogador proprietário estiver ativo e conectado."
+          "Hint": "Se você tiver um Bardo com Song of Rest ou um Chef em seu grupo, essas características só serão consideradas se o jogador proprietário estiver ativo e conectado."
         },
         "MaxShortRests": {
           "Title": "Máximo de Descansos Curtos por Descanso Longo",
@@ -501,13 +502,17 @@
           "Title": "Fração de Recuperação de Características",
           "Hint": "A fração de característica usada para recuperar em um descanso curto, se o recurso tiver cargas com usos limitados por descanso curto."
         },
+        "SpellSlotsShortRecoveryFraction": {
+          "Title": "Fração de Recuperação de Espaços de Magia",
+          "Hint": "A fração de espaços de magia recuperados em um descanso curto."
+        },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Fração de Recuperação de Magias de Pacto",
           "Hint": "A fração de espaços de magias de pacto de Bruxo para recuperar em um descanso curto."
         },
         "SongOfRestMultiuse": {
-          "Title": "Canção do Descanso em Cada Dado de Vida",
-          "Hint": "Ativar isso permitirá que Canção do Descanso role e adicione um bônus a cada dado de vida rolado durante um descanso, em vez de apenas ao primeiro."
+          "Title": "Song of Rest em Cada Dado de Vida",
+          "Hint": "Ativar isso permitirá que Song of Rest role e adicione um bônus a cada dado de vida rolado durante um descanso, em vez de apenas ao primeiro."
         },
         "HitPointsRecoveryFraction": {
           "Title": "Fração de Recuperação de Pontos de Vida",
@@ -569,7 +574,7 @@
         },
         "CustomSpellSlotRecovery": {
           "Title": "Habilitar Regra de Recuperação de Pontos de Espaços de Magia",
-          "Hint": "Ativar esta opção faz com que todos que possuam espaços de magia, os recuperem como a característica \"Recuperação Arcana\" do Mago, onde você deve escolher quais espaços de magia irá recuperar. Essa opção só pode ser ativada caso a opção \"Fração de Recuperação de Espaços de Magia\" estiver configurada para Personalizado. Personagens recuperam uma quantidade de espaços de magia iguais à fórmula personalizada da configuração."
+          "Hint": "Ativar esta opção faz com que todos que possuam espaços de magia, os recuperem como a característica \"Arcane Recovery\" do Mago, onde você deve escolher quais espaços de magia irá recuperar. Essa opção só pode ser ativada caso a opção \"Fração de Recuperação de Espaços de Magia\" estiver configurada para Personalizado. Personagens recuperam uma quantidade de espaços de magia iguais à fórmula personalizada da configuração."
         },
         "PactSpellSlotsLongRecoveryFraction": {
           "Title": "Fração de Recuperação de Magias de Pacto",
@@ -611,51 +616,55 @@
         },
         "BardClassName": {
           "Title": "Nome da Classe Bardo",
-          "Hint": "Aqui você pode configurar como a classe Bardo é chamada em seu jogo. Isso é usado para determinar a Canção do Descanso de quem será usada. Isso pode ser uma string localizada."
+          "Hint": "Aqui você pode configurar como a classe Bardo é chamada em seu jogo. Isso é usado para determinar o Song of Rest de quem será usada. Isso pode ser uma string localizada."
         },
         "ArcaneRecovery": {
-          "Title": "Nome da Recuperação Arcana",
-          "Hint": "Aqui você pode configurar como a característica Recuperação Arcana de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Arcane Recovery",
+          "Hint": "Aqui você pode configurar como a característica Arcane Recovery de um Mago é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "ArcaneGrimoire": {
-          "Title": "Nome do Grimório Arcano",
-          "Hint": "Aqui você pode configurar como o item Grimório Arcano é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Arcane Grimoire",
+          "Hint": "Aqui você pode configurar como o item Arcane Grimoire é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecovery": {
-          "Title": "Nome da Recuperação Natural",
-          "Hint": "Aqui você pode configurar como a característica Recuperação Natural de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Natural Recovery",
+          "Hint": "Aqui você pode configurar como a característica Natural Recovery de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "NaturalRecoveryActivity": {
-          "Title": "Nome da Atividade Recuperação Natural",
-          "Hint": "Aqui você pode configurar como a atividade da característica Recuperação Natural de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome da Atividade Natural Recovery",
+          "Hint": "Aqui você pode configurar como a atividade da característica Natural Recovery de um Druida é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "SongOfRest": {
-          "Title": "Nome da Canção do Descanso",
-          "Hint": "Aqui você pode configurar como a característica Canção do Descanso de um Bardo é chamada em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Song of Rest",
+          "Hint": "Aqui você pode configurar como a característica Song of Rest de um Bardo é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "ChefFeat": {
-          "Title": "Nome do Talento Chefe",
-          "Hint": "Aqui você pode configurar como o talento Chefe é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Talento Chef",
+          "Hint": "Aqui você pode configurar como o talento Chef é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "ChefTools": {
           "Title": "Nome dos Utensílios de Cozinheiro",
-          "Hint": "Aqui você pode configurar como o item Utensílios de Cozinheiro é chamado em seu jogo. Isso pode ser uma string localizada. Deixe em branco se quiser desabilitar a necessidade de usar ferramentas para o Chefe poder usar esse talento."
+          "Hint": "Aqui você pode configurar como o item Utensílios de Cozinheiro é chamado em seu jogo. Isso pode ser uma string localizada. Deixe em branco se quiser desabilitar a necessidade de usar ferramentas para o Chef poder usar esse talento."
         },
         "DurableFeat": {
-          "Title": "Nome do Talento Resistente",
-          "Hint": "Aqui você pode configurar como o talento Resistente é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Talento Durable",
+          "Hint": "Aqui você pode configurar como o talento Durable é chamado em seu jogo. Isso pode ser uma string localizada."
+        },
+        "Resourceful": {
+          "Title": "Nome do Resourceful",
+          "Hint": "Aqui você pode configurar como a característica Resourceful de um Humano é chamada em seu jogo. Isso pode ser uma string localizada."
         },
         "PeriaptItem": {
-          "Title": "Nome da Periapto da Cicatrização",
-          "Hint": "Aqui você pode configurar como o item Periapto da Cicatrização é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Periapt of Wound Closure",
+          "Hint": "Aqui você pode configurar como o item Periapt of Wound Closure é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "WoundClosureBlessing": {
-          "Title": "Nome da Benção da Cicatrização",
-          "Hint": "Aqui você pode configurar como o recurso Benção da Cicatrização é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Blessing of Wound Closure",
+          "Hint": "Aqui você pode configurar como o recurso Blessing of Wound Closure é chamado em seu jogo. Isso pode ser uma string localizada."
         },
         "BlackBloodFeature": {
-          "Title": "Nome de Cura do Sangue Negro",
-          "Hint": "Aqui você pode configurar como o traço Cura do Sangue Negro de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
+          "Title": "Nome do Black Blood Healing",
+          "Hint": "Aqui você pode configurar como o traço Black Blood Healing de um Verdan é chamado em seu jogo. Isso pode ser uma string localizada."
         }
       }
     }
