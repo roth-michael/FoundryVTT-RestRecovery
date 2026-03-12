@@ -55,8 +55,8 @@ export class SaveProfileApplication extends HandlebarsApplicationMixin(Applicati
     return context;
   }
 
-  _onRender(context, options) {
-    super._onRender(context, options);
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
     const profileNameInput = this.element.querySelector('input[name="profileName"]');
     profileNameInput?.addEventListener("input", e => {
       this.profileName = e.currentTarget.value;

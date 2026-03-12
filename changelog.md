@@ -1,5 +1,9 @@
 # Rest Recovery Changelog
 
+## Version 5.2.1
+- Fixed debilitating performance loss while attempting to name a new profile
+- Translation updates (thanks Kharmans)
+
 ## Version 5.2.0
 - Added support for Calendaria notes
 - Removed support for Simple Calendar notes, as it does not appear that it will be reaching v13 in any official capacity
