@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.2.2
+- Fixed full-day's-worth food/water not actually counting for a full day's worth of food/water
+
 ## Version 5.2.1
 - Fixed debilitating performance loss while attempting to name a new profile
 - Translation updates (thanks Kharmans)

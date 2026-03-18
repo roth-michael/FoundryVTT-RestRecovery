@@ -1683,8 +1683,8 @@ export default class RestWorkflow {
 
     if (item.system.type?.subtype === "both") {
 
-      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorFoodSatedValue : actorFoodSatedValue + chargesUsed;
-      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorWaterSatedValue : actorWaterSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
 
       const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
