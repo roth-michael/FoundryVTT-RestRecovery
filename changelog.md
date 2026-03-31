@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.2.3
+- Compatibility bump for core v14 and system 5.3
+
 ## Version 5.2.2
 - Fixed full-day's-worth food/water not actually counting for a full day's worth of food/water
 
