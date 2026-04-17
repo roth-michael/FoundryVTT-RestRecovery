@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.2.4
+- Properly call & respect results for `dnd5e.{type}Rest` hook when group resting (thanks @Sayshal!)
+
 ## Version 5.2.3
 - Compatibility bump for core v14 and system 5.3
 
