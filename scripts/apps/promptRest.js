@@ -153,15 +153,20 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     await this.updateRestConfig(false);
     const timeChanges = getTimeChanges(restType === "long");
 
-    if (getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING)) {
+    const trueNewDay = this.useCalendar ? timeChanges.isNewDay : this.forceNewDay;
+    if (this.groupActor) {
+      const hookConfig = { type: restType, newDay: trueNewDay, advanceTime: true, duration: timeChanges.restTime / 60 };
+      Hooks.call(`dnd5e.${restType}Rest`, this.groupActor, hookConfig);
+      if (!hookConfig.advanceTime) timeChanges.restTime = 0;
+    }
+
+    if (getSetting(CONSTANTS.SETTINGS.ENABLE_PROMPT_REST_TIME_PASSING) && timeChanges.restTime > 0) {
       await game.time.advance(timeChanges.restTime);
     }
 
     if (this.advanceBastionTurn) {
       await dnd5e.bastion.advanceAllBastions();
     }
-
-    const trueNewDay = this.useCalendar ? timeChanges.isNewDay : this.forceNewDay;
 
     if (this.configuration.size) {
       const restConfig = CONFIG.DND5E.restTypes[restType];
