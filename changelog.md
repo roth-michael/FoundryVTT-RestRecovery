@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 5.2.5
+- Ensure minimum recovery of at least 1 for item uses that are set to "recover all" (previously, if the multiplier were such that total recovery would be fractional and less than 1, it was rounded down)
+
 ## Version 5.2.4
 - Properly call & respect results for `dnd5e.{type}Rest` hook when group resting (thanks @Sayshal!)
 

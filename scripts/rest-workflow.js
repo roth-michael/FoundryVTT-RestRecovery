@@ -1482,7 +1482,7 @@ export default class RestWorkflow {
     let newSpent = oldSpent;
     if (profile.type === "recoverAll") {
       recoverAmount = Math.floor(multiplier * usesMax * numDaysMult);
-      newSpent = Math.clamp(oldSpent - recoverAmount, 0, usesMax);
+      newSpent = Math.clamp(oldSpent - recoverAmount, 0, usesMax - (multiplier > 0 ? 1 : 0));
     } else if (profile.type === "loseAll") {
       newSpent = usesMax;
     } else if (profile.formula) {
