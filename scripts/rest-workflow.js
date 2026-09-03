@@ -219,12 +219,10 @@ export default class RestWorkflow {
         const hp0 = actor.system.attributes.hp.value;
 
         const shortRestPromise = new Promise((resolve, reject) => {
-          new RestApplication({ ...config, actor, workflow, resolve, reject}).render(true)
+          new RestApplication({ config, actor, workflow, resolve, reject}).render(true)
         });
   
-        shortRestPromise.then(async (newDay) => {
-  
-          config.newDay = newDay;
+        shortRestPromise.then(async () => {
 
           if (workflow._shouldRollForFoodWaterExhaustion()) {
   
@@ -277,12 +275,10 @@ export default class RestWorkflow {
 
       workflow.then((workflow) => {
         const longRestPromise = new Promise((resolve, reject) => {
-          new RestApplication({ ...config, actor, workflow, resolve, reject}).render(true)
+          new RestApplication({ config, actor, workflow, resolve, reject}).render(true)
         });
-        longRestPromise.then(async (newDay) => {
-  
-          config.newDay = newDay;
-  
+        longRestPromise.then(async () => {
+    
           if (workflow._shouldRollForFoodWaterExhaustion()) {
   
             const halfWaterSaveDC = lib.getSetting(CONSTANTS.SETTINGS.HALF_WATER_SAVE_DC);
@@ -1237,7 +1233,9 @@ export default class RestWorkflow {
       extra += this.foodAndWaterMessage.join("");
     }
 
-    let newChatMessageContent = `<p>${chatMessage.content}${this.hitDiceMessage ? " " + this.hitDiceMessage : ""}</p>` + extra;
+    let newChatMessageContent = chatMessage.content;
+    if (this.hitDiceMessage) newChatMessageContent += `<p>${this.hitDiceMessage}"</p>`;
+    newChatMessageContent += extra;
 
     if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES) && (this.config.request || lib.getSetting(CONSTANTS.SETTINGS.CALENDARIA_NOTES_ONLY_PROMPTED)) && CALENDARIA) {
       const endDateTimestamp = game.time.worldTime;

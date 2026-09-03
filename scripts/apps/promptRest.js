@@ -46,6 +46,8 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     this.profiles = Object.keys(gameSettings.profiles);
     this.activeProfile = gameSettings.activeProfile;
     this.actorList = options.actorList ?? [];
+    this.recoverTemp = !!CONFIG.DND5E.restTypes.long?.recoverTemp;
+    this.recoverTempMax = !!CONFIG.DND5E.restTypes.long?.recoverTempMax;
     const actorsOnScene = new Set(canvas.scene?.tokens?.map(i => i.actor?.id))
     const allActors = Array.from(game.actors).filter(a => ["character", "npc"].includes(a.type)).toSorted((a, b) => {
       if (a.hasPlayerOwner && !b.hasPlayerOwner) return -1;
@@ -60,7 +62,7 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     for (const [currId, currName] of this.actorList) {
       if (!this.validActors.some(curr => curr[0] === currId)) this.validActors.push([currId, currName]);
     }
-    this.useCalendar = getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION);
+    this.useCalendar = !dnd5e.settings.calendarConfig.manualRecovery;
     this.longRestWouldBeNewDay = getTimeChanges(true).isNewDay;
     this.shortRestWouldBeNewDay = getTimeChanges(false).isNewDay;
     const { enabled: bastionsEnabled, duration: bastionDays } = game.settings.get("dnd5e", "bastionConfiguration");
@@ -88,6 +90,8 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     context.bastionDays = this.bastionDays;
     context.advanceBastionTurn = this.advanceBastionTurn;
     context.forcedType = this.forcedType;
+    context.recoverTemp = this.recoverTemp;
+    context.recoverTempMax = this.recoverTempMax;
     return context;
   }
 
@@ -156,6 +160,10 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
     const trueNewDay = this.useCalendar ? timeChanges.isNewDay : this.forceNewDay;
     if (this.groupActor) {
       const hookConfig = { type: restType, newDay: trueNewDay, advanceTime: true, duration: timeChanges.restTime / 60 };
+      if (restType === "long") {
+        hookConfig.recoverTemp = this.recoverTemp;
+        hookConfig.recoverTempMax = this.recoverTempMax;
+      }
       Hooks.call(`dnd5e.${restType}Rest`, this.groupActor, hookConfig);
       if (!hookConfig.advanceTime) timeChanges.restTime = 0;
     }
@@ -190,6 +198,10 @@ export class PromptRestApplication extends HandlebarsApplicationMixin(Applicatio
         },
         type: "request"
       };
+      if (restType === "long") {
+        messageData.system.data.recoverTemp = this.recoverTemp;
+        messageData.system.data.recoverTempMax = this.recoverTempMax;
+      }
       await ChatMessage.create(messageData);
     }
 

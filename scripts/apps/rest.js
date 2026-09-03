@@ -34,13 +34,14 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
 
   typeIndex = { "both": 2, "food": 1, "water": 0 };
 
-  constructor(options = {}) {
+  constructor({config, actor, workflow, resolve, reject, ...options} = {}) {
     super(options);
-    this.resolve = options.resolve;
-    this.reject = options.reject;
-    this.actor = options.actor;
+    this.config = config;
+    this.actor = actor;
     this.workflow = RestWorkflow.get(this.actor);
-    const useCalendar = getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION);
+    this.reject = reject;
+    this.resolve = resolve;
+    const useCalendar = !dnd5e.settings.calendarConfig.manualRecovery;
     const timeChanges = getTimeChanges(!!this.workflow.longRest);
     this.maxShortRests = getSetting(CONSTANTS.SETTINGS.MAX_SHORT_RESTS);
     this.currentShortRests = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.CURRENT_NUM_SHORT_RESTS) || 0;
@@ -48,17 +49,15 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.activeStep = 0;
     this.showStartLongRestButton = this.workflow.longRest && getSetting(CONSTANTS.SETTINGS.PRE_REST_REGAIN_HIT_DICE);
     this.promptNewDay = !useCalendar
-      && options.promptNewDay
-      && (
-        (this.workflow.longRest && (this.workflow.restVariant !== "gritty")) || 
-        (!this.workflow.longRest && (this.workflow.restVariant !== "epic"))
-      );
+      && config.duration > 10
+      && config.duration < 1440
+      && !config.request;
     if (this.workflow.longRest) {
       this.enableRollHitDice = getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
     } else {
       this.enableRollHitDice = !getSetting(CONSTANTS.SETTINGS.DISABLE_SHORT_REST_HIT_DICE);
     }
-    this.newDay = options.request ? options.newDay : (useCalendar ? timeChanges.isNewDay : (options.newDay ?? true));
+    config.newDay = config.request ? config.newDay : (useCalendar ? timeChanges.isNewDay : (config.newDay ?? true));
     this.minSpendHitDice = this.enableRollHitDice ? (getSetting(CONSTANTS.SETTINGS.MIN_HIT_DIE_SPEND) || 0) : 0;
     let maxSpendHitDice;
     const maxHitDiceSetting = this.workflow.longRest ? CONSTANTS.SETTINGS.LONG_MAX_HIT_DICE_SPEND : CONSTANTS.SETTINGS.MAX_HIT_DICE_SPEND;
@@ -136,6 +135,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.workflow = this.workflow;
+    context.isRequest = this.config.request;
     context.maxShortRests = this.maxShortRests;
     context.currentShortRests = this.currentShortRests;
     context.enableShortRest = this.enableShortRest;
@@ -145,7 +145,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     context.remainingShortRests = this.maxShortRests - this.currentShortRests;
     context.showStartLongRestButton = this.showStartLongRestButton;
     context.promptNewDay = this.promptNewDay;
-    context.newDay = this.newDay;
+    context.newDay = this.config.newDay;
     context.minSpendHitDice = this.minSpendHitDice;
     context.remainMinSpend = this.minSpendHitDice - this.workflow.healthData.hitDiceSpent;
     context.maxSpendHitDice = this.maxSpendHitDice;
@@ -155,6 +155,9 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     context.showHealthBar = this.showHealthBar;
     context.showArmorCheckbox = this.showArmorCheckbox;
     context.enableRollHitDice = this.enableRollHitDice;
+
+    context.recoverTemp = this.config.recoverTemp;
+    context.recoverTempMax = this.config.recoverTempMax;
 
     // context.potentialMax = 0;
     // context.maxLeft = 0;
@@ -274,6 +277,9 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       this.selectedItem = target.value;
     } else if (target?.name === "hd") {
       this.selectedHitDice = target.value;
+    } else if (target?.type === "checkbox") {
+      if ( target.name in this.config ) this.config[target.name] = target.checked;
+      else this[target.name] = target.checked;
     }
     this.render();
   }
@@ -338,7 +344,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       });
       if (!doContinue) return false;
     }
-    this.resolve(this.newDay);
+    this.resolve();
     this.resolved = true;
     this.close();
   }

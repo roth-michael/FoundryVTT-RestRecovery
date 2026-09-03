@@ -60,10 +60,6 @@ const migrations = {
       const newConfig = Array.from(new Set(existingConfig.map(i => i.split("-")[1]).filter(i => i)))
       await game.user.update({[CONSTANTS.FLAGS.PROMPT_REST_CONFIG]: newConfig});
     }
-    let oldSimpleCalendarSetting = findOldSettingValue("enable-simple-calendar-integration");
-    if (oldSimpleCalendarSetting) {
-      await setSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION, oldSimpleCalendarSetting);
-    }
   },
 
   "5.2.0": async () => {

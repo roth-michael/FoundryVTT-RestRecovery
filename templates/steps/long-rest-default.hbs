@@ -21,7 +21,7 @@
         {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayTitle" "DND5E.REST.NewDay.Label")}}
       </label>
       {{#if promptNewDay}}
-        <input type="checkbox" {{checked newDay}}/>
+        <input type="checkbox" name="newDay" {{checked newDay}}/>
       {{/if}}
       <p class="hint">
         {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.LongRest.ForcedNewDayHint" "DND5E.REST.NewDay.Hint")}}
@@ -46,5 +46,21 @@
       <input name="removeNonLightArmor" type="checkbox" {{checked workflow.healthData.removeNonLightArmor}}/>
       <p class="hint">{{localize "REST-RECOVERY.Dialogs.LongRest.ArmorRecoveryHint"}}</p>
     </div>
+  {{/if}}
+
+  {{#if (or recoverTemp (not isRequest))}}
+  <div class="form-group">
+    <label>{{localize "DND5E.REST.RecoverTempHP.Label"}}</label>
+    <input name="recoverTemp" type="checkbox" {{checked recoverTemp}} {{disabled isRequest}}/>
+  </div>
+  {{/if}}
+  {{#if (or recoverTempMax (not isRequest))}}
+  <div class="form-group">
+    <label>{{localize "DND5E.REST.RecoverTempMaxHP.Label"}}</label>
+    <input name="recoverTempMax" type="checkbox" {{checked recoverTempMax}} {{disabled isRequest}}/>
+    <p class="hint">
+      {{localize "DND5E.REST.RecoverTempMaxHP.Hint"}}
+    </p>
+  </div>
   {{/if}}
 </div>

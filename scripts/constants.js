@@ -26,7 +26,6 @@ const CONSTANTS = {
     SHOW_PLAYER_LIST_REST_BUTTON: "show-player-list-rest-button",
     ENABLE_AUTO_ROLL_HIT_DICE: "enable-auto-roll-hit-dice",
     ENABLE_PROMPT_REST_TIME_PASSING: "enable-prompt-rest-time-passing",
-    ENABLE_CALENDAR_INTEGRATION: "enable-calendar-integration",
     ENABLE_CALENDARIA_NOTES: "enable-calendaria-notes",
     CALENDARIA_NOTES_ONLY_PROMPTED: "calendaria-notes-only-prompted",
     PERIAPT_ROLL_MECHANICS: "periapt-roll-mechanics",
@@ -264,15 +263,6 @@ CONSTANTS.DEFAULT_SETTINGS = {
     group: "general",
     config: false,
     default: true,
-    type: Boolean
-  },
-  [CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION]: {
-    name: "REST-RECOVERY.Settings.General.EnableCalendarIntegration.Title",
-    hint: "REST-RECOVERY.Settings.General.EnableCalendarIntegration.Hint",
-    scope: "world",
-    group: "general",
-    config: false,
-    default: false,
     type: Boolean
   },
   [CONSTANTS.SETTINGS.ENABLE_CALENDARIA_NOTES]: {

@@ -1,4 +1,4 @@
-<form autocomplete=off class="dialog-content">
+<section>
   <div class="rest-recovery-grid-table">
     <div style="font-size:1rem; margin-bottom:0.25rem;">{{localize "REST-RECOVERY.Dialogs.PromptRest.PromptCharactersRest" }}</div>
     <div style="text-align: center;">
@@ -38,7 +38,6 @@
       <i class="fas fa-cog rest-recovery-clickable-link" data-action="showSettings"></i>
     </div>
 
-
     <div style="margin-top: 0.25rem; grid-column: 1{{#if useCalendar}} / 3{{/if}};">
       <span style="font-size: 1rem;">{{{newDayTitle}}}</span>
       <p class="hint" style="font-size: 0.75rem;">
@@ -54,13 +53,26 @@
     {{#if bastionsEnabled}}
       <div style="margin-top:0.25rem; grid-column: 1;">
         <span style="font-size: 1rem;">{{localize "REST-RECOVERY.Dialogs.PromptRest.BastionTurn"}}</span>
-        <p style="font-size: 0.75rem; color: #4b4a44;">
+        <p class="hint" style="font-size: 0.75rem;">
           {{{localize "REST-RECOVERY.Dialogs.PromptRest.BastionTurnHint" days=bastionDays}}}
         </p>
       </div>
       {{!-- TODO: bind this --}}
       <input name="advanceBastionTurn" type="checkbox" {{checked advanceBastionTurn}}/>
     {{/if}}
+    <hr><br>
+    <span style="font-size: 1rem;">{{localize "REST-RECOVERY.Dialogs.LongRestSettingsDialog.Title"}}</span>
+    <div style="margin-top:0.25rem; grid-column: 1;">
+      <span style="font-size: 1rem;">{{localize "DND5E.REST.RecoverTempHP.Label"}}</span>
+    </div>
+    <input name="recoverTemp" type="checkbox" {{checked recoverTemp}}/>
+    <div style="margin-top:0.25rem; grid-column: 1;">
+      <span style="font-size: 1rem;">{{localize "DND5E.REST.RecoverTempMaxHP.Label"}}</span>
+      <p class="hint">
+        {{localize "DND5E.REST.RecoverTempMaxHP.Hint"}}
+      </p>
+    </div>
+    <input name="recoverTempMax" type="checkbox" {{checked recoverTempMax}}/>
   </div>
 
   <footer class="flexrow" style="margin-top:0.25rem;">
@@ -84,4 +96,4 @@
     {{/unless}}
   </footer>
 
-</form>
+<section>

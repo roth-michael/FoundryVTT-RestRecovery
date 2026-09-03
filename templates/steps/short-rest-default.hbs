@@ -22,7 +22,7 @@
       <label>
         {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayTitle" "DND5E.REST.NewDay.Label")}}
       </label>
-      <input type="checkbox" {{checked newDay}} {{disabled (not promptNewDay)}}/>
+      <input type="checkbox" name="newDay" {{checked newDay}} {{disabled (not promptNewDay)}}/>
       <p class="hint">
         {{localize (ifThen (and newDay (not promptNewDay)) "REST-RECOVERY.Dialogs.ShortRest.ForcedNewDayHint" "DND5E.REST.NewDay.Hint")}}
       </p>

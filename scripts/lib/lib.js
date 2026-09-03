@@ -259,7 +259,7 @@ export function roundHalf(num) {
 
 export function getTimeChanges(isLongRest) {
 
-  const useCalendar = getSetting(CONSTANTS.SETTINGS.ENABLE_CALENDAR_INTEGRATION);
+  const useCalendar = !dnd5e.settings.calendarConfig.manualRecovery;
   const { secondsPerMinute, minutesPerHour, hoursPerDay } = game.time.calendar.days;
   const secondsPerHour = minutesPerHour * secondsPerMinute;
   const secondsPerDay = hoursPerDay * secondsPerHour;

@@ -388,7 +388,7 @@
         },
         "EnablePromptRestTimePassing": {
           "Title": "Enable automatic time passage on prompt rest",
-          "Hint": "This enables time passing whenever players and prompted to rest by a GM. This may cause time-based active effects on characters to expire."
+          "Hint": "This enables time passing whenever players are prompted to rest by a GM. This may cause time-based active effects on characters to expire."
         },
         "EnableCalendarIntegration": {
           "Title": "Enable calendar integration",

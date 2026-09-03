@@ -1,5 +1,10 @@
 # Rest Recovery Changelog
 
+## Version 6.0.0
+- Requires system version 6.0.0 at a minimum
+- Removed "Enable calendar integration" setting; this is now effectively a system setting under the system's "Configure Calendar" settings menu
+- Added checkboxes for resetting temp HP & tempmax HP on long rest (system-provided functionality)
+
 ## Version 5.2.5
 - Ensure minimum recovery of at least 1 for item uses that are set to "recover all" (previously, if the multiplier were such that total recovery would be fractional and less than 1, it was rounded down)
 
