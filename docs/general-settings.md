@@ -7,9 +7,6 @@ This adds a button to the long and short rest UI so that players can auto-roll h
 ## Enable automatic time passage on prompt rest
 This enables time passing whenever players and prompted to rest by a GM. This may cause time-based active effects on characters to expire.
 
-## Enable calendar integration
-Enabling this makes the \"New Day\" button in the prompt rest UI and in the long/short rest UI for players automated based on the current time of the calendar.
-
 ## Enable Calendaria notes
 Enabling this will create a Calendaria note for each character's short/long rests, the content of which will be identical to the chat message outputted at the end of the rest. Requires the [Calendaria](https://github.com/Sayshal/Calendaria) module.
 
