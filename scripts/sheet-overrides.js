@@ -88,10 +88,9 @@ function patch_itemSheet(app, html) {
 function patch_itemConsumableInputs(html, item) {
   let targetElem = html.querySelector(".form-group:has(select[name='system.type.subtype'])")
   if (!targetElem) return;
-  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
   const fullDay = dnd5e.applications.fields.createCheckboxInput(undefined, {
     name: CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH,
-    value: customConsumable.dayWorth
+    value: !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH)
   });
   if (!html.classList.contains("editable") && !html.querySelector("form")?.classList.contains("editable")) fullDay.disabled = true;
   const fullDayGroup = foundry.applications.fields.createFormGroup({
@@ -107,13 +106,13 @@ function patch_tidyItemConsumableInputs(element, item) {
   if (!targetElem) return;
   let existingElem = element.querySelector(`input[name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}"]`);
   if (existingElem) return;
-  const customConsumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE) ?? {};
+  const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
   const elemToInject = document.createElement("div");
   elemToInject.classList.add("form-group");
   elemToInject.innerHTML = `
     <div class="form-fields">
       <label class="checkbox"">
-        <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${customConsumable.dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
+        <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
       </label>
     </div>
   `;

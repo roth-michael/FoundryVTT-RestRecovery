@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 6.0.1
+- Fixed a bug where hit dice recovered at the _start_ of a rest would sometimes not be rollable during the rest
+- Fixed a bug where auto-spending hit dice ignored any guaranteed hit point recovery, thereby potentially over-spending hit dice
+- Fixed a bug where errors would sometimes be thrown when resting with hit die buffers enabled
+- Fixed a bug where custom food/water items could not be consumed during rest unless they had previously been set to contain an entire day's worth of nourishment
+
 ## Version 6.0.0
 - Requires system version 6.0.0 at a minimum
 - Removed "Enable calendar integration" setting; this is now effectively a system setting under the system's "Configure Calendar" settings menu

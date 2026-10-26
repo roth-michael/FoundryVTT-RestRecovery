@@ -187,7 +187,7 @@ export default class RestWorkflow {
         delete updates.class["system.hd.spent"];
         updates.class[CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG] = bufferDice - 1;
       } else if (bufferDice === 0) {
-        updates.class[REMOVE_HIT_DICE_BUFFER_FLAG] = null;
+        updates.class[CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG] = _del;
       }
 
     });
@@ -422,6 +422,17 @@ export default class RestWorkflow {
       removeNonLightArmor: !(actorHasNonLightArmor && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ARMOR_AUTOMATION))
     }
 
+    Object.defineProperty(this.healthData, "enableAutoRollHitDice", {
+      get: () => {
+        if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE)) return false;
+        const avgHitDiceRegain = this.getAverageHitDiceRoll();
+        const missingHP = this.maxHP - this.currHP;
+        const probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
+        return ((this.currHP + this.healthData.hitPointsToRegainFromRest) < this.maxHP)
+          && (probableHitDiceLeftToRoll > 0) && (this.healthData.totalHitDice > 0)
+      }
+    })
+
     const longRestRollHitDice = this.longRest && lib.getSetting(CONSTANTS.SETTINGS.LONG_REST_ROLL_HIT_DICE);
     const longRestNotFullHitPoints = longRestRollHitDice && lib.getSetting(CONSTANTS.SETTINGS.HP_MULTIPLIER) !== CONSTANTS.FRACTIONS.FULL;
 
@@ -437,16 +448,6 @@ export default class RestWorkflow {
   refreshHealthData() {
     this.healthData.availableHitDice = this.getHitDice();
     this.healthData.totalHitDice = this.totalHitDice;
-
-    if (lib.getSetting(CONSTANTS.SETTINGS.ENABLE_AUTO_ROLL_HIT_DICE)) {
-      let avgHitDiceRegain = this.getAverageHitDiceRoll();
-      let missingHP = this.maxHP - this.currHP;
-      let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
-
-      this.healthData.enableAutoRollHitDice = (this.currHP + this.healthData.hitPointsToRegainFromRest) < this.maxHP
-        && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0;
-
-    }
   }
 
   getHitDice() {
@@ -663,7 +664,7 @@ export default class RestWorkflow {
 
   async autoSpendHitDice() {
     let avgHitDiceRegain = this.getAverageHitDiceRoll();
-    let missingHP = this.maxHP - this.currHP;
+    let missingHP = this.maxHP - this.currHP - this.healthData.hitPointsToRegainFromRest;
     let probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
     let minSpendHitDice = 0;
     let maxSpendHitDice = Infinity;
@@ -682,12 +683,12 @@ export default class RestWorkflow {
       maxSpendHitDice = Math.max(minSpendHitDice, maxSpendHitDice);
     }
 
-    // While the character is missing at least 10% of its hp, and we predict we can roll hit dice, and we have some left, roll hit dice
+    // While the character will be missing at least 10% of its hp at end of rest, and we have hit dice left, roll hit dice
     while (missingHP && probableHitDiceLeftToRoll > 0 && this.healthData.totalHitDice > 0 && avgHitDiceRegain > 0) {
       if (this.healthData.hitDiceSpent >= maxSpendHitDice) break;
       avgHitDiceRegain = this.getAverageHitDiceRoll();
       await this.rollHitDice(undefined, false);
-      missingHP = this.maxHP - this.currHP;
+      missingHP = this.maxHP - this.currHP - this.healthData.hitPointsToRegainFromRest;
       probableHitDiceLeftToRoll = Math.floor(missingHP / avgHitDiceRegain);
     }
 
@@ -1412,7 +1413,7 @@ export default class RestWorkflow {
       Object.values(this.actor.classes).forEach(cls => {
         lib.addToUpdates(results.updateItems, {
           _id: cls.id,
-          [CONSTANTS.FLAGS.REMOVE_HIT_DICE_BUFFER_FLAG]: null
+          [CONSTANTS.FLAGS.HIT_DICE_BUFFER_FLAG]: _del
         });
       })
     }
@@ -1659,7 +1660,7 @@ export default class RestWorkflow {
     if (!workflow) workflow = this;
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return [];
 
-    const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+    const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
 
     const actorUpdates = {};
 
@@ -1681,17 +1682,17 @@ export default class RestWorkflow {
 
     if (item.system.type?.subtype === "both") {
 
-      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
-      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
 
-      const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedBoth" + (dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: consumingActor.name,
         itemName: item.name,
         charges: chargesUsed
       }) + "</p>";
 
-      if (!consumable.dayWorth) {
+      if (!dayWorth) {
         message += actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] >= actorRequiredFood
           ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedFood") + "</p>"
           : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
@@ -1702,9 +1703,9 @@ export default class RestWorkflow {
 
     } else if (item.system.type?.subtype === "food") {
 
-      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = consumable.dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
 
-      const localize = "REST-RECOVERY.Chat.ConsumedFood" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedFood" + (dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: consumingActor.name,
         itemName: item.name,
@@ -1717,9 +1718,9 @@ export default class RestWorkflow {
 
     } else if (item.system.type?.subtype === "water") {
 
-      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = consumable.dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
+      actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
 
-      const localize = "REST-RECOVERY.Chat.ConsumedWater" + (consumable.dayWorth ? "DayWorth" : "")
+      const localize = "REST-RECOVERY.Chat.ConsumedWater" + (dayWorth ? "DayWorth" : "")
       message = "<p>" + game.i18n.format(localize, {
         actorName: consumingActor.name,
         itemName: item.name,

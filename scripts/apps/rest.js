@@ -287,6 +287,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onStartLongRest() {
     this.showStartLongRestButton = false;
     await this.workflow.regainHitDice();
+    this.selectedHitDice = Object.entries(this.workflow.healthData.availableHitDice).filter(i => i[1])?.[0]?.[0];
     this.render();
   }
 
@@ -431,7 +432,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     const item = this.actor.items.get(itemId);
     if (!item) return;
 
-    const consumable = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE);
+    const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
     if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
 
     const foodRequired = Math.max(0.5, this.workflow.foodWaterRequirement.actorRequiredFood - this.newFoodSatedValue);
@@ -444,7 +445,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     const quantity = foundry.utils.getProperty(item, "system.quantity") ?? 1;
     let countsAs = 1;
     let requiredNum = 1;
-    if (consumable.dayWorth) {
+    if (dayWorth) {
       switch (item.system.type.subtype) {
         case "both":
           requiredNum = maxBothRequired;
@@ -481,7 +482,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       countsAs,
       totalUsesLeft,
       quantity,
-      consumable,
+      consumable: {dayWorth},
       type: item.system.type.subtype,
       capitalizedType: capitalizeFirstLetter(item.system.type.subtype)
     };
