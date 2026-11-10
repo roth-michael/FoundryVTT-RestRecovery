@@ -32,7 +32,7 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     }
   }, { inplace: false })
 
-  typeIndex = { "both": 2, "food": 1, "water": 0 };
+  typeIndex = { "Both": 2, "Food": 1, "Water": 0 };
 
   constructor({config, actor, workflow, resolve, reject, ...options} = {}) {
     super(options);
@@ -271,8 +271,8 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       const itemId = target.name.split("-")[1];
       const item = this.consumableItems.find(i => i.id === itemId);
       item.amount = Math.clamp(target.value, 1, item.totalUsesLeft);
-      if (["both", "food"].includes(item.type)) this.calcFood();
-      if (["both", "water"].includes(item.type)) this.calcWater();
+      if (item.properties.has("nutritious")) this.calcFood();
+      if (item.properties.has("hydrating")) this.calcWater();
     } else if (target?.name === "selectedItem") {
       this.selectedItem = target.value;
     } else if (target?.name === "hd") {
@@ -432,8 +432,8 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     const item = this.actor.items.get(itemId);
     if (!item) return;
 
-    const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
-    if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
+    const dayWorth = item.system.properties?.has("daysWorth");
+    if (!["hydrating", "nutritious"].some(p => item.system.properties?.has(p))) return;
 
     const foodRequired = Math.max(0.5, this.workflow.foodWaterRequirement.actorRequiredFood - this.newFoodSatedValue);
     const waterRequired = Math.max(0.5, this.workflow.foodWaterRequirement.actorRequiredWater, this.newWaterSatedValue);
@@ -446,17 +446,9 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     let countsAs = 1;
     let requiredNum = 1;
     if (dayWorth) {
-      switch (item.system.type.subtype) {
-        case "both":
-          requiredNum = maxBothRequired;
-          break;
-        case "food":
-          requiredNum = foodRequired;
-          break;
-        case "water":
-          requiredNum = waterRequired;
-          break;
-      }
+      if (["hydrating", "nutritious"].every(p => item.system.properties?.has(p))) requiredNum = maxBothRequired;
+      else if (item.system.properties?.has("hydrating")) requiredNum = waterRequired;
+      else if (item.system.properties?.has("nutritious")) requiredNum = foodRequired;
       countsAs = Math.ceil(requiredNum / (this.workflow.restVariant === "gritty" ? 7 : 1));
     }
 
@@ -473,18 +465,22 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
+    let capitalizedType;
+    if (["hydrating", "nutritious"].every(p => item.system.properties?.has(p))) capitalizedType = "Both";
+    else if (item.system.properties?.has("hydrating")) capitalizedType = "Water";
+    else if (item.system.properties?.has("nutritious")) capitalizedType = "Food";
+
     const consumableItem = {
       id: item.id,
       item,
-      index: this.typeIndex[item.system.type.subtype],
-      fullName: `${item.name} (${localize(`REST-RECOVERY.Misc.${capitalizeFirstLetter(item.system.type.subtype)}`)}) - ${totalUsesLeft} left`,
+      index: this.typeIndex[capitalizedType],
+      fullName: `${item.name} (${localize(`REST-RECOVERY.Misc.${capitalizedType}`)}) - ${totalUsesLeft} left`,
       amount: Math.ceil(requiredNum / countsAs),
       countsAs,
       totalUsesLeft,
       quantity,
-      consumable: {dayWorth},
-      type: item.system.type.subtype,
-      capitalizedType: capitalizeFirstLetter(item.system.type.subtype)
+      properties: item.system.properties,
+      capitalizedType
     };
 
     consumableItem["amount"] = Math.min(totalUsesLeft, consumableItem["amount"]);
@@ -514,10 +510,10 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     for (const item of this.consumableItems) {
-      if (!this.hasAccessToFood && (["both", "food"].includes(item.type))) {
+      if (!this.hasAccessToFood && item.properties.has("nutritious")) {
         this.newFoodSatedValue += item.countsAs * item.amount;
       }
-      if (!this.hasAccessToWater && (["both", "water"].includes(item.type))) {
+      if (!this.hasAccessToWater && item.properties.has("hydrating")) {
         this.newWaterSatedValue += item.countsAs * item.amount;
       }
     }
@@ -535,10 +531,10 @@ export class RestApplication extends HandlebarsApplicationMixin(ApplicationV2) {
     this.actorConsumableItems = getConsumableItemsFromActor(this.actor)
       .filter(item => !this.consumableItems.find(consumableItem => consumableItem.id === item.id))
       .sort((a, b) => {
-        if (a.type === b.type) {
+        if (a.capitalizedType === b.capitalizedType) {
           return b.name > a.name ? -1 : 1;
         }
-        return this.typeIndex[b.type] - this.typeIndex[a.type];
+        return this.typeIndex[b.capitalizedType] - this.typeIndex[a.capitalizedType];
       });
     if (!this.actorConsumableItems.find(item => item.id === this.selectedItem)) {
       this.selectedItem = this.actorConsumableItems[0]?.id ?? "";

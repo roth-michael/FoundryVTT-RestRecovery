@@ -176,16 +176,20 @@ export function getConsumableItemsFromActor(actor) {
   return actor.items.map(item => {
     const consumableUses = getConsumableItemDayUses(item);
     if (!consumableUses > 0) return false;
+    let capitalizedType;
+    if (["hydrating", "nutritious"].every(p => item.system.properties?.has(p))) capitalizedType = "Both";
+    else if (item.system.properties?.has("hydrating")) capitalizedType = "Water";
+    else if (item.system.properties?.has("nutritious")) capitalizedType = "Food";
     return {
       id: item.id,
-      name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizeFirstLetter(item.system.type?.subtype)) + ")",
+      name: item.name + " (" + game.i18n.localize("REST-RECOVERY.Misc." + capitalizedType) + ")",
     };
   }).filter(Boolean);
 
 }
 
 export function getConsumableItemDayUses(item) {
-  if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return 0;
+  if (!["hydrating", "nutritious"].some(p => item.system.properties?.has(p))) return 0;
   const uses = foundry.utils.getProperty(item, "system.uses");
   return ((((typeof uses.max === 'string' && uses.max.length) ? new Roll(uses.max, item.getRollData()).evaluateSync().total : uses.max) ?? 1) - (uses.spent ?? 0));
 }

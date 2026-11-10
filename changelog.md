@@ -1,5 +1,11 @@
 # Rest Recovery Changelog
 
+## Version 7.0.0
+- Requires system version 6.1.0 at a minimum
+- Food subtypes are no longer registered; instead, the system-added properties of "nutritious" and "hydrating" are used
+  - This change should be automatically reflected for any in-compendium items, and addressed on all world actors & items on first launch via a migration
+- The "One charge is an entire day's worth" checkbox is now simply a "Day's Worth" _property_ on food-type consumables, similar to the above change (this too is covered by the migration)
+
 ## Version 6.0.1
 - Fixed a bug where hit dice recovered at the _start_ of a rest would sometimes not be rollable during the rest
 - Fixed a bug where auto-spending hit dice ignored any guaranteed hit point recovery, thereby potentially over-spending hit dice

@@ -1,6 +1,6 @@
 ## Important Notes
 
-Consumable items may require some setup from you. By default, the system has a "Food" consumable type, but no subtypes for that; installing Rest Recovery adds "Food", "Water", and "Food & Water" subtypes, which must be selected in order to use food consumables for food/water.
+Consumable items may require some setup from you. The system has a "Food" consumable type, and "Hydrating" and "Nutritious" properties to represent something which counts as water or food, respectively. Installing Rest Recovery also adds a "Day's Worth" property, representing items for which a single charge covers an entire day's requirements for the respective food type.
 
 ## Enable food and water automation
 This enables sub-features relating to food and water automation, as seen below.

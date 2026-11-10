@@ -35,6 +35,8 @@
     },
     "PatchedRecovery": "O(a) {recoveryName} de {actorName} foi usado(a).",
     "PatchedConsumable": "{itemName} atualizado(a) com usos.",
+    "MigrationBegun": "Iniciando migrações de Rest Recovery 5e...",
+    "MigrationComplete": "Todas as migrações de Rest Recovery 5e foram concluídas!",
     "Fractions": {
       "None": "Nenhum",
       "Quarter": "Um Quarto",

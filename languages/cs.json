@@ -34,6 +34,8 @@
     },
     "PatchedRecovery": "Aktér {actorName} s {recoveryName} byl ošetřen.",
     "PatchedConsumable": "Aktualizováno použití položky {itemName}.",
+    "MigrationBegun": "Zahájena migrace efektů Rest Recovery 5e...",
+    "MigrationComplete": "Všechny migrace Rest Recovery 5e byly dokončeny!",
     "Fractions": {
       "None": "Žádný",
       "Quarter": "Čtvrtinový",

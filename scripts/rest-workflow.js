@@ -62,13 +62,6 @@ export default class RestWorkflow {
   }
 
   static initialize() {
-
-    CONFIG.DND5E.consumableTypes.food.subtypes = {
-      food: "REST-RECOVERY.Misc.Food",
-      water: "REST-RECOVERY.Misc.Water",
-      both: "REST-RECOVERY.Misc.Both"
-    }
-
     Hooks.on("dnd5e.restCompleted", (actor) => {
       RestWorkflow.remove(actor);
     });
@@ -996,10 +989,10 @@ export default class RestWorkflow {
     } else {
 
       const items = this.consumableData.items.filter(item => item.amount);
-      let waterItems = items.filter(item => item.type === "both" || item.type === "water");
+      let waterItems = items.filter(item => item.properties.has("hydrating"));
 
       actorWaterSatedValue = waterItems.reduce((acc, item) => {
-        acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
+        acc += item.properties.has("daysWorth") ? actorRequiredWater : item.amount;
         return acc;
       }, actorWaterSatedValue);
 
@@ -1045,8 +1038,8 @@ export default class RestWorkflow {
       let actorDaysWithoutFood = foundry.utils.getProperty(this.actor, CONSTANTS.FLAGS.STARVATION) ?? 0;
 
       const items = this.consumableData.items.filter(item => item.amount);
-      let foodItems = items.filter(item => item.type === "both" || item.type === "food");
-      let waterItems = items.filter(item => item.type === "both" || item.type === "water");
+      let foodItems = items.filter(item => item.properties.has("nutritious"));
+      let waterItems = items.filter(item => item.properties.has("hydrating"));
 
       if (actorRequiredFood) {
 
@@ -1074,7 +1067,7 @@ export default class RestWorkflow {
         } else {
 
           actorFoodSatedValue += foodItems.reduce((acc, item) => {
-            acc += item.consumable.dayWorth ? 100000000000 : item.amount;
+            acc += item.properties.has("daysWorth") ? 100000000000 : item.amount;
             return acc;
           }, actorFoodSatedValue);
 
@@ -1132,7 +1125,7 @@ export default class RestWorkflow {
         } else {
 
           actorWaterSatedValue = waterItems.reduce((acc, item) => {
-            acc += item.consumable.dayWorth ? actorRequiredWater : item.amount;
+            acc += item.properties.has("daysWorth") ? actorRequiredWater : item.amount;
             return acc;
           }, actorWaterSatedValue);
 
@@ -1586,7 +1579,7 @@ export default class RestWorkflow {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
       if (!activity?.item) return;
       const item = activity.item;
-      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
+      if (!["hydrating", "nutritious"].some(p => item.system.properties?.has(p))) return;
       let consumeFull = true;
       // const element = app.element.find('input[name="consumeAmount"]:checked');
       // if (element.length) {
@@ -1600,38 +1593,37 @@ export default class RestWorkflow {
 
     Hooks.on('preUpdateItem', (item, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
-      if (CONSTANTS.CONSUMABLE_TYPES.includes(data.system?.type?.subtype) && !lib.isRealNumber(foundry.utils.getProperty(item, "system.uses.max"))) {
+      if (["hydrating", "nutritious"].some(p => data.system?.properties?.includes(p)) && !lib.isRealNumber(foundry.utils.getProperty(item, "system.uses.max"))) {
         return this._patchConsumableItem(item, data);
       }
       if (!this.itemsListened.has(item.id)) return;
-      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
+      if (!["hydrating", "nutritious"].some(p => item.system.properties?.has(p))) return;
       return this._handleConsumableItem(item, data, this);
     });
 
     Hooks.on('deleteItem', (item, data) => {
       if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return;
       if (!this.itemsListened.has(item.id)) return;
-      if (!CONSTANTS.CONSUMABLE_TYPES.includes(item.system.type?.subtype)) return;
+      if (!["hydrating", "nutritious"].some(p => item.system.properties?.includes(p))) return;
       return this._handleConsumableItem(item, data, this);
     })
   }
 
   static async patchAllConsumableItems(actor) {
     const potentialItems = ["Rations", "Rations (1 day)", "Waterskin", "Water (Pint)"]
-    const items = actor.items.filter(item => potentialItems.includes(item.name) && item.type !== "container" && !CONSTANTS.CONSUMABLE_TYPES.includes(foundry.utils.getProperty(item, "system.type.subtype")));
+    const items = actor.items.filter(item => potentialItems.includes(item.name) && item.type !== "container" && !["hydrating", "nutritious"].some(p => item.system?.properties?.has(p)));
 
     const updates = items.map(item => {
       const currUpdates = {
         "_id": item.id,
         "system.uses.spent": foundry.utils.getProperty(item, "system.uses.spent") ?? 0,
         "system.uses.max": foundry.utils.getProperty(item, "system.uses.max") ?? 1,
-        "system.type.value": "food",
-        [CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH]: false
+        "system.type.value": "food"
       }
       if (item.name.startsWith("Rations")) {
-        currUpdates["system.type.subtype"] = CONSTANTS.FLAGS.CONSUMABLE_TYPE_FOOD;
+        currUpdates["system.properties"] = [...(item.system.properties ?? []), "nutritious"];
       } else {
-        currUpdates["system.type.subtype"] = CONSTANTS.FLAGS.CONSUMABLE_TYPE_WATER;
+        currUpdates["system.properties"] = [...(item.system.properties ?? []), "hydrating"];
       }
 
       return currUpdates;
@@ -1660,7 +1652,7 @@ export default class RestWorkflow {
     if (!workflow) workflow = this;
     if (!lib.getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER)) return [];
 
-    const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
+    const dayWorth = item.system.properties?.has("daysWorth");
 
     const actorUpdates = {};
 
@@ -1680,7 +1672,7 @@ export default class RestWorkflow {
 
     let message;
 
-    if (item.system.type?.subtype === "both") {
+    if (["hydrating", "nutritious"].every(p => item.system.properties?.has(p))) {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = dayWorth ? actorRequiredFood : actorFoodSatedValue + chargesUsed;
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = dayWorth ? actorRequiredWater : actorWaterSatedValue + chargesUsed;
@@ -1701,7 +1693,7 @@ export default class RestWorkflow {
           : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedWater", { units: actorRequiredWater - actorUpdates[CONSTANTS.FLAGS.SATED_WATER] }) + "</p>"
       }
 
-    } else if (item.system.type?.subtype === "food") {
+    } else if (item.system.properties?.has("nutritious")) {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] = dayWorth ? 100000000000 : actorFoodSatedValue + chargesUsed;
 
@@ -1716,7 +1708,7 @@ export default class RestWorkflow {
         ? "<p>" + game.i18n.localize("REST-RECOVERY.Chat.SatedFood") + "</p>"
         : "<p>" + game.i18n.format("REST-RECOVERY.Chat.RequiredSatedFood", { units: actorRequiredFood - actorUpdates[CONSTANTS.FLAGS.SATED_FOOD] }) + "</p>"
 
-    } else if (item.system.type?.subtype === "water") {
+    } else if (item.system.properties?.has("hydrating")) {
 
       actorUpdates[CONSTANTS.FLAGS.SATED_WATER] = dayWorth ? 100000000000 : actorWaterSatedValue + chargesUsed;
 

@@ -2,7 +2,6 @@ import CONSTANTS from "./constants.js";
 import { getSetting } from "./lib/lib.js";
 
 export default function registerSheetOverrides() {
-  Hooks.on("renderDocumentSheetV2", patch_itemSheet);
   registerTraits();
 }
 
@@ -70,51 +69,4 @@ export function registerTraits() {
 
   }
 
-}
-
-function patch_itemSheet(app, html) {
-  if (app.document?.documentName !== "Item") return;
-  const item = app.item;
-  if (!item) return;
-  html = html instanceof HTMLElement ? html : html[0];
-  if (!getSetting(CONSTANTS.SETTINGS.ENABLE_FOOD_AND_WATER) || item.type !== "consumable" || item.system.type?.value !== "food") return;
-  if (!app.options.classes.includes("tidy5e-sheet")) {
-    patch_itemConsumableInputs(html, item);
-  } else {
-    patch_tidyItemConsumableInputs(html, item);
-  }
-}
-
-function patch_itemConsumableInputs(html, item) {
-  let targetElem = html.querySelector(".form-group:has(select[name='system.type.subtype'])")
-  if (!targetElem) return;
-  const fullDay = dnd5e.applications.fields.createCheckboxInput(undefined, {
-    name: CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH,
-    value: !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH)
-  });
-  if (!html.classList.contains("editable") && !html.querySelector("form")?.classList.contains("editable")) fullDay.disabled = true;
-  const fullDayGroup = foundry.applications.fields.createFormGroup({
-    label: "REST-RECOVERY.Dialogs.ItemOverrides.DayWorth",
-    localize: true,
-    input: fullDay
-  });
-  targetElem.after(fullDayGroup);
-}
-
-function patch_tidyItemConsumableInputs(element, item) {
-  let targetElem = element.querySelector(".form-group:has(select[data-tidy-field='system.type.subtype'])");
-  if (!targetElem) return;
-  let existingElem = element.querySelector(`input[name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}"]`);
-  if (existingElem) return;
-  const dayWorth = !!foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
-  const elemToInject = document.createElement("div");
-  elemToInject.classList.add("form-group");
-  elemToInject.innerHTML = `
-    <div class="form-fields">
-      <label class="checkbox"">
-        <input type="checkbox" name="${CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH}" ${dayWorth ? "checked" : ""}> ${game.i18n.localize("REST-RECOVERY.Dialogs.ItemOverrides.DayWorth")}
-      </label>
-    </div>
-  `;
-  targetElem.after(elemToInject);
 }

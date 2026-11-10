@@ -10,10 +10,17 @@ export default async function migrate() {
     return foundry.utils.isNewerVersion(b[0], a[0]) ? -1 : 1;
   });
 
+  let migrationAlert;
+
   for (const [version, migration] of sortedMigrations) {
     const migrationVersion = getSetting(CONSTANTS.SETTINGS.MIGRATION_VERSION);
     if (!foundry.utils.isNewerVersion(version, migrationVersion)) continue;
+    migrationAlert ??= ui.notifications.info("REST-RECOVERY.MigrationBegun", {permanent: true, localize: true});
     await migration();
+  }
+  if (migrationAlert) {
+    migrationAlert.remove();
+    ui.notifications.success("REST-RECOVERY.MigrationComplete", {localize: true});
   }
 
   const moduleVersion = game.modules.get(CONSTANTS.MODULE_NAME).version;
@@ -69,6 +76,51 @@ const migrations = {
     if (findOldSettingValue("simple-calendar-notes-only-prompted")) {
       await setSetting(CONSTANTS.SETTINGS.CALENDARIA_NOTES_ONLY_PROMPTED, findOldSettingValue("simple-calendar-notes-only-prompted"));
     }
+  },
+
+  "7.0.0": async () => {
+    const createBatch = (parent, items) => {
+      const updates = [];
+      for (const item of items) {
+        if (item.type !== "consumable") continue;
+        if (item.system?.type?.value !== "food") continue;
+        const isFood = ["food", "both"].includes(item.system.type.subtype);
+        const isWater = ["water", "both"].includes(item.system.type.subtype);
+        const isDaysWorth = foundry.utils.getProperty(item, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH);
+        if (!isFood && !isWater && !isDaysWorth) continue;
+        const update = {_id: item.id, system: {properties: [...item.system.properties]}};
+        if (isFood) {
+          foundry.utils.setProperty(update, "system.type.subtype", "");
+          update.system.properties.push("nutritious");
+        }
+        if (isWater) {
+          foundry.utils.setProperty(update, "system.type.subtype", "");
+          update.system.properties.push("hydrating");
+        }
+        if (isDaysWorth) {
+          foundry.utils.setProperty(update, CONSTANTS.FLAGS.CONSUMABLE_DAY_WORTH, _del);
+          update.system.properties.push("daysWorth");
+        }
+        updates.push(update);
+      }
+      if (!updates.length) return null;
+      return {
+        updates,
+        action: "update",
+        documentName: "Item",
+        parent
+      };
+    }
+    const allSyntheticActors = game.scenes.map(s => s.tokens.filter(t => t.actor?.isToken).map(t => t.actor)).flat();
+    const allWorldActors = allSyntheticActors.concat(...game.actors).filter(Boolean);
+    const operations = [];
+    const worldItemOperation = createBatch(null, game.items);
+    if (worldItemOperation) operations.push(worldItemOperation);
+    for (const actor of allWorldActors) {
+      const actorOperation = createBatch(actor, actor.items);
+      if (actorOperation) operations.push(actorOperation);
+    }
+    if (operations.length) await foundry.documents.modifyBatch(operations);
   }
 
 }
