@@ -73,7 +73,7 @@
             <span class="item-name">{{fullName}}</span>
             <label>
               <input type="number" value="{{amount}}" step="0.5" name="consumable-{{id}}"/>
-              {{#if consumable.dayWorth}}
+              {{#if rest-recovery-includes properties "daysWorth"}}
                 {{localize (concat "REST-RECOVERY.Dialogs.AbilityUse.DayWorthTitle" capitalizedType)}}
               {{else}}
                 {{localize "REST-RECOVERY.Dialogs.RestSteps.FoodWater.AmountToConsume"}}
