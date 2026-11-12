@@ -62,7 +62,7 @@ Available choices for this setting are as follows:
 
 ## Spell slots recovery fraction
 
-The fraction of spell slots to recover on a long rest (pact slots excluded).
+The fraction of spell slots to recover on a long rest (Short Rest-recovering slots, like Pact, excluded).
 
 Available choices for this setting are as follows:
 * None

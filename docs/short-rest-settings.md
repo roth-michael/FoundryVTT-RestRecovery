@@ -27,7 +27,7 @@ Available choices for this setting are as follows:
 
 ## Spell slots recovery fraction
 
-The fraction of spell slots to recover on a short rest (pact slots excluded).
+The fraction of spell slots to recover on a short rest (Short Rest-recovering slots, like Pact, excluded).
 
 Available choices for this setting are as follows:
 * None *(default)*
@@ -58,8 +58,8 @@ Available choices for this setting are as follows:
 * Full *(Default)*
 * Custom Formula
 
-## Pact spell slots recovery fraction
-The fraction of Warlock pact spell slots to recover on a short rest.
+## Short Rest-recovering spell slots recovery fraction
+The fraction of short rest-recovering (e.g. Pact) spell slots to recover on a short rest.
 
 Available choices for this setting are as follows:
 * None

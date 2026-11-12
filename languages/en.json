@@ -510,8 +510,8 @@
           "Hint": "The fraction of spell slots to recover on a short rest."
         },
         "PactSpellSlotsLongRecoveryFraction": {
-          "Title": "Pact spell slots recovery fraction",
-          "Hint": "The fraction of Warlock pact spell slots to recover on a short rest."
+          "Title": "Short Rest-recovering spell slots recovery fraction",
+          "Hint": "The fraction of short rest-recovering (e.g. Pact) spell slots to recover on a short rest."
         },
         "SongOfRestMultiuse": {
           "Title": "Song of Rest rolls for every hit die spent",
@@ -580,8 +580,8 @@
           "Hint": "Enabling this setting will cause everyone with spell slots to recover them like the wizard \"Arcane Recovery\" feature, where you have you choose which spell slots you recover. This setting can only be enabled when \"Spell slots recovery fraction\" is set to custom. Characters regain a number of spell slots equal to the custom formula's setting."
         },
         "PactSpellSlotsLongRecoveryFraction": {
-          "Title": "Pact spell slots recovery fraction",
-          "Hint": "The fraction of Warlock pact spell slots to recover on a long rest."
+          "Title": "Short Rest-recovering spell slots recovery fraction",
+          "Hint": "The fraction of short rest-recovering (e.g. Pact) spell slots to recover on a long rest."
         },
         "ItemUsesRecoveryFraction": {
           "Title": "Item uses recovery fraction",

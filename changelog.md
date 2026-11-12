@@ -1,5 +1,8 @@
 # Rest Recovery Changelog
 
+## Version 7.0.1
+- All references to "pact" spell slots now apply to any spells which "should" recover during short rests (based on `CONFIG.DND5E.restTypes.short.recoverSpellSlotTypes`)
+
 ## Version 7.0.0
 - Requires system version 6.1.0 at a minimum
 - Food subtypes are no longer registered; instead, the system-added properties of "nutritious" and "hydrating" are used

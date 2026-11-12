@@ -371,7 +371,8 @@ export default class RestWorkflow {
   }
 
   determineSteps() {
-    const hasSpells = Object.values({...this.actor.classes, ...this.actor.subclasses}).some(cls => !['none', 'pact'].includes(cls.system.spellcasting.progression));
+    const shortSlotTypes = CONFIG.DND5E.restTypes.short.recoverSpellSlotTypes;
+    const hasSpells = Object.values({...this.actor.classes, ...this.actor.subclasses}).some(cls => (cls.system.spellcasting.progression !== "none") && !shortSlotTypes.has(cls.system.spellcasting.progression));
     this.steps = [
       {
         title: "REST-RECOVERY.Dialogs.RestSteps.Rest.Title",
@@ -485,7 +486,7 @@ export default class RestWorkflow {
     };
 
     for (let [level, slot] of Object.entries(this.actor.system.spells)) {
-      if ((!slot.max && !slot.override) || level === "pact") {
+      if ((!slot.max && !slot.override) || !level.startsWith("spell")) {
         continue;
       }
       let levelNum = Number(level.slice(5))
@@ -1353,10 +1354,12 @@ export default class RestWorkflow {
     const spellMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS[`${longRest ? "LONG" : "SHORT"}_SPELLS_MULTIPLIER`]);
     const pactMultiplier = lib.determineMultiplier(CONSTANTS.SETTINGS[`${longRest ? "LONG" : "SHORT"}_PACT_SPELLS_MULTIPLIER`])
 
+    const shortSlotTypes = CONFIG.DND5E.restTypes.short.recoverSpellSlotTypes;
+
     for (let [level, slot] of Object.entries(this.actor.system.spells)) {
       if (!slot.override && !slot.max) continue;
-      let multiplier = level === "pact" ? pactMultiplier : spellMultiplier;
-      if (level !== "pact" && customSpellRecovery) {
+      let multiplier = shortSlotTypes.has(level) ? pactMultiplier : spellMultiplier;
+      if (!shortSlotTypes.has(level) && customSpellRecovery) {
         results.updateData[`system.spells.${level}.value`] = slot.value;
         continue;
       }
